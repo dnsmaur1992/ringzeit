@@ -2570,6 +2570,287 @@
       animation: none;
     }
   }
+  /* first steps */
+  .starter {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 16px 16px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sthead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .sthead > div {
+    display: flex;
+    flex-direction: column;
+  }
+  .sthead b {
+    font-size: 18px;
+  }
+  .sthead .btn.ghost {
+    padding: 4px 6px;
+    font-size: 13px;
+  }
+  .strow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    border: 0;
+    border-top: 1px solid var(--line);
+    background: none;
+    color: var(--frost);
+    text-align: left;
+    padding: 11px 0;
+    font: inherit;
+  }
+  .strow:disabled {
+    opacity: 1;
+  }
+  .strow i {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    display: grid;
+    place-items: center;
+    font-style: normal;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .strow.done i {
+    background: var(--done);
+    border-color: var(--done);
+    color: #0a0b0d;
+  }
+  .strow > span:nth-child(2) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .strow b {
+    font-weight: 600;
+    font-size: 15.5px;
+  }
+  .strow small {
+    color: var(--mist);
+    font-size: 13px;
+  }
+  .strow.done b {
+    color: var(--mist);
+    text-decoration: line-through;
+  }
+  .strow .chev {
+    color: var(--mist);
+    font-size: 22px;
+  }
+  @keyframes sthl {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+    30%,
+    70% {
+      box-shadow: 0 0 0 3px var(--ice);
+    }
+  }
+  .sthl {
+    animation: sthl 2s ease-in-out;
+    border-radius: 14px;
+  }
+  /* focus blocks */
+  .blkc,
+  .blks {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .blks {
+    border-color: color-mix(in srgb, var(--bc) 45%, var(--line));
+    background: color-mix(in srgb, var(--bc) 7%, var(--panel));
+  }
+  .bhd {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .bhd > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .bhd b {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+  .bchip {
+    align-self: flex-start;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bc);
+    background: color-mix(in srgb, var(--bc) 16%, transparent);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .bico {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    color: var(--bc);
+    background: color-mix(in srgb, var(--bc) 16%, transparent);
+  }
+  .bico svg {
+    width: 22px;
+    height: 22px;
+  }
+  .blkc .pbar span {
+    background: var(--bc);
+  }
+  .bstg {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .bstg > div {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .bstg b {
+    font-size: 13px;
+  }
+  .bstg small {
+    font-size: 12px;
+    color: var(--mist);
+    overflow-wrap: anywhere;
+  }
+  .bstg .on {
+    border-color: var(--bc);
+    background: color-mix(in srgb, var(--bc) 12%, transparent);
+  }
+  .bstg .on small {
+    color: var(--frost);
+  }
+  .bstg .done b {
+    color: var(--bc);
+  }
+  .blkc p,
+  .blks p {
+    margin: 0;
+  }
+  .bsrow {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .bsrow > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .bsrow b {
+    font-size: 16px;
+  }
+  .bopt {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    border: 1px solid var(--line);
+    background: var(--panel2);
+    color: var(--frost);
+    border-radius: 16px;
+    padding: 12px;
+    font: inherit;
+    margin-bottom: 8px;
+  }
+  .bopt.on {
+    border-color: var(--bc);
+    background: color-mix(in srgb, var(--bc) 12%, var(--panel2));
+  }
+  .bopt > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .bopt small {
+    color: var(--mist);
+    font-size: 13px;
+  }
+  .bopt em {
+    font-style: normal;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #0a0b0d;
+    background: var(--bc);
+    border-radius: 6px;
+    padding: 2px 6px;
+    margin-left: 6px;
+    vertical-align: 2px;
+  }
+  .sheet .bstg {
+    margin: 4px 0 6px;
+  }
+  .bcmp {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .bcmp div {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--line);
+    padding-top: 6px;
+  }
+  .bcmp .up {
+    color: var(--done);
+    font-weight: 700;
+  }
+  .tg.blk {
+    color: #5fb3a6;
+    border-color: #23413c;
+  }
+  .onbpts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .onbpts span {
+    font-size: 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 11px;
+    color: var(--mist);
+  }
+  .onb .later {
+    align-self: center;
+    margin-top: -8px;
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -2818,6 +3099,139 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      pow: "Schnellkraft",
+      blk: {
+        names: { end: "Kampfausdauer", pow: "Schnellkraft", mob: "Beweglichkeit" },
+        subs: {
+          end: "Länger hohes Tempo halten, schneller erholen",
+          pow: "Härter und schneller treffen, explosiver starten",
+          mob: "Höhere Kicks, freiere Hüfte, weniger Zerrungen",
+        },
+        stages: {
+          end: ["Motor aufbauen", "Rundentempo", "Explosionen"],
+          pow: ["Kraftbasis", "Explosiv", "Speed & Kontrast"],
+          mob: ["Hüfte & Adduktoren", "Kick-Mobilität", "Aktiv beweglich"],
+        },
+        wk: (a, b) => `Wo. ${a}–${b}`,
+        wkN: (n) => `Wo. ${n}`,
+        week: (n) => `Woche ${n} von 6`,
+        now: "Jetzt",
+        title: "Schwerpunkt für die nächsten Wochen",
+        start: "Start",
+        today: "Ab heute",
+        monday: "Ab Montag",
+        go: "6-Wochen-Block starten",
+        how: {
+          end: "Eine Technik-Einheit pro Woche wird zu Technik & Kondition. Höchstens 3 harte Einheiten pro Woche inkl. Vereinstraining. Am Ende: Fitnesstest zum Vergleich.",
+          pow: "Ab 4 Trainingstagen gibt es 2 Kraft-Einheiten pro Woche. Sprünge immer ausgeruht und mit voller Pause – Qualität vor Menge. Am Ende: Fitnesstest zum Vergleich.",
+          mob: "Jede Einheit endet mit längerem Dehnen; ab 4 Trainingstagen wird eine Kondi-Einheit zum Mobility-Flow. Am Ende: Fitnesstest zum Vergleich.",
+        },
+        compWarn: (d) =>
+          `Dein Turnier am ${d} fällt in den Block. Die Turniervorbereitung hat dann Vorrang, der Block ruht so lange.`,
+        kaWarn: "Wegen Knie/Sprunggelenk ersetzt Ringzeit die Sprünge durch gelenkschonende Kraftübungen.",
+        rec: "Empfohlen",
+        sugT: (c) => `${c} ist dein schwächster Bereich`,
+        sugS: (d) => `Laut Fitnesstest vom ${d}. Ein 6-Wochen-Block bringt dich gezielt nach vorn.`,
+        view: "Block ansehen",
+        later: "Später",
+        prof: "Trainingsschwerpunkt",
+        profHint:
+          "Sechs Wochen gezielt an einem Bereich arbeiten – z. B. wenn der Trainer sagt: „Du brauchst mehr Ausdauer.“",
+        none: "Keiner aktiv",
+        choose: "Block wählen",
+        pause: "Pausieren",
+        resume: "Fortsetzen",
+        stop: "Beenden",
+        pausedSince: (d) => `Pausiert seit ${d} – die Wochen zählen erst weiter, wenn du fortsetzt.`,
+        soon: (d) => `Startet am ${d}`,
+        compNow: "Turniervorbereitung hat Vorrang – der Block ruht bis nach dem Turnier.",
+        doneT: "Block geschafft!",
+        doneS: "Mach jetzt den Fitnesstest – dann siehst du, was die sechs Wochen gebracht haben.",
+        doneCmp: "Vorher → nachher",
+        testGo: "Test starten",
+        finish: "Abschließen",
+        started: "Block gestartet – dein Plan ist angepasst",
+        ended: "Block beendet – der Plan läuft wieder normal",
+        pausedT: "Block pausiert",
+        resumed: "Block läuft weiter",
+        stopAsk: "Block wirklich beenden? Der Plan läuft dann wieder normal.",
+        tag: "Block",
+        hist: "Abgeschlossen",
+        onbT: "Wo stehst du gerade?",
+        onbS: "Freiwillig: Mit einem kurzen Fitnesstest schlägt dir Ringzeit einen ersten 6-Wochen-Schwerpunkt vor – Ausdauer, Schnellkraft oder Beweglichkeit. Einzelne Teile kannst du auslassen und später nachtragen.",
+        onbTest: "Fitnesstest öffnen",
+        onbLater: "Später – direkt loslegen",
+        onbPts: ["Liegestütze am Stück", "Jab-Cross in 20 s", "2,4 km Lauf", "Sidekick-Höhe", "Technik-Einschätzung"],
+        wtxt: {
+          end: [
+            (w, b) =>
+              `Diese Woche: Runden à ${w} in gleichmäßigem Tempo (≈ 70 %), ${b} Pause – du baust den Motor. Optional: 20–30 Min. locker laufen an einem freien Tag.`,
+            (w, b, n, nx) =>
+              `Diese Woche: ${n} × ${w} im Kampftempo, ${b} Pause.${nx ? ` Nächste Woche ${nx} Runden.` : " Danach: Explosionen."}`,
+            (w, b, n, nx, ov) =>
+              ov
+                ? `Diese Woche: Überlast – ${n} × ${w} mit nur ${b} Pause. Danach: Fitnesstest zum Vergleich.`
+                : `Diese Woche: ${w}-Runden mit 15 s Vollgas / 15 s Technik im Wechsel.`,
+          ],
+          pow: [
+            "Diese Woche: schwere Grundübungen mit langen Pausen. Sauber vor schwer.",
+            "Diese Woche: Sprünge und explosive Übungen vor der Kraft – jede Wiederholung maximal schnell, volle Pause.",
+            "Diese Woche: Kontrast – schwerer Satz, direkt danach explosiv. Dazu Speed-Runden mit 10 s Maximaltempo.",
+          ],
+          mob: [
+            "Diese Woche: Hüfte und Adduktoren – längeres Dehnen nach jeder Einheit, ruhig atmen, nie federn.",
+            "Diese Woche: dynamische Kick-Mobilität – kontrollierte Beinpendel und Zeitlupen-Kicks.",
+            "Diese Woche: aktive Beweglichkeit – Kicks oben halten. Zählt nur die Höhe, die du kontrollierst.",
+          ],
+        },
+        where: {
+          end: "in Technik & Kondition und Kondition",
+          pow: "in den Kraft-Einheiten",
+          mob: "im Mobility-Flow und Cool-down",
+        },
+        note: {
+          end: [
+            "Schwerpunkt Kampfausdauer · Motor aufbauen: lange Runden, gleichmäßig – nicht überpacen.",
+            "Schwerpunkt Kampfausdauer · Rundentempo: jede Runde so hart wie Runde 1 im Kampf.",
+            "Schwerpunkt Kampfausdauer · Explosionen: Vollgas-Phasen wirklich voll, Technik-Phasen sauber.",
+          ],
+          pow: [
+            "Schwerpunkt Schnellkraft · Kraftbasis: schwer, sauber, 2 Min. Pause zwischen den Sätzen.",
+            "Schwerpunkt Schnellkraft · Explosiv: maximal schnell, aufhören, sobald es langsamer wird.",
+            "Schwerpunkt Schnellkraft · Speed & Kontrast: schwer und explosiv im Wechsel, volle Pausen.",
+          ],
+          mob: [
+            "Schwerpunkt Beweglichkeit · Hüfte & Adduktoren: längeres Cool-down mit Dehnen.",
+            "Schwerpunkt Beweglichkeit · Kick-Mobilität: kontrollierte Bewegung statt Schwung.",
+            "Schwerpunkt Beweglichkeit · Aktiv: Kick-Höhe halten, die du kontrollierst.",
+          ],
+        },
+        cue: {
+          end0: "Gleichmäßiges Tempo (≈ 70 %) – du kannst noch kurze Sätze sprechen.",
+          end1: "Kampftempo: so hart wie Runde 1 im Turnier.",
+          end2o: "Überlast: Kampftempo trotz kurzer Pause.",
+        },
+        sets: {
+          heavy: "schwer, 2 Min. Pause",
+          clean: "sauber, langsam steigern",
+          expl: "explosiv, volle Pause",
+          contrast: "Kontrast: nach jedem Kraftsatz sofort 5 explosive Wdh.",
+        },
+      },
+      starter: {
+        title: "Erste Schritte",
+        count: (a, n) => `${a} von ${n} erledigt`,
+        hide: "Ausblenden",
+        hidden: "Ausgeblendet – die App-Tour im Profil zeigt dir jederzeit alles noch einmal.",
+        steps: {
+          profile: ["Geburtsjahr und Trainingstage festlegen", "Damit passen Rundenzeiten und Plan zu dir"],
+          club: ["Vereinstage eintragen", "Ringzeit plant deine eigenen Einheiten drumherum"],
+          session: ["Erste Einheit absolvieren", "Starten, trainieren, Anstrengung eintragen"],
+          timer: ["Rundentimer ausprobieren", "Eine Runde mit Glocke, ganz ohne Plan"],
+          test: ["Fitnesstest ablegen", "Dein Ausgangswert und der Weg zum nächsten Level"],
+          combo: ["Eine eigene Kombi anlegen", "Kombis aus dem Verein in deine Einheiten bringen"],
+        },
+      },
       prepLbl: "Gleich geht's los",
       tabTimer: "Timer",
       bdgTitle: "Abzeichen",
@@ -3421,6 +3835,138 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      pow: "Power",
+      blk: {
+        names: { end: "Fight endurance", pow: "Power", mob: "Mobility" },
+        subs: {
+          end: "Hold a high pace longer, recover faster",
+          pow: "Hit harder and faster, start more explosively",
+          mob: "Higher kicks, freer hips, fewer strains",
+        },
+        stages: {
+          end: ["Build the engine", "Round pace", "Bursts"],
+          pow: ["Strength base", "Explosive", "Speed & contrast"],
+          mob: ["Hips & adductors", "Kick mobility", "Active range"],
+        },
+        wk: (a, b) => `Wk ${a}–${b}`,
+        wkN: (n) => `Wk ${n}`,
+        week: (n) => `Week ${n} of 6`,
+        now: "Now",
+        title: "Focus for the coming weeks",
+        start: "Start",
+        today: "From today",
+        monday: "From Monday",
+        go: "Start 6-week block",
+        how: {
+          end: "One technique session per week becomes technique & conditioning. At most 3 hard sessions per week, club training included. At the end: fitness test to compare.",
+          pow: "With 4+ training days you get 2 strength sessions per week. Jumps always fresh and with full rest – quality over volume. At the end: fitness test to compare.",
+          mob: "Every session ends with longer stretching; with 4+ training days one conditioning session becomes a mobility flow. At the end: fitness test to compare.",
+        },
+        compWarn: (d) =>
+          `Your tournament on ${d} falls into the block. Tournament prep takes priority then and the block rests meanwhile.`,
+        kaWarn: "Because of knee/ankle limits, Ringzeit replaces the jumps with joint-friendly strength work.",
+        rec: "Recommended",
+        sugT: (c) => `${c} is your weakest area`,
+        sugS: (d) => `Based on your fitness test from ${d}. A 6-week block moves you forward in a targeted way.`,
+        view: "View block",
+        later: "Later",
+        prof: "Training focus",
+        profHint: "Work on one area for six weeks – e.g. when your coach says: “You need more stamina.”",
+        none: "None active",
+        choose: "Choose block",
+        pause: "Pause",
+        resume: "Resume",
+        stop: "End",
+        pausedSince: (d) => `Paused since ${d} – the weeks only count on once you resume.`,
+        soon: (d) => `Starts on ${d}`,
+        compNow: "Tournament prep takes priority – the block rests until after the tournament.",
+        doneT: "Block complete!",
+        doneS: "Take the fitness test now to see what the six weeks brought you.",
+        doneCmp: "Before → after",
+        testGo: "Start test",
+        finish: "Finish",
+        started: "Block started – your plan is adjusted",
+        ended: "Block ended – the plan is back to normal",
+        pausedT: "Block paused",
+        resumed: "Block resumed",
+        stopAsk: "Really end the block? The plan goes back to normal.",
+        tag: "Block",
+        hist: "Completed",
+        onbT: "Where do you stand right now?",
+        onbS: "Optional: with a short fitness test Ringzeit suggests a first 6-week focus – endurance, power or mobility. You can skip single parts and add them later.",
+        onbTest: "Open fitness test",
+        onbLater: "Later – just start",
+        onbPts: ["Push-ups in a row", "Jab-cross in 20 s", "2.4 km run", "Side kick height", "Technique rating"],
+        wtxt: {
+          end: [
+            (w, b) =>
+              `This week: ${w} rounds at an even pace (≈ 70 %), ${b} rest – you are building the engine. Optional: an easy 20–30 min run on a free day.`,
+            (w, b, n, nx) =>
+              `This week: ${n} × ${w} at fight pace, ${b} rest.${nx ? ` Next week ${nx} rounds.` : " Then: bursts."}`,
+            (w, b, n, nx, ov) =>
+              ov
+                ? `This week: overload – ${n} × ${w} with only ${b} rest. Then: fitness test to compare.`
+                : `This week: ${w} rounds alternating 15 s all-out / 15 s technique.`,
+          ],
+          pow: [
+            "This week: heavy basic lifts with long rests. Clean before heavy.",
+            "This week: jumps and explosive moves before strength – every rep at max speed, full rest.",
+            "This week: contrast – a heavy set, explosive right after. Plus speed rounds with 10 s max pace.",
+          ],
+          mob: [
+            "This week: hips and adductors – longer stretching after every session, breathe calmly, never bounce.",
+            "This week: dynamic kick mobility – controlled leg swings and slow-motion kicks.",
+            "This week: active range – hold your kicks up. Only the height you control counts.",
+          ],
+        },
+        where: {
+          end: "in technique & conditioning and conditioning",
+          pow: "in the strength sessions",
+          mob: "in the mobility flow and cool-down",
+        },
+        note: {
+          end: [
+            "Focus fight endurance · build the engine: long rounds, even pace – don't overpace.",
+            "Focus fight endurance · round pace: every round as hard as round 1 of a bout.",
+            "Focus fight endurance · bursts: all-out phases truly all-out, technique phases clean.",
+          ],
+          pow: [
+            "Focus power · strength base: heavy, clean, 2 min rest between sets.",
+            "Focus power · explosive: max speed, stop as soon as it slows down.",
+            "Focus power · speed & contrast: heavy and explosive in turns, full rests.",
+          ],
+          mob: [
+            "Focus mobility · hips & adductors: longer cool-down with stretching.",
+            "Focus mobility · kick mobility: controlled movement instead of swinging.",
+            "Focus mobility · active: hold the kick height you control.",
+          ],
+        },
+        cue: {
+          end0: "Even pace (≈ 70 %) – you can still speak short sentences.",
+          end1: "Fight pace: as hard as round 1 of a tournament bout.",
+          end2o: "Overload: fight pace despite the short rest.",
+        },
+        sets: {
+          heavy: "heavy, 2 min rest",
+          clean: "clean, build up slowly",
+          expl: "explosive, full rest",
+          contrast: "Contrast: after every strength set do 5 explosive reps right away.",
+        },
+      },
+      starter: {
+        title: "First steps",
+        count: (a, n) => `${a} of ${n} done`,
+        hide: "Hide",
+        hidden: "Hidden – the app tour in the profile shows everything again any time.",
+        steps: {
+          profile: ["Set birth year and training days", "So round times and the plan fit you"],
+          club: ["Add your club days", "Ringzeit plans your own sessions around them"],
+          session: ["Finish your first session", "Start, train, log the effort"],
+          timer: ["Try the round timer", "One round with the bell, no plan needed"],
+          test: ["Take the fitness test", "Your baseline and the way to the next level"],
+          combo: ["Create your own combo", "Bring combos from the club into your sessions"],
+        },
+      },
       prepLbl: "Get ready",
       tabTimer: "Timer",
       bdgTitle: "Badges",
@@ -5090,6 +5636,105 @@
       "ka",
       0,
     ],
+    [
+      "pow",
+      "Sprungkniebeugen",
+      "Jump squats",
+      "Hüftbreit in die Hocke, explosiv nach oben abspringen, weich und leise landen. Jede Wiederholung maximal.",
+      "Hip-width squat, jump up explosively, land soft and quiet. Every rep at max effort.",
+      "",
+      "gho",
+      "ka",
+      0,
+    ],
+    [
+      "pow",
+      "Standweitsprung",
+      "Broad jumps",
+      "Arme schwingen, beidbeinig so weit wie möglich nach vorn springen, in der Hocke landen und stehen bleiben.",
+      "Swing the arms, jump forward off both feet as far as you can, land in a squat and stick it.",
+      "",
+      "gho",
+      "ka",
+      0,
+    ],
+    [
+      "pow",
+      "Seitliche Sprünge",
+      "Lateral bounds",
+      "Von einem Bein seitlich weit auf das andere springen, Landung 1 s halten – wie ein schneller Ausweichschritt.",
+      "Bound sideways from one leg to the other and hold the landing for 1 s – like a fast slip step.",
+      "",
+      "gho",
+      "ka",
+      0,
+    ],
+    [
+      "pow",
+      "Klatsch-Liegestütze",
+      "Clap push-ups",
+      "Explosiv hochdrücken, kurz klatschen, weich mit gebeugten Armen landen.",
+      "Push up explosively, clap, land soft with bent arms.",
+      "",
+      "gho",
+      "sw",
+      1,
+    ],
+    [
+      "pow",
+      "Explosive Liegestütze",
+      "Explosive push-ups",
+      "So schnell hochdrücken, dass sich die Hände kurz vom Boden lösen. Langsam ablassen.",
+      "Push up so fast that the hands leave the floor briefly. Lower slowly.",
+      "",
+      "gho",
+      "sw",
+      0,
+    ],
+    [
+      "cond",
+      "Speed-Runden",
+      "Speed rounds",
+      "10 s Kombi in Maximaltempo, 20 s locker in Bewegung – Deckung oben, Technik bleibt sauber.",
+      "10 s combo at max speed, 20 s easy movement – guard up, technique stays clean.",
+      "",
+      "gho",
+      "",
+      0,
+    ],
+    [
+      "mob",
+      "Beinpendel kontrolliert",
+      "Controlled leg swings",
+      "An der Wand abstützen, Bein locker vor und zurück pendeln, jeden Satz etwas höher. Je Seite 10.",
+      "Hold on to a wall, swing the leg front and back, a little higher each set. 10 per side.",
+      "",
+      "gho",
+      "",
+      0,
+    ],
+    [
+      "mob",
+      "Kick-Halten",
+      "Kick holds",
+      "Sidekick langsam hochführen und 3–5 s oben halten, ohne Hand. Je Seite 5×.",
+      "Raise a side kick slowly and hold it at the top for 3–5 s, no hands. 5 per side.",
+      "",
+      "gho",
+      "ka",
+      0,
+    ],
+    [
+      "mob",
+      "Aktive Beinheber",
+      "Active leg raises",
+      "Auf dem Rücken: gestrecktes Bein ohne Schwung so hoch wie möglich heben, 2 s halten, langsam ab. Je Seite 8.",
+      "On your back: lift the straight leg as high as you can without swinging, hold 2 s, lower slowly. 8 per side.",
+      "",
+      "gho",
+      "",
+      0,
+    ],
   ];
   const EX = X.map((r, i) => ({
     id: i,
@@ -5389,7 +6034,7 @@
     6: ["T", "S", "P", "K", "T", "M"],
     7: ["T", "S", "P", "K", "T", "S", "M"],
   };
-  function dayTypes() {
+  function dayTypes(bk) {
     const p = S.profile,
       days = p.days.slice().sort((a, b) => a - b),
       pat = PATTERN[days.length] || [];
@@ -5399,6 +6044,7 @@
       if (p.level === 0 && ty === "P") ty = "T";
       m[d] = ty;
     });
+    if (bk) blockTypes(m, days, bk);
     return m;
   }
 
@@ -5428,7 +6074,8 @@
   const koLock = (ds) => !!S.ko && ds >= S.ko && daysBetween(parse(S.ko), parse(ds)) < 28;
   /* Weekly suggestion; no sparring during a KO suspension or the day after club sparring */
   function suggestOn(ds) {
-    let ty = dayTypes()[wd(ds)];
+    const bi = blockInfo(ds);
+    let ty = dayTypes(bi && bi.k)[wd(ds)];
     if (!ty) return null;
     const y = clubDone(iso(addDays(parse(ds), -1)));
     if (ty === "P" && (koLock(ds) || (y && y.ck === "P"))) ty = "T";
@@ -6340,6 +6987,12 @@
       return n;
     };
     const rpe = rpeRange(type, dateStr);
+    // focus block: adapts round lengths, exercise choice and sets; tournament phases switch it off (see blockInfo)
+    const bi = blockInfo(dateStr),
+      bk = bi && bi.k,
+      blk = bi ? { k: bi.k, wk: bi.wk } : null,
+      byName = (list, base) => (e) => (list.includes(e.de) ? 3 : 0) + (base ? base(e) : 0);
+    if (bi) notes.push(t("blk").note[bi.k][bi.st]);
     if (type === "M") {
       const warm = 8,
         cool = 7,
@@ -6358,7 +7011,14 @@
       blocks.push({
         key: "mob",
         min: flow,
-        items: pickEx("mob", Math.max(5, Math.round(flow / 4)), loc, eq, used),
+        items: pickEx(
+          "mob",
+          Math.max(5, Math.round(flow / 4)),
+          loc,
+          eq,
+          used,
+          bk === "mob" ? byName(BLK_MOB[bi.st]) : null,
+        ),
         sets: t("holdNote"),
       });
       const breath = EX.find((e) => e.de === "Atmung");
@@ -6367,7 +7027,19 @@
         min: cool,
         items: pickEx("cool", 2, loc, eq, used).concat(used.has(breath.id) ? [] : [{ kind: "ex", id: breath.id }]),
       });
-      return { date: dateStr, type, loc, eq, blocks, notes, rpe: rpe.txt, tHi: rpe.hi, min: D, created: Date.now() };
+      return {
+        date: dateStr,
+        type,
+        loc,
+        eq,
+        blocks,
+        notes,
+        rpe: rpe.txt,
+        tHi: rpe.hi,
+        min: D,
+        blk,
+        created: Date.now(),
+      };
     }
     if (run) {
       // Simple run by feel: easy zone 2; outside the foundation phase with a short zone-3 block in the middle
@@ -6392,6 +7064,7 @@
         loc,
         eq,
         run: true,
+        blk,
         blocks,
         notes,
         rpe: iv ? "4–6" : "3–4",
@@ -6401,8 +7074,13 @@
       };
     }
     const warmMin = Math.max(8, Math.round(D * 0.15)),
-      coolMin = Math.max(5, Math.round(D * 0.1)),
+      coolMin = Math.max(5, Math.round(D * 0.1)) + (bk === "mob" ? 5 : 0),
       rest = D - warmMin - coolMin - 6;
+    // power exercises; with knee/ankle limits the jumps drop out and strength work fills in
+    const powPick = (n) => {
+      const a = pickEx("pow", n, loc, eq, used);
+      return a.length >= n ? a : a.concat(pickEx("str", n - a.length, loc, eq, used));
+    };
     blocks.push({
       key: "warm",
       min: warmMin,
@@ -6433,37 +7111,71 @@
     let theme = null;
     if (type === "S") {
       const main = Math.round(rest * 0.7),
-        fin = rest - main;
-      blocks.push({
-        key: "str",
-        min: main,
-        items: pickEx("str", taper ? 3 : p.level === 0 ? 4 : 5, loc, eq, used, machines),
-        sets,
-      });
-      const n = Math.max(2, Math.floor(fin / 3));
+        fin = rest - main,
+        light = p.level === 0 || ageGroup() === "youth",
+        B = t("blk").sets;
+      if (bk === "pow" && bi.st > 0 && !load.deload) {
+        // explosive transfer / contrast: power work first, while fresh
+        const pm = Math.round(main * 0.4);
+        blocks.push({
+          key: "pow",
+          min: pm,
+          items: powPick(3),
+          sets: bi.st === 1 ? (light ? "3× 5 " : "4× 5 ") + B.expl : B.contrast,
+        });
+        blocks.push({
+          key: "str",
+          min: main - pm,
+          items: pickEx("str", p.level === 0 ? 3 : 4, loc, eq, used, machines),
+          sets: light ? "3× 8–10" : "3× 4–6 · " + B.heavy,
+        });
+      } else
+        blocks.push({
+          key: "str",
+          min: main,
+          items: pickEx("str", taper ? 3 : p.level === 0 ? 4 : 5, loc, eq, used, machines),
+          sets: bk === "pow" && !load.deload ? (light ? "3× 8–10 · " + B.clean : "4× 4–6 · " + B.heavy) : sets,
+        });
+      const n = Math.max(2, Math.floor(fin / 3)),
+        cpref = bk === "pow" && bi.st === 2 ? byName(["Speed-Runden"]) : bk === "end" ? byName(BLK_END) : null;
       blocks.push({
         key: "cond",
         min: fin,
         rounds: true,
-        items: pickEx("cond", n, loc, eq, used).map((x) => ({ kind: "round", k: "ex", id: x.id })),
+        items: pickEx("cond", n, loc, eq, used, cpref).map((x) => ({ kind: "round", k: "ex", id: x.id })),
       });
     } else if (type === "K") {
-      const main = Math.round(rest * 0.75),
-        core = rest - main;
+      const br = bk === "end" ? blockRounds(bi, dateStr) : null,
+        w = br ? br.w : condW,
+        bb = br ? br.b : restB,
+        len = (w + bb) / 60;
+      let n = roundsFor(Math.round(rest * 0.75), len);
+      // fixed fight-pace rounds come last; in the overload week only a short lead-in before them
+      if (br && br.n)
+        n = Math.min(Math.max(n, br.n), bi.wk === 6 ? br.n + 2 : 99, Math.max(2, Math.floor((rest - 5) / len)));
+      const main = br && br.n ? Math.round(n * len) : Math.round(rest * 0.75),
+        core = rest - main,
+        coreMax = Math.round(rest * 0.3);
       blocks.push({
         key: "cond",
         min: main,
         rounds: true,
-        w: condW,
-        b: restB,
-        items: pickEx("cond", roundsFor(main, (condW + restB) / 60), loc, eq, used, machines).map((x) => ({
+        w,
+        b: bb,
+        items: pickEx("cond", n, loc, eq, used, br ? byName(BLK_END, machines) : machines).map((x) => ({
           kind: "round",
           k: "ex",
           id: x.id,
-          pace: !!fmtR,
+          pace: !!fmtR || !!(br && br.pace),
         })),
       });
-      blocks.push({ key: "core", min: core, items: pickEx("str", 3, loc, eq, used), sets: supSets });
+      const cb = blocks[blocks.length - 1];
+      if (br && br.cue) cb.items.forEach((it, i) => (!br.n || i >= cb.items.length - br.n) && (it.cue = br.cue));
+      // a lot of time left after the fixed rounds: strength endurance before the core work
+      if (core > coreMax + 5) {
+        blocks.push({ key: "str", min: core - coreMax, items: pickEx("str", 3, loc, eq, used), sets: supSets });
+        blocks.push({ key: "core", min: coreMax, items: pickEx("str", 3, loc, eq, used), sets: supSets });
+      } else blocks.push({ key: "core", min: core, items: pickEx("str", 3, loc, eq, used), sets: supSets });
     } else {
       theme = chooseTheme();
       // grading prep: part of the session drills the belt programme
@@ -6471,10 +7183,22 @@
         exItems = exMin0 ? examPick(Math.max(3, Math.round(exMin0 / 3)), loc, eq) : [],
         exMin = exItems.length ? exMin0 : 0;
       const share = { T: 0.65, C: 0.45, P: 0.7 }[type],
-        main = Math.round((rest - exMin) * share),
-        sup = rest - exMin - main;
+        br = bk === "end" && type === "C" ? blockRounds(bi, dateStr) : null,
+        fw = br ? br.w : fightW,
+        rb = br ? br.b : restB;
+      let main = Math.round((rest - exMin) * share),
+        nR = roundsFor(main, (fw + rb) / 60);
+      // fixed fight-pace rounds at the end of the round block, technique rounds before them
+      if (br && br.n) {
+        nR = Math.min(
+          Math.max(nR, br.n),
+          bi.wk === 6 ? br.n + 2 : 99,
+          Math.max(2, Math.floor(((rest - exMin - 5) * 60) / (fw + rb))),
+        );
+        main = Math.round((nR * (fw + rb)) / 60);
+      }
+      const sup = rest - exMin - main;
       if (type === "P" && eq.includes("partner")) notes.push(t("gearNote"));
-      const nR = roundsFor(main, (fightW + restB) / 60);
       let items;
       if (type === "P" && ph.phase === "peak" && fmtR) {
         // fight simulation: two full bouts in the exact format, like two bouts on tournament day
@@ -6487,8 +7211,15 @@
         items = fightRounds(type, nR, loc, eq, theme);
         // fight-pace intervals: every round in technique & conditioning, every second round in technique
         if (fmtR && !taper) items.forEach((it, i) => (it.pace = type === "C" || i % 2 === 1));
+        if (br)
+          items.forEach((it, i) => {
+            if (br.pace) it.pace = true;
+            if (br.cue && (!br.n || i >= items.length - br.n)) it.cue = br.cue;
+          });
+        // bursts stage: every second technique round in 15/15 intervals
+        if (bk === "end" && bi.st === 2 && type === "T") items.forEach((it, i) => (it.pace = i % 2 === 1));
       }
-      blocks.push({ key: "main", min: main, rounds: true, w: fightW, b: restB, items });
+      blocks.push({ key: "main", min: main, rounds: true, w: fw, b: rb, items });
       if (exItems.length) {
         blocks.push({ key: "exam", min: exMin, items: exItems });
         const pr = examProgress(targetStage());
@@ -6496,12 +7227,24 @@
       }
       const supItems =
         type === "C"
-          ? pickEx("cond", 4, loc, eq, used)
-          : [...pickEx("cond", 2, loc, eq, used), ...pickEx("str", 2, loc, eq, used)];
+          ? pickEx("cond", 4, loc, eq, used, bk === "end" ? byName(BLK_END) : null)
+          : bk === "pow" && bi.st > 0
+            ? [...powPick(1), ...pickEx("cond", 1, loc, eq, used), ...pickEx("str", 2, loc, eq, used)]
+            : [...pickEx("cond", 2, loc, eq, used), ...pickEx("str", 2, loc, eq, used)];
       blocks.push({ key: type === "C" ? "cond" : "str", min: sup, items: supItems, sets: supSets });
     }
     blocks.push(hardBlock(eq, loc, soft));
-    blocks.push({ key: "cool", min: coolMin, items: pickEx("cool", 3, loc, eq, used) });
+    blocks.push({
+      key: "cool",
+      min: coolMin,
+      items:
+        bk === "mob"
+          ? [
+              ...pickEx("mob", 2, loc, eq, used, byName(BLK_MOB[bi.st])),
+              ...pickEx("cool", 2, loc, eq, used, byName(["Adduktoren & Spagat", "Hüftbeuger dehnen"])),
+            ]
+          : pickEx("cool", 3, loc, eq, used),
+    });
     if (ph.phase !== "base" && type !== "M") {
       notes.unshift(prepText(ph, type));
       if (prep && !S.profile.birthYear) notes.push(t("needBirth"));
@@ -6526,6 +7269,7 @@
       tHi: rpe.hi,
       theme: theme ? theme.id : null,
       min: D,
+      blk,
       created: Date.now(),
     };
   }
@@ -6862,7 +7606,7 @@
     );
   }
 
-  const APP_VER = "23.10.2026 18:28";
+  const APP_VER = "23.10.2026 20:25";
   const ICO_T =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.6M9.5 2.5h5M19 6l1.5-1.5"/></svg>';
   const PLAY =
@@ -6978,6 +7722,8 @@
     const pose = nty === "T" || nty === "C" || nty === "P" ? "kick" : "box";
     let h = header(t("todayTitle"));
     h += todayCard(nd, nty, pose);
+    h += blockHtml();
+    h += starterHtml();
     h += promptsHtml();
     h += pulseHtml();
     if (S.profile.example) h += `<div class="note">${t("example")}</div>`;
@@ -7242,7 +7988,7 @@ ${setupFields(setup, ty)}
  <div class="field"><button class="btn${sess ? " sec" : ""}" type="button" id="buildSess">${sess ? t("recreate") : t("create")}</button><div class="minirow" style="justify-content:space-between">${recent && !doneOn(ds) ? `<button type="button" class="btn ghost" data-move="${ds}">${t("move")}</button>` : ""}${ow.t && !ow.from && !doneOn(ds) ? `<button type="button" class="btn ghost" data-unplan="${ds}">${t("removeExtra")}</button>` : ""}${ow.from ? `<span class="sub">${t("movedFrom")(dayLbl(ow.from))}</span>` : ""}</div></div></div>`;
     if (!sess) return h;
     const rbS = roundBlock(sess);
-    h += `<div class="tags"><span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
+    h += `<div class="tags"><span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
     if (sess.notes && sess.notes.length) h += `<div class="note warn">${sess.notes.map(esc).join("<br>")}</div>`;
     const rb = sess.blocks.find((b) => b.rounds);
     if (rb) {
@@ -7258,7 +8004,7 @@ ${setupFields(setup, ty)}
       b.items.forEach((it, n) => {
         if (it.kind === "round" && it.k === "ex") {
           const x = exText(it.id);
-          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx">${exName(it.id, x.name)}<div>${esc(x.desc)}</div>${it.pace ? `<div class="last">${t("paceIv")}</div>` : ""}${hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
+          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx">${exName(it.id, x.name)}<div>${esc(x.desc)}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
         } else if (it.kind === "run") {
           const z3 = it.zone === 3;
           h += `<div class="ex"><span class="num r">Z${it.zone}</span><div class="tx"><b>${z3 ? t("z3set")(it.reps, it.on, it.off) : `${it.min} ${t("min")} · ${t("z2")}`}</b><div>${z3 ? t("z3d") : t("z2d")}</div></div></div>`;
@@ -7278,7 +8024,7 @@ ${setupFields(setup, ty)}
           if (x) h += examRow(x, n, sess.eq);
         } else if (it.kind === "round") {
           const r = RT[it.k];
-          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${it.pace ? `<div class="last">${t("paceIv")}</div>` : ""}${it.combo ? comboHtml(it.combo) : ""}</div></div>`;
+          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? comboHtml(it.combo) : ""}</div></div>`;
         } else {
           const x = exText(it.id),
             tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
@@ -7643,6 +8389,7 @@ ${setupFields(setup, ty)}
       .join(
         "",
       )}<div class="field"><span class="lab">${t("ko")}</span>${S.ko ? `<span class="sub">${esc(koLock(iso(today())) ? t("koActive")(fmtDate(iso(koUntil)), daysBetween(today(), koUntil) + 1) : t("koPast")(fmtDate(S.ko)))}</span><button type="button" class="btn ghost" data-kodel="1" style="align-self:flex-start">${t("del")}</button>` : `<span class="sub">${t("koHint")}</span><button type="button" class="btn sec" data-konew="1">${t("koAdd")}</button>`}</div></div>`;
+    h += blockProfHtml();
     h += mycHtml();
     h += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div><div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div></div><p class="foot" style="text-align:center">Ringzeit · Version ${APP_VER}</p>`;
     h += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
@@ -7667,16 +8414,22 @@ ${setupFields(setup, ty)}
     }
     const o = ui.onb,
       step = o.step;
-    let h = `<button type="button" class="btn ghost skip" data-onb="skip">${t("onbSkip")}</button><div class="dots">${[0, 1, 2].map((i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>`;
+    let h = `<button type="button" class="btn ghost skip" data-onb="skip">${t("onbSkip")}</button><div class="dots">${[0, 1, 2, 3].map((i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>`;
     h += `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair(step === 1 ? "box" : "kick")}</svg>`;
     if (step === 0) {
       h += `<h1>${t("onbQ1")}</h1><div class="sub">${t("onbQ1s")}</div><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => `<button type="button" data-od="${k}" aria-pressed="${o.disc === k}" ${k === "fc" || k === "k1" ? "disabled" : ""}>${t("disc")[k]}</button>`).join("")}</div>`;
     } else if (step === 1) {
       h += `<h1>${t("onbQ2")}</h1><div class="sub">${t("onbQ2s")}</div><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip" data-oday="${i}" aria-pressed="${o.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><div class="seg">${[45, 60, 75, 90].map((m) => `<button type="button" data-omin="${m}" aria-pressed="${o.minutes === m}">${m} ${t("min")}</button>`).join("")}</div>`;
+    } else if (step === 3) {
+      const B = t("blk");
+      h += `<h1>${B.onbT}</h1><div class="sub">${B.onbS}</div><div class="onbpts">${B.onbPts.map((x) => `<span>${x}</span>`).join("")}</div>`;
     } else {
       h += `<h1>${t("onbQ3")}</h1><div class="sub">${t("onbQ3s")}</div><input id="oBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${o.birthYear || ""}"><label class="lab" for="oComp">${t("onbComp")}</label><input id="oComp" type="date" min="${iso(today())}" value="${o.comp || ""}">`;
     }
-    h += `<div class="acts">${step ? `<button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button>` : ""}<button type="button" class="btn" data-onb="${step < 2 ? "next" : "done"}" ${step === 1 && !o.days.length ? "disabled" : ""}>${step < 2 ? t("onbNext") : t("onbGo")}</button></div>`;
+    if (step === 3)
+      h += `<div class="acts"><button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button><button type="button" class="btn" data-onb="test">${t("blk").onbTest}</button></div><button type="button" class="btn ghost later" data-onb="done">${t("blk").onbLater}</button>`;
+    else
+      h += `<div class="acts">${step ? `<button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button>` : ""}<button type="button" class="btn" data-onb="next" ${step === 1 && !o.days.length ? "disabled" : ""}>${t("onbNext")}</button></div>`;
     el.innerHTML = h;
     el.hidden = false;
   }
@@ -7689,7 +8442,7 @@ ${setupFields(setup, ty)}
     }
     if (c) ui.onb.comp = c.value;
   }
-  async function finishOnb(skip) {
+  async function finishOnb(skip, test) {
     const o = ui.onb;
     ui.onb = null;
     if (!skip) {
@@ -7712,8 +8465,16 @@ ${setupFields(setup, ty)}
       store.save();
     }
     ui.tab = "week";
+    // optional entry test: the tour follows once the test is saved or closed
+    if (test) {
+      ui.tab = "test";
+      ui.testView = "fit";
+      ui.testOpen = true;
+      ui.testDraft = {};
+      ui.tourAfter = true;
+    }
     render(true);
-    if (!S.profile.toured) startTour();
+    if (!S.profile.toured && !test) startTour();
   }
 
   /* ============ Belt grading: adult programme of the BFVKB / WAKO Deutschland grading rules (as of 20.01.2019) ============ */
@@ -11019,7 +11780,177 @@ ${setupFields(setup, ty)}
     Object.assign(o, { mode: "quiz", qs: all.slice(0, 10), qi: 0, pick: null, score: 0 });
   }
   /* Form cues: German name → [DE cues, EN cues, DE mistake, EN mistake] */
+  /* focus blocks: power and active mobility */
+  Object.assign(SKETCH, {
+    Sprungkniebeugen: {
+      a: { ...SQUAT, w: [92, 104], W: [88, 104], ea: [0, 1] },
+      b: {
+        h: [120, 20],
+        s: [120, 44],
+        p: [120, 78],
+        w: [130, 6],
+        W: [110, 6],
+        f: [124, 132],
+        F: [116, 132],
+        ea: [1, 0],
+        ka: [1, 0],
+      },
+      arrow: [
+        [186, 124],
+        [186, 70],
+      ],
+    },
+    Standweitsprung: {
+      a: {
+        h: [83, 65],
+        s: [72, 86],
+        p: [56, 116],
+        f: [86, 148],
+        F: [80, 148],
+        ka: [1, -0.4],
+        w: [50, 100],
+        W: [46, 100],
+        ea: [0, 1],
+      },
+      b: {
+        h: [183, 65],
+        s: [172, 86],
+        p: [156, 116],
+        f: [186, 148],
+        F: [180, 148],
+        ka: [1, -0.4],
+        w: [196, 92],
+        W: [192, 94],
+        ea: [0, 1],
+      },
+      arrow: [
+        [86, 30],
+        [170, 30],
+      ],
+    },
+    "Seitliche Sprünge": SKETCH["Skater-Sprünge"],
+    "Klatsch-Liegestütze": {
+      a: { ...pd, w: [119, 147], ea: [-1, -0.3] },
+      b: { ...skLine([40, 146], 36), w: [130, 116], W: [128, 118], ea: [1, 1] },
+      arrow: [
+        [192, 124],
+        [192, 86],
+      ],
+    },
+    "Explosive Liegestütze": {
+      a: { ...pd, w: [119, 147], ea: [-1, -0.3] },
+      b: { ...skLine([40, 146], 36), w: [122, 134], ea: [-1, 0] },
+      arrow: [
+        [192, 124],
+        [192, 86],
+      ],
+    },
+    "Speed-Runden": SKETCH["Schatten-Sprints"],
+    "Beinpendel kontrolliert": {
+      a: st({ W: [94, 66], EA: [0, 1], w: [128, 96], f: [98, 142], ka: [1, 0] }),
+      b: st({ W: [94, 66], EA: [0, 1], w: [128, 96], f: [170, 80], ka: [0, -1] }),
+      props: [["wall", 82]],
+      arc: [[120, 94], 66, 115, -18],
+    },
+    "Kick-Halten": {
+      a: st({ w: [132, 50], W: [126, 54], ea: [0, 1], f: [146, 122], ka: [1, -1] }),
+      b: {
+        h: [100, 44],
+        s: [106, 66],
+        p: [118, 98],
+        w: [118, 52],
+        W: [112, 56],
+        ea: [0, 1],
+        f: [172, 90],
+        F: [114, 148],
+        ka: [0, -1],
+      },
+      arrow: [
+        [196, 132],
+        [196, 98],
+      ],
+    },
+    "Aktive Beinheber": {
+      a: {
+        h: [182, 134],
+        s: [158, 138],
+        p: [124, 140],
+        w: [128, 146],
+        W: [124, 146],
+        ea: [0, -1],
+        f: [70, 144],
+        F: [70, 144],
+        ka: [0, -1],
+      },
+      b: {
+        h: [182, 134],
+        s: [158, 138],
+        p: [124, 140],
+        w: [128, 146],
+        W: [124, 146],
+        ea: [0, -1],
+        f: [116, 86],
+        F: [70, 144],
+        ka: [-1, 0],
+      },
+      arc: [[124, 140], 64, 190, 262],
+    },
+  });
   const EXTIPS = {
+    Sprungkniebeugen: [
+      ["Knie zeigen in Richtung Zehen", "Arme schwingen kraftvoll mit", "Weich über den Vorfuß landen"],
+      ["Knees point over the toes", "Swing the arms powerfully", "Land softly through the forefoot"],
+      "Knie fallen bei der Landung nach innen",
+      "Knees cave in on landing",
+    ],
+    Standweitsprung: [
+      ["Ausholen mit Armen und Hüfte", "Beide Füße gleichzeitig", "Landung halten, erst dann aufrichten"],
+      ["Load with arms and hips", "Both feet at the same time", "Stick the landing before standing up"],
+      "Nach der Landung nach vorn stolpern",
+      "Stumbling forward after landing",
+    ],
+    "Seitliche Sprünge": [
+      ["Vom Außenbein abdrücken", "Landung auf einem Bein, Knie über dem Fuß", "1 s stabil halten"],
+      ["Push off the outside leg", "Land on one leg, knee over the foot", "Hold steady for 1 s"],
+      "Sofort weiterspringen ohne stabile Landung",
+      "Bouncing on without a stable landing",
+    ],
+    "Klatsch-Liegestütze": [
+      ["Körper bleibt ein Brett", "Explosiv drücken, schnell klatschen", "Mit gebeugten Armen weich landen"],
+      ["Body stays a plank", "Push explosively, clap fast", "Land soft with bent arms"],
+      "Mit gestreckten Armen landen",
+      "Landing on locked arms",
+    ],
+    "Explosive Liegestütze": [
+      ["Langsam runter, explosiv hoch", "Hände lösen sich nur kurz", "Rumpf fest"],
+      ["Lower slowly, push up explosively", "Hands leave the floor only briefly", "Tight core"],
+      "Hüfte hängt durch",
+      "Hips sag",
+    ],
+    "Speed-Runden": [
+      ["10 s wirklich Maximaltempo", "Hände kommen sofort zurück an den Kopf", "20 s locker bewegen, nicht stehen"],
+      ["10 s truly at max speed", "Hands come straight back to the head", "Move easy for 20 s, don't stand still"],
+      "Tempo geht auf Kosten der Deckung",
+      "Speed at the cost of the guard",
+    ],
+    "Beinpendel kontrolliert": [
+      ["Oberkörper bleibt aufrecht", "Höhe langsam steigern", "Standbein leicht gebeugt"],
+      ["Upper body stays upright", "Increase the height gradually", "Standing knee slightly bent"],
+      "Mit Schwung über den Schmerz reißen",
+      "Yanking the leg up past the pain",
+    ],
+    "Kick-Halten": [
+      ["Knie erst hoch anziehen, dann strecken", "Ferse führt, Fuß angezogen", "Höhe halten, die du kontrollierst"],
+      ["Chamber the knee high first, then extend", "Heel leads, foot flexed", "Hold the height you control"],
+      "Oberkörper kippt weit nach hinten weg",
+      "Upper body tips far back",
+    ],
+    "Aktive Beinheber": [
+      ["Unteres Bein bleibt am Boden", "Knie gestreckt, Fuß angezogen", "Langsam absenken"],
+      ["Lower leg stays on the floor", "Knee straight, foot flexed", "Lower slowly"],
+      "Mit Schwung hochwerfen",
+      "Throwing the leg up with momentum",
+    ],
     Liegestütze: [
       ["Hände unter den Schultern", "Körper bleibt ein Brett: Po und Bauch fest", "Brust bis knapp über den Boden"],
       ["Hands under the shoulders", "Body stays a plank: glutes and abs tight", "Chest to just above the floor"],
@@ -11397,6 +12328,8 @@ ${setupFields(setup, ty)}
         );
       }
       h += `<h3>${t("moveTo")}</h3><div class="mlist">${rows.join("")}</div><div class="acts2">${cancel}</div>`;
+    } else if (o.kind === "blk") {
+      h += blockSheetHtml(o);
     } else if (o.kind === "confirm") {
       h += `<h3>${esc(o.title)}</h3>${o.lines.map((x) => `<div class="note warn">${esc(x)}</div>`).join("")}<div class="acts2">${cancel}<button type="button" class="btn" data-sx="confirm">${t("sure")}</button></div>`;
     } else if (o.kind === "result") {
@@ -11480,6 +12413,14 @@ ${setupFields(setup, ty)}
     if (!o) return;
     readSheet();
     if (a === "close") return closeSheet();
+    if (a === "blkgo") {
+      blockStart(o.k, o.start);
+      closeSheet();
+      ui.tab = "week";
+      render(true);
+      window.scrollTo(0, 0);
+      return toast(t("blk").started);
+    }
     if (a === "confirm") {
       const run = o.run;
       closeSheet();
@@ -12476,6 +13417,24 @@ ${setupFields(setup, ty)}
       ["All-rounder", "Every session type at least once"],
     ],
     [
+      "go",
+      "level",
+      1,
+      6,
+      "starter",
+      ["Startklar", "Alle ersten Schritte erledigt"],
+      ["Ready to go", "All first steps done"],
+    ],
+    [
+      "blk1",
+      "level",
+      2,
+      1,
+      "blocks",
+      ["Fokussiert", "Einen 6-Wochen-Schwerpunkt durchgezogen"],
+      ["Focused", "Completed a 6-week focus block"],
+    ],
+    [
       "k1",
       "comp",
       2,
@@ -12515,6 +13474,8 @@ ${setupFields(setup, ty)}
       belts: done.filter((c) => c.kind === "grade" && c.result.passed === "y").length,
       theory: Object.entries(S.profile.gp || {}).filter(([k, v]) => k.includes(".th.") && v === 2).length,
       types: new Set(ownLog.map((e) => e.type)).size,
+      starter: starterSteps().filter((x) => x.done).length,
+      blocks: (S.profile.blockHist || []).filter((x) => x.full).length,
       comps: done.filter((c) => c.kind !== "grade").length,
       wins: done.filter((c) => c.kind !== "grade" && +c.result.wins > 0).length,
       podium: done.filter((c) => ["1", "2", "3"].includes(c.result.place)).length,
@@ -12818,13 +13779,390 @@ ${setupFields(setup, ty)}
       <button type="button" class="btn sec" data-cact="new">＋ ${L.new}</button></div></div>`;
   }
 
+  /* ============ First steps: a small checklist on Today that ticks itself off (like onboarding lists in Duolingo or Notion) ============ */
+  /* key, done?, where the tap leads (tab + element to highlight, or an action) */
+  function starterSteps() {
+    const p = S.profile;
+    return [
+      { k: "profile", done: !!p.birthYear && p.days.length > 0, tab: "profile", sel: "#pBirth" },
+      { k: "club", done: !!(p.club && p.club.days && p.club.days.length), tab: "profile", sel: "[data-cday]" },
+      { k: "session", done: S.log.some(own), tab: "session" },
+      { k: "timer", done: (p.ftRounds || 0) > 0, act: "timer" },
+      { k: "test", done: S.tests.length > 0, tab: "test", view: "fit" },
+      { k: "combo", done: (p.myc || []).length > 0, tab: "profile", sel: "[data-cact=new]" },
+    ];
+  }
+  function starterHtml() {
+    if (S.profile.starterHide) return "";
+    const st = starterSteps(),
+      ok = st.filter((x) => x.done).length,
+      L = t("starter");
+    if (ok === st.length) return "";
+    return `<div class="starter"><div class="sthead"><div><b>${L.title}</b><span class="sub">${L.count(ok, st.length)}</span></div><button type="button" class="btn ghost" data-act2="starterhide">${L.hide}</button></div>
+      <div class="pbar"><span style="width:${Math.round((100 * ok) / st.length)}%"></span></div>
+      ${st
+        .map(
+          (x, i) =>
+            `<button type="button" class="strow${x.done ? " done" : ""}" data-start="${i}" ${x.done ? "disabled" : ""}><i>${x.done ? "✓" : ""}</i><span><b>${L.steps[x.k][0]}</b><small>${L.steps[x.k][1]}</small></span>${x.done ? "" : '<span class="chev">›</span>'}</button>`,
+        )
+        .join("")}</div>`;
+  }
+  function starterGo(i) {
+    const x = starterSteps()[i];
+    if (!x) return;
+    if (x.act === "timer") return openFt();
+    if (x.tab === "session") ui.sel = nextTrainingDate();
+    if (x.view) ui.testView = x.view;
+    ui.tab = x.tab;
+    if (x.tab !== "profile") draft = null;
+    render(true);
+    window.scrollTo(0, 0);
+    if (x.sel)
+      setTimeout(() => {
+        const el = document.querySelector(x.sel),
+          box = el && (el.closest(".field") || el);
+        if (!box) return;
+        box.scrollIntoView({
+          block: "center",
+          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        });
+        box.classList.add("sthl");
+        setTimeout(() => box.classList.remove("sthl"), 2200);
+      }, 120);
+  }
+
+  /* ============ Focus blocks: 6 weeks in 3 stages (fight endurance, power, mobility) ============ */
+  /*
+   * S.profile.block:     { k: "end"|"pow"|"mob", start: date, paused: date|null }
+   * S.profile.blockHist: [{ k, start, end, full }]
+   * S.profile.blkSeen:   id of the test whose block suggestion was dismissed or used
+   * Tournament phases win: during build, peak, taper and recovery the block content rests.
+   */
+  const BLK = ["end", "pow", "mob"];
+  const BLK_COL = { end: "#5fb3a6", pow: "#c9a86a", mob: "#8ec9a4" };
+  const BLK_ICO = {
+    end: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.5-7.5-10.2A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.5 2.6C19.5 15.5 12 20 12 20z"/></svg>',
+    pow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2.5L5 13.5h6l-1 8 8.5-11h-6z"/></svg>',
+    mob: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 3.5V8h-4.5"/></svg>',
+  };
+  /* test areas per block (for the suggestion and the before/after comparison) */
+  const BLK_CATS = { end: ["end"], pow: ["str", "spd"], mob: ["flx"] };
+  /* fight-specific conditioning first in the endurance block */
+  const BLK_END = ["Schatten-Sprints", "Sack-Sprints", "Kick-Intervalle", "Seil-Intervalle", "Speed-Runden"];
+  /* mobility per stage: hips & adductors → dynamic kick mobility → active range */
+  const BLK_MOB = [
+    ["Hüftkreise im Vierfüßler", "90/90 Hüftwechsel", "Cossack Squats", "Froschdehnung", "Taube", "Tiefe Hocke halten"],
+    ["Beinpendel kontrolliert", "Zeitlupen-Kicks", "World's Greatest Stretch", "Cossack Squats", "90/90 Hüftwechsel"],
+    ["Kick-Halten", "Aktive Beinheber", "Zeitlupen-Kicks", "Cossack Squats", "Beinpendel kontrolliert"],
+  ];
+  /* block week on a date (1–6) regardless of tournaments; null outside the block or while paused */
+  function blockRaw(ds) {
+    const b = S.profile.block;
+    if (!b || !b.k) return null;
+    const d = ds || iso(today());
+    if (d < b.start || (b.paused && d >= b.paused)) return null;
+    const wk = Math.floor(daysBetween(parse(b.start), parse(d)) / 7) + 1;
+    if (wk > 6) return null;
+    return { k: b.k, wk, st: Math.floor((wk - 1) / 2) };
+  }
+  /* the block as it shapes the plan: off during tournament phases */
+  function blockInfo(ds) {
+    const r = blockRaw(ds);
+    if (!r) return null;
+    const ph = phaseInfo(ds).phase;
+    return ph === "base" || ph === "grade" ? r : null;
+  }
+  /* status for today: soon, run, comp (tournament prep wins), paused, done */
+  function blockState() {
+    const b = S.profile.block;
+    if (!b || !b.k) return null;
+    const td = iso(today());
+    if (td < b.start) return { s: "soon", k: b.k, wk: 0, st: 0, days: 0 };
+    const ref = b.paused || td,
+      days = daysBetween(parse(b.start), parse(ref)),
+      wk = Math.floor(days / 7) + 1;
+    if (wk > 6) return { s: "done", k: b.k, wk: 6, st: 2, days: 42 };
+    const st = Math.floor((wk - 1) / 2);
+    if (b.paused) return { s: "paused", k: b.k, wk, st, days };
+    const ph = phaseInfo(td).phase;
+    return { s: ph === "base" || ph === "grade" ? "run" : "comp", k: b.k, wk, st, days };
+  }
+  /* fight endurance: round length, rest and (fixed) number of rounds per week */
+  function blockRounds(bi, ds) {
+    const L = S.profile.level,
+      m = ageGroup() === "masters" ? 1 : 0,
+      dl = weekLoad(ds).deload ? 1 : 0;
+    if (bi.st === 0) return { w: bi.wk === 1 ? 240 : 300, b: 60, n: 0, cue: "end0" };
+    // round pace: one round more each week
+    if (bi.st === 1) return { w: 120, b: 60, n: Math.max(3, bi.wk + L - m - dl), cue: "end1" };
+    if (bi.wk === 5) return { w: 120, b: 60, n: 0, pace: true };
+    // overload: short rests (a little longer for beginners and youth)
+    return {
+      w: 120,
+      b: dl ? 60 : L === 0 || ageGroup() === "youth" ? 45 : 30,
+      n: Math.max(3, 4 + (L === 2 ? 1 : 0) - (L === 0 ? 1 : 0) - m - dl),
+      cue: "end2o",
+    };
+  }
+  /* weekly session types inside a block; at most 3 hard units per week, club training included */
+  function blockTypes(m, days, k) {
+    const cnt = (ty) => days.filter((d) => m[d] === ty).length,
+      clubN = ((S.profile.club || {}).days || []).length,
+      hard = () => days.filter((d) => HARD_T.has(m[d])).length + clubN,
+      swap = (from, to, skip = 0) => {
+        const d = days.filter((x) => m[x] === from)[skip];
+        if (d == null) return false;
+        m[d] = to;
+        return true;
+      };
+    if (k === "end") {
+      if (hard() < 3) swap("T", "C");
+      if (days.length >= 4 && !cnt("K") && hard() < 3) swap("T", "K", 1);
+    } else if (k === "pow") {
+      const want = days.length >= 4 ? 2 : 1;
+      while (cnt("S") < want && (swap("K", "S") || swap("C", "S") || (cnt("T") > 1 && swap("T", "S", 1))));
+    } else if (k === "mob") {
+      const want = days.length >= 5 ? 2 : days.length >= 4 ? 1 : 0;
+      while (cnt("M") < want && (swap("K", "M") || swap("C", "M") || (cnt("T") > 1 && swap("T", "M", 1))));
+    }
+  }
+  /* round cue: fight-pace intervals or the block's pace hint */
+  const paceTxt = (it) => (it.cue ? t("blk").cue[it.cue] || "" : it.pace ? t("paceIv") : "");
+  /* weakest physical area of the latest test (technique doesn't pick a block) */
+  function blockSuggest() {
+    const tt = S.tests[S.tests.length - 1];
+    if (!tt || !tt.scores) return null;
+    const cand = ["end", "spd", "str", "flx"].filter((k) => tt.scores[k] != null);
+    if (!cand.length) return null;
+    let w = cand[0];
+    cand.forEach((k) => {
+      if (tt.scores[k] < tt.scores[w]) w = k;
+    });
+    if (tt.scores[w] >= 5) return null;
+    return { cat: w, k: { end: "end", spd: "pow", str: "pow", flx: "mob" }[w], test: tt };
+  }
+  /* last test before the block and the first one from week 6 on */
+  function blockTests(b) {
+    const cut = iso(addDays(parse(b.start), 35));
+    return {
+      before: S.tests.filter((x) => x.date < b.start).pop(),
+      after: S.tests.find((x) => x.date >= cut),
+    };
+  }
+  function blockWeekTxt(bi) {
+    const W = t("blk").wtxt[bi.k][bi.st];
+    if (bi.k !== "end") return W;
+    const r = blockRounds(bi, iso(today())),
+      nx = bi.wk === 3 ? blockRounds({ k: "end", wk: 4, st: 1 }, iso(addDays(today(), 7))).n : 0;
+    return W(fmt(r.w), fmt(r.b), r.n, nx, bi.wk === 6);
+  }
+  function blockSync() {
+    if (draft) {
+      draft.block = S.profile.block;
+      draft.blockHist = S.profile.blockHist;
+      draft.blkSeen = S.profile.blkSeen;
+    }
+    // planned sessions from today on are rebuilt with the new block content
+    const td = iso(today());
+    for (const k of Object.keys(S.sessions)) if (k >= td && !doneOn(k)) delete S.sessions[k];
+    ui.setup = null;
+    store.save();
+  }
+  function blockStart(k, when) {
+    const start = when === "mon" ? iso(addDays(monday(today()), 7)) : iso(today()),
+      sg = blockSuggest();
+    S.profile.block = { k, start, paused: null };
+    if (sg) S.profile.blkSeen = sg.test.id;
+    blockSync();
+  }
+  function blockFinish() {
+    const b = S.profile.block,
+      bs = blockState();
+    if (!b) return;
+    S.profile.blockHist = [
+      ...(S.profile.blockHist || []),
+      { k: b.k, start: b.start, end: iso(today()), full: bs.s === "done" },
+    ].slice(-20);
+    S.profile.block = null;
+    blockSync();
+  }
+  function blockPause(on) {
+    const b = S.profile.block;
+    if (!b) return;
+    if (on) b.paused = iso(today());
+    else if (b.paused) {
+      // the paused days are added to the block, so no week is lost
+      const gap = Math.max(0, daysBetween(parse(b.paused), today()));
+      b.start = iso(addDays(parse(b.start), gap));
+      b.paused = null;
+    }
+    blockSync();
+  }
+  function blockStages(k, cur, soon) {
+    const B = t("blk");
+    return `<div class="bstg">${[0, 1, 2]
+      .map((i) => {
+        const done = cur != null && !soon && i < cur,
+          on = cur != null && !soon && i === cur;
+        return `<div class="${done ? "done" : on ? "on" : ""}"><b>${done ? "✓" : on ? B.now : cur == null ? B.wk(i * 2 + 1, i * 2 + 2) : B.wkN(i * 2 + 1)}</b><small>${B.stages[k][i]}</small></div>`;
+      })
+      .join("")}</div>`;
+  }
+  /* Today: progress card during a block, otherwise a suggestion after a fitness test */
+  function blockHtml() {
+    const B = t("blk"),
+      bs = blockState();
+    if (bs) {
+      const b = S.profile.block,
+        head = (title) =>
+          `<div class="bhd"><div><span class="bchip">${B.names[bs.k]}</span><b>${esc(title)}</b></div><span class="bico">${BLK_ICO[bs.k]}</span></div>`;
+      if (bs.s === "done") {
+        const tt = blockTests(b);
+        let body;
+        if (tt.after) {
+          const rows = BLK_CATS[bs.k]
+            .map((c) => {
+              const a = tt.before && tt.before.scores[c],
+                z = tt.after.scores[c];
+              return `<div><span>${t("cats")[c]}</span><span class="${a && z > a ? "up" : ""}">${a ?? "–"} → ${z ?? "–"}</span></div>`;
+            })
+            .join("");
+          body = `<div class="bcmp"><span class="sub">${B.doneCmp}</span>${rows}</div><div class="acts2"><button type="button" class="btn" data-blk="finish">${B.finish}</button></div>`;
+        } else
+          body = `<p class="sub">${B.doneS}</p><div class="acts2"><button type="button" class="btn" data-blk="test">${B.testGo}</button><button type="button" class="btn sec" data-blk="finish">${B.finish}</button></div>`;
+        return `<div class="blkc" style="--bc:${BLK_COL[bs.k]}">${head(B.doneT)}<div class="pbar"><span style="width:100%"></span></div>${body}</div>`;
+      }
+      const soon = bs.s === "soon",
+        title = soon ? B.soon(fmtDate(b.start)) : `${B.week(bs.wk)} · ${B.stages[bs.k][bs.st]}`,
+        txt =
+          bs.s === "comp"
+            ? B.compNow
+            : bs.s === "paused"
+              ? B.pausedSince(fmtDate(b.paused))
+              : blockWeekTxt(soon ? { k: bs.k, wk: 1, st: 0 } : bs);
+      return `<div class="blkc" style="--bc:${BLK_COL[bs.k]}">${head(title)}<div class="pbar"><span style="width:${Math.round((100 * bs.days) / 42)}%"></span></div>${blockStages(bs.k, bs.st, soon)}<p class="sub">${esc(txt)}</p></div>`;
+    }
+    const sg = blockSuggest(),
+      ph = phaseInfo().phase;
+    if (!sg || S.profile.blkSeen === sg.test.id || !(ph === "base" || ph === "grade")) return "";
+    return `<div class="blks" style="--bc:${BLK_COL[sg.k]}"><div class="bsrow"><span class="bico">${BLK_ICO[sg.k]}</span><div><b>${esc(B.sugT(t("cats")[sg.cat]))}</b><span class="sub">${esc(B.sugS(fmtDate(sg.test.date)))}</span></div></div><div class="acts2"><button type="button" class="btn" data-blk="view:${sg.k}">${B.view}</button><button type="button" class="btn sec" data-blk="later:${sg.test.id}">${B.later}</button></div></div>`;
+  }
+  /* Profile: start, pause or end a block */
+  function blockProfHtml() {
+    const B = t("blk"),
+      bs = blockState(),
+      b = S.profile.block;
+    let h = `<div class="panel"><div class="field"><span class="lab">${B.prof}</span>`;
+    if (!bs)
+      h += `<span class="sub">${B.profHint}</span><button type="button" class="btn sec" data-blk="view">${B.choose}</button>`;
+    else {
+      const info =
+        bs.s === "soon"
+          ? B.soon(fmtDate(b.start))
+          : bs.s === "done"
+            ? B.doneT
+            : bs.s === "paused"
+              ? B.pausedSince(fmtDate(b.paused))
+              : `${B.week(bs.wk)} · ${B.stages[bs.k][bs.st]}`;
+      h += `<div class="bsrow" style="--bc:${BLK_COL[bs.k]}"><span class="bico">${BLK_ICO[bs.k]}</span><div><b>${B.names[bs.k]}</b><span class="sub">${esc(info)}</span></div></div><div class="acts2">${
+        bs.s === "done"
+          ? `<button type="button" class="btn" data-blk="finish">${B.finish}</button>`
+          : `<button type="button" class="btn sec" data-blk="${bs.s === "paused" ? "resume" : "pause"}" ${bs.s === "soon" ? "disabled" : ""}>${bs.s === "paused" ? B.resume : B.pause}</button><button type="button" class="btn sec" data-blk="stop">${B.stop}</button>`
+      }</div>`;
+    }
+    h += `</div>`;
+    const hist = (S.profile.blockHist || []).slice(-3).reverse();
+    if (hist.length)
+      h += hist
+        .map(
+          (x) =>
+            `<div class="row"><span style="flex:1"><b>${B.names[x.k]}</b><div class="sub">${fmtDate(x.start)} – ${fmtDate(x.end)}${x.full ? ` · ${B.hist} ✓` : ""}</div></span></div>`,
+        )
+        .join("");
+    return h + `</div>`;
+  }
+  /* Bottom sheet: choose a block (the mock-up's step 2) */
+  function blockSheetHtml(o) {
+    const B = t("blk"),
+      k = o.k,
+      start = o.start === "mon" ? addDays(monday(today()), 7) : today(),
+      end = addDays(start, 41),
+      nc = (S.profile.comps || []).find(
+        (c) => (c.kind || "comp") === "comp" && parse(c.date) >= start && parse(c.date) <= addDays(end, 7),
+      );
+    let h = `<h3>${B.title}</h3>`;
+    h += BLK.map(
+      (x) =>
+        `<button type="button" class="bopt${x === k ? " on" : ""}" data-bk="${x}" style="--bc:${BLK_COL[x]}" aria-pressed="${x === k}"><span class="bico">${BLK_ICO[x]}</span><span><b>${B.names[x]}${o.rec === x ? `<em>${B.rec}</em>` : ""}</b><small>${B.subs[x]}</small></span></button>`,
+    ).join("");
+    h += `<div style="--bc:${BLK_COL[k]}">${blockStages(k, null)}</div>`;
+    h += `<div class="lab">${B.start}</div><div class="seg">${["today", "mon"].map((x) => `<button type="button" data-bs="${x}" aria-pressed="${(o.start || "today") === x}">${x === "today" ? B.today : B.monday}</button>`).join("")}</div>`;
+    h += `<p class="sub">${B.how[k]}</p>`;
+    if (nc) h += `<div class="note warn">${esc(B.compWarn(fmtDate(nc.date)))}</div>`;
+    if (k === "pow" && kneeAnk()) h += `<div class="note warn">${B.kaWarn}</div>`;
+    h += `<div class="acts2"><button type="button" class="btn sec" data-sx="close">${t("cancel")}</button><button type="button" class="btn" data-sx="blkgo" style="background:${BLK_COL[k]}">${B.go}</button></div>`;
+    return h;
+  }
+  function openBlockSheet(k) {
+    const sg = blockSuggest();
+    openSheet({ kind: "blk", k: k || (sg && sg.k) || "end", rec: sg && sg.k, start: "today" });
+  }
+  /* after a fitness test: suggest a block when none is running */
+  function blockAfterTest() {
+    const ph = phaseInfo().phase;
+    if (S.profile.block || !(ph === "base" || ph === "grade")) return;
+    const sg = blockSuggest();
+    if (sg && S.profile.blkSeen !== sg.test.id) openBlockSheet(sg.k);
+  }
+  function blockAction(a) {
+    const [cmd, arg] = a.split(":"),
+      B = t("blk");
+    if (cmd === "view") return openBlockSheet(arg);
+    if (cmd === "later") {
+      S.profile.blkSeen = arg;
+      if (draft) draft.blkSeen = arg;
+      store.save();
+      return render();
+    }
+    if (cmd === "test") {
+      ui.tab = "test";
+      ui.testView = "fit";
+      ui.testOpen = true;
+      ui.testDraft = {};
+      render(true);
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (cmd === "finish") {
+      blockFinish();
+      render();
+      return toast(B.ended);
+    }
+    if (cmd === "pause" || cmd === "resume") {
+      blockPause(cmd === "pause");
+      render();
+      return toast(cmd === "pause" ? B.pausedT : B.resumed);
+    }
+    if (cmd === "stop")
+      return openSheet({
+        kind: "confirm",
+        title: B.stop,
+        lines: [B.stopAsk],
+        run: () => {
+          blockFinish();
+          render();
+          toast(B.ended);
+        },
+      });
+  }
+
   /* ============ Training mode (full screen) ============ */
   /* Title, description and combo of one round item, used by the training mode */
   function roundInfo(it) {
     const lg = S.profile.lang === "de" ? 0 : 1;
     if (it.k === "ex") {
       const x = exText(it.id);
-      return { title: x.name, desc: x.desc + (it.pace ? " " + t("paceIv") : "") };
+      return { title: x.name, desc: x.desc + (paceTxt(it) ? " " + paceTxt(it) : "") };
     }
     if (it.k === "sim")
       return { title: t("simT")(it.fight, it.r), desc: it.fight > 1 && it.r === 1 ? t("simD2") : t("simD1") };
@@ -12835,7 +14173,7 @@ ${setupFields(setup, ty)}
     const r = RT[it.k] || ["", "", "", ""];
     return {
       title: r[lg],
-      desc: r[lg + 2] + (it.pace ? " " + t("paceIv") : ""),
+      desc: r[lg + 2] + (paceTxt(it) ? " " + paceTxt(it) : ""),
       combo: it.combo,
       label: it.mine ? "★ " + t("myc").lbl : undefined,
     };
@@ -13062,9 +14400,27 @@ ${setupFields(setup, ty)}
     // ----- bottom sheet
     if (ds.sx) return sheetAction(ds.sx);
     if (ds.exinfo) return openSheet({ kind: "ex", id: +ds.exinfo });
+    // ----- focus blocks
+    if (ds.blk) return blockAction(ds.blk);
+    if (ds.bk && ui.sheet && ui.sheet.kind === "blk") {
+      ui.sheet.k = ds.bk;
+      return renderSheet();
+    }
+    if (ds.bs && ui.sheet && ui.sheet.kind === "blk") {
+      ui.sheet.start = ds.bs;
+      return renderSheet();
+    }
     // ----- badges, free timer, my combos
     if (ds.bdg) return openSheet({ kind: "badge", id: ds.bdg });
     if (ds.act2 === "allbdg") return openSheet({ kind: "badges" });
+    if (ds.start != null) return starterGo(+ds.start);
+    if (ds.act2 === "starterhide") {
+      S.profile.starterHide = true;
+      if (draft) draft.starterHide = true;
+      store.save();
+      toast(t("starter").hidden);
+      return render();
+    }
     if (ds.ftx) return ds.ftx === "open" ? openFt() : ftAction(ds.ftx);
     if (ds.fts) {
       const [k, d] = ds.fts.split(":");
@@ -13439,7 +14795,7 @@ ${setupFields(setup, ty)}
       readOnb();
       if (ds.onb === "next") ui.onb.step++;
       else if (ds.onb === "back") ui.onb.step--;
-      else return finishOnb(ds.onb === "skip");
+      else return finishOnb(ds.onb === "skip", ds.onb === "test");
       renderOnb();
       return;
     }
@@ -13567,6 +14923,10 @@ ${setupFields(setup, ty)}
     if (b.id === "tCancel") {
       ui.testOpen = false;
       render();
+      if (ui.tourAfter) {
+        ui.tourAfter = false;
+        if (!S.profile.toured) startTour();
+      }
       return;
     }
     if (ds.tf) {
@@ -13598,6 +14958,10 @@ ${setupFields(setup, ty)}
       const after = maxLevel();
       if (after > before) toast(t("lvlUp")(t("levels")[after]));
       else toast(t("saved"));
+      if (ui.tourAfter) {
+        ui.tourAfter = false;
+        if (!S.profile.toured) startTour();
+      } else blockAfterTest();
       return;
     }
     // profile
@@ -13641,7 +15005,15 @@ ${setupFields(setup, ty)}
     }
     if (b.id === "pSave") {
       await loading("loadingPlan");
-      S.profile = { ...draft, example: false, planStart: S.profile.planStart || iso(today()) };
+      // the focus block is managed on its own (not part of the plan draft)
+      S.profile = {
+        ...draft,
+        example: false,
+        planStart: S.profile.planStart || iso(today()),
+        block: S.profile.block,
+        blockHist: S.profile.blockHist,
+        blkSeen: S.profile.blkSeen,
+      };
       draft = null;
       const td = iso(today());
       for (const k of Object.keys(S.sessions)) if (k >= td && !doneOn(k)) delete S.sessions[k];
