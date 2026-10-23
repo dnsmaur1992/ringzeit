@@ -919,7 +919,16 @@
     padding: 8px max(6px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px))
       max(6px, env(safe-area-inset-left, 0px));
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .tabbar .tabft i {
+    display: grid;
+    place-items: center;
+    color: var(--c-T);
+  }
+  .tabbar .tabft svg {
+    width: 22px;
+    height: 22px;
   }
   .tabbar button {
     border: 0;
@@ -2809,6 +2818,7 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      tabTimer: "Timer",
       bdgTitle: "Abzeichen",
       bdgAll: "Alle",
       bdgCount: (a, n) => `${a} von ${n} freigeschaltet`,
@@ -2951,7 +2961,7 @@
           "Vor jeder Einheit wählst du Art, Dauer, Ort und Ausrüstung. Gefragt wird nur, was für diese Einheit wichtig ist. Danach erstellt Ringzeit dein Programm.",
         ],
         timer: [
-          "Rundentimer",
+          "Timer der Einheit",
           "Jede Runde startest du selbst. Im Vollbild siehst du Zeit, Runde und bei Conditioning eine Skizze der Übung.",
         ],
         exinfo: [
@@ -2961,6 +2971,10 @@
         finish: [
           "Abschließen",
           "Nach dem Training speicherst du Dauer und Anstrengung (RPE). Daraus erkennt Ringzeit, wann du mehr Erholung brauchst.",
+        ],
+        ftimer: [
+          "Rundentimer",
+          "Der rote Knopf in der Mitte startet einen freien Rundentimer mit Ringglocke – fürs Vereinstraining, Sparring oder zwischendurch, ganz ohne Plan.",
         ],
         test: [
           "Tests & Gürtelprüfung",
@@ -3406,6 +3420,7 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      tabTimer: "Timer",
       bdgTitle: "Badges",
       bdgAll: "All",
       bdgCount: (a, n) => `${a} of ${n} unlocked`,
@@ -3542,7 +3557,7 @@
           "Before each session you pick type, duration, place and equipment. You're only asked what matters for that session. Then Ringzeit builds your programme.",
         ],
         timer: [
-          "Round timer",
+          "Session timer",
           "You start every round yourself. Full screen shows time, round and, for conditioning, a sketch of the exercise.",
         ],
         exinfo: [
@@ -3552,6 +3567,10 @@
         finish: [
           "Finish",
           "After training you save duration and effort (RPE). That's how Ringzeit spots when you need more recovery.",
+        ],
+        ftimer: [
+          "Round timer",
+          "The red button in the middle starts a free round timer with a ring bell – for club training, sparring or in between, no plan needed.",
         ],
         test: [
           "Tests & belt grading",
@@ -6956,8 +6975,6 @@
     const pose = nty === "T" || nty === "C" || nty === "P" ? "kick" : "box";
     let h = header(t("todayTitle"));
     h += todayCard(nd, nty, pose);
-    const fc = ftCfg();
-    h += `<button type="button" class="ftquick" data-ftx="open"><span class="ftqi">${ICO_T}</span><span><b>${t("ft").title}</b><small>${fc.r} × ${fmtS(fc.w)} · ${t("ft").restShort} ${fmtS(fc.b)}</small></span><span class="chev">›</span></button>`;
     h += promptsHtml();
     h += pulseHtml();
     if (S.profile.example) h += `<div class="note">${t("example")}</div>`;
@@ -8062,6 +8079,7 @@ ${setupFields(setup, ty)}
     { k: "timer", tab: "session", sel: "#timer" },
     { k: "exinfo", tab: "session", sel: "[data-exinfo]", up: ".ex" },
     { k: "finish", tab: "session", sel: "#fSave", up: ".panel" },
+    { k: "ftimer", tab: "week", sel: "#tabs .tabft" },
     { k: "test", tab: "test", sel: "#tabs [data-tab=test]" },
     { k: "log", tab: "log", sel: "#tabs [data-tab=log]" },
     { k: "club", tab: "profile", sel: "[data-cday]", up: ".field" },
@@ -11901,18 +11919,24 @@ ${setupFields(setup, ty)}
     }
   }
   function renderTabs() {
-    document.getElementById("tabs").innerHTML = [
-      ["week", "tabWeek"],
-      ["session", "tabSession"],
-      ["test", "tabTest"],
-      ["log", "tabLog"],
-      ["profile", "tabProfile"],
-    ]
-      .map(
-        ([k, l]) =>
-          `<button type="button" data-tab="${k}" ${ui.tab === k ? 'aria-current="page"' : ""}>${ICONS[k]}<span>${t(l)}</span></button>`,
-      )
-      .join("");
+    const tab = ([k, l]) =>
+      `<button type="button" data-tab="${k}" ${ui.tab === k ? 'aria-current="page"' : ""}>${ICONS[k]}<span>${t(l)}</span></button>`;
+    // the free timer opens over the current view, so it is a button rather than a tab
+    document.getElementById("tabs").innerHTML =
+      [
+        ["week", "tabWeek"],
+        ["session", "tabSession"],
+      ]
+        .map(tab)
+        .join("") +
+      `<button type="button" class="tabft" data-ftx="open" aria-label="${t("ft").title}"><i>${ICO_T}</i><span>${t("tabTimer")}</span></button>` +
+      [
+        ["test", "tabTest"],
+        ["log", "tabLog"],
+        ["profile", "tabProfile"],
+      ]
+        .map(tab)
+        .join("");
   }
   function render(enter) {
     loadCache = {};
@@ -11954,6 +11978,64 @@ ${setupFields(setup, ty)}
         g.gain.exponentialRampToValueAtTime(0.001, s + d);
         o.start(s);
         o.stop(s + d);
+      }
+    } catch (e) {}
+  }
+  /* Boxing ring bell, synthesised: inharmonic partials with a metallic strike and a long ring-out.
+     n = number of strikes (1 = round start, 3 = round end) */
+  function bell(n = 1) {
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+      const out = actx.createDynamicsCompressor(),
+        master = actx.createGain();
+      master.gain.value = 0.9;
+      master.connect(out);
+      out.connect(actx.destination);
+      const f0 = 720,
+        parts = [
+          [1, 0.55, 2.6],
+          [2.01, 0.32, 1.9],
+          [2.76, 0.4, 1.5],
+          [4.07, 0.22, 1.0],
+          [5.43, 0.18, 0.7],
+          [6.8, 0.1, 0.45],
+          [8.9, 0.06, 0.3],
+        ],
+        gap = 0.32;
+      for (let i = 0; i < n; i++) {
+        const t0 = actx.currentTime + 0.02 + i * gap,
+          len = n > 1 && i < n - 1 ? 0.55 : 1; // quick strikes in a series, the last one rings out
+        parts.forEach(([r, a, d]) => {
+          [1, 1.004].forEach((det, j) => {
+            const o = actx.createOscillator(),
+              g = actx.createGain();
+            o.type = "sine";
+            o.frequency.value = f0 * r * det;
+            g.gain.setValueAtTime(0.0001, t0);
+            g.gain.exponentialRampToValueAtTime(a * (j ? 0.45 : 1), t0 + 0.004);
+            g.gain.exponentialRampToValueAtTime(0.0001, t0 + d * len * 1.4);
+            o.connect(g);
+            g.connect(master);
+            o.start(t0);
+            o.stop(t0 + d * len * 1.4 + 0.05);
+          });
+        });
+        // the hammer: a short burst of filtered noise
+        const buf = actx.createBuffer(1, Math.floor(actx.sampleRate * 0.03), actx.sampleRate),
+          ch = buf.getChannelData(0);
+        for (let k = 0; k < ch.length; k++) ch[k] = (Math.random() * 2 - 1) * (1 - k / ch.length);
+        const src = actx.createBufferSource(),
+          hp = actx.createBiquadFilter(),
+          ng = actx.createGain();
+        src.buffer = buf;
+        hp.type = "highpass";
+        hp.frequency.value = 2500;
+        ng.gain.value = 0.35;
+        src.connect(hp);
+        hp.connect(ng);
+        ng.connect(master);
+        src.start(t0);
       }
     } catch (e) {}
   }
@@ -12073,7 +12155,7 @@ ${setupFields(setup, ty)}
       speechSynthesis.cancel();
       speechSynthesis.speak(new SpeechSynthesisUtterance(""));
     } catch (e) {}
-    setTimeout(() => say(text, 0.88), 450);
+    setTimeout(() => say(text, 0.88), 1300);
   }
 
   /* ============ Badges (in the spirit of Apple Fitness awards): earned from the data, kept with their date ============ */
@@ -12428,11 +12510,12 @@ ${setupFields(setup, ty)}
     f.left = len;
     f.endAt = Date.now() + len * 1000;
     if (ph === "work") {
-      beep(988, 0.22, 3);
-      say(f.round === c.r && c.r > 1 ? L.sayLast : L.sayRound(f.round), 0.95);
+      bell(1);
+      const txt = f.round === c.r && c.r > 1 ? L.sayLast : L.sayRound(f.round);
+      setTimeout(() => say(txt, 0.95), 1300);
     } else if (ph === "rest") {
-      beep(523, 0.6, 1);
-      say(L.restL, 0.95);
+      bell(3);
+      setTimeout(() => say(L.restL, 0.95), 1500);
     }
     renderFt();
   }
@@ -12463,8 +12546,8 @@ ${setupFields(setup, ty)}
         f.phase = "done";
         clearInterval(ui.ftI);
         releaseWake();
-        beep(880, 0.35, 3);
-        say(t("ft").sayDone, 0.95);
+        bell(3);
+        setTimeout(() => say(t("ft").sayDone, 0.95), 1500);
         renderFt();
         checkBadges();
         return;
@@ -12689,7 +12772,7 @@ ${setupFields(setup, ty)}
       tm.phase = "work";
       tm.left = tm.work;
       tm.running = true;
-      beep(988, 0.25, 1);
+      bell(1);
       getWake();
       callTick(tm);
       return;
@@ -12736,13 +12819,13 @@ ${setupFields(setup, ty)}
           tm.phase = "done";
           tm.running = false;
           tm.left = 0;
-          beep(880, 0.3, 3);
+          bell(3);
           releaseWake();
         } else {
           tm.phase = "rest";
           tm.call = null;
           tm.left = tm.rest;
-          beep(520, 0.35, 2);
+          bell(3);
         }
       } else {
         tm.phase = "ready";
