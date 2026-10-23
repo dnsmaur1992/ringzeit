@@ -6862,6 +6862,7 @@
     );
   }
 
+  const APP_VER = "23.10.2026 17:42";
   const ICO_T =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.6M9.5 2.5h5M19 6l1.5-1.5"/></svg>';
   const PLAY =
@@ -7643,7 +7644,7 @@ ${setupFields(setup, ty)}
         "",
       )}<div class="field"><span class="lab">${t("ko")}</span>${S.ko ? `<span class="sub">${esc(koLock(iso(today())) ? t("koActive")(fmtDate(iso(koUntil)), daysBetween(today(), koUntil) + 1) : t("koPast")(fmtDate(S.ko)))}</span><button type="button" class="btn ghost" data-kodel="1" style="align-self:flex-start">${t("del")}</button>` : `<span class="sub">${t("koHint")}</span><button type="button" class="btn sec" data-konew="1">${t("koAdd")}</button>`}</div></div>`;
     h += mycHtml();
-    h += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div><div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div></div>`;
+    h += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div><div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div></div><p class="foot" style="text-align:center">Ringzeit · Version ${APP_VER}</p>`;
     h += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
     return h;
   }
@@ -11967,6 +11968,9 @@ ${setupFields(setup, ty)}
   let actx = null,
     wake = null;
   function beep(f = 880, d = 0.18, n = 1) {
+    withAudio(() => beepNow(f, d, n));
+  }
+  function beepNow(f, d, n) {
     try {
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
       for (let i = 0; i < n; i++) {
@@ -12004,10 +12008,42 @@ ${setupFields(setup, ty)}
   ["pointerdown", "touchend", "click"].forEach((x) => document.addEventListener(x, unlockOnce, true));
   /* Boxing ring bell, synthesised: inharmonic partials with a metallic strike and a long ring-out.
      n = number of strikes (1 = round start, 3 = round end) */
-  function bell(n = 1) {
+  /* iOS puts web audio into "interrupted" (or "suspended") after speech or a pause; wake it before playing */
+  function withAudio(play) {
     try {
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-      if (actx.state === "suspended") actx.resume();
+      if (actx.state === "running") return play();
+      const p = actx.resume();
+      if (p && p.then) p.then(play, play);
+      else play();
+    } catch (e) {}
+  }
+  /* While a timer runs, an inaudible tone keeps the audio output awake, so the first bell isn't swallowed */
+  let keepTone = null;
+  function audioKeep(on) {
+    try {
+      if (on && !keepTone) {
+        actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+        if (actx.state !== "running") actx.resume();
+        const o = actx.createOscillator(),
+          g = actx.createGain();
+        o.frequency.value = 40;
+        g.gain.value = 0.0005;
+        o.connect(g);
+        g.connect(actx.destination);
+        o.start();
+        keepTone = o;
+      } else if (!on && keepTone) {
+        keepTone.stop();
+        keepTone = null;
+      }
+    } catch (e) {}
+  }
+  function bell(n = 1) {
+    withAudio(() => bellNow(n));
+  }
+  function bellNow(n) {
+    try {
       const out = actx.createDynamicsCompressor(),
         master = actx.createGain();
       master.gain.value = 0.9;
@@ -12061,6 +12097,7 @@ ${setupFields(setup, ty)}
     } catch (e) {}
   }
   async function getWake() {
+    audioKeep(true);
     try {
       wake = await navigator.wakeLock?.request("screen");
     } catch (e) {
@@ -12068,6 +12105,7 @@ ${setupFields(setup, ty)}
     }
   }
   function releaseWake() {
+    audioKeep(false);
     try {
       wake && wake.release();
     } catch (e) {}
