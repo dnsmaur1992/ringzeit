@@ -2884,6 +2884,642 @@
     gap: 6px;
     padding: 12px 14px;
   }
+  /* ===== Success moments: summary after a session ===== */
+  .win {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+    padding: calc(34px + env(safe-area-inset-top, 0px)) 20px calc(24px + env(safe-area-inset-bottom, 0px));
+    background: radial-gradient(90% 55% at 50% 18%, color-mix(in srgb, var(--tc) 30%, transparent), transparent 70%),
+      #0a0b0d;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .win.in {
+    opacity: 1;
+  }
+  .win.out {
+    opacity: 0;
+    transition-duration: 0.22s;
+  }
+  .wcheck {
+    position: relative;
+    width: 116px;
+    height: 116px;
+    flex: none;
+  }
+  .wcheck svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .wcheck .c {
+    fill: color-mix(in srgb, var(--tc) 18%, transparent);
+    stroke: var(--tc);
+    stroke-width: 6;
+    stroke-dasharray: 327;
+    stroke-dashoffset: 327;
+    transform: rotate(-90deg);
+    transform-origin: 60px 60px;
+  }
+  .wcheck .k {
+    fill: none;
+    stroke: var(--frost);
+    stroke-width: 9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 70;
+    stroke-dashoffset: 70;
+  }
+  .wcheck .ray {
+    stroke: var(--tc);
+    stroke-width: 4;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+  .in .wcheck .c,
+  .fdone .wcheck .c,
+  .ftdone .wcheck .c {
+    animation: wDraw 0.6s 0.1s cubic-bezier(0.6, 0, 0.3, 1) forwards;
+  }
+  .in .wcheck .k,
+  .fdone .wcheck .k,
+  .ftdone .wcheck .k {
+    animation: wDraw 0.35s 0.6s ease-out forwards;
+  }
+  .in .wcheck .ray,
+  .fdone .wcheck .ray,
+  .ftdone .wcheck .ray {
+    animation: wRay 0.7s 0.75s ease-out forwards;
+  }
+  .in .wcheck,
+  .fdone .wcheck,
+  .ftdone .wcheck {
+    animation: wPop 0.5s 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+  }
+  @keyframes wDraw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes wRay {
+    0% {
+      opacity: 0;
+      stroke-dasharray: 0 30;
+    }
+    40% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      stroke-dasharray: 14 30;
+      stroke-dashoffset: -16;
+    }
+  }
+  @keyframes wPop {
+    0% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  .ftdone .wcheck .c {
+    fill: rgba(255, 255, 255, 0.12);
+    stroke: #fff;
+  }
+  .ftdone .wcheck .ray {
+    stroke: #fff;
+  }
+  .win h2 {
+    margin: 0;
+    font-size: 34px;
+    letter-spacing: -0.02em;
+  }
+  .win > .sub {
+    margin: -10px 0 0;
+  }
+  .wstats {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 8px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .wstats > div {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 12px 6px;
+    display: flex;
+    flex-direction: column;
+  }
+  .wstats b {
+    font-family: var(--num);
+    font-size: 30px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .wstats small {
+    color: var(--mist);
+    font-size: 13px;
+  }
+  .wweek {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+  }
+  .wweek.full {
+    border-color: color-mix(in srgb, var(--ice) 60%, var(--line));
+    background: color-mix(in srgb, var(--ice) 9%, var(--panel));
+  }
+  .wring {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    flex: none;
+  }
+  .wring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .wring .arc {
+    transition: stroke-dashoffset 1.1s 0.5s cubic-bezier(0.3, 0, 0.2, 1);
+  }
+  .wring span {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--num);
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .wweek > div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .wweek b {
+    font-size: 17px;
+  }
+  .wflame {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--frost);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .wflame svg {
+    width: 18px;
+    height: 22px;
+    flex: none;
+    transform-origin: 50% 90%;
+    animation: flicker 1.3s ease-in-out infinite;
+  }
+  @keyframes flicker {
+    0%,
+    100% {
+      transform: scale(1) rotate(-2deg);
+    }
+    50% {
+      transform: scale(1.08, 1.12) rotate(2deg);
+    }
+  }
+  .wblk {
+    color: var(--mist);
+    font-size: 14px;
+  }
+  .wbdg {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+  }
+  .wbdg > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 120px;
+  }
+  .wbdg small {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ice);
+  }
+  .wmed {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .wmed .medal {
+    width: 100%;
+    height: 100%;
+    animation-delay: 0.9s;
+  }
+  .wmed::after {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.55) 50%, transparent 65%);
+    transform: translateX(-120%);
+    animation: shine 1.1s 1.6s ease-in-out forwards;
+  }
+  @keyframes shine {
+    to {
+      transform: translateX(120%);
+    }
+  }
+  .wtot {
+    color: var(--mist);
+    font-size: 13.5px;
+  }
+  .win .btn {
+    width: 100%;
+    max-width: 420px;
+    margin-top: auto;
+  }
+  .win > * {
+    animation: wUp 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .win > :nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .win > :nth-child(3) {
+    animation-delay: 0.2s;
+  }
+  .win > :nth-child(4) {
+    animation-delay: 0.3s;
+  }
+  .win > :nth-child(5) {
+    animation-delay: 0.4s;
+  }
+  .win > :nth-child(n + 6) {
+    animation-delay: 0.5s;
+  }
+  @keyframes wUp {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+  /* ===== Timer: splash at round start and end, heartbeat in the last 10 seconds ===== */
+  .tfx {
+    position: fixed;
+    inset: 0;
+    z-index: 58;
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .tfx::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.5), transparent 62%);
+    animation: tfxFlash 0.8s ease-out forwards;
+  }
+  .tfx.end::before {
+    background: radial-gradient(circle at 50% 40%, rgba(142, 201, 164, 0.55), transparent 65%);
+  }
+  .tfx.done::before {
+    background: radial-gradient(circle at 50% 40%, rgba(201, 168, 106, 0.6), transparent 68%);
+  }
+  .tfx i {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    width: 140px;
+    height: 140px;
+    margin: -70px 0 0 -70px;
+    border-radius: 50%;
+    border: 5px solid rgba(255, 255, 255, 0.9);
+    animation: tfxWave 0.9s ease-out forwards;
+  }
+  .tfx b {
+    position: relative;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(40px, 13vw, 68px);
+    line-height: 1.05;
+    text-align: center;
+    padding: 0 20px;
+    color: #fff;
+    text-shadow: 0 6px 30px rgba(0, 0, 0, 0.55);
+    animation: tfxText 1.4s cubic-bezier(0.2, 1.2, 0.4, 1) forwards;
+  }
+  @keyframes tfxFlash {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes tfxWave {
+    from {
+      transform: scale(0.3);
+      opacity: 0.9;
+    }
+    to {
+      transform: scale(4.5);
+      opacity: 0;
+    }
+  }
+  @keyframes tfxText {
+    0% {
+      transform: scale(0.4);
+      opacity: 0;
+    }
+    22% {
+      transform: scale(1.08);
+      opacity: 1;
+    }
+    38% {
+      transform: scale(1);
+    }
+    78% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.03);
+      opacity: 0;
+    }
+  }
+  .fknob {
+    transform-origin: 140px 140px;
+    transition: transform 1s linear;
+  }
+  .ftimer .fknob {
+    transition-duration: 0.25s;
+  }
+  .focus.last .fring,
+  .ftimer.run.last .fring {
+    animation: ringBeat 1s ease-in-out infinite;
+  }
+  @keyframes ringBeat {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    12% {
+      transform: scale(1.04);
+    }
+    30% {
+      transform: scale(1);
+    }
+  }
+  .focus.last #farc,
+  .focus.last .fknob circle {
+    stroke: var(--ember);
+    fill: var(--ember);
+    fill-opacity: 0;
+  }
+  .focus.last .fknob circle {
+    fill-opacity: 1;
+  }
+  .focus.last .fring svg,
+  .ftimer.run.last .fring svg {
+    filter: drop-shadow(0 0 12px rgba(255, 90, 100, 0.7));
+  }
+  .focus.last .clk {
+    animation: ftpulse 1s ease-in-out infinite;
+  }
+  .focus::after,
+  .ftimer.run::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    box-shadow: inset 0 0 140px 40px rgba(200, 64, 74, 0.5);
+  }
+  .ftimer.run::after {
+    box-shadow: inset 0 0 140px 40px rgba(255, 255, 255, 0.28);
+  }
+  .focus.last::after,
+  .ftimer.run.last::after {
+    animation: vign 1s ease-in-out infinite;
+  }
+  @keyframes vign {
+    0%,
+    100% {
+      opacity: 0.25;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  .fdone .wcheck,
+  .ftdone .wcheck {
+    margin-bottom: 4px;
+  }
+  /* ===== Today: living hero (time of day, exchange of blows, dust in the light) ===== */
+  .today .bob {
+    animation: bob 1.8s ease-in-out infinite;
+  }
+  .today .tw {
+    animation: twinkle 3.4s ease-in-out infinite;
+  }
+  .today .glow {
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .today .pa,
+  .today .pb,
+  .today .hitfx,
+  .today .kb {
+    animation-duration: 4.2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+  .today .pa {
+    animation-name: poseA;
+  }
+  .today .pb {
+    animation-name: poseB;
+    opacity: 0;
+  }
+  .today .def .pa {
+    animation-name: poseAd;
+  }
+  .today .def .pb {
+    animation-name: poseBd;
+  }
+  @keyframes poseA {
+    0%,
+    69.9% {
+      opacity: 1;
+    }
+    70%,
+    81.9% {
+      opacity: 0;
+    }
+    82%,
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes poseB {
+    0%,
+    69.9% {
+      opacity: 0;
+    }
+    70%,
+    81.9% {
+      opacity: 1;
+    }
+    82%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes poseAd {
+    0%,
+    67.9% {
+      opacity: 1;
+    }
+    68%,
+    83.9% {
+      opacity: 0;
+    }
+    84%,
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes poseBd {
+    0%,
+    67.9% {
+      opacity: 0;
+    }
+    68%,
+    83.9% {
+      opacity: 1;
+    }
+    84%,
+    100% {
+      opacity: 0;
+    }
+  }
+  .today .kb {
+    animation-name: knock;
+  }
+  @keyframes knock {
+    0%,
+    71% {
+      transform: translateX(0);
+    }
+    74% {
+      transform: translateX(-5px);
+    }
+    82%,
+    100% {
+      transform: translateX(0);
+    }
+  }
+  .today .hitfx {
+    animation-name: hit;
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+  }
+  @keyframes hit {
+    0%,
+    71% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    74% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    82% {
+      opacity: 0;
+      transform: scale(1.5);
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  .today .dust {
+    animation: dust linear infinite;
+  }
+  @keyframes dust {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    20%,
+    70% {
+      opacity: var(--o, 0.5);
+    }
+    100% {
+      transform: translateY(-46px);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .win,
+    .win > *,
+    .wcheck,
+    .wcheck *,
+    .wmed::after,
+    .wflame svg,
+    .wring .arc,
+    .focus.last .fring,
+    .ftimer.run.last .fring,
+    .focus.last .clk,
+    .focus.last::after,
+    .ftimer.run.last::after,
+    .today .bob,
+    .today .tw,
+    .today .glow,
+    .today .dust,
+    .today .pa,
+    .today .pb,
+    .today .hitfx,
+    .today .kb {
+      animation: none !important;
+      transition: none !important;
+    }
+    .wcheck .c,
+    .wcheck .k {
+      stroke-dashoffset: 0;
+    }
+    .win {
+      opacity: 1;
+    }
+    .tfx {
+      display: none;
+    }
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -3132,6 +3768,26 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      win: {
+        min: "Minuten",
+        rounds: "Runden",
+        ex: "Übungen",
+        week: "Diese Woche",
+        weekOf: "Woche",
+        full: "Woche komplett!",
+        streak: (n) => (n === 1 ? "1 Woche in Folge komplett" : `${n} Wochen in Folge komplett`),
+        streak0: "Schaff alle Einheiten dieser Woche – dann startet deine Serie.",
+        left: (n) =>
+          n === 1 ? "Noch 1 Einheit bis zur kompletten Woche" : `Noch ${n} Einheiten bis zur kompletten Woche`,
+        total: (n, h) => `Insgesamt: ${n} ${n === 1 ? "Einheit" : "Einheiten"} · ${h} Std. Training`,
+        cont: "Weiter",
+        newB: "Neues Abzeichen",
+        club: "Vereinstraining eingetragen",
+        go: "Los!",
+        last: "Letzte Runde!",
+        end: (n) => `Runde ${n} geschafft`,
+        fin: "Geschafft!",
+      },
       inst: {
         title: "Ringzeit als App installieren",
         ios: "Tippe unten auf Teilen und dann auf „Zum Home-Bildschirm“. Danach startest du Ringzeit wie jede andere App – auch offline.",
@@ -3881,6 +4537,25 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      win: {
+        min: "Minutes",
+        rounds: "Rounds",
+        ex: "Exercises",
+        week: "This week",
+        weekOf: "Week",
+        full: "Week complete!",
+        streak: (n) => (n === 1 ? "1 complete week in a row" : `${n} complete weeks in a row`),
+        streak0: "Finish every session this week to start your streak.",
+        left: (n) => (n === 1 ? "1 more session to complete the week" : `${n} more sessions to complete the week`),
+        total: (n, h) => `In total: ${n} ${n === 1 ? "session" : "sessions"} · ${h} h of training`,
+        cont: "Continue",
+        newB: "New badge",
+        club: "Club training logged",
+        go: "Go!",
+        last: "Last round!",
+        end: (n) => `Round ${n} done`,
+        fin: "Done!",
+      },
       inst: {
         title: "Install Ringzeit as an app",
         ios: "Tap Share below, then “Add to Home Screen”. After that Ringzeit starts like any other app – even offline.",
@@ -7491,24 +8166,77 @@
   }
   let seed = 7;
   const srand = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  function heroScene(pose) {
+  /* light by time of day: dawn, day, dusk, night */
+  function todSky() {
+    const h = new Date().getHours();
+    if (h >= 5 && h < 10) return { top: "#2b1d15", glow: "#E0914A", stars: 0, sun: 1 };
+    if (h >= 10 && h < 17) return { top: "#19212c", glow: "#C9A86A", stars: 0 };
+    if (h >= 17 && h < 21) return { top: "#2a1626", glow: "#D9705C", stars: 10 };
+    return { top: "#14161B", glow: "#C9A86A", stars: 28, moon: 1 };
+  }
+  const TYPE_HEX = { T: "#d9545c", C: "#e0914a", P: "#e5683c", S: "#c9a86a", K: "#5fb3a6", M: "#8ec9a4", V: "#6f9fe0" };
+  /* the front-most point of an attacking pose (where the blow lands) */
+  function strikePoint(o) {
+    let best = [0, 0];
+    [...o.front, ...o.legs].forEach((l) => l.forEach((p) => p[0] > best[0] && (best = p)));
+    return best;
+  }
+  /* two fighters trading: the attacker strikes every few seconds, the defender slips or takes it on the guard */
+  function fightPairLive(scene, calm, y = 14) {
+    if (calm)
+      return `<g transform="translate(362 ${y}) scale(-1 1)"><g class="bob" style="animation-delay:.4s">${figure(FIGS.guard)}</g></g><g transform="translate(40 ${y})"><g class="bob">${figure(FIGS.guard)}</g></g>`;
+    const kick = scene === "kick",
+      atk = kick ? "kick" : "jab",
+      xa = kick ? 34 : 50,
+      xb = kick ? 362 : 352,
+      hp = strikePoint(FIGS[atk]),
+      hx = xa + hp[0] + (kick ? 4 : 6),
+      hy = y + hp[1],
+      rays = [0, 60, 120, 180, 240, 300]
+        .map((a) => {
+          const r = (a * Math.PI) / 180;
+          return `<line x1="${(Math.cos(r) * 9).toFixed(1)}" y1="${(Math.sin(r) * 9).toFixed(1)}" x2="${(Math.cos(r) * 17).toFixed(1)}" y2="${(Math.sin(r) * 17).toFixed(1)}"/>`;
+        })
+        .join("");
+    const def = kick
+      ? `<g class="kb">${figure(FIGS.guard)}</g>`
+      : `<g class="pa">${figure(FIGS.guard)}</g><g class="pb">${figure(FIGS.slip)}</g>`;
+    return `<g transform="translate(${xb} ${y}) scale(-1 1)"><g class="bob def" style="animation-delay:.4s">${def}</g></g><g transform="translate(${xa} ${y})"><g class="bob"><g class="pa">${figure(FIGS.guard)}</g><g class="pb">${figure(FIGS[atk])}</g></g></g><g transform="translate(${hx.toFixed(1)} ${hy.toFixed(1)})"><g class="hitfx" stroke="#F3EEE4" stroke-width="3" stroke-linecap="round"><circle r="5" fill="#F3EEE4" stroke="none"/>${rays}</g></g>`;
+  }
+  function heroScene(pose, ty, calm) {
     seed = 11;
-    let stars = "";
+    const sky = todSky(),
+      floorC = TYPE_HEX[ty] || "#C9A86A";
+    let stars = "",
+      dust = "";
     for (let i = 0; i < 28; i++) {
       const x = srand() * 400,
         y = srand() * 120,
         r = 0.4 + srand() * 0.9;
-      stars += `<circle class="${i % 3 ? "" : "tw"}" style="animation-delay:${(srand() * 3).toFixed(2)}s" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#ECE8E1" opacity="${(0.2 + srand() * 0.5).toFixed(2)}"/>`;
+      const sc = `<circle class="${i % 3 ? "" : "tw"}" style="animation-delay:${(srand() * 3).toFixed(2)}s" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#ECE8E1" opacity="${(0.2 + srand() * 0.5).toFixed(2)}"/>`;
+      if (i < sky.stars) stars += sc;
     }
+    // dust floating up in the spotlight
+    for (let i = 0; i < 12; i++) {
+      const yy = 60 + srand() * 140,
+        x = 200 + (srand() - 0.5) * (60 + yy * 0.9);
+      dust += `<circle class="dust" style="animation-duration:${(5 + srand() * 5).toFixed(1)}s;animation-delay:-${(srand() * 8).toFixed(1)}s;--o:${(0.25 + srand() * 0.45).toFixed(2)}" cx="${x.toFixed(1)}" cy="${yy.toFixed(1)}" r="${(0.6 + srand() * 1.1).toFixed(2)}" fill="#F3EEE4"/>`;
+    }
+    const orb = sky.sun
+      ? `<circle cx="70" cy="170" r="90" fill="url(#orb)"/>`
+      : sky.moon
+        ? `<circle cx="338" cy="38" r="11" fill="#ECE8E1" opacity=".75"/><circle cx="343" cy="34" r="10" fill="url(#sky)"/>`
+        : "";
     return `<svg viewBox="0 0 400 220" role="img" aria-label="Ringzeit">
- <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14161B"/><stop offset="1" stop-color="#0A0B0D"/></linearGradient>
- <radialGradient id="glow" cx="200" cy="120" r="170" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C9A86A" stop-opacity=".26"/><stop offset=".5" stop-color="#C9A86A" stop-opacity=".07"/><stop offset="1" stop-color="#C9A86A" stop-opacity="0"/></radialGradient>
+ <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky.top}"/><stop offset="1" stop-color="#0A0B0D"/></linearGradient>
+ <radialGradient id="orb" cx="70" cy="170" r="90" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F2B36B" stop-opacity=".42"/><stop offset="1" stop-color="#F2B36B" stop-opacity="0"/></radialGradient>
+ <radialGradient id="glow" cx="200" cy="120" r="170" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${sky.glow}" stop-opacity=".26"/><stop offset=".5" stop-color="${sky.glow}" stop-opacity=".07"/><stop offset="1" stop-color="${sky.glow}" stop-opacity="0"/></radialGradient>
  <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3EEE4" stop-opacity=".16"/><stop offset="1" stop-color="#F3EEE4" stop-opacity="0"/></linearGradient>
- <radialGradient id="floor" cx="200" cy="208" r="150" gradientTransform="matrix(1 0 0 .16 0 174.7)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C9A86A" stop-opacity=".35"/><stop offset="1" stop-color="#C9A86A" stop-opacity="0"/></radialGradient></defs>
- <rect width="400" height="220" fill="url(#sky)"/>${stars}<rect class="glow" width="400" height="220" fill="url(#glow)"/>
- <polygon points="170,0 230,0 330,220 70,220" fill="url(#beam)"/>
+ <radialGradient id="floor" cx="200" cy="208" r="150" gradientTransform="matrix(1 0 0 .16 0 174.7)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${floorC}" stop-opacity=".4"/><stop offset="1" stop-color="${floorC}" stop-opacity="0"/></radialGradient></defs>
+ <rect width="400" height="220" fill="url(#sky)"/>${orb}${stars}<rect class="glow" width="400" height="220" fill="url(#glow)"/>
+ <polygon points="170,0 230,0 330,220 70,220" fill="url(#beam)"/>${dust}
  <ellipse cx="200" cy="208" rx="150" ry="24" fill="url(#floor)"/>
- ${fightPair(pose)}</svg>`;
+ ${fightPairLive(pose, calm)}</svg>`;
   }
   function burst() {
     let s = "";
@@ -7577,14 +8305,14 @@
     return openLoader(ms);
   }
   /* A short burst of brass and crimson sparks from the toast position */
-  function celebrate() {
+  function celebrate(x, y, n = 16, far = 60) {
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const x = innerWidth / 2,
-      y = innerHeight - 130;
-    for (let i = 0; i < 16; i++) {
+    if (x == null) x = window.innerWidth / 2;
+    if (y == null) y = window.innerHeight - 130;
+    for (let i = 0; i < n; i++) {
       const el = document.createElement("span"),
-        a = (i / 16) * Math.PI * 2,
-        d = 50 + Math.random() * 60;
+        a = (i / n) * Math.PI * 2,
+        d = far - 10 + Math.random() * far;
       el.className = "spark";
       el.style.cssText = `left:${x}px;top:${y}px;background:${i % 3 ? "#C9A86A" : "#C8404A"};--dx:${(Math.cos(a) * d).toFixed(0)}px;--dy:${(Math.sin(a) * d - 30).toFixed(0)}px`;
       document.body.appendChild(el);
@@ -7665,7 +8393,7 @@
     );
   }
 
-  const APP_VER = "23.10.2026 20:52";
+  const APP_VER = "23.10.2026 21:47";
   const ICO_T =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.6M9.5 2.5h5M19 6l1.5-1.5"/></svg>';
   const PLAY =
@@ -7706,7 +8434,9 @@
       btn =
         nty && nd !== td ? `<button type="button" class="go small" data-open="${nd}">${t("viewNext")}</button>` : "";
     }
-    return `<div class="today" style="--tc:var(--c-${ty || "S"})">${heroScene(pose)}<div class="tbody"><div style="min-width:0"><small>${esc(small)}</small><b>${esc(title)}</b>${meta ? `<div class="sub">${esc(meta)}</div>` : ""}</div>${btn}</div></div>`;
+    // the fighters trade blows on training days; on rest days and once done they wait calmly in guard
+    const calm = !!pz || !((tty && !doneOn(td)) || (cl && !clubDone(td)));
+    return `<div class="today" style="--tc:var(--c-${ty || "S"})">${heroScene(pose, ty, calm)}<div class="tbody"><div style="min-width:0"><small>${esc(small)}</small><b>${esc(title)}</b>${meta ? `<div class="sub">${esc(meta)}</div>` : ""}</div>${btn}</div></div>`;
   }
   /* Things that need an answer: break, KO suspension, club attendance, missed sessions, results, weight class */
   function promptsHtml() {
@@ -12501,9 +13231,8 @@ ${setupFields(setup, ty)}
       if (S.cov[o.ds] && S.cov[o.ds].off === "miss") delete S.cov[o.ds];
       store.save();
       closeSheet();
-      toast(rnd(t("cheers")));
-      celebrate();
       render();
+      showWin(S.log[S.log.length - 1]);
       return;
     }
     if (a === "ressave") {
@@ -13572,7 +14301,7 @@ ${setupFields(setup, ty)}
     showBadgeQueue();
   }
   function showBadgeQueue() {
-    if (ui.sheet || !ui.bdgQueue || !ui.bdgQueue.length) return;
+    if (ui.sheet || ui.win || !ui.bdgQueue || !ui.bdgQueue.length) return;
     const id = ui.bdgQueue.shift();
     openSheet({ kind: "badge", id, fresh: true });
     celebrate();
@@ -13657,12 +14386,12 @@ ${setupFields(setup, ty)}
       frac = f.phase === "done" ? 1 : 1 - f.left / len;
     el.className = `ftimer run ${f.phase}${f.paused ? " paused" : ""}${f.phase === "work" && c.warn && f.left <= 10 ? " last" : ""}`;
     if (f.phase === "done") {
-      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div><div class="ftdone"><b>${L.done}</b><span>${L.doneT(c.r, Math.round((c.r * c.w) / 60))}</span><button type="button" class="btn" data-ftx="again">${L.again}</button><button type="button" class="btn sec" data-ftx="close">${t("close")}</button></div>`;
+      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div><div class="ftdone">${CHECK_SVG}<b>${L.done}</b><span>${L.doneT(c.r, Math.round((c.r * c.w) / 60))}</span><button type="button" class="btn" data-ftx="again">${L.again}</button><button type="button" class="btn sec" data-ftx="close">${t("close")}</button></div>`;
       return;
     }
     el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div>
       <div class="ftph">${f.phase === "prep" ? L.ready : f.phase === "rest" ? L.restL : f.round === c.r && c.r > 1 ? L.lastR : L.round(f.round, c.r)}</div>
-      <div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/><circle id="ftarc" cx="140" cy="140" r="130" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - frac)).toFixed(1)}"/></svg><div class="mid"><span class="clk" id="ftclk">${fmtS(f.left)}</span>${f.phase === "rest" && f.round < c.r ? `<span class="sub">${L.next(f.round + 1, c.r)}</span>` : ""}</div></div>
+      <div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/><circle id="ftarc" cx="140" cy="140" r="130" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - frac)).toFixed(1)}"/><g class="fknob" id="ftknob" style="transform:rotate(${(frac * 360).toFixed(1)}deg)"><circle cx="270" cy="140" r="10" fill="#fff"/></g></svg><div class="mid"><span class="clk" id="ftclk">${fmtS(f.left)}</span>${f.phase === "rest" && f.round < c.r ? `<span class="sub">${L.next(f.round + 1, c.r)}</span>` : ""}</div></div>
       <div class="ftdots">${[...Array(c.r)].map((_, i) => `<i class="${i + 1 < f.round || (i + 1 === f.round && f.phase === "rest") ? "d" : i + 1 === f.round && f.phase === "work" ? "c" : ""}"></i>`).join("")}</div>
       <div class="fctl"><button type="button" class="s" data-ftx="reset" aria-label="${L.reset}">${ICO.prev}</button><button type="button" class="m" data-ftx="pause">${f.paused ? PLAY : ICO.pause}</button><button type="button" class="s" data-ftx="skip" aria-label="${L.skip}">${ICO.next}</button></div>`;
   }
@@ -13676,10 +14405,12 @@ ${setupFields(setup, ty)}
     f.endAt = Date.now() + len * 1000;
     if (ph === "work") {
       bell(1);
+      timerFx("go", f.round === c.r && c.r > 1 ? t("win").last : t("win").go);
       const txt = f.round === c.r && c.r > 1 ? L.sayLast : L.sayRound(f.round);
       setTimeout(() => say(txt, 0.95), 1300);
     } else if (ph === "rest") {
       bell(3);
+      timerFx("end", t("win").end(f.round));
       setTimeout(() => say(L.restL, 0.95), 1500);
     }
     renderFt();
@@ -13709,6 +14440,7 @@ ${setupFields(setup, ty)}
         releaseWake();
         bell(3);
         setTimeout(() => say(t("ft").sayDone, 0.95), 1500);
+        timerFx("done", t("win").fin);
         renderFt();
         checkBadges();
         return;
@@ -13736,6 +14468,8 @@ ${setupFields(setup, ty)}
     const len = f.phase === "work" ? f.cfg.w : f.phase === "rest" ? f.cfg.b : 10,
       C = 2 * Math.PI * 130;
     arc.setAttribute("stroke-dashoffset", (C * (left / len)).toFixed(1));
+    const kn = document.getElementById("ftknob");
+    if (kn) kn.style.transform = `rotate(${((1 - left / len) * 360).toFixed(1)}deg)`;
     document.getElementById("ftimer").classList.toggle("last", f.phase === "work" && f.cfg.warn && left <= 10);
   }
   function ftAction(a) {
@@ -14284,6 +15018,105 @@ ${setupFields(setup, ty)}
     }
   }
 
+  /* ============ Success moments and timer splashes ============ */
+  const CHECK_SVG = `<div class="wcheck" aria-hidden="true"><svg viewBox="0 0 120 120"><circle class="c" cx="60" cy="60" r="52"/><path class="k" d="M37 62l15 15 31-33"/>${[
+    0, 45, 90, 135, 180, 225, 270, 315,
+  ]
+    .map((a) => {
+      const r = (a * Math.PI) / 180;
+      return `<line class="ray" x1="${(60 + Math.cos(r) * 64).toFixed(1)}" y1="${(60 + Math.sin(r) * 64).toFixed(1)}" x2="${(60 + Math.cos(r) * 84).toFixed(1)}" y2="${(60 + Math.sin(r) * 84).toFixed(1)}"/>`;
+    })
+    .join("")}</svg></div>`;
+  const FLAME_SVG =
+    '<svg viewBox="0 0 18 22" aria-hidden="true"><path d="M9 1c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z" fill="#E0914A"/><path d="M9 11c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1.5-2.5 0 1 .5 1.5 1 1.5 0-1.5 0-2.5.5-4z" fill="#F6D27A"/></svg>';
+  /* big centred text with a flash at round start / round end; a short vibration where supported */
+  function timerFx(kind, text) {
+    try {
+      navigator.vibrate && navigator.vibrate(kind === "go" ? 80 : [50, 70, 50]);
+    } catch (e) {}
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const el = document.createElement("div");
+    el.className = "tfx " + kind;
+    el.innerHTML = `<i></i><b>${esc(text)}</b>`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1500);
+    if (kind === "done") setTimeout(() => celebrate(innerWidth / 2, innerHeight * 0.4, 26, 110), 150);
+  }
+  /* counts a number up from 0 */
+  function countUp(el, to, ms = 900) {
+    const t0 = performance.now(),
+      step = (now) => {
+        const k = Math.min(1, (now - t0) / ms),
+          e = 1 - Math.pow(1 - k, 3);
+        el.textContent = Math.round(to * e);
+        if (k < 1) requestAnimationFrame(step);
+      };
+    requestAnimationFrame(step);
+  }
+  /* full-screen summary after logging a session: stats, week ring, streak, new badges */
+  function showWin(e) {
+    const W = t("win"),
+      reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    ui.win = true;
+    checkBadges();
+    const fresh = (ui.bdgQueue || [])
+      .splice(0)
+      .map((id) => BADGES.find((b) => b[0] === id))
+      .filter(Boolean);
+    const mon = monday(parse(e.date)),
+      wp = weekPlan(mon),
+      goal = Math.max(wp.planned, wp.done, 1),
+      before = Math.max(0, wp.done - 1),
+      full = wp.planned > 0 && wp.done >= wp.planned,
+      streak = weekStreak(),
+      sess = S.sessions[e.date],
+      rb = own(e) && sess && roundBlock(sess),
+      nEx = own(e) && sess ? sess.blocks.reduce((a, b) => a + b.items.length, 0) : 0,
+      stats = [[e.minutes, W.min], rb ? [rb.items.length, W.rounds] : nEx ? [nEx, W.ex] : null, [e.rpe, "RPE"]].filter(
+        Boolean,
+      ),
+      ownN = S.log.filter(own).length,
+      hours = Math.round(S.log.reduce((a, x) => a + (x.minutes || 0), 0) / 60),
+      bi = own(e) ? blockRaw(e.date) : null,
+      C = 2 * Math.PI * 32,
+      title = own(e) ? rnd(t("cheers")) : W.club,
+      sub = `${own(e) ? t("types")[e.type] || "" : t("clubKinds")[e.ck] || t("club")} · ${fmtDate(e.date)}`;
+    const el = document.createElement("div");
+    el.className = "win";
+    el.setAttribute("role", "dialog");
+    el.setAttribute("aria-modal", "true");
+    el.style.setProperty("--tc", own(e) ? `var(--c-${e.type})` : "var(--c-V)");
+    el.innerHTML = `${CHECK_SVG}<h2>${esc(title)}</h2><p class="sub">${esc(sub)}</p>
+      <div class="wstats">${stats.map((x) => `<div><b data-to="${x[0]}">${reduced ? x[0] : 0}</b><small>${x[1]}</small></div>`).join("")}</div>
+      <div class="wweek${full ? " full" : ""}"><div class="wring"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="7"/><circle class="arc" cx="38" cy="38" r="32" fill="none" stroke="${full ? "var(--ice)" : "var(--tc)"}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - (reduced ? wp.done : before) / goal)).toFixed(1)}" data-off="${(C * (1 - Math.min(1, wp.done / goal))).toFixed(1)}"/></svg><span>${wp.done}/${goal}</span></div>
+        <div><b>${full ? W.full : mon.getTime() === monday(today()).getTime() ? W.week : `${W.weekOf} ${fmtDate(iso(mon))}`}</b>${
+          full && streak
+            ? `<span class="wflame">${FLAME_SVG}${esc(W.streak(streak))}</span>`
+            : `<span class="sub">${esc(wp.planned > wp.done ? W.left(wp.planned - wp.done) : W.streak0)}</span>`
+        }${bi ? `<span class="wblk">${t("blk").names[bi.k]} · ${t("blk").week(bi.wk)}</span>` : ""}</div></div>
+      ${fresh.length ? `<div class="wbdg">${fresh.map((b) => `<div><div class="wmed">${medalSvg(b, true, "pop")}</div><small>${W.newB}</small><b>${esc(bName(b)[0])}</b></div>`).join("")}</div>` : ""}
+      <div class="wtot">${esc(W.total(ownN, hours))}</div>
+      <button type="button" class="btn">${W.cont}</button>`;
+    document.body.appendChild(el);
+    const close = () => {
+      el.classList.add("out");
+      setTimeout(() => el.remove(), 230);
+      ui.win = false;
+      showBadgeQueue();
+    };
+    el.querySelector(".btn").onclick = close;
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        el.classList.add("in");
+        const arc = el.querySelector(".wring .arc");
+        arc.setAttribute("stroke-dashoffset", arc.dataset.off);
+        if (!reduced) el.querySelectorAll("[data-to]").forEach((b) => setTimeout(() => countUp(b, +b.dataset.to), 350));
+        setTimeout(() => celebrate(innerWidth / 2, 120, 22, 90), 700);
+        if (full) setTimeout(() => celebrate(innerWidth / 2, innerHeight / 2, 18, 80), 1500);
+      }),
+    );
+  }
+
   /* ============ Training mode (full screen) ============ */
   /* Title, description and combo of one round item, used by the training mode */
   function roundInfo(it) {
@@ -14331,14 +15164,18 @@ ${setupFields(setup, ty)}
       info = roundInfo(show),
       sk = show && show.k === "ex" && hasSketch(show.id),
       big = tm.phase !== "work";
-    el.style.setProperty("--tc", `var(--c-${sess.type})`);
+    // rest is green, the lead-in brass, the round in the session colour
+    el.style.setProperty(
+      "--tc",
+      tm.phase === "rest" ? "var(--done)" : tm.phase === "prep" ? "var(--ice)" : `var(--c-${sess.type})`,
+    );
     el.className = "focus" + (tm.phase === "rest" ? " rest" : "");
     let h = `<div class="fbar"><button type="button" class="x" data-fx="close" aria-label="×">✕</button><span>${t("types")[sess.type]}</span>${canSpeak() ? `<button type="button" class="x vo" data-voice="1" aria-pressed="${voiceOn()}" aria-label="${t("voice")}">${voiceOn() ? "🔊" : "🔈"}</button>` : `<span style="width:40px"></span>`}</div>`;
     if (tm.phase === "done") {
-      h += `<div class="fdone"><b>${t("finishedT")}</b><div class="sub">${t("roundOf")(tm.total, tm.total)}</div><button type="button" class="btn" data-fx="finish">${t("finishNow")}</button></div>`;
+      h += `<div class="fdone">${CHECK_SVG}<b>${t("finishedT")}</b><div class="sub">${t("roundOf")(tm.total, tm.total)}</div><button type="button" class="btn" data-fx="finish">${t("finishNow")}</button></div>`;
     } else {
       const C = 2 * Math.PI * 130;
-      h += `<div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="farc" class="arc" cx="140" cy="140" r="130" fill="none" stroke="var(--tc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/></svg>
+      h += `<div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="farc" class="arc" cx="140" cy="140" r="130" fill="none" stroke="var(--tc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/><g class="fknob" id="fknob"><circle cx="270" cy="140" r="9" fill="var(--tc)" stroke="#0a0b0d" stroke-width="4"/></g></svg>
  <div class="mid"><span class="ph" id="fph"></span><span class="clk" id="fclock">${fmt(tm.left)}</span><span class="sub">${t("roundOf")(Math.min(tm.round, tm.total), tm.total)}</span></div></div>`;
       const lbl = rest ? t("nextLbl") : info.label || t("roundOf")(Math.min(tm.round, tm.total), tm.total);
       h += `<div class="fcur${sk ? (big ? " skb" : " sks") : ""}">${sk && big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}<div class="fct"><small>${esc(lbl)}</small><b>${esc(info.title)}</b><p>${esc(info.desc)}</p>${info.combo ? `<div id="fcall">${comboHtml(info.combo)}</div>` : ""}</div>${sk && !big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}</div>`;
@@ -14370,6 +15207,8 @@ ${setupFields(setup, ty)}
       C = 2 * Math.PI * 130,
       frac = tm.phase === "ready" ? 0 : 1 - tm.left / len;
     document.getElementById("farc").setAttribute("stroke-dashoffset", (C * (1 - frac)).toFixed(1));
+    const kn = document.getElementById("fknob");
+    if (kn) kn.style.transform = `rotate(${(frac * 360).toFixed(1)}deg)`;
     document.getElementById("fgo").innerHTML = tm.phase === "ready" ? PLAY : tm.running ? ICO.pause : PLAY;
   }
   /* Start / pause / resume – shared by the inline timer and the training mode */
@@ -14427,10 +15266,12 @@ ${setupFields(setup, ty)}
     if (tm.left === 10 && tm.phase === "work") beep(660, 0.12, 1);
     if (tm.phase === "prep" && tm.left > 0 && tm.left <= 3) beep(740, 0.08, 1);
     if (tm.left <= 0) {
+      const W = t("win");
       if (tm.phase === "prep") {
         tm.phase = "work";
         tm.left = tm.work;
         bell(1);
+        if (ui.focus) timerFx("go", tm.round === tm.total && tm.total > 1 ? W.last : W.go);
       } else if (tm.phase === "work") {
         if (tm.round >= tm.total) {
           tm.phase = "done";
@@ -14438,11 +15279,13 @@ ${setupFields(setup, ty)}
           tm.left = 0;
           bell(3);
           releaseWake();
+          if (ui.focus) timerFx("done", W.fin);
         } else {
           tm.phase = "rest";
           tm.call = null;
           tm.left = tm.rest;
           bell(3);
+          if (ui.focus) timerFx("end", W.end(tm.round));
         }
       } else {
         tm.phase = "ready";
@@ -15012,9 +15855,8 @@ ${setupFields(setup, ty)}
         note: document.getElementById("fNote").value.slice(0, 300),
       });
       store.save();
-      toast(rnd(t("cheers")));
-      celebrate();
       render();
+      showWin(S.log[S.log.length - 1]);
       return;
     }
     if (ds.del) {
