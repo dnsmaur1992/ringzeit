@@ -6862,7 +6862,7 @@
     );
   }
 
-  const APP_VER = "23.10.2026 17:42";
+  const APP_VER = "23.10.2026 17:52";
   const ICO_T =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.6M9.5 2.5h5M19 6l1.5-1.5"/></svg>';
   const PLAY =
@@ -11989,6 +11989,7 @@ ${setupFields(setup, ty)}
   }
   /* iOS only allows sound that was first started from a tap: unlock audio and speech on the first touch */
   function unlockAudio() {
+    unlockBells();
     try {
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
       if (actx.state === "suspended") actx.resume();
@@ -12039,7 +12040,94 @@ ${setupFields(setup, ty)}
       }
     } catch (e) {}
   }
+  /* The bell is rendered once into a WAV file and played with an audio element: on iOS that survives speech
+     and audio interruptions better than live synthesis. Web audio stays as the fallback. */
+  let bellEls = null;
+  function bellWav(n) {
+    const sr = 44100,
+      f0 = 720,
+      gap = 0.32,
+      parts = [
+        [1, 0.55, 2.6],
+        [2.01, 0.32, 1.9],
+        [2.76, 0.4, 1.5],
+        [4.07, 0.22, 1.0],
+        [5.43, 0.18, 0.7],
+        [6.8, 0.1, 0.45],
+        [8.9, 0.06, 0.3],
+      ],
+      N = Math.ceil(sr * (gap * (n - 1) + 3.8)),
+      y = new Float32Array(N);
+    for (let i = 0; i < n; i++) {
+      const k0 = Math.round((0.02 + i * gap) * sr),
+        len = n > 1 && i < n - 1 ? 0.55 : 1;
+      parts.forEach(([r, a, d]) =>
+        [1, 1.004].forEach((det, j) => {
+          const amp = a * (j ? 0.45 : 1),
+            M = Math.min(N - k0, Math.round(d * len * 1.4 * sr)),
+            dec = Math.log(0.0001 / amp) / M,
+            w = (2 * Math.PI * f0 * r * det) / sr,
+            att = 0.004 * sr;
+          for (let m = 0; m < M; m++) y[k0 + m] += Math.sin(w * m) * amp * Math.exp(dec * m) * Math.min(1, m / att);
+        }),
+      );
+      let prev = 0;
+      for (let m = 0; m < 0.03 * sr && k0 + m < N; m++) {
+        const v = (Math.random() * 2 - 1) * (1 - m / (0.03 * sr)) * 0.35;
+        y[k0 + m] += v - prev; // crude high-pass: the hammer's click
+        prev = v;
+      }
+    }
+    let peak = 0;
+    for (let k = 0; k < N; k++) peak = Math.max(peak, Math.abs(y[k]));
+    const buf = new ArrayBuffer(44 + N * 2),
+      dv = new DataView(buf),
+      str = (o, t) => [...t].forEach((c, i) => dv.setUint8(o + i, c.charCodeAt(0)));
+    str(0, "RIFF");
+    dv.setUint32(4, 36 + N * 2, true);
+    str(8, "WAVEfmt ");
+    dv.setUint32(16, 16, true);
+    dv.setUint16(20, 1, true);
+    dv.setUint16(22, 1, true);
+    dv.setUint32(24, sr, true);
+    dv.setUint32(28, sr * 2, true);
+    dv.setUint16(32, 2, true);
+    dv.setUint16(34, 16, true);
+    str(36, "data");
+    dv.setUint32(40, N * 2, true);
+    for (let k = 0; k < N; k++) dv.setInt16(44 + k * 2, Math.max(-1, Math.min(1, (y[k] / peak) * 0.9)) * 32767, true);
+    return URL.createObjectURL(new Blob([buf], { type: "audio/wav" }));
+  }
+  /* audio elements may only play later if they were started once from a tap: start them muted and stop at once */
+  function unlockBells() {
+    try {
+      if (!bellEls) bellEls = { 1: new Audio(bellWav(1)), 3: new Audio(bellWav(3)) };
+      Object.values(bellEls).forEach((el) => {
+        if (el._ok) return;
+        el.preload = "auto";
+        el.muted = true;
+        const p = el.play();
+        const done = () => {
+          el.pause();
+          el.currentTime = 0;
+          el.muted = false;
+          el._ok = true;
+        };
+        p && p.then ? p.then(done, () => (el.muted = false)) : done();
+      });
+    } catch (e) {}
+  }
   function bell(n = 1) {
+    const el = bellEls && bellEls[n > 1 ? 3 : 1];
+    if (el && el._ok) {
+      try {
+        el.muted = false;
+        el.currentTime = 0;
+        const p = el.play();
+        if (p && p.catch) p.catch(() => withAudio(() => bellNow(n)));
+        return;
+      } catch (e) {}
+    }
     withAudio(() => bellNow(n));
   }
   function bellNow(n) {
@@ -12098,6 +12186,7 @@ ${setupFields(setup, ty)}
   }
   async function getWake() {
     audioKeep(true);
+    unlockBells();
     try {
       wake = await navigator.wakeLock?.request("screen");
     } catch (e) {
