@@ -2851,6 +2851,39 @@
     align-self: center;
     margin-top: -8px;
   }
+  /* install hint (only on the installable web version, opened in the browser) */
+  .insth {
+    background: var(--panel);
+    border: 1px solid #4a3f2b;
+    border-radius: 20px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .insth b {
+    font-size: 16px;
+  }
+  .insth p {
+    margin: 0;
+  }
+  .insth .shr {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    vertical-align: -3px;
+    color: #4b9bff;
+  }
+  .insth a.btn {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .onb .insth {
+    gap: 6px;
+    padding: 12px 14px;
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -3099,6 +3132,19 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      inst: {
+        title: "Ringzeit als App installieren",
+        ios: "Tippe unten auf Teilen und dann auf „Zum Home-Bildschirm“. Danach startest du Ringzeit wie jede andere App – auch offline.",
+        and: "Installiere Ringzeit auf deinem Startbildschirm. Danach startest du es wie jede andere App – auch offline.",
+        first: "Am besten jetzt, bevor du dich einrichtest: Browser und App speichern getrennt.",
+        go: "Installieren",
+        guide: "Anleitung",
+        later: "Später",
+        share: "Ringzeit weitergeben",
+        shareHint: "Schick Vereinskollegen den Link zur Installationsanleitung – mit QR-Code zum Ausdrucken.",
+        shareText: "Ringzeit – Trainingsplan fürs Kickboxen. So installierst du die App:",
+        copied: "Link kopiert",
+      },
       pow: "Schnellkraft",
       blk: {
         names: { end: "Kampfausdauer", pow: "Schnellkraft", mob: "Beweglichkeit" },
@@ -3835,6 +3881,19 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      inst: {
+        title: "Install Ringzeit as an app",
+        ios: "Tap Share below, then “Add to Home Screen”. After that Ringzeit starts like any other app – even offline.",
+        and: "Install Ringzeit on your home screen. After that it starts like any other app – even offline.",
+        first: "Best do it now, before you set up: browser and app store data separately.",
+        go: "Install",
+        guide: "Guide",
+        later: "Later",
+        share: "Share Ringzeit",
+        shareHint: "Send club mates the link to the install guide – with a QR code to print.",
+        shareText: "Ringzeit – kickboxing training planner. How to install the app:",
+        copied: "Link copied",
+      },
       pow: "Power",
       blk: {
         names: { end: "Fight endurance", pow: "Power", mob: "Mobility" },
@@ -7606,7 +7665,7 @@
     );
   }
 
-  const APP_VER = "23.10.2026 20:25";
+  const APP_VER = "23.10.2026 20:52";
   const ICO_T =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.6M9.5 2.5h5M19 6l1.5-1.5"/></svg>';
   const PLAY =
@@ -7721,6 +7780,7 @@
       load = weekLoad();
     const pose = nty === "T" || nty === "C" || nty === "P" ? "kick" : "box";
     let h = header(t("todayTitle"));
+    h += installHtml();
     h += todayCard(nd, nty, pose);
     h += blockHtml();
     h += starterHtml();
@@ -8391,7 +8451,7 @@ ${setupFields(setup, ty)}
       )}<div class="field"><span class="lab">${t("ko")}</span>${S.ko ? `<span class="sub">${esc(koLock(iso(today())) ? t("koActive")(fmtDate(iso(koUntil)), daysBetween(today(), koUntil) + 1) : t("koPast")(fmtDate(S.ko)))}</span><button type="button" class="btn ghost" data-kodel="1" style="align-self:flex-start">${t("del")}</button>` : `<span class="sub">${t("koHint")}</span><button type="button" class="btn sec" data-konew="1">${t("koAdd")}</button>`}</div></div>`;
     h += blockProfHtml();
     h += mycHtml();
-    h += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div><div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div></div><p class="foot" style="text-align:center">Ringzeit · Version ${APP_VER}</p>`;
+    h += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div></div><p class="foot" style="text-align:center">Ringzeit · Version ${APP_VER}</p>`;
     h += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
     return h;
   }
@@ -8414,7 +8474,7 @@ ${setupFields(setup, ty)}
     }
     const o = ui.onb,
       step = o.step;
-    let h = `<button type="button" class="btn ghost skip" data-onb="skip">${t("onbSkip")}</button><div class="dots">${[0, 1, 2, 3].map((i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>`;
+    let h = `<button type="button" class="btn ghost skip" data-onb="skip">${t("onbSkip")}</button><div class="dots">${[0, 1, 2, 3].map((i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>${step === 0 ? installHtml(true) : ""}`;
     h += `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair(step === 1 ? "box" : "kick")}</svg>`;
     if (step === 0) {
       h += `<h1>${t("onbQ1")}</h1><div class="sub">${t("onbQ1s")}</div><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => `<button type="button" data-od="${k}" aria-pressed="${o.disc === k}" ${k === "fc" || k === "k1" ? "disabled" : ""}>${t("disc")[k]}</button>`).join("")}</div>`;
@@ -14156,6 +14216,74 @@ ${setupFields(setup, ty)}
       });
   }
 
+  /* ============ Install hint and sharing: only on the published web app (GitHub Pages), never inside Claude ============ */
+  const installable = () => {
+    try {
+      return !!document.querySelector('link[rel="manifest"]');
+    } catch (e) {
+      return false;
+    }
+  };
+  const isIOS = () =>
+    /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  let installEvt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    installEvt = e;
+    if (ui.onb) renderOnb();
+    else if (ui.tour == null) render();
+  });
+  window.addEventListener("appinstalled", () => {
+    installEvt = null;
+    render();
+  });
+  const SHARE_ICO =
+    '<svg class="shr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg>';
+  function installHtml(onb) {
+    if (!installable() || isStandalone() || (!onb && (S.profile.instHide || ui.instLater))) return "";
+    const I = t("inst"),
+      ios = isIOS();
+    if (!ios && !installEvt && !/android/i.test(navigator.userAgent)) return "";
+    const txt = ios ? I.ios.replace("Teilen", "Teilen " + SHARE_ICO).replace("Share", "Share " + SHARE_ICO) : I.and;
+    return `<div class="insth"><b>${I.title}</b><p class="sub">${txt}${onb ? " " + I.first : ""}</p>${
+      onb
+        ? installEvt
+          ? `<div class="acts2"><button type="button" class="btn" data-inst="go">${I.go}</button></div>`
+          : ""
+        : `<div class="acts2">${installEvt ? `<button type="button" class="btn" data-inst="go">${I.go}</button>` : `<a class="btn sec" href="installieren.html">${I.guide}</a>`}<button type="button" class="btn sec" data-inst="later">${I.later}</button></div>`
+    }</div>`;
+  }
+  async function installAction(a) {
+    if (a === "go" && installEvt) {
+      installEvt.prompt();
+      try {
+        await installEvt.userChoice;
+      } catch (e) {}
+      installEvt = null;
+      return ui.onb ? renderOnb() : render();
+    }
+    if (a === "later") {
+      ui.instLater = true;
+      return render();
+    }
+    if (a === "share") {
+      const url = new URL("installieren.html", location.href).href,
+        I = t("inst");
+      try {
+        if (navigator.share) return await navigator.share({ title: "Ringzeit", text: I.shareText, url });
+      } catch (e) {
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        toast(I.copied);
+      } catch (e) {
+        prompt("", url);
+      }
+    }
+  }
+
   /* ============ Training mode (full screen) ============ */
   /* Title, description and combo of one round item, used by the training mode */
   function roundInfo(it) {
@@ -14402,6 +14530,7 @@ ${setupFields(setup, ty)}
     if (ds.exinfo) return openSheet({ kind: "ex", id: +ds.exinfo });
     // ----- focus blocks
     if (ds.blk) return blockAction(ds.blk);
+    if (ds.inst) return installAction(ds.inst);
     if (ds.bk && ui.sheet && ui.sheet.kind === "blk") {
       ui.sheet.k = ds.bk;
       return renderSheet();
