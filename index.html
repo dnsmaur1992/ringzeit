@@ -80,7 +80,7 @@
     display: flex;
     flex-direction: column;
     gap: 22px;
-    padding-top: 18px;
+    padding-top: calc(18px + env(safe-area-inset-top, 0px));
   }
   .top {
     display: flex;
@@ -1985,6 +1985,9 @@
   .sheetbg:not([hidden]) .sheet {
     animation: sheetup 0.25s ease-out;
   }
+  .sheetbg:not([hidden]) .sheet.still {
+    animation: none;
+  }
   .sheet h3 {
     margin: 0;
     font-size: 21px;
@@ -2153,6 +2156,410 @@
   .thres p {
     color: var(--mist);
     margin: 6px 0 0;
+  }
+  /* badges – metallic medals like fitness award cases */
+  .bdghead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .bdgrow {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding: 4px 2px 10px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .bdgrow .bdg {
+    flex: 0 0 96px;
+    scroll-snap-align: start;
+  }
+  .bdggrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 10px;
+  }
+  .bdg {
+    border: 0;
+    background: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+    color: var(--frost);
+    padding: 0;
+  }
+  .bdg b {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .bdg small {
+    font-size: 11px;
+    color: var(--mist);
+  }
+  .medal {
+    width: 84px;
+    height: 84px;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+  }
+  .medal.off {
+    opacity: 0.6;
+    filter: none;
+  }
+  .bdgbig {
+    display: grid;
+    place-items: center;
+    padding: 8px 0 2px;
+  }
+  .bdgbig .medal {
+    width: 168px;
+    height: 168px;
+  }
+  .bdgnew {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ice);
+  }
+  @keyframes medalPop {
+    0% {
+      transform: scale(0.3) rotate(-25deg);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.12) rotate(6deg);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1) rotate(0);
+    }
+  }
+  .medal.pop {
+    animation: medalPop 0.8s cubic-bezier(0.2, 1.2, 0.4, 1) both;
+  }
+  /* quick entry for the free timer */
+  .ftquick {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--panel);
+    padding: 14px 16px;
+    text-align: left;
+    color: var(--frost);
+  }
+  .ftquick .ftqi {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--c-T) 22%, transparent);
+    color: var(--c-T);
+    flex: none;
+  }
+  .ftquick .ftqi svg {
+    width: 22px;
+    height: 22px;
+  }
+  .ftquick > span:nth-child(2) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .ftquick small {
+    color: var(--mist);
+    font-size: 13px;
+  }
+  .ftquick .chev {
+    color: var(--mist);
+    font-size: 22px;
+  }
+  /* free timer – full screen, the colour tells the phase from across the room */
+  .ftimer {
+    position: fixed;
+    inset: 0;
+    z-index: 46;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: calc(14px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px))
+      calc(24px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));
+    background-color: #0a0b0d;
+  }
+  .ftimer.run.work {
+    background-image: radial-gradient(120% 80% at 50% 30%, #c2333d, #5e1219 75%);
+  }
+  .ftimer.run.rest {
+    background-image: radial-gradient(120% 80% at 50% 30%, #2f8f63, #0f3a27 75%);
+  }
+  .ftimer.run.prep {
+    background-image: radial-gradient(120% 80% at 50% 30%, #b88c3c, #4a3512 75%);
+  }
+  .ftimer.run.last .clk {
+    animation: ftpulse 1s ease-in-out infinite;
+  }
+  @keyframes ftpulse {
+    50% {
+      transform: scale(1.06);
+    }
+  }
+  .ftimer.paused .fring {
+    opacity: 0.55;
+  }
+  .ftimer .fring .clk {
+    font-size: clamp(64px, 22vw, 96px);
+    color: #fff;
+  }
+  .ftph {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.92);
+    margin-top: 6px;
+  }
+  .ftimer .fring .sub {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .ftdots {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ftdots i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+  }
+  .ftdots i.d {
+    background: #fff;
+  }
+  .ftdots i.c {
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+  }
+  .ftimer.run .fctl .s {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+  }
+  .ftimer.run .fctl .m {
+    background: #fff;
+    color: #111;
+  }
+  .ftpre {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .ftpre button {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--panel);
+    color: var(--frost);
+    padding: 12px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .ftpre button[aria-pressed="true"] {
+    border-color: var(--c-T);
+    background: color-mix(in srgb, var(--c-T) 18%, var(--panel));
+  }
+  .ftpre b {
+    font-size: 16px;
+  }
+  .ftpre small {
+    font-size: 11.5px;
+    color: var(--mist);
+    font-variant-numeric: tabular-nums;
+  }
+  .ftcard {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .ftstep,
+  .setrow2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    width: 100%;
+    background: none;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    color: var(--frost);
+    font: inherit;
+    text-align: left;
+  }
+  .setrow2:last-child {
+    border-bottom: 0;
+  }
+  .ftstep > div {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .ftstep button {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--frost);
+    font-size: 22px;
+  }
+  .ftstep b {
+    min-width: 56px;
+    text-align: center;
+    font-family: var(--num);
+    font-size: 24px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tog {
+    width: 51px;
+    height: 31px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.14);
+    position: relative;
+    flex: none;
+    border: 0;
+    padding: 0;
+    transition: background 0.2s;
+  }
+  .tog::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+  }
+  .tog.on {
+    background: var(--done);
+  }
+  .tog.on::after {
+    transform: translateX(20px);
+  }
+  .fttotal {
+    text-align: center;
+    color: var(--mist);
+    font-size: 14px;
+  }
+  .ftgo {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 20px;
+    background: var(--c-T);
+    color: #fff;
+    font-size: 19px;
+    font-weight: 700;
+    padding: 18px;
+    box-shadow: 0 10px 30px color-mix(in srgb, var(--c-T) 45%, transparent);
+  }
+  .ftgo svg {
+    width: 22px;
+    height: 22px;
+  }
+  .ftdone {
+    margin: auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+  .ftdone b {
+    font-size: 40px;
+  }
+  .ftdone span {
+    color: var(--mist);
+  }
+  .ftdone .btn {
+    width: 100%;
+  }
+  /* my combos */
+  .mycrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .mycbody {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    color: var(--frost);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .cprev {
+    min-height: 54px;
+    display: flex;
+    align-items: center;
+    background: var(--panel2);
+    border-radius: 14px;
+    padding: 10px 12px;
+  }
+  .ctiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ctile {
+    border: 1px solid var(--line);
+    background: var(--panel2);
+    color: var(--frost);
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .ctile.k {
+    color: var(--c-T);
+  }
+  .ctile:active {
+    transform: scale(0.95);
+  }
+  .last.mine {
+    color: var(--ice);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .medal.pop,
+    .ftimer.run.last .clk {
+      animation: none;
+    }
   }
   /* app tour */
   .tour {
@@ -2350,6 +2757,7 @@
   <div class="hint" id="loaderHint"></div>
 </div>
 <div class="focus" id="focus" hidden></div>
+<div class="ftimer" id="ftimer" hidden></div>
 <div class="onb" id="onb" hidden></div>
 <div class="tour" id="tour" hidden></div>
 <div class="sheetbg" id="sheet" hidden></div>
@@ -2401,6 +2809,53 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      bdgTitle: "Abzeichen",
+      bdgAll: "Alle",
+      bdgCount: (a, n) => `${a} von ${n} freigeschaltet`,
+      bdgNew: "Neues Abzeichen",
+      bdgGot: (d) => `Erhalten am ${d}`,
+      bdgCont: "Weiter",
+      bdgInit: (n) => `${n} Abzeichen aus deinem bisherigen Training freigeschaltet – schau unter Verlauf.`,
+      ft: {
+        title: "Rundentimer",
+        restShort: "Pause",
+        pre: { wako: "WAKO", k1: "K1", spar: "Sparring", pads: "Pratzen", hiit: "HIIT", pro: "Profi" },
+        rounds: "Runden",
+        work: "Rundenzeit",
+        rest: "Pause",
+        prep: "10 s Vorlauf",
+        warn: "Signal 10 s vor Rundenende",
+        total: (m) => `Gesamt etwa ${m} Minuten`,
+        start: "Starten",
+        ready: "Bereit machen",
+        restL: "Pause",
+        lastR: "Letzte Runde",
+        round: (r, n) => `Runde ${r} von ${n}`,
+        next: (r, n) => `Als Nächstes: Runde ${r} von ${n}`,
+        reset: "Zurücksetzen",
+        skip: "Überspringen",
+        done: "Geschafft!",
+        doneT: (r, m) => `${r} Runden · ${m} Minuten Arbeit`,
+        again: "Noch einmal",
+        sayRound: (r) => `Runde ${r}`,
+        sayLast: "Letzte Runde",
+        sayDone: "Geschafft",
+      },
+      myc: {
+        title: "Meine Kombis",
+        hint: "Kombis aus dem Vereinstraining: Aktive Kombis baut Ringzeit in deine Schatten-, Sandsack- und Pratzenrunden ein.",
+        new: "Neue Kombi",
+        edit: "Kombi bearbeiten",
+        tap: "Tippe die Techniken in der richtigen Reihenfolge an.",
+        undo: "Zurück",
+        clear: "Leeren",
+        groups: { hand: "Hände", kick: "Beine", def: "Abwehr & Bewegung" },
+        name: "Name (optional)",
+        namePh: "z. B. Training 12.10.",
+        active: "In Einheiten einbauen",
+        saved: "Kombi gespeichert",
+        lbl: "Deine Kombi",
+      },
       backupNone:
         "Deine Daten liegen nur auf diesem iPhone. Sichere sie ab und zu als Datei, zum Beispiel in iCloud Drive.",
       backupOld: (d) => `Letzte Datensicherung: ${d}. Zeit für eine neue Sicherung.`,
@@ -2411,10 +2866,10 @@
         "Noch nicht ganz. Lies die Karten noch einmal und versuch es erneut. Ab 80 % richtigen Antworten gilt das Thema als sicher.",
       thAgain: "Nochmal",
       thDone: "Auswerten",
-      voice: "Kombi-Ansage",
+      voice: "Runden-Ansage",
       voiceOn: "Ansage an",
       voiceOff: "Ansage aus",
-      voiceTest: "Kombi-Ansage ist an",
+      voiceTest: "Runden-Ansage ist an",
       sdSteps: "Vorschlag zur Umsetzung",
       sdLegend: "Hell: du · Grau: Angreifer · Pfeil: Hauptbewegung der Befreiung",
       sdSafe:
@@ -2737,7 +3192,9 @@
       equip: {
         pads: "Pratzen",
         rope: "Springseil",
-        weights: "Hanteln/Kettlebell",
+        weights: "Kurzhanteln",
+        kb: "Kettlebell",
+        bb: "Langhantel",
         bands: "Widerstandsbänder",
         bar: "Klimmzugstange",
       },
@@ -2949,6 +3406,53 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      bdgTitle: "Badges",
+      bdgAll: "All",
+      bdgCount: (a, n) => `${a} of ${n} unlocked`,
+      bdgNew: "New badge",
+      bdgGot: (d) => `Earned on ${d}`,
+      bdgCont: "Continue",
+      bdgInit: (n) => `${n} badges unlocked from your training so far – see History.`,
+      ft: {
+        title: "Round timer",
+        restShort: "rest",
+        pre: { wako: "WAKO", k1: "K1", spar: "Sparring", pads: "Pads", hiit: "HIIT", pro: "Pro" },
+        rounds: "Rounds",
+        work: "Round time",
+        rest: "Rest",
+        prep: "10 s lead-in",
+        warn: "Signal 10 s before the bell",
+        total: (m) => `About ${m} minutes in total`,
+        start: "Start",
+        ready: "Get ready",
+        restL: "Rest",
+        lastR: "Last round",
+        round: (r, n) => `Round ${r} of ${n}`,
+        next: (r, n) => `Next: round ${r} of ${n}`,
+        reset: "Reset",
+        skip: "Skip",
+        done: "Done!",
+        doneT: (r, m) => `${r} rounds · ${m} minutes of work`,
+        again: "Again",
+        sayRound: (r) => `Round ${r}`,
+        sayLast: "Last round",
+        sayDone: "Done",
+      },
+      myc: {
+        title: "My combos",
+        hint: "Combos from club training: Ringzeit mixes active combos into your shadow, bag and pad rounds.",
+        new: "New combo",
+        edit: "Edit combo",
+        tap: "Tap the techniques in order.",
+        undo: "Back",
+        clear: "Clear",
+        groups: { hand: "Hands", kick: "Legs", def: "Defence & movement" },
+        name: "Name (optional)",
+        namePh: "e.g. Training 12 Oct",
+        active: "Use in sessions",
+        saved: "Combo saved",
+        lbl: "Your combo",
+      },
       backupNone: "Your data only lives on this iPhone. Save a backup file now and then, for example to iCloud Drive.",
       backupOld: (d) => `Last backup: ${d}. Time for a new one.`,
       thQuiz: "Start quiz",
@@ -2957,10 +3461,10 @@
       thFail: "Not quite yet. Read the cards again and try once more. 80 % correct answers mark the topic as solid.",
       thAgain: "Again",
       thDone: "See result",
-      voice: "Combo caller",
-      voiceOn: "Caller on",
-      voiceOff: "Caller off",
-      voiceTest: "Combo caller is on",
+      voice: "Round announcer",
+      voiceOn: "Announcer on",
+      voiceOff: "Announcer off",
+      voiceTest: "Round announcer is on",
       sdSteps: "Suggested solution",
       sdLegend: "Light: you · Grey: attacker · Arrow: key move of the release",
       sdSafe:
@@ -3272,7 +3776,9 @@
       equip: {
         pads: "Focus pads",
         rope: "Jump rope",
-        weights: "Dumbbells/kettlebell",
+        weights: "Dumbbells",
+        kb: "Kettlebell",
+        bb: "Barbell",
         bands: "Resistance bands",
         bar: "Pull-up bar",
       },
@@ -3915,7 +4421,7 @@
       "Kettlebell swings",
       "Mit Kettlebell oder Kurzhantel – die Hüfte arbeitet, Rücken neutral.",
       "With a kettlebell or dumbbell – hinge from the hips, neutral back.",
-      "weights",
+      "weights|kb",
       "gh",
       "b",
       1,
@@ -4059,8 +4565,8 @@
       "Barbell back squat",
       "Hüftbreit, tief und kontrolliert, Rücken neutral.",
       "Hip width, deep and controlled, neutral back.",
-      "studio",
-      "f",
+      "studio|bb",
+      "fgh",
       "kb",
       1,
     ],
@@ -4070,8 +4576,8 @@
       "Barbell Romanian deadlift",
       "Stange nah am Bein, Hüfte nach hinten schieben.",
       "Bar close to the legs, push the hips back.",
-      "studio",
-      "f",
+      "studio|bb",
+      "fgh",
       "b",
       1,
     ],
@@ -4158,8 +4664,8 @@
       "Barbell hip thrust",
       "Schulter auf der Bank, Hüfte ganz strecken.",
       "Shoulders on the bench, full hip extension.",
-      "studio",
-      "f",
+      "studio|bb",
+      "fgh",
       "",
       0,
     ],
@@ -4215,7 +4721,7 @@
       "Goblet squats",
       "Tief und kontrolliert.",
       "Deep and controlled.",
-      "weights",
+      "weights|kb",
       "gh",
       "kb",
       1,
@@ -5110,10 +5616,11 @@
     const av = S.profile.limits.map((l) => AV[l]).join("");
     // the fitness gym ("studio") also allows every indoor hall exercise
     if (loc === "studio" ? !/[gf]/.test(e.locs) : !e.locs.includes(loc[0])) return false;
-    if (e.eq && !eq.includes(e.eq)) return false;
+    // e.eq may list alternatives, e.g. "weights|kb" = dumbbells or a kettlebell
+    if (e.eq && !e.eq.split("|").some((q) => eq.includes(q))) return false;
     for (const c of av) if (e.avoid.includes(c)) return false;
     if (e.lvl > S.profile.level) return false;
-    if (ageGroup() === "youth" && e.eq === "weights" && e.lvl > 0) return false;
+    if (ageGroup() === "youth" && /weights|kb|bb/.test(e.eq) && e.lvl > 0) return false;
     return true;
   }
   /* prefer: optional scoring function – higher scores are picked first (shuffled within equal scores) */
@@ -5482,10 +5989,20 @@
       const idx = Math.min(2, n - 1);
       if (["shadow", "bag"].includes(kinds[idx]) || !partner) kinds[idx] = "sixkick";
     }
+    // my combos from club training: the first suitable round always, later ones now and then
+    let mi = Math.floor(Math.random() * 8),
+      gotMine = false;
     const out = kinds.map((k) => {
       const r = { kind: "round", k };
-      if (["shadow", "bag", "pads", "counter", "partner"].includes(k))
-        r.combo = combo(k === "bag" || k === "shadow" ? k : "pads", theme);
+      if (["shadow", "bag", "pads", "counter", "partner"].includes(k)) {
+        const kk = k === "bag" || k === "shadow" ? k : "pads",
+          mine = myCombos(kk);
+        if (mine.length && (!gotMine || Math.random() < 0.35)) {
+          r.combo = mine[mi++ % mine.length].slice();
+          r.mine = 1;
+          gotMine = true;
+        } else r.combo = combo(kk, theme);
+      }
       if (k === "sixkick")
         r.combo = ["front", "round", "side", "roundh", "round", "front"].filter(
           (x) => !(p.level === 0 && x === "roundh"),
@@ -5498,6 +6015,7 @@
       (r) =>
         r.combo &&
         r.k !== "sixkick" &&
+        !r.mine &&
         !(r.k === "bag" && (ka || p.limits.includes("wrist") || p.limits.includes("shoulder"))),
     );
     const need = ["roundh"];
@@ -5523,11 +6041,11 @@
   }
   /* Equipment that is relevant per session type – everything else the user selected is ignored */
   const EQ_FOR = {
-    T: ["partner", "bag", "pads", "rope", "weights", "bands", "bar"],
-    C: ["partner", "bag", "pads", "rope", "weights", "bands", "bar"],
+    T: ["partner", "bag", "pads", "rope", "weights", "kb", "bb", "bands", "bar"],
+    C: ["partner", "bag", "pads", "rope", "weights", "kb", "bb", "bands", "bar"],
     P: ["partner", "bag"],
-    S: ["rope", "weights", "bands", "bar"],
-    K: ["rope", "weights", "bands", "bar"],
+    S: ["rope", "weights", "kb", "bb", "bands", "bar"],
+    K: ["rope", "weights", "kb", "bands", "bar"],
     M: ["bands"],
   };
   /* A Zone 2–3 run replaces interval conditioning outdoors (not with knee/ankle limits) */
@@ -5764,8 +6282,11 @@
     if (loc === "studio" && type !== "S" && type !== "K") loc = "gym";
     const studio = loc === "studio",
       run = !!opts.run && canRun(type, loc);
-    let eq = studio ? ["weights", "bar", "studio"] : eqIn.filter((x) => EQ_FOR[type].includes(x));
-    const machines = studio ? (e) => (e.eq === "studio" ? 2 : e.eq ? 1 : 0) : null;
+    let eq = studio ? ["weights", "kb", "bb", "bar", "studio"] : eqIn.filter((x) => EQ_FOR[type].includes(x));
+    // equipment that was brought along gets used first (in the gym: the machines)
+    const machines = studio
+      ? (e) => (e.eq.includes("studio") ? 2 : e.eq ? 1 : 0)
+      : (e) => (e.eq && e.eq.split("|").some((q) => eq.includes(q)) ? 1 : 0);
     // after a KO: no sparring and no partner contact – solo work only
     const ko = koLock(dateStr),
       ramp = rampOn(dateStr);
@@ -6320,6 +6841,8 @@
     );
   }
 
+  const ICO_T =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.6M9.5 2.5h5M19 6l1.5-1.5"/></svg>';
   const PLAY =
     '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>';
   /* The first thing on the start page: today's session, club training or the next session, with one big button */
@@ -6433,6 +6956,8 @@
     const pose = nty === "T" || nty === "C" || nty === "P" ? "kick" : "box";
     let h = header(t("todayTitle"));
     h += todayCard(nd, nty, pose);
+    const fc = ftCfg();
+    h += `<button type="button" class="ftquick" data-ftx="open"><span class="ftqi">${ICO_T}</span><span><b>${t("ft").title}</b><small>${fc.r} × ${fmtS(fc.w)} · ${t("ft").restShort} ${fmtS(fc.b)}</small></span><span class="chev">›</span></button>`;
     h += promptsHtml();
     h += pulseHtml();
     if (S.profile.example) h += `<div class="note">${t("example")}</div>`;
@@ -6506,7 +7031,7 @@
     ].map((n) => EX.findIndex((e) => e.de === n)),
   );
   const tracksSets = (id) => EX[id].cat === "str";
-  const hasKg = (id) => EX[id].eq === "weights" || (EX[id].eq === "studio" && EX[id].cat === "str");
+  const hasKg = (id) => /weights|kb|bb/.test(EX[id].eq) || (EX[id].eq.includes("studio") && EX[id].cat === "str");
   function lastPerf(id, before) {
     const logs = S.log.filter((e) => e.perf && e.date < before).sort((a, b) => b.date.localeCompare(a.date));
     for (const e of logs) {
@@ -6704,7 +7229,7 @@ ${setupFields(setup, ty)}
       if (!ui.timer || ui.timer.ds !== ds) ui.timer = newTimer(ds);
       const st = ui.timer,
         total = st.total;
-      h += `<div class="timer ${st.phase === "rest" || st.phase === "ready" ? "rest" : ""}" id="timer"><div class="bar"><span id="tbar"></span></div><div class="info"><span class="ph" id="tph">${st.phase === "rest" ? t("pause") : st.phase === "done" ? t("finished") : st.phase === "ready" ? t("timer") : t("work")}</span><div class="clock" id="tclock">${fmt(st.left)}</div><span class="tr" id="tround">${t("round")} ${Math.min(st.round, total)}/${total} · ${fmt(st.work)} / ${fmt(st.rest)}</span>${canSpeak() && rb.items.some((i) => i.k === "shadow" || i.k === "bag") ? `<button type="button" class="vchip" data-voice="1" aria-pressed="${voiceOn()}">${voiceOn() ? "🔊 " + t("voiceOn") : "🔈 " + t("voiceOff")}</button>` : ""}</div>
+      h += `<div class="timer ${st.phase === "rest" || st.phase === "ready" ? "rest" : ""}" id="timer"><div class="bar"><span id="tbar"></span></div><div class="info"><span class="ph" id="tph">${st.phase === "rest" ? t("pause") : st.phase === "done" ? t("finished") : st.phase === "ready" ? t("timer") : t("work")}</span><div class="clock" id="tclock">${fmt(st.left)}</div><span class="tr" id="tround">${t("round")} ${Math.min(st.round, total)}/${total} · ${fmt(st.work)} / ${fmt(st.rest)}</span>${canSpeak() ? `<button type="button" class="vchip" data-voice="1" aria-pressed="${voiceOn()}">${voiceOn() ? "🔊 " + t("voiceOn") : "🔈 " + t("voiceOff")}</button>` : ""}</div>
   <div class="tb"><button type="button" id="tgo">${tlabel(st)}</button><button type="button" class="fs" data-fx="open">${t("focusOpen")}</button><button type="button" id="treset">${t("reset")}</button></div></div>`;
     }
     sess.blocks.forEach((b, bi) => {
@@ -6718,8 +7243,9 @@ ${setupFields(setup, ty)}
           const z3 = it.zone === 3;
           h += `<div class="ex"><span class="num r">Z${it.zone}</span><div class="tx"><b>${z3 ? t("z3set")(it.reps, it.on, it.off) : `${it.min} ${t("min")} · ${t("z2")}`}</b><div>${z3 ? t("z3d") : t("z2d")}</div></div></div>`;
         } else if (it.kind === "hard") {
-          const x = (HARD.find((q) => q.id === it.id) || HARD[0])[S.profile.lang];
-          h += `<div class="ex"><span class="num">${pad(n + 1)}</span><div class="tx"><b>${esc(x[0])}</b><div>${esc(x[1])}</div></div></div>`;
+          const hd = HARD.find((q) => q.id === it.id) || HARD[0],
+            x = hd[S.profile.lang];
+          h += `<div class="ex"><span class="num">${pad(n + 1)}</span><div class="tx">${SKETCH[hd.de[0]] ? `<button type="button" class="exn" data-hardinfo="${hd.id}"><b>${esc(x[0])}</b><span class="exi" aria-hidden="true">i</span></button>` : `<b>${esc(x[0])}</b>`}<div>${esc(x[1])}</div></div></div>`;
         } else if (it.k === "sim") {
           h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx"><b>${t("simT")(it.fight, it.r)}</b><div>${it.fight > 1 && it.r === 1 ? t("simD2") : t("simD1")}${it.beg ? t("simBeg") : ""}</div></div></div>`;
         } else if (it.k === "task") {
@@ -6732,7 +7258,7 @@ ${setupFields(setup, ty)}
           if (x) h += examRow(x, n, sess.eq);
         } else if (it.kind === "round") {
           const r = RT[it.k];
-          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx"><b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${it.pace ? `<div class="last">${t("paceIv")}</div>` : ""}${it.combo ? comboHtml(it.combo) : ""}</div></div>`;
+          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${it.pace ? `<div class="last">${t("paceIv")}</div>` : ""}${it.combo ? comboHtml(it.combo) : ""}</div></div>`;
         } else {
           const x = exText(it.id),
             tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
@@ -6948,6 +7474,7 @@ ${setupFields(setup, ty)}
     const avg = recent.length ? (recent.reduce((a, e) => a + e.rpe, 0) / recent.length).toFixed(1) : "–";
     h += `<div class="stats"><div class="stat"><div class="v">${byWeek[thisW] || 0}/${planned}</div><div class="k">${t("statWeek")}</div></div><div class="stat ${streak >= 2 ? "hot" : ""}"><div class="v">${streak}</div><div class="k">${t("statStreak")}</div></div><div class="stat"><div class="v">${avg}</div><div class="k">${t("statRpe")}</div></div></div>`;
     h += `<div><h2>${t("last4")}</h2><div class="stats"><div class="stat"><div class="v">${sd.own}</div><div class="k">${t("sum").own}</div></div><div class="stat"><div class="v" style="color:var(--c-V)">${sd.club}</div><div class="k">${t("sum").clubN}</div></div><div class="stat"><div class="v">${sd.mins}</div><div class="k">${t("sum").mins}</div></div></div></div>`;
+    h += badgesHtml();
     h += heatHtml();
     if (!S.log.length) h += `<div class="empty"><b>${t("emptyLog")}</b>${t("emptyLogT")}</div>`;
     else {
@@ -7096,6 +7623,7 @@ ${setupFields(setup, ty)}
       .join(
         "",
       )}<div class="field"><span class="lab">${t("ko")}</span>${S.ko ? `<span class="sub">${esc(koLock(iso(today())) ? t("koActive")(fmtDate(iso(koUntil)), daysBetween(today(), koUntil) + 1) : t("koPast")(fmtDate(S.ko)))}</span><button type="button" class="btn ghost" data-kodel="1" style="align-self:flex-start">${t("del")}</button>` : `<span class="sub">${t("koHint")}</span><button type="button" class="btn sec" data-konew="1">${t("koAdd")}</button>`}</div></div>`;
+    h += mycHtml();
     h += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div><div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div></div>`;
     h += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
     return h;
@@ -7638,7 +8166,7 @@ ${setupFields(setup, ty)}
   const skPoly = (pts, w, col) =>
     `<polyline points="${pts.map((q) => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" ")}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
   /* equipment held in the hands is drawn in front of the figure, everything else behind it */
-  const SK_FRONT = new Set(["plate", "db", "kb", "handle"]);
+  const SK_FRONT = new Set(["plate", "db", "kb", "handle", "band2", "towel"]);
   function skProp(pr) {
     const [k, a, b] = pr,
       L = SK.LINE;
@@ -7664,6 +8192,15 @@ ${setupFields(setup, ty)}
       return `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#a88a5c" stroke-width="5" stroke-linecap="round"/>`;
     if (k === "knife")
       return `<line x1="${a[0] + 6}" y1="${a[1]}" x2="${a[0] - 16}" y2="${a[1] - 2}" stroke="${L}" stroke-width="3" stroke-linecap="round"/><line x1="${a[0] + 10}" y1="${a[1]}" x2="${a[0] + 2}" y2="${a[1]}" stroke="#3a3f47" stroke-width="5" stroke-linecap="round"/>`;
+    if (k === "wall") return `<rect x="${a}" y="6" width="10" height="143" rx="3" fill="#2a2e35"/>`;
+    if (k === "hill") return `<polygon points="0,149 240,101 240,149" fill="#22262d"/>`;
+    if (k === "wheel") return `<circle cx="${a[0]}" cy="${a[1]}" r="${b}" fill="none" stroke="${L}" stroke-width="4"/>`;
+    if (k === "line")
+      return `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${L}" stroke-width="${pr[3] || 3}" stroke-linecap="round"/>`;
+    if (k === "band2")
+      return `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${SK.BAND}" stroke-width="5" stroke-linecap="round"/>`;
+    if (k === "towel")
+      return `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#d8cfc0" stroke-width="9" stroke-linecap="round"/>`;
     if (k === "handle")
       return `<line x1="${a[0] - 18}" y1="${a[1]}" x2="${a[0] + 18}" y2="${a[1]}" stroke="${L}" stroke-width="4" stroke-linecap="round"/>`;
     return "";
@@ -7689,6 +8226,14 @@ ${setupFields(setup, ty)}
     h += `<circle cx="${q.h[0].toFixed(1)}" cy="${q.h[1].toFixed(1)}" r="12" fill="${near}" stroke="${SK.BG}" stroke-width="3"/>`;
     h += skPoly(arm(q.s, q.w, q.ea || [0, 1]), 10, near);
     return h;
+  }
+  /* curved arrow around a centre, angles in degrees (0 = right, clockwise) */
+  function skArc(c, r, a0, a1) {
+    if (Math.abs(a1 - a0) > 330) a1 = a0 + Math.sign(a1 - a0) * 330;
+    const pt = (a) => [c[0] + r * Math.cos((a * Math.PI) / 180), c[1] + r * Math.sin((a * Math.PI) / 180)],
+      p0 = pt(a0),
+      p1 = pt(a1);
+    return `<path d="M${p0[0].toFixed(1)} ${p0[1].toFixed(1)} A${r} ${r} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} ${a1 > a0 ? 1 : 0} ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}" fill="none" stroke="${SK.BRASS}" stroke-width="3" stroke-linecap="round" marker-end="url(#skHead)"/>`;
   }
   const skArrow = (a, b) =>
     `<path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" stroke="${SK.BRASS}" stroke-width="3" stroke-linecap="round" marker-end="url(#skHead)"/>`;
@@ -8525,7 +9070,7 @@ ${setupFields(setup, ty)}
           .filter((x) => SK_FRONT.has(x[0]))
           .map(skProp)
           .join("")}</g>`;
-    return `<svg class="sketch${k.b ? " moving" : ""}${fast ? " fast" : ""}" viewBox="0 0 240 156" role="img" aria-label="${esc(name)}"><defs><marker id="skHead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${SK.BRASS}"/></marker></defs>${skProp(["floor"])}${layer(k.a, k.props, "fa")}${k.b ? layer(b, k.pb || k.props, "fb") : ""}${k.arrow ? skArrow(...k.arrow) : ""}</svg>`;
+    return `<svg class="sketch${k.b ? " moving" : ""}${fast ? " fast" : ""}" viewBox="0 0 240 156" role="img" aria-label="${esc(name)}"><defs><marker id="skHead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${SK.BRASS}"/></marker></defs>${skProp(["floor"])}${layer(k.a, k.props, "fa")}${k.b ? layer(b, k.pb || k.props, "fb") : ""}${k.arrow ? skArrow(...k.arrow) : ""}${k.arc ? skArc(...k.arc) : ""}</svg>`;
   }
 
   /* ============ Self-defence sketches: you (light) and the attacker (grey), with the key move of the release ============ */
@@ -8891,6 +9436,592 @@ ${setupFields(setup, ty)}
       ],
     },
   };
+  /* ============ More sketches: warm-up, mobility, cool-down, running and machines, solo hardening ============ */
+  const RUN_A = {
+      h: [128, 36],
+      s: [122, 60],
+      p: [114, 94],
+      f: [146, 126],
+      F: [86, 140],
+      ka: [1, 0],
+      KA: [0, 1],
+      w: [104, 82],
+      W: [144, 66],
+      ea: [-1, 0.3],
+      EA: [1, 1],
+    },
+    RUN_B = {
+      h: [128, 36],
+      s: [122, 60],
+      p: [114, 94],
+      f: [86, 140],
+      F: [146, 126],
+      ka: [0, 1],
+      KA: [1, 0],
+      w: [144, 66],
+      W: [104, 82],
+      ea: [1, 1],
+      EA: [-1, 0.3],
+    },
+    SPR_A = { ...RUN_A, h: [140, 42], s: [132, 64], f: [150, 122], F: [80, 140], w: [106, 88], W: [154, 66] },
+    SPR_B = { ...RUN_B, h: [140, 42], s: [132, 64], f: [80, 140], F: [150, 122], w: [154, 66], W: [106, 88] },
+    WALK_A = {
+      ...STAND,
+      f: [136, 148],
+      F: [104, 148],
+      ka: [1, 0],
+      KA: [0, 1],
+      w: [104, 92],
+      W: [140, 82],
+      ea: [-1, 0.3],
+      EA: [1, 1],
+    },
+    WALK_B = {
+      ...STAND,
+      f: [104, 148],
+      F: [136, 148],
+      ka: [0, 1],
+      KA: [1, 0],
+      w: [140, 82],
+      W: [104, 92],
+      ea: [1, 1],
+      EA: [-1, 0.3],
+    },
+    QUAD = {
+      p: [96, 110],
+      s: [138, 108],
+      h: [158, 100],
+      w: [140, 147],
+      W: [134, 147],
+      f: [64, 146],
+      F: [68, 146],
+      ka: [0, 1],
+      KA: [0, 1],
+      ea: [-1, 0],
+    },
+    LUNGE_K = {
+      p: [112, 112],
+      s: [114, 78],
+      h: [116, 54],
+      f: [150, 148],
+      F: [70, 146],
+      ka: [1, -1],
+      KA: [0, 1],
+      w: [120, 104],
+      W: [114, 104],
+      ea: [1, 0],
+    },
+    TREAD = [
+      ["rect", [52, 140], [140, 9]],
+      ["line", [178, 140], [196, 70], 5],
+      ["rect", [184, 60], [28, 12]],
+    ],
+    BIKE = [
+      ["wheel", [70, 128], 20],
+      ["wheel", [178, 128], 20],
+      ["line", [70, 128], [112, 128], 4],
+      ["line", [112, 128], [100, 92], 4],
+      ["line", [112, 128], [160, 92], 4],
+      ["line", [160, 92], [178, 128], 4],
+      ["line", [100, 92], [70, 128], 4],
+      ["line", [90, 89], [112, 89], 6],
+      ["line", [160, 92], [164, 80], 4],
+      ["line", [156, 80], [170, 80], 5],
+      ["wheel", [112, 128], 9],
+    ],
+    BIKE_A = {
+      p: [102, 86],
+      s: [134, 66],
+      h: [154, 56],
+      w: [160, 80],
+      W: [164, 80],
+      ea: [0, 1],
+      EA: [0, 1],
+      f: [118, 136],
+      F: [106, 119],
+      ka: [1, -0.3],
+      KA: [1, -0.6],
+    },
+    ROWER = [
+      ["rect", [26, 140], [186, 6]],
+      ["wheel", [206, 120], 17],
+      ["line", [196, 140], [206, 120], 4],
+      ["line", [160, 140], [166, 132], 6],
+    ];
+  Object.assign(SKETCH, {
+    /* warm-up */
+    "Seilspringen locker": SKETCH["Seil-Intervalle"],
+    Einlaufen: {
+      a: RUN_A,
+      b: RUN_B,
+      arrow: [
+        [176, 140],
+        [206, 140],
+      ],
+    },
+    Gelenkmobilisation: {
+      a: st({ w: [126, 16], W: [118, 18], ea: [0, -1], EA: [0, -1] }),
+      b: st({ w: [160, 74], W: [156, 78], ea: [0, 1], EA: [0, 1] }),
+      arc: [[120, 60], 52, -150, 30],
+    },
+    "Dynamisches Dehnen": {
+      a: st({ f: [168, 104], ka: [1, 0], w: [84, 70], ea: [0, 1], W: [116, 100] }),
+      b: st({ f: [82, 134], ka: [0, 1], w: [84, 70], ea: [0, 1], W: [116, 100] }),
+      props: [["wall", 62]],
+      arc: [[120, 94], 54, 120, 20],
+    },
+    "Bänder-Aktivierung": {
+      a: st({ w: [162, 64], W: [158, 62], ea: [0, 1], EA: [0, 1] }),
+      b: st({ w: [124, 62], W: [116, 62], ea: [1, -0.2], EA: [-1, -0.2] }),
+      props: [["band2", [162, 64], [158, 62]]],
+      pb: [["band2", [124, 62], [116, 62]]],
+      arrow: [
+        [178, 44],
+        [140, 44],
+      ],
+    },
+    /* mobility */
+    "Hüftkreise im Vierfüßler": {
+      a: QUAD,
+      b: { ...QUAD, f: [86, 112], ka: [-1, 0] },
+      arc: [[94, 120], 26, 200, 520],
+    },
+    "90/90 Hüftwechsel": {
+      a: {
+        p: [108, 140],
+        s: [110, 104],
+        h: [112, 80],
+        f: [150, 146],
+        F: [146, 146],
+        ka: [0, -1],
+        KA: [0, -1],
+        w: [92, 146],
+        W: [96, 146],
+        ea: [-1, 0],
+      },
+      b: {
+        p: [108, 140],
+        s: [110, 104],
+        h: [112, 80],
+        f: [70, 146],
+        F: [74, 146],
+        ka: [0, -1],
+        KA: [0, -1],
+        w: [130, 146],
+        W: [126, 146],
+        ea: [1, 0],
+      },
+      arc: [[110, 128], 34, 340, 200],
+    },
+    "Cossack Squats": {
+      a: {
+        p: [96, 126],
+        s: [104, 94],
+        h: [110, 70],
+        f: [102, 148],
+        ka: [1, -1],
+        F: [178, 148],
+        KA: [0, -1],
+        w: [124, 112],
+        W: [118, 114],
+        ea: [0, 1],
+      },
+      b: {
+        p: [144, 126],
+        s: [136, 94],
+        h: [130, 70],
+        f: [138, 148],
+        ka: [-1, -1],
+        F: [62, 148],
+        KA: [0, -1],
+        w: [116, 112],
+        W: [122, 114],
+        ea: [0, 1],
+      },
+      arrow: [
+        [90, 40],
+        [150, 40],
+      ],
+    },
+    "World's Greatest Stretch": {
+      a: {
+        p: [110, 118],
+        s: [140, 100],
+        h: [160, 94],
+        f: [152, 148],
+        F: [52, 146],
+        ka: [1, -1],
+        KA: [0, 1],
+        w: [150, 146],
+        W: [144, 146],
+        ea: [-1, 0],
+      },
+      b: {
+        p: [110, 118],
+        s: [140, 100],
+        h: [158, 88],
+        f: [152, 148],
+        F: [52, 146],
+        ka: [1, -1],
+        KA: [0, 1],
+        w: [144, 57],
+        W: [144, 146],
+        ea: [1, 0],
+      },
+      arrow: [
+        [186, 120],
+        [186, 60],
+      ],
+    },
+    "Offenes Buch": {
+      a: {
+        p: [104, 140],
+        s: [140, 136],
+        h: [162, 132],
+        f: [100, 146],
+        F: [104, 146],
+        ka: [1, -1],
+        KA: [1, -1],
+        w: [182, 140],
+        W: [184, 144],
+        ea: [0, -1],
+      },
+      b: {
+        p: [104, 140],
+        s: [140, 136],
+        h: [158, 126],
+        f: [100, 146],
+        F: [104, 146],
+        ka: [1, -1],
+        KA: [1, -1],
+        w: [104, 120],
+        W: [184, 144],
+        ea: [0, -1],
+      },
+      arc: [[140, 130], 40, -10, -170],
+    },
+    "Sprunggelenk an der Wand": {
+      a: {
+        p: [126, 116],
+        s: [130, 82],
+        h: [134, 58],
+        f: [168, 148],
+        F: [92, 146],
+        ka: [1, -1],
+        KA: [0, 1],
+        w: [188, 78],
+        W: [190, 82],
+        ea: [0, 1],
+      },
+      b: {
+        p: [138, 116],
+        s: [142, 82],
+        h: [146, 58],
+        f: [168, 148],
+        F: [104, 146],
+        ka: [1, -1],
+        KA: [0, 1],
+        w: [188, 78],
+        W: [190, 82],
+        ea: [0, 1],
+      },
+      props: [["wall", 196]],
+      arrow: [
+        [150, 98],
+        [178, 98],
+      ],
+    },
+    "Band-Dislocates": {
+      a: st({ w: [150, 100], W: [146, 100], ea: [0, 1], EA: [0, 1] }),
+      b: st({ w: [92, 42], W: [96, 40], ea: [-1, -1], EA: [-1, -1] }),
+      props: [["band2", [150, 100], [146, 100]]],
+      pb: [["band2", [92, 42], [96, 40]]],
+      arc: [[120, 60], 50, 40, -200],
+    },
+    Froschdehnung: {
+      a: {
+        p: [104, 118],
+        s: [140, 126],
+        h: [162, 128],
+        f: [70, 146],
+        F: [74, 146],
+        ka: [0, 1],
+        KA: [0, 1],
+        w: [162, 146],
+        W: [158, 146],
+        ea: [0, 1],
+      },
+      b: {
+        p: [84, 124],
+        s: [122, 130],
+        h: [144, 132],
+        f: [70, 146],
+        F: [74, 146],
+        ka: [0, 1],
+        KA: [0, 1],
+        w: [146, 146],
+        W: [142, 146],
+        ea: [0, 1],
+      },
+      arrow: [
+        [60, 104],
+        [36, 104],
+      ],
+    },
+    Taube: {
+      a: {
+        p: [104, 132],
+        s: [110, 98],
+        h: [114, 74],
+        f: [100, 148],
+        ka: [1, 0.2],
+        F: [32, 146],
+        KA: [0, -1],
+        w: [130, 146],
+        W: [126, 146],
+        ea: [1, 0],
+      },
+      b: {
+        p: [104, 134],
+        s: [138, 128],
+        h: [160, 128],
+        f: [100, 148],
+        ka: [1, 0.2],
+        F: [32, 146],
+        KA: [0, -1],
+        w: [184, 146],
+        W: [180, 146],
+        ea: [0, -1],
+      },
+      arc: [[106, 132], 44, -95, -20],
+    },
+    "Katze-Kuh": {
+      a: { ...QUAD, p: [96, 104], s: [138, 102], h: [152, 118] },
+      b: { ...QUAD, p: [96, 114], s: [138, 112], h: [162, 92] },
+      arrow: [
+        [117, 74],
+        [117, 100],
+      ],
+    },
+    "Tiefe Hocke halten": {
+      a: {
+        p: [104, 134],
+        s: [116, 102],
+        h: [128, 80],
+        f: [126, 148],
+        F: [122, 148],
+        ka: [1, -1],
+        KA: [1, -1],
+        w: [142, 112],
+        W: [140, 110],
+        ea: [0, 1],
+        EA: [0, 1],
+      },
+      hold: true,
+    },
+    Nackenmobilisation: {
+      a: st({ h: [114, 36] }),
+      b: st({ h: [130, 42] }),
+      arc: [[121, 38], 24, -160, -20],
+    },
+    /* cool-down */
+    "Hüftbeuger dehnen": {
+      a: LUNGE_K,
+      b: { ...LUNGE_K, p: [122, 116], s: [122, 82], h: [122, 58], w: [126, 106], W: [120, 106] },
+      arrow: [
+        [150, 104],
+        [176, 104],
+      ],
+      hold: true,
+    },
+    "Adduktoren & Spagat": {
+      a: {
+        p: [120, 112],
+        s: [120, 78],
+        h: [120, 54],
+        f: [172, 148],
+        F: [68, 148],
+        ka: [0, -1],
+        KA: [0, -1],
+        w: [140, 112],
+        W: [100, 112],
+        ea: [1, 0],
+        EA: [-1, 0],
+      },
+      hold: true,
+    },
+    "Oberschenkel hinten": {
+      a: {
+        p: [94, 138],
+        s: [126, 120],
+        h: [148, 114],
+        f: [152, 146],
+        F: [150, 146],
+        ka: [0, -1],
+        KA: [0, -1],
+        w: [152, 140],
+        W: [148, 140],
+        ea: [0, -1],
+      },
+      hold: true,
+    },
+    "Schulter & Brust": { a: st({ w: [76, 60], W: [116, 100], ea: [0, 1] }), props: [["wall", 62]], hold: true },
+    Atmung: {
+      a: {
+        p: [110, 140],
+        s: [146, 140],
+        h: [168, 138],
+        f: [86, 148],
+        F: [90, 148],
+        ka: [0, -1],
+        KA: [0, -1],
+        w: [128, 128],
+        W: [124, 130],
+        ea: [0, -1],
+      },
+      arrow: [
+        [128, 116],
+        [128, 96],
+      ],
+      hold: true,
+    },
+    Auslaufen: {
+      a: WALK_A,
+      b: WALK_B,
+      arrow: [
+        [176, 140],
+        [200, 140],
+      ],
+    },
+    /* running and machines */
+    Sprints: {
+      a: SPR_A,
+      b: SPR_B,
+      arrow: [
+        [172, 140],
+        [212, 140],
+      ],
+    },
+    Steigerungsläufe: {
+      a: RUN_A,
+      b: SPR_B,
+      arrow: [
+        [172, 140],
+        [212, 140],
+      ],
+    },
+    Bergsprints: {
+      a: skShift(SPR_A, 0, -9),
+      b: skShift(SPR_B, 0, -9),
+      props: [["hill"]],
+      arrow: [
+        [168, 104],
+        [204, 92],
+      ],
+    },
+    "Zügiges Marschieren mit Armarbeit": {
+      a: WALK_A,
+      b: WALK_B,
+      arrow: [
+        [176, 140],
+        [200, 140],
+      ],
+    },
+    "Laufband-Intervalle": { a: skShift(RUN_A, -6, -8), b: skShift(RUN_B, -6, -8), props: TREAD },
+    "Rad-Sprints": { a: BIKE_A, b: { ...BIKE_A, f: [106, 119], F: [118, 136] }, props: BIKE },
+    "Rudergerät-Intervalle": {
+      a: {
+        p: [118, 128],
+        s: [138, 96],
+        h: [152, 74],
+        f: [152, 136],
+        F: [150, 136],
+        ka: [0, -1],
+        KA: [0, -1],
+        w: [168, 114],
+        W: [166, 112],
+        ea: [0, 1],
+      },
+      b: {
+        p: [98, 128],
+        s: [90, 96],
+        h: [84, 72],
+        f: [152, 136],
+        F: [150, 136],
+        ka: [0, -1],
+        KA: [0, -1],
+        w: [106, 106],
+        W: [104, 104],
+        ea: [-1, 0.5],
+      },
+      props: [...ROWER, ["line", [206, 120], [168, 114], 2]],
+      pb: [...ROWER, ["line", [206, 120], [106, 106], 2]],
+      arrow: [
+        [100, 24],
+        [70, 24],
+      ],
+    },
+    /* solo hardening (keyed by the German hardening name) */
+    "Faust-Liegestütze": SKETCH.Liegestütze,
+    "Faust-Stütz": { a: { ...pu, w: [119, 147], ea: [-1, 0] }, hold: true },
+    "Handtuch auswringen": {
+      a: st({ w: [144, 80], W: [140, 76], ea: [0, 1], EA: [0, 1] }),
+      props: [["towel", [130, 80], [168, 76]]],
+      arc: [[150, 78], 20, -150, 150],
+      hold: true,
+    },
+    "Rumpf an den Sack": {
+      a: st({
+        h: [124, 38],
+        s: [124, 62],
+        p: [118, 96],
+        w: [150, 70],
+        W: [146, 74],
+        ea: [0, 1],
+        f: [112, 148],
+        F: [104, 148],
+      }),
+      props: [
+        ["cable", [168, 2], [168, 24]],
+        ["rect", [150, 24], [36, 100]],
+      ],
+      arrow: [
+        [200, 74],
+        [186, 74],
+      ],
+      hold: true,
+    },
+    "Schienbeine abklopfen": {
+      a: {
+        p: [96, 140],
+        s: [100, 106],
+        h: [104, 82],
+        f: [150, 146],
+        F: [146, 146],
+        ka: [0, -1],
+        KA: [0, -1],
+        w: [132, 112],
+        W: [128, 116],
+        ea: [0, 1],
+      },
+      b: {
+        p: [96, 140],
+        s: [100, 106],
+        h: [106, 82],
+        f: [150, 146],
+        F: [146, 146],
+        ka: [0, -1],
+        KA: [0, -1],
+        w: [140, 128],
+        W: [128, 116],
+        ea: [0, 1],
+      },
+      arrow: [
+        [160, 100],
+        [150, 120],
+      ],
+    },
+  });
   /* top view for self-defence in the circle */
   function sdCircleSvg() {
     let h = `<svg class="sketch" viewBox="0 0 240 156" role="img"><defs><marker id="skHead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${SK.BRASS}"/></marker></defs><circle cx="120" cy="78" r="58" fill="none" stroke="#2b2f36" stroke-width="2" stroke-dasharray="5 6"/>`;
@@ -10196,6 +11327,7 @@ ${setupFields(setup, ty)}
     let h = `<div class="skwrap">${sketchSvg(e.de)}${k.hold ? `<span class="skhold">${t("skHold")}</span>` : ""}</div>`;
     if (tp)
       h += `<ul class="cues">${tp[lg === "de" ? 0 : 1].map((c) => `<li>${esc(c)}</li>`).join("")}</ul><div class="note warn"><b>${t("skErr")}</b> ${esc(tp[lg === "de" ? 2 : 3])}</div>`;
+    else h += `<p class="sub" style="margin:0">${esc(lg === "de" ? e.dde : e.den)}</p>`;
     return h;
   }
   const exName = (id, name) =>
@@ -10221,7 +11353,11 @@ ${setupFields(setup, ty)}
     }
     const cancel = `<button type="button" class="btn sec" data-sx="close">${t("cancel")}</button>`,
       save = (a) => `<button type="button" class="btn" data-sx="${a}">${t("save")}</button>`;
-    let h = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>`;
+    // re-rendering the same sheet (toggles, quiz, combo builder) keeps its scroll position and doesn't animate again
+    const again = renderSheet.last === o && !el.hidden,
+      oldTop = again && el.firstElementChild ? el.firstElementChild.scrollTop : 0;
+    renderSheet.last = o;
+    let h = `<div class="sheet${again ? " still" : ""}" role="dialog" aria-modal="true"><div class="grab"></div>`;
     if (o.kind === "club") {
       h += `<h3>${t("club")} · ${esc(dayLbl(o.ds))}</h3><div class="lab">${t("clubWhat")}</div><div class="seg g3">${["T", "P", "K", "S", "X"].map((k) => `<button type="button" data-sck="${k}" aria-pressed="${o.ck === k}">${t("clubKinds")[k]}</button>`).join("")}</div>
  <label class="lab" for="scMin">${t("duration")}</label><input id="scMin" type="number" inputmode="numeric" min="10" max="300" value="${o.min}">
@@ -10266,12 +11402,24 @@ ${setupFields(setup, ty)}
     } else if (o.kind === "sd") {
       const x = examItem(o.id);
       h += `<h3>${esc(x[S.profile.lang])}</h3>${sdInfoHtml(o.id)}<div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
+    } else if (o.kind === "hard") {
+      const hd = HARD.find((q) => q.id === o.id),
+        x = hd[S.profile.lang],
+        k = SKETCH[hd.de[0]];
+      h += `<h3>${esc(x[0])}</h3><div class="skwrap">${sketchSvg(hd.de[0])}${k.hold ? `<span class="skhold">${t("skHold")}</span>` : ""}</div><p class="sub" style="margin:0">${esc(x[1])}</p><div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
     } else if (o.kind === "ex") {
       h += `<h3>${esc(exText(o.id).name)}</h3>${exInfoHtml(o.id)}<div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
+    } else if (o.kind === "badge") {
+      h += badgeSheetHtml(o);
+    } else if (o.kind === "badges") {
+      h += allBadgesHtml();
+    } else if (o.kind === "raw") {
+      h += `<h3>${esc(o.title)}</h3>${o.html}`;
     } else if (o.kind === "show") {
       h += `<h3>${esc(o.title)}</h3>${o.html}<div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
     }
     el.innerHTML = h + `</div>`;
+    if (again && el.firstElementChild) el.firstElementChild.scrollTop = oldTop;
     el.hidden = false;
   }
   /* Keeps typed values when a sheet re-renders after a toggle */
@@ -10303,6 +11451,10 @@ ${setupFields(setup, ty)}
     } else if (o.kind === "ko") o.date = v("koDate") || o.date;
   }
   function sheetAction(a) {
+    if (a === "bdgnext") {
+      closeSheet();
+      return showBadgeQueue();
+    }
     const o = ui.sheet;
     if (!o) return;
     readSheet();
@@ -10773,6 +11925,7 @@ ${setupFields(setup, ty)}
       render.t = setTimeout(() => app.classList.remove("enter"), 900);
     } else app.classList.remove("enter"); // later re-renders (toggles, timer) must not replay the entrance
     document.documentElement.lang = S.profile.lang;
+    if (!ui.ft) checkBadges();
     renderTabs();
     const v = { week: renderWeek, session: renderSession, test: renderTest, log: renderLog, profile: renderProfile }[
       ui.tab
@@ -10852,7 +12005,7 @@ ${setupFields(setup, ty)}
           : t("resume");
   }
 
-  /* ============ Combo caller: speaks combos during shadow and bag rounds ============ */
+  /* ============ Round announcer: speaks round, exercise and combo once at the start of every round ============ */
   const SPEAK = {
     de: {
       round: "Roundhouse",
@@ -10894,40 +12047,552 @@ ${setupFields(setup, ty)}
       })
       .join(", ");
   }
-  function say(text) {
+  function say(text, rate = 1) {
     if (!voiceOn()) return;
     try {
       const u = new SpeechSynthesisUtterance(text);
       u.lang = S.profile.lang === "de" ? "de-DE" : "en-GB";
-      u.rate = 1.1;
+      u.rate = rate;
       speechSynthesis.cancel();
       speechSynthesis.speak(u);
     } catch (e) {}
   }
-  /* calls for the current round: mostly the round's combo, sometimes a variation from the same pool */
-  function callerFor(tm) {
+  /* Announces the round once at its start, slowly and clearly: round number, exercise and (if any) the combo */
+  function callTick(tm) {
+    if (!voiceOn() || tm.phase !== "work" || tm.called === tm.round) return;
     const sess = S.sessions[tm.ds],
       rb = roundBlock(sess),
       it = rb && rb.items[tm.round - 1];
-    if (!it || !it.combo || (it.k !== "shadow" && it.k !== "bag")) return null;
-    const th = THEMES.find((x) => x.id === sess.theme) || null,
-      alts = [0, 1, 2].map(() => combo(it.k, th));
-    return { list: [it.combo, ...alts], every: [7, 5, 4][S.profile.level] || 6 };
+    if (!it) return;
+    tm.called = tm.round;
+    const info = roundInfo(it),
+      de = S.profile.lang === "de",
+      text = `${de ? "Runde" : "Round"} ${tm.round}. ${info.title}.${it.combo ? " " + comboWords(it.combo) + "." : ""}`;
+    // an empty utterance inside the tap unlocks speech on iOS; the announcement follows after the start signal
+    try {
+      speechSynthesis.cancel();
+      speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+    } catch (e) {}
+    setTimeout(() => say(text, 0.88), 450);
   }
-  function callTick(tm, first) {
-    if (!voiceOn() || tm.phase !== "work") return;
-    if (first) tm.call = callerFor(tm);
-    const c = tm.call;
-    if (!c) return;
-    const el = tm.work - tm.left;
-    if (first) c.next = 0;
-    if (el < c.next || tm.left <= 3) return;
-    const pick = c.next === 0 || Math.random() < 0.65 ? c.list[0] : rnd(c.list.slice(1));
-    c.next = el + c.every + Math.max(0, pick.length - 3);
-    c.cur = pick;
-    say(comboWords(pick));
-    const f = document.getElementById("fcall");
-    if (f) f.innerHTML = comboHtml(pick);
+
+  /* ============ Badges (in the spirit of Apple Fitness awards): earned from the data, kept with their date ============ */
+  const ICON_P = {
+    sess: "M6.5 12.5l3.5 3.5 7.5-8.5",
+    rounds: "M6 16h12l-1.6-2.2V10a4.4 4.4 0 0 0-8.8 0v3.8z M10 18.5a2 2 0 0 0 4 0",
+    streak:
+      "M12 3.5c1.2 3.2 4.6 4.6 4.6 8.9a4.6 4.6 0 0 1-9.2 0c0-2.3 1.2-3.6 2.4-4.6 0 1.7 1 2.8 2.2 2.8 0-2.7-1.2-4.8 0-7.1z",
+    club: "M4.5 11.2L12 5.5l7.5 5.7V19h-4.6v-4.8H9.1V19H4.5z",
+    test: "M12 4.2l2.4 5 5.4.6-4 3.7 1.1 5.3L12 16.2l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z",
+    level: "M6.5 14.5l5.5-5.5 5.5 5.5 M6.5 19l5.5-5.5 5.5 5.5",
+    belt: "M3.5 10.5h17v3.2h-17z M10.5 13.7l-2 5.8 M13.5 13.7l2 5.8 M10.5 10.5h3v3.2h-3z",
+    comp: "M8 4.5h8v4.8a4 4 0 0 1-8 0z M8 6.2H5.4a2.8 2.8 0 0 0 2.8 3.6 M16 6.2h2.6a2.8 2.8 0 0 1-2.8 3.6 M12 13.3v3.9 M9 19.5h6",
+    win: "M13.2 3.5L6.5 13h5l-1 7.5 7-10h-5z",
+    podium: "M4 20v-6h5.3v6 M9.3 20V9.5h5.4V20 M14.7 20v-8h5.3v8",
+    theory: "M4.5 5.5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2h-6z M19.5 5.5h-5a2 2 0 0 0-2 2 M19.5 5.5v12h-5a2 2 0 0 0-2 2",
+    variety: "M4.5 7.5h3.8l7.4 9h3.8 M4.5 16.5h3.8l2.4-2.9 M13.3 10.4l2.4-2.9h3.8",
+  };
+  const TIER = [
+    null,
+    { a: "#e3a26a", b: "#8a4f22", ink: "#f2c49a" }, // bronze
+    { a: "#f1f3f6", b: "#8e959f", ink: "#e9edf2" }, // silver
+    { a: "#ffe08a", b: "#b07d1f", ink: "#ffd76a" }, // gold
+    { a: "#ff8a7a", b: "#9e2430", ink: "#ffb1a6" }, // champion (crimson)
+  ];
+  /* id, icon, tier, threshold, stat key, [de name, de text], [en name, en text] */
+  const BADGES = [
+    [
+      "s1",
+      "sess",
+      1,
+      1,
+      "own",
+      ["Erster Schritt", "Deine erste eigene Einheit"],
+      ["First step", "Your first own session"],
+    ],
+    ["s10", "sess", 1, 10, "own", ["Dranbleiber", "10 eigene Einheiten"], ["Sticking with it", "10 own sessions"]],
+    ["s25", "sess", 2, 25, "own", ["Routine", "25 eigene Einheiten"], ["Routine", "25 own sessions"]],
+    ["s50", "sess", 3, 50, "own", ["Ausdauernd", "50 eigene Einheiten"], ["Relentless", "50 own sessions"]],
+    ["s100", "sess", 4, 100, "own", ["Hundert", "100 eigene Einheiten"], ["Century", "100 own sessions"]],
+    [
+      "r100",
+      "rounds",
+      1,
+      100,
+      "rounds",
+      ["100 Runden", "100 Runden im Rundentimer"],
+      ["100 rounds", "100 rounds on the round timer"],
+    ],
+    [
+      "r500",
+      "rounds",
+      3,
+      500,
+      "rounds",
+      ["500 Runden", "500 Runden im Rundentimer"],
+      ["500 rounds", "500 rounds on the round timer"],
+    ],
+    [
+      "r1000",
+      "rounds",
+      4,
+      1000,
+      "rounds",
+      ["Tausend Runden", "1000 Runden im Rundentimer"],
+      ["Thousand rounds", "1000 rounds on the round timer"],
+    ],
+    [
+      "w4",
+      "streak",
+      1,
+      4,
+      "streak",
+      ["4 Wochen am Stück", "4 Wochen hintereinander alles geschafft"],
+      ["4-week streak", "4 weeks in a row, all done"],
+    ],
+    [
+      "w8",
+      "streak",
+      2,
+      8,
+      "streak",
+      ["8 Wochen am Stück", "8 Wochen hintereinander alles geschafft"],
+      ["8-week streak", "8 weeks in a row, all done"],
+    ],
+    [
+      "w12",
+      "streak",
+      3,
+      12,
+      "streak",
+      ["Ein Quartal", "12 Wochen hintereinander alles geschafft"],
+      ["A full quarter", "12 weeks in a row, all done"],
+    ],
+    [
+      "w26",
+      "streak",
+      4,
+      26,
+      "streak",
+      ["Ein halbes Jahr", "26 Wochen hintereinander alles geschafft"],
+      ["Half a year", "26 weeks in a row, all done"],
+    ],
+    [
+      "c10",
+      "club",
+      1,
+      10,
+      "club",
+      ["Vereinsmensch", "10 Vereinstrainings eingetragen"],
+      ["Club regular", "10 club sessions logged"],
+    ],
+    [
+      "c50",
+      "club",
+      3,
+      50,
+      "club",
+      ["Stammgast", "50 Vereinstrainings eingetragen"],
+      ["Club veteran", "50 club sessions logged"],
+    ],
+    [
+      "t1",
+      "test",
+      1,
+      1,
+      "tests",
+      ["Standortbestimmung", "Dein erster Fitnesstest"],
+      ["Baseline", "Your first fitness test"],
+    ],
+    [
+      "l1",
+      "level",
+      2,
+      1,
+      "level",
+      ["Fortgeschritten", "Level Fortgeschritten freigeschaltet"],
+      ["Advanced", "Advanced level unlocked"],
+    ],
+    [
+      "l2",
+      "level",
+      3,
+      2,
+      "level",
+      ["Wettkampfreif", "Level Wettkampf freigeschaltet"],
+      ["Fight ready", "Competition level unlocked"],
+    ],
+    [
+      "b1",
+      "belt",
+      2,
+      1,
+      "belts",
+      ["Neuer Gurt", "Eine Gürtelprüfung bestanden"],
+      ["New belt", "Passed a belt grading"],
+    ],
+    [
+      "th1",
+      "theory",
+      1,
+      1,
+      "theory",
+      ["Theoriefest", "Ein Theorie-Quiz bestanden"],
+      ["Knows the rules", "Passed a theory quiz"],
+    ],
+    [
+      "mix",
+      "variety",
+      2,
+      6,
+      "types",
+      ["Allrounder", "Jede Art von Einheit mindestens einmal"],
+      ["All-rounder", "Every session type at least once"],
+    ],
+    [
+      "k1",
+      "comp",
+      2,
+      1,
+      "comps",
+      ["Ab in den Ring", "Dein erstes Turnier"],
+      ["Into the ring", "Your first tournament"],
+    ],
+    ["k2", "win", 3, 1, "wins", ["Erster Sieg", "Einen Turnierkampf gewonnen"], ["First win", "Won a tournament bout"]],
+    [
+      "k3",
+      "podium",
+      3,
+      1,
+      "podium",
+      ["Auf dem Podest", "Platz 1 bis 3 bei einem Turnier"],
+      ["On the podium", "Top 3 at a tournament"],
+    ],
+    ["k4", "comp", 4, 1, "gold", ["Turniersieger", "Ein Turnier gewonnen"], ["Champion", "Won a tournament"]],
+  ];
+  function badgeStats() {
+    const ownLog = S.log.filter(own),
+      done = (S.profile.comps || []).filter((c) => c.result && c.date <= iso(today()));
+    let rounds = 0;
+    ownLog.forEach((e) => {
+      const rb = roundBlock(S.sessions[e.date]);
+      if (rb) rounds += rb.items.length;
+    });
+    rounds += S.profile.ftRounds || 0;
+    return {
+      own: ownLog.length,
+      rounds,
+      streak: weekStreak(),
+      club: S.log.filter((e) => !own(e)).length,
+      tests: S.tests.length,
+      level: maxLevel(),
+      belts: done.filter((c) => c.kind === "grade" && c.result.passed === "y").length,
+      theory: Object.entries(S.profile.gp || {}).filter(([k, v]) => k.includes(".th.") && v === 2).length,
+      types: new Set(ownLog.map((e) => e.type)).size,
+      comps: done.filter((c) => c.kind !== "grade").length,
+      wins: done.filter((c) => c.kind !== "grade" && +c.result.wins > 0).length,
+      podium: done.filter((c) => ["1", "2", "3"].includes(c.result.place)).length,
+      gold: done.filter((c) => c.result.place === "1").length,
+    };
+  }
+  const bName = (b) => b[S.profile.lang === "de" ? 5 : 6];
+  function medalSvg(b, earned, cls = "") {
+    const [id, icon, tier, n] = b,
+      T = TIER[tier],
+      g = `mg${id}${cls ? "x" : ""}`,
+      big = n >= 10 && ["sess", "rounds", "club", "streak"].includes(icon);
+    return `<svg class="medal ${earned ? "on" : "off"} ${cls}" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${earned ? T.a : "#3a3d44"}"/><stop offset="1" stop-color="${earned ? T.b : "#1f2227"}"/></linearGradient><radialGradient id="${g}i" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="${earned ? "#262a31" : "#1c1f24"}"/><stop offset="1" stop-color="#0d0f12"/></radialGradient></defs>
+      <circle cx="50" cy="50" r="47" fill="url(#${g})"/><circle cx="50" cy="50" r="38.5" fill="url(#${g}i)" stroke="${earned ? T.b : "#15171b"}" stroke-width="1.5"/>
+      ${earned ? `<path d="M18 34 A36 36 0 0 1 60 14" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/>` : ""}
+      <g transform="translate(${big ? 32 : 29} ${big ? 22 : 29}) scale(${big ? 1.5 : 1.75})" fill="none" stroke="${earned ? T.ink : "#4a4e56"}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${ICON_P[icon]}"/></g>
+      ${big ? `<text x="50" y="78" text-anchor="middle" font-size="15" font-weight="800" fill="${earned ? T.ink : "#4a4e56"}" font-family="ui-rounded,-apple-system,system-ui,sans-serif">${n}</text>` : ""}</svg>`;
+  }
+  /* new badges are stored with their date; the very first check (existing data) stores silently */
+  function checkBadges() {
+    if (ui.onb || ui.tour != null) return;
+    const st = badgeStats(),
+      first = !S.profile.badges,
+      have = S.profile.badges || {},
+      fresh = BADGES.filter((b) => !have[b[0]] && st[b[4]] >= b[3]);
+    if (!fresh.length && !first) return;
+    const d = iso(today());
+    fresh.forEach((b) => (have[b[0]] = d));
+    S.profile.badges = have;
+    if (draft) draft.badges = have;
+    store.save();
+    if (first) return fresh.length && toast(t("bdgInit")(fresh.length));
+    ui.bdgQueue = [...(ui.bdgQueue || []), ...fresh.map((b) => b[0])];
+    showBadgeQueue();
+  }
+  function showBadgeQueue() {
+    if (ui.sheet || !ui.bdgQueue || !ui.bdgQueue.length) return;
+    const id = ui.bdgQueue.shift();
+    openSheet({ kind: "badge", id, fresh: true });
+    celebrate();
+  }
+  function badgeSheetHtml(o) {
+    const b = BADGES.find((x) => x[0] === o.id),
+      got = (S.profile.badges || {})[o.id],
+      st = badgeStats(),
+      v = Math.min(st[b[4]], b[3]),
+      [nm, tx] = bName(b);
+    return `<div class="bdgbig">${medalSvg(b, !!got, o.fresh ? "pop" : "")}</div>${o.fresh ? `<div class="bdgnew">${t("bdgNew")}</div>` : ""}<h3 style="text-align:center">${esc(nm)}</h3><p class="sub" style="text-align:center;margin:0">${esc(tx)}</p>
+      ${got ? `<p class="sub" style="text-align:center;margin:0">${t("bdgGot")(fmtDate(got))}</p>` : `<div class="pbar"><span style="width:${Math.round((100 * v) / b[3])}%"></span></div><p class="sub" style="text-align:center;margin:0">${v} / ${b[3]}</p>`}
+      <div class="acts2"><button type="button" class="btn" data-sx="${o.fresh ? "bdgnext" : "close"}">${o.fresh ? t("bdgCont") : t("close")}</button></div>`;
+  }
+  function badgeOrder() {
+    const have = S.profile.badges || {},
+      st = badgeStats();
+    const earned = BADGES.filter((b) => have[b[0]]).sort((a, b) => have[b[0]].localeCompare(have[a[0]])),
+      open = BADGES.filter((b) => !have[b[0]]).sort((a, b) => st[b[4]] / b[3] - st[a[4]] / a[3]);
+    return { earned, open, st };
+  }
+  function badgesHtml() {
+    const { earned, open, st } = badgeOrder(),
+      cell = (b, got) =>
+        `<button type="button" class="bdg" data-bdg="${b[0]}">${medalSvg(b, got)}<b>${esc(bName(b)[0])}</b><small>${got ? fmtDate(S.profile.badges[b[0]]) : `${Math.min(st[b[4]], b[3])}/${b[3]}`}</small></button>`;
+    return `<div><div class="bdghead"><h2>${t("bdgTitle")}</h2><button type="button" class="btn ghost" data-act2="allbdg">${t("bdgAll")} · ${earned.length}/${BADGES.length}</button></div><div class="bdgrow">${[...earned.map((b) => cell(b, true)), ...open.slice(0, 6).map((b) => cell(b, false))].join("")}</div></div>`;
+  }
+  function allBadgesHtml() {
+    const { earned, open, st } = badgeOrder(),
+      cell = (b, got) =>
+        `<button type="button" class="bdg" data-bdg="${b[0]}">${medalSvg(b, got)}<b>${esc(bName(b)[0])}</b><small>${got ? fmtDate(S.profile.badges[b[0]]) : `${Math.min(st[b[4]], b[3])}/${b[3]}`}</small></button>`;
+    return `<h3>${t("bdgTitle")}</h3><div class="sub">${t("bdgCount")(earned.length, BADGES.length)}</div><div class="bdggrid">${[...earned.map((b) => cell(b, true)), ...open.map((b) => cell(b, false))].join("")}</div><div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
+  }
+  /* ============ Free round timer (like the classic boxing timer apps): runs on its own, no plan needed ============ */
+  const FT_PRESETS = [
+    { id: "wako", r: 3, w: 120, b: 60 },
+    { id: "k1", r: 3, w: 180, b: 60 },
+    { id: "spar", r: 5, w: 180, b: 60 },
+    { id: "pads", r: 6, w: 120, b: 45 },
+    { id: "hiit", r: 8, w: 40, b: 20 },
+    { id: "pro", r: 12, w: 180, b: 60 },
+  ];
+  const ftCfg = () => ({ r: 3, w: 120, b: 60, prep: true, warn: true, ...(S.profile.ft || {}) });
+  const fmtS = (s) => `${Math.floor(s / 60)}:${pad(s % 60)}`;
+  function openFt() {
+    ui.ft = { phase: "setup", cfg: ftCfg() };
+    renderFt();
+  }
+  function closeFt() {
+    clearInterval(ui.ftI);
+    releaseWake();
+    ui.ft = null;
+    renderFt();
+  }
+  function renderFt() {
+    const el = document.getElementById("ftimer"),
+      f = ui.ft;
+    if (!f) {
+      el.hidden = true;
+      el.innerHTML = "";
+      return;
+    }
+    el.hidden = false;
+    const c = f.cfg,
+      L = t("ft");
+    if (f.phase === "setup") {
+      const total = c.r * c.w + (c.r - 1) * c.b + (c.prep ? 10 : 0),
+        step = (k, v, lbl) =>
+          `<div class="ftstep"><span>${lbl}</span><div><button type="button" data-fts="${k}:-1" aria-label="−">−</button><b>${v}</b><button type="button" data-fts="${k}:1" aria-label="+">+</button></div></div>`;
+      el.className = "ftimer setup";
+      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div>
+        <div class="ftpre">${FT_PRESETS.map((p) => `<button type="button" data-ftp="${p.id}" aria-pressed="${p.r === c.r && p.w === c.w && p.b === c.b}"><b>${L.pre[p.id]}</b><small>${p.r} × ${fmtS(p.w)} · ${fmtS(p.b)}</small></button>`).join("")}</div>
+        <div class="ftcard">${step("r", c.r, L.rounds)}${step("w", fmtS(c.w), L.work)}${step("b", fmtS(c.b), L.rest)}
+          <button type="button" class="setrow2" data-ftt="prep"><span>${L.prep}</span><span class="tog ${c.prep ? "on" : ""}"></span></button>
+          <button type="button" class="setrow2" data-ftt="warn"><span>${L.warn}</span><span class="tog ${c.warn ? "on" : ""}"></span></button></div>
+        <div class="fttotal">${L.total(Math.round(total / 60))}</div>
+        <button type="button" class="ftgo" data-ftx="start">${PLAY}<span>${L.start}</span></button>`;
+      return;
+    }
+    const len = f.phase === "work" ? c.w : f.phase === "rest" ? c.b : f.phase === "prep" ? 10 : 1,
+      C = 2 * Math.PI * 130,
+      frac = f.phase === "done" ? 1 : 1 - f.left / len;
+    el.className = `ftimer run ${f.phase}${f.paused ? " paused" : ""}${f.phase === "work" && c.warn && f.left <= 10 ? " last" : ""}`;
+    if (f.phase === "done") {
+      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div><div class="ftdone"><b>${L.done}</b><span>${L.doneT(c.r, Math.round((c.r * c.w) / 60))}</span><button type="button" class="btn" data-ftx="again">${L.again}</button><button type="button" class="btn sec" data-ftx="close">${t("close")}</button></div>`;
+      return;
+    }
+    el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div>
+      <div class="ftph">${f.phase === "prep" ? L.ready : f.phase === "rest" ? L.restL : f.round === c.r && c.r > 1 ? L.lastR : L.round(f.round, c.r)}</div>
+      <div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/><circle id="ftarc" cx="140" cy="140" r="130" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - frac)).toFixed(1)}"/></svg><div class="mid"><span class="clk" id="ftclk">${fmtS(f.left)}</span>${f.phase === "rest" && f.round < c.r ? `<span class="sub">${L.next(f.round + 1, c.r)}</span>` : ""}</div></div>
+      <div class="ftdots">${[...Array(c.r)].map((_, i) => `<i class="${i + 1 < f.round || (i + 1 === f.round && f.phase === "rest") ? "d" : i + 1 === f.round && f.phase === "work" ? "c" : ""}"></i>`).join("")}</div>
+      <div class="fctl"><button type="button" class="s" data-ftx="reset" aria-label="${L.reset}">${ICO.prev}</button><button type="button" class="m" data-ftx="pause">${f.paused ? PLAY : ICO.pause}</button><button type="button" class="s" data-ftx="skip" aria-label="${L.skip}">${ICO.next}</button></div>`;
+  }
+  function ftPhase(ph) {
+    const f = ui.ft,
+      c = f.cfg,
+      L = t("ft");
+    f.phase = ph;
+    const len = ph === "work" ? c.w : ph === "rest" ? c.b : 10;
+    f.left = len;
+    f.endAt = Date.now() + len * 1000;
+    if (ph === "work") {
+      beep(988, 0.22, 3);
+      say(f.round === c.r && c.r > 1 ? L.sayLast : L.sayRound(f.round), 0.95);
+    } else if (ph === "rest") {
+      beep(523, 0.6, 1);
+      say(L.restL, 0.95);
+    }
+    renderFt();
+  }
+  function ftStart() {
+    const f = ui.ft;
+    S.profile.ft = { r: f.cfg.r, w: f.cfg.w, b: f.cfg.b, prep: f.cfg.prep, warn: f.cfg.warn };
+    store.save();
+    f.round = 1;
+    f.paused = false;
+    getWake();
+    // speech on iOS needs a first utterance inside the tap
+    try {
+      speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+    } catch (e) {}
+    if (f.cfg.prep) ftPhase("prep");
+    else ftPhase("work");
+    clearInterval(ui.ftI);
+    ui.ftI = setInterval(ftTick, 200);
+  }
+  function ftEnd() {
+    const f = ui.ft,
+      c = f.cfg;
+    if (f.phase === "prep") return ftPhase("work");
+    if (f.phase === "work") {
+      S.profile.ftRounds = (S.profile.ftRounds || 0) + 1;
+      store.save();
+      if (f.round >= c.r) {
+        f.phase = "done";
+        clearInterval(ui.ftI);
+        releaseWake();
+        beep(880, 0.35, 3);
+        say(t("ft").sayDone, 0.95);
+        renderFt();
+        checkBadges();
+        return;
+      }
+      if (c.b > 0) return ftPhase("rest");
+      f.round++;
+      return ftPhase("work");
+    }
+    f.round++;
+    ftPhase("work");
+  }
+  function ftTick() {
+    const f = ui.ft;
+    if (!f || f.paused || !f.endAt || f.phase === "done" || f.phase === "setup") return;
+    const left = Math.max(0, Math.ceil((f.endAt - Date.now()) / 1000));
+    if (left === f.left) return;
+    f.left = left;
+    if (left <= 0) return ftEnd();
+    if (f.phase === "work" && f.cfg.warn && left === 10) beep(660, 0.1, 2);
+    if ((f.phase === "prep" || f.phase === "rest") && left <= 3) beep(740, 0.08, 1);
+    const clk = document.getElementById("ftclk"),
+      arc = document.getElementById("ftarc");
+    if (!clk) return;
+    clk.textContent = fmtS(left);
+    const len = f.phase === "work" ? f.cfg.w : f.phase === "rest" ? f.cfg.b : 10,
+      C = 2 * Math.PI * 130;
+    arc.setAttribute("stroke-dashoffset", (C * (left / len)).toFixed(1));
+    document.getElementById("ftimer").classList.toggle("last", f.phase === "work" && f.cfg.warn && left <= 10);
+  }
+  function ftAction(a) {
+    const f = ui.ft;
+    if (a === "close") return closeFt();
+    if (a === "start") return ftStart();
+    if (a === "again") return (f.phase = "setup"), renderFt();
+    if (a === "pause") {
+      if (f.paused) {
+        f.endAt = Date.now() + f.left * 1000;
+        f.paused = false;
+        getWake();
+      } else {
+        f.paused = true;
+        releaseWake();
+      }
+      return renderFt();
+    }
+    if (a === "skip") return ftEnd();
+    if (a === "reset") {
+      clearInterval(ui.ftI);
+      releaseWake();
+      f.phase = "setup";
+      return renderFt();
+    }
+  }
+  function ftStepper(k, d) {
+    const c = ui.ft.cfg;
+    if (k === "r") c.r = Math.max(1, Math.min(20, c.r + d));
+    if (k === "w") c.w = Math.max(15, Math.min(600, c.w + d * 15));
+    if (k === "b") c.b = Math.max(0, Math.min(300, c.b + d * 15));
+    renderFt();
+  }
+
+  /* ============ My combos: combos from club training, mixed into own sessions ============ */
+  const MYC_GROUPS = {
+    hand: ["jab", "cross", "hook", "hookb", "upper"],
+    kick: ["front", "round", "roundh", "side", "back", "hookk", "axe", "sweep", "lowk", "knee"],
+    def: ["slip", "step", "block"],
+  };
+  /* techniques the discipline allows: low kicks only in kick light and K1, knees only in K1 */
+  const discOk = (x, disc = S.profile.disc) =>
+    x === "lowk" ? disc === "kl" || disc === "k1" : x === "knee" ? disc === "k1" : true;
+  function myCombos(kind) {
+    const p = S.profile,
+      ka = kneeAnk();
+    return (p.myc || [])
+      .filter((m) => m.on && m.c && m.c.length >= 2)
+      .map((m) => m.c)
+      .filter(
+        (c) =>
+          c.every((x) => TECH[x] && discOk(x)) &&
+          !(ka && c.some((x) => RISKY.has(x))) &&
+          !(ageGroup() === "youth" && c.includes("back")) &&
+          !(
+            kind === "bag" &&
+            (p.limits.includes("wrist") || p.limits.includes("shoulder")) &&
+            c.some((x) => !KICKS.has(x) && STRIKE.has(x))
+          ),
+      );
+  }
+  function mycSheet() {
+    const cb = ui.cb,
+      lg = S.profile.lang === "de" ? 0 : 1,
+      L = t("myc");
+    const tile = (x) =>
+      `<button type="button" class="ctile${KICKS.has(x) ? " k" : ""}" data-ctech="${x}">${esc(TECH[x][lg])}</button>`;
+    const o = {
+      kind: "raw",
+      myc: 1,
+      title: cb.id ? L.edit : L.new,
+      html: `<div class="cprev">${cb.c.length ? comboHtml(cb.c) : `<span class="sub">${L.tap}</span>`}</div>
+        <div class="acts2"><button type="button" class="btn sec" data-cact="undo" ${cb.c.length ? "" : "disabled"}>⌫ ${L.undo}</button><button type="button" class="btn sec" data-cact="clear" ${cb.c.length ? "" : "disabled"}>${L.clear}</button></div>
+        ${Object.entries(MYC_GROUPS)
+          .map(
+            ([g, xs]) =>
+              `<div class="lab">${L.groups[g]}</div><div class="ctiles">${xs
+                .filter((x) => discOk(x))
+                .map(tile)
+                .join("")}</div>`,
+          )
+          .join("")}
+        <label class="lab" for="cName">${L.name}</label><input id="cName" type="text" maxlength="40" value="${esc(cb.name || "")}" placeholder="${L.namePh}">
+        <div class="acts2">${cb.id ? `<button type="button" class="btn sec" data-cact="del">${t("del")}</button>` : ""}<button type="button" class="btn" data-cact="save" ${cb.c.length >= 2 ? "" : "disabled"}>${t("save")}</button></div>`,
+    };
+    if (ui.sheet && ui.sheet.myc) {
+      Object.assign(ui.sheet, o);
+      renderSheet();
+    } else openSheet(o);
+  }
+  function mycHtml() {
+    const L = t("myc"),
+      list = S.profile.myc || [];
+    return `<div class="panel"><div class="field"><span class="lab">${L.title}</span><span class="sub">${L.hint}</span>
+      ${list
+        .map(
+          (m) =>
+            `<div class="mycrow"><button type="button" class="mycbody" data-cedit="${m.id}">${m.name ? `<b>${esc(m.name)}</b>` : ""}${comboHtml(m.c)}</button><button type="button" class="tog ${m.on ? "on" : ""}" data-con="${m.id}" aria-label="${L.active}" aria-pressed="${!!m.on}"></button></div>`,
+        )
+        .join("")}
+      <button type="button" class="btn sec" data-cact="new">＋ ${L.new}</button></div></div>`;
   }
 
   /* ============ Training mode (full screen) ============ */
@@ -10945,7 +12610,12 @@ ${setupFields(setup, ty)}
       return { title: x[0], desc: it.m === "p" ? x[1] : x[2] || x[1], label: t("sparMode")[it.m] };
     }
     const r = RT[it.k] || ["", "", "", ""];
-    return { title: r[lg], desc: r[lg + 2] + (it.pace ? " " + t("paceIv") : ""), combo: it.combo };
+    return {
+      title: r[lg],
+      desc: r[lg + 2] + (it.pace ? " " + t("paceIv") : ""),
+      combo: it.combo,
+      label: it.mine ? "★ " + t("myc").lbl : undefined,
+    };
   }
   const ICO = {
     prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
@@ -10974,7 +12644,7 @@ ${setupFields(setup, ty)}
       big = tm.phase !== "work";
     el.style.setProperty("--tc", `var(--c-${sess.type})`);
     el.className = "focus" + (tm.phase === "rest" ? " rest" : "");
-    let h = `<div class="fbar"><button type="button" class="x" data-fx="close" aria-label="×">✕</button><span>${t("types")[sess.type]}</span>${canSpeak() && rb.items.some((i) => i.k === "shadow" || i.k === "bag") ? `<button type="button" class="x vo" data-voice="1" aria-pressed="${voiceOn()}" aria-label="${t("voice")}">${voiceOn() ? "🔊" : "🔈"}</button>` : `<span style="width:40px"></span>`}</div>`;
+    let h = `<div class="fbar"><button type="button" class="x" data-fx="close" aria-label="×">✕</button><span>${t("types")[sess.type]}</span>${canSpeak() ? `<button type="button" class="x vo" data-voice="1" aria-pressed="${voiceOn()}" aria-label="${t("voice")}">${voiceOn() ? "🔊" : "🔈"}</button>` : `<span style="width:40px"></span>`}</div>`;
     if (tm.phase === "done") {
       h += `<div class="fdone"><b>${t("finishedT")}</b><div class="sub">${t("roundOf")(tm.total, tm.total)}</div><button type="button" class="btn" data-fx="finish">${t("finishNow")}</button></div>`;
     } else {
@@ -10982,7 +12652,7 @@ ${setupFields(setup, ty)}
       h += `<div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="farc" class="arc" cx="140" cy="140" r="130" fill="none" stroke="var(--tc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/></svg>
  <div class="mid"><span class="ph" id="fph"></span><span class="clk" id="fclock">${fmt(tm.left)}</span><span class="sub">${t("roundOf")(Math.min(tm.round, tm.total), tm.total)}</span></div></div>`;
       const lbl = rest ? t("nextLbl") : info.label || t("roundOf")(Math.min(tm.round, tm.total), tm.total);
-      h += `<div class="fcur${sk ? (big ? " skb" : " sks") : ""}">${sk && big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}<div class="fct"><small>${esc(lbl)}</small><b>${esc(info.title)}</b><p>${esc(info.desc)}</p>${info.combo ? `<div id="fcall">${comboHtml(tm.phase === "work" && tm.call && tm.call.cur ? tm.call.cur : info.combo)}</div>` : ""}</div>${sk && !big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}</div>`;
+      h += `<div class="fcur${sk ? (big ? " skb" : " sks") : ""}">${sk && big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}<div class="fct"><small>${esc(lbl)}</small><b>${esc(info.title)}</b><p>${esc(info.desc)}</p>${info.combo ? `<div id="fcall">${comboHtml(info.combo)}</div>` : ""}</div>${sk && !big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}</div>`;
       h += `<div class="fnext">${nxt ? `${t(rest ? "afterLbl" : "nextLbl")}: <b>${esc(roundInfo(nxt).title)}</b>` : t("lastRound")}</div>`;
       h += `<div class="fctl"><button type="button" class="s" data-fx="prev" aria-label="←" ${tm.round <= 1 ? "disabled" : ""}>${ICO.prev}</button><button type="button" class="m" data-fx="go" id="fgo"></button><button type="button" class="s" data-fx="next" aria-label="→" ${tm.round >= tm.total ? "disabled" : ""}>${ICO.next}</button></div>`;
     }
@@ -11021,7 +12691,7 @@ ${setupFields(setup, ty)}
       tm.running = true;
       beep(988, 0.25, 1);
       getWake();
-      callTick(tm, true);
+      callTick(tm);
       return;
     }
     tm.running = !tm.running;
@@ -11060,7 +12730,6 @@ ${setupFields(setup, ty)}
     if (!tm || !tm.running) return;
     tm.left--;
     if (tm.left === 10 && tm.phase === "work") beep(660, 0.12, 1);
-    if (tm.phase === "work" && tm.left > 0) callTick(tm, !tm.call);
     if (tm.left <= 0) {
       if (tm.phase === "work") {
         if (tm.round >= tm.total) {
@@ -11150,6 +12819,62 @@ ${setupFields(setup, ty)}
     // ----- bottom sheet
     if (ds.sx) return sheetAction(ds.sx);
     if (ds.exinfo) return openSheet({ kind: "ex", id: +ds.exinfo });
+    // ----- badges, free timer, my combos
+    if (ds.bdg) return openSheet({ kind: "badge", id: ds.bdg });
+    if (ds.act2 === "allbdg") return openSheet({ kind: "badges" });
+    if (ds.ftx) return ds.ftx === "open" ? openFt() : ftAction(ds.ftx);
+    if (ds.fts) {
+      const [k, d] = ds.fts.split(":");
+      return ftStepper(k, +d);
+    }
+    if (ds.ftp) {
+      const p = FT_PRESETS.find((x) => x.id === ds.ftp);
+      Object.assign(ui.ft.cfg, { r: p.r, w: p.w, b: p.b });
+      return renderFt();
+    }
+    if (ds.ftt) {
+      ui.ft.cfg[ds.ftt] = !ui.ft.cfg[ds.ftt];
+      return renderFt();
+    }
+    if (ds.ctech || ds.cact || ds.cedit || ds.con) {
+      const nm = document.getElementById("cName");
+      if (ui.cb && nm) ui.cb.name = nm.value.trim().slice(0, 40);
+      const list = S.profile.myc || [];
+      if (ds.con) {
+        const m = list.find((x) => x.id === ds.con);
+        if (m) m.on = !m.on;
+      } else if (ds.cedit) {
+        const m = list.find((x) => x.id === ds.cedit);
+        ui.cb = { id: m.id, c: m.c.slice(), name: m.name || "" };
+        return mycSheet();
+      } else if (ds.ctech) {
+        if (ui.cb.c.length < 8) ui.cb.c.push(ds.ctech);
+        return mycSheet();
+      } else if (ds.cact === "new") {
+        ui.cb = { id: null, c: [], name: "" };
+        return mycSheet();
+      } else if (ds.cact === "undo" || ds.cact === "clear") {
+        ds.cact === "undo" ? ui.cb.c.pop() : (ui.cb.c = []);
+        return mycSheet();
+      } else if (ds.cact === "save") {
+        const cb = ui.cb,
+          m = { id: cb.id || "m" + Date.now().toString(36), c: cb.c.slice(), name: cb.name, on: true };
+        S.profile.myc = cb.id ? list.map((x) => (x.id === cb.id ? { ...x, ...m, on: x.on } : x)) : [...list, m];
+        closeSheet();
+        toast(t("myc").saved);
+      } else if (ds.cact === "del") {
+        S.profile.myc = list.filter((x) => x.id !== ui.cb.id);
+        closeSheet();
+      }
+      S.profile.myc = S.profile.myc || list;
+      if (draft) draft.myc = JSON.parse(JSON.stringify(S.profile.myc));
+      store.save();
+      const y = window.scrollY;
+      render();
+      window.scrollTo(0, y);
+      return;
+    }
+    if (ds.hardinfo) return openSheet({ kind: "hard", id: ds.hardinfo });
     if (ds.sdinfo) return openSheet({ kind: "sd", id: ds.sdinfo });
     if (ds.th) return openSheet({ kind: "th", id: ds.th, mode: "cards" });
     if (ds.thq || ds.tha) {
@@ -11184,7 +12909,6 @@ ${setupFields(setup, ty)}
       store.save();
       if (S.profile.voice) say(t("voiceTest"));
       else if (canSpeak()) speechSynthesis.cancel();
-      if (ui.timer && ui.timer.phase === "work") callTick(ui.timer, true);
       if (ui.focus) renderFocus();
       else {
         const y = window.scrollY;
