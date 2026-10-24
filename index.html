@@ -3520,6 +3520,26 @@
       display: none;
     }
   }
+  /* dose of an exercise: how much, how long, how often */
+  .ex .tx .dose {
+    display: inline-block;
+    margin: 3px 0 4px;
+    padding: 2px 9px;
+    border-radius: 8px;
+    background: rgba(201, 168, 106, 0.13);
+    color: var(--ice);
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+  .bnote {
+    padding: 8px 16px 10px;
+    font-size: 13px;
+    color: var(--mist);
+    border-bottom: 1px solid var(--line);
+  }
+  .bnote + .ex {
+    border-top: 0;
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -8393,7 +8413,7 @@
     );
   }
 
-  const APP_VER = "23.10.2026 21:47";
+  const APP_VER = "24.10.2026 09:24";
   const ICO_T =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.6M9.5 2.5h5M19 6l1.5-1.5"/></svg>';
   const PLAY =
@@ -8602,7 +8622,7 @@
   function perfRows(sess, key, b) {
     sess.perf = sess.perf || {};
     if (!sess.perf[key]) {
-      const n = parseInt(b.sets) || 3;
+      const n = b.items ? blockSets(b) : parseInt(b.sets) || 3;
       sess.perf[key] = Array.from({ length: n }, () => ({ r: null, kg: null }));
     }
     return sess.perf[key];
@@ -8789,7 +8809,7 @@ ${setupFields(setup, ty)}
   <div class="tb"><button type="button" id="tgo">${tlabel(st)}</button><button type="button" class="fs" data-fx="open">${t("focusOpen")}</button><button type="button" id="treset">${t("reset")}</button></div></div>`;
     }
     sess.blocks.forEach((b, bi) => {
-      h += `<div class="block"><div class="bhead"><b>${t(b.key)}</b><span>${b.min} ${t("min")}${b.sets ? ` · ${esc(b.sets)}` : ""}</span></div>`;
+      h += `<div class="block">${blockHead(b)}`;
       if (b.items.some((it) => it.combo)) h += `<div class="legend">${t("legend")}</div>`;
       b.items.forEach((it, n) => {
         if (it.kind === "round" && it.k === "ex") {
@@ -8818,7 +8838,8 @@ ${setupFields(setup, ty)}
         } else {
           const x = exText(it.id),
             tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
-          h += `<div class="ex"><span class="num">${pad(n + 1)}</span><div class="tx">${exName(it.id, x.name)}<div>${esc(x.desc)}</div>${tr ? setsHtml(sess, bi, n, b, it.id, false) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
+          const dz = doseTxt(it.id, b);
+          h += `<div class="ex"><span class="num">${pad(n + 1)}</span><div class="tx">${exName(it.id, x.name)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${tr ? setsHtml(sess, bi, n, b, it.id, false) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
         }
       });
       h += `</div>`;
@@ -15115,6 +15136,170 @@ ${setupFields(setup, ty)}
         if (full) setTimeout(() => celebrate(innerWidth / 2, innerHeight / 2, 18, 80), 1500);
       }),
     );
+  }
+
+  /* ============ Dose: every exercise says how much – reps, seconds, distance or minutes ============ */
+  /* per-exercise doses by German name: [de, en] */
+  const DOSE_FIX = {
+    // warm-up (shown after the minutes)
+    Gelenkmobilisation: ["je Gelenk 10 Kreise", "10 circles per joint"],
+    "Dynamisches Dehnen": ["je Bewegung 10 Wdh.", "10 reps per movement"],
+    "Bänder-Aktivierung": ["je Übung 15 Wdh.", "15 reps per exercise"],
+    // cool-down
+    "Hüftbeuger dehnen": ["je Seite 45 s", "45 s per side"],
+    "Adduktoren & Spagat": ["60–90 s halten", "hold 60–90 s"],
+    "Oberschenkel hinten": ["je Seite 45 s", "45 s per side"],
+    "Schulter & Brust": ["je Seite 30 s", "30 s per side"],
+    Atmung: ["2 Min.", "2 min"],
+    Auslaufen: ["5 Min. locker", "5 min easy"],
+    // mobility
+    "Hüftkreise im Vierfüßler": ["je Seite 6 Kreise", "6 circles per side"],
+    "90/90 Hüftwechsel": ["10 Wechsel", "10 switches"],
+    "Cossack Squats": ["je Seite 6", "6 per side"],
+    "World's Greatest Stretch": ["je Seite 5", "5 per side"],
+    "Offenes Buch": ["je Seite 8", "8 per side"],
+    "Sprunggelenk an der Wand": ["je Seite 10", "10 per side"],
+    "Band-Dislocates": ["10 Wdh.", "10 reps"],
+    Froschdehnung: ["60–90 s halten", "hold 60–90 s"],
+    Taube: ["je Seite 60–90 s", "60–90 s per side"],
+    "Katze-Kuh": ["10 Wdh.", "10 reps"],
+    "Zeitlupen-Kicks": ["je Seite 5", "5 per side"],
+    "Tiefe Hocke halten": ["60–90 s halten", "hold 60–90 s"],
+    Nackenmobilisation: ["je Richtung 5", "5 each direction"],
+    "Beinpendel kontrolliert": ["je Seite 10", "10 per side"],
+    "Kick-Halten": ["je Seite 5 × 3–5 s", "5 × 3–5 s per side"],
+    "Aktive Beinheber": ["je Seite 8", "8 per side"],
+    // strength specials
+    Klimmzüge: ["so viele saubere wie möglich", "as many clean reps as possible"],
+    "Negative Klimmzüge": ["3–5 Wdh.", "3–5 reps"],
+    Nackenstärkung: ["je Richtung 10 s", "10 s each direction"],
+    "Einbeinstand mit Kick-Hold": ["je Seite 2 × 10 s", "2 × 10 s per side"],
+    // conditioning with their own pattern (one block per circuit lap)
+    "Seil-Intervalle": ["2 Min. im Wechsel", "2 min alternating"],
+    Sprints: ["4 Läufe à 20 m", "4 runs of 20 m"],
+    Bergsprints: ["4 Sprints", "4 sprints"],
+    "Schatten-Sprints": ["3 × (20 s Vollgas / 10 s locker)", "3 × (20 s all-out / 10 s easy)"],
+    "Sack-Sprints": ["4 × (15 s / 15 s Pause)", "4 × (15 s / 15 s rest)"],
+    "Kick-Intervalle": ["3 × (20 s / 10 s Pause)", "3 × (20 s / 10 s rest)"],
+    Steigerungsläufe: ["2 × 80 m", "2 × 80 m"],
+    "Rudergerät-Intervalle": ["2 Min. im Wechsel", "2 min alternating"],
+    "Laufband-Intervalle": ["2 Min. im Wechsel", "2 min alternating"],
+    "Rad-Sprints": ["2 × (20 s / 40 s locker)", "2 × (20 s / 40 s easy)"],
+    "Speed-Runden": ["4 × (10 s / 20 s locker)", "4 × (10 s / 20 s easy)"],
+    "Zügiges Marschieren mit Armarbeit": ["3 Min.", "3 min"],
+    "Kettlebell-Swings": ["15 Wdh.", "15 reps"],
+    "Skater-Sprünge": ["je Seite 10", "10 per side"],
+  };
+  /* minutes one circuit lap of these takes (everything else ≈ 1 min) */
+  const DOSE_MIN = {
+    "Seil-Intervalle": 2,
+    Sprints: 1.5,
+    Bergsprints: 2,
+    "Schatten-Sprints": 1.5,
+    "Sack-Sprints": 2,
+    "Kick-Intervalle": 1.5,
+    Steigerungsläufe: 1.5,
+    "Rudergerät-Intervalle": 2,
+    "Laufband-Intervalle": 2,
+    "Rad-Sprints": 2,
+    "Speed-Runden": 2,
+    "Zügiges Marschieren mit Armarbeit": 3,
+  };
+  const DOSE_SIDE = new Set([
+    "Ausfallschritte",
+    "Bulgarian Split Squats",
+    "Step-ups",
+    "Wadenheben einbeinig",
+    "Woodchopper am Kabelzug",
+    "Pallof Press",
+    "Copenhagen Plank",
+    "Russian Twists",
+    "Seitliche Sprünge",
+  ]);
+  /* a circuit: "3×" without reps – all exercises one after another, then a lap break */
+  const isCirc = (b) => /^\d+\s*×$/.test((b.sets || "").trim());
+  const circLap = (b) =>
+    b.items.reduce((a, it) => {
+      const e = EX[it.id];
+      return a + (!e ? 1 : DOSE_MIN[e.de] || (DOSE_SIDE.has(e.de) ? 1.5 : 1));
+    }, 0) + 1.5;
+  /* laps that fill the block's minutes (2–6) */
+  const circN = (b) => Math.max(2, Math.min(6, Math.round(b.min / circLap(b))));
+  const blockSets = (b) => (isCirc(b) ? circN(b) : parseInt(b.sets) || 3);
+  function doseTxt(id, b) {
+    const e = EX[id];
+    if (!e) return "";
+    const de = S.profile.lang === "de",
+      L = S.profile.level,
+      fix = DOSE_FIX[e.de] ? DOSE_FIX[e.de][de ? 0 : 1] : "",
+      side = DOSE_SIDE.has(e.de) ? (de ? " je Seite" : " per side") : "",
+      reps = de ? " Wdh." : " reps",
+      circ = isCirc(b),
+      m = (b.sets || "").match(/^(\d+)×\s*(\d+(?:[–-]\d+)?)?/),
+      n = m ? +m[1] : 3;
+    if (b.key === "warm") {
+      const mins = Math.max(2, Math.round(b.min / Math.max(1, b.items.length)));
+      return `${mins} ${de ? "Min." : "min"}${fix ? " · " + fix : ""}`;
+    }
+    if (b.key === "mob") {
+      const mins = Math.max(2, Math.round(b.min / Math.max(1, b.items.length)));
+      return `${fix || (de ? "60–90 s halten" : "hold 60–90 s")} · ${de ? "insgesamt ca." : "about"} ${mins} ${de ? "Min." : "min in total"}`;
+    }
+    if (b.key === "cool" || e.cat === "cool" || e.cat === "mob") return fix || (de ? "45–60 s halten" : "hold 45–60 s");
+    if (e.cat === "cond") {
+      if (fix) return fix;
+      if (e.de === "Burpees") return ["6", "10", "15"][L] + reps;
+      const W = [30, 40, 45][L],
+        R = [30, 20, 15][L];
+      if (e.de === "Bear Crawl")
+        return de ? `${W} s (ca. 10 m hin und zurück), ${R} s Pause` : `${W} s (about 10 m out and back), ${R} s rest`;
+      return de ? `${W} s Belastung, ${R} s Pause` : `${W} s work, ${R} s rest`;
+    }
+    // strength, core and power
+    if (e.cat === "pow") {
+      const one = (de ? "5 Wdh." : "5 reps") + side;
+      if (circ) return one;
+      if (/^Kontrast|^Contrast/.test(b.sets || ""))
+        return de ? `3 × 5 Wdh.${side} direkt nach dem Kraftsatz` : `3 × 5 reps${side} right after the strength set`;
+      return `${n} × ${one} · ${de ? "1–2 Min. Pause" : "1–2 min rest"}`;
+    }
+    let one;
+    if (fix) one = fix;
+    else if (TIMED.has(id)) {
+      const h = [
+        [20, 30],
+        [30, 45],
+        [45, 60],
+      ][L] || [30, 45];
+      one = `${h[0]}–${h[1]} s${side} ${de ? "halten" : "hold"}`;
+    } else {
+      const r = m && m[2] ? m[2] : hasKg(id) ? "8–12" : ["8–10", "10–12", "12–15"][L];
+      one = r + reps + side;
+    }
+    return circ ? one : `${n} × ${one}`;
+  }
+  function blockHead(b) {
+    const de = S.profile.lang === "de";
+    let info = b.sets || "";
+    if (b.key === "mob") info = "";
+    else if (isCirc(b)) info = de ? `${circN(b)} Durchgänge` : `${circN(b)} laps`;
+    if (b.rounds) {
+      const w = b.w || (b.items.some((i) => i.k !== "ex") ? 180 : 120),
+        r = b.b || 60;
+      info = `${b.items.length} × ${fmt(w)} / ${fmt(r)} ${de ? "Pause" : "rest"}`;
+    }
+    const straight = !b.rounds && !isCirc(b) && (b.key === "str" || b.key === "pow") && /^\d+×/.test(b.sets || ""),
+      note =
+        isCirc(b) && !b.rounds
+          ? de
+            ? "Zirkel: alle Übungen nacheinander, dann 1–2 Min. Pause. Das ist ein Durchgang."
+            : "Circuit: all exercises one after another, then 1–2 min rest. That is one lap."
+          : straight
+            ? de
+              ? "Erst alle Sätze einer Übung, dazwischen 60–90 s Pause – dann die nächste Übung."
+              : "All sets of one exercise first, 60–90 s rest in between – then the next exercise."
+            : "";
+    return `<div class="bhead"><b>${t(b.key)}</b><span>${b.min} ${t("min")}${info ? ` · ${esc(info)}` : ""}</span></div>${note ? `<div class="bnote">${note}</div>` : ""}`;
   }
 
   /* ============ Training mode (full screen) ============ */
