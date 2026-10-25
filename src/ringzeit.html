@@ -3694,6 +3694,37 @@
   .blks .seg {
     margin: 0;
   }
+  /* profile overview */
+  .plist {
+    padding: 2px 16px;
+  }
+  .plist .grow:first-child {
+    border-top: 0;
+  }
+  .grow .gtx {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .grow .gtx small {
+    color: var(--mist);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pback {
+    align-self: flex-start;
+    margin: -8px 0 -4px;
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: var(--ice);
+    font: inherit;
+    font-weight: 600;
+    font-size: 16px;
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -3942,6 +3973,19 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      psec: {
+        back: "Profil",
+        train: ["Training", "Disziplin, Level, Tage, Verein, Einschränkungen"],
+        goals: ["Ziele", "Turniere, Gürtelprüfungen, Schwerpunkt"],
+        life: ["Alltag & Pausen", "Woche, Wenig-Zeit, Arbeit, Pausen, K.o."],
+        guide: ["Ratgeber", "Bandagieren, Materialpflege, Erste Hilfe"],
+        app: ["App & Daten", "Sicherung, Meine Kombis, Design, Tour"],
+        days: (n) => `${n} ${n === 1 ? "Tag" : "Tage"}/Woche`,
+        noGoal: "Noch kein Ziel eingetragen",
+        nextComp: (d) => `Turnier am ${d}`,
+        nextGrade: (d) => `Prüfung am ${d}`,
+        paused: "Pause läuft",
+      },
       life: {
         title: "Alltag",
         hint: "Job, Schule, Studium und Familie kosten auch Kraft. Alles hier ist freiwillig.",
@@ -4463,7 +4507,7 @@
         ],
         life: [
           "Alltag & Ratgeber",
-          "Stressige Woche, wenig Zeit oder ein körperlicher Job? Hier passt du Ringzeit an deinen Alltag an. Darunter findest du Bandagieren, Materialpflege und Erste Hilfe.",
+          "Das Profil ist in fünf Bereiche gegliedert. Unter „Alltag & Pausen“ passt du Ringzeit an stressige Wochen, wenig Zeit oder einen körperlichen Job an. Unter „Ratgeber“ findest du Bandagieren, Materialpflege und Erste Hilfe.",
         ],
         end: [
           "Bereit",
@@ -4888,6 +4932,19 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      psec: {
+        back: "Profile",
+        train: ["Training", "Discipline, level, days, club, limitations"],
+        goals: ["Goals", "Tournaments, belt gradings, focus"],
+        life: ["Everyday life & breaks", "Week, short on time, work, breaks, KO"],
+        guide: ["Guide", "Hand wraps, gear care, first aid"],
+        app: ["App & data", "Backup, my combos, design, tour"],
+        days: (n) => `${n} ${n === 1 ? "day" : "days"}/week`,
+        noGoal: "No goal set yet",
+        nextComp: (d) => `Tournament on ${d}`,
+        nextGrade: (d) => `Grading on ${d}`,
+        paused: "Break running",
+      },
       life: {
         title: "Everyday life",
         hint: "Work, school, studies and family take energy too. Everything here is optional.",
@@ -5397,7 +5454,7 @@
         ],
         life: [
           "Everyday life & guide",
-          "Stressful week, short on time or a physical job? Adapt Ringzeit to your everyday life here. Below you'll find hand wrapping, gear care and first aid.",
+          "Your profile has five sections. Under “Everyday life & breaks” you adapt Ringzeit to stressful weeks, little time or a physical job. Under “Guide” you'll find hand wrapping, gear care and first aid.",
         ],
         end: ["Ready", "That's it. You can find the tour any time in the profile under “App tour”. Enjoy training!"],
       },
@@ -9610,16 +9667,22 @@
     let h = header(t("todayTitle"));
     h += installHtml();
     h += todayCard(nd, nty, pose);
+    // prompts that need an answer: at most two at once, by importance; the rest follow once one is done
+    const asks = [];
     {
       const hj = hijri(today()),
         F = t("fast");
       if (hj && hj.m === 9 && !(S.profile.fast && S.profile.fast.y === hj.y))
-        h += `<div class="blks" style="--bc:#E0A63A"><div class="bsrow"><span class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></span><div><b>${F.ask}</b><span class="sub">${F.askS}</span></div></div><div class="acts2"><button type="button" class="btn" data-fast="yes">${F.yes}</button><button type="button" class="btn sec" data-fast="no">${F.no}</button></div></div>`;
+        asks.push(
+          `<div class="blks" style="--bc:#E0A63A"><div class="bsrow"><span class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg></span><div><b>${F.ask}</b><span class="sub">${F.askS}</span></div></div><div class="acts2"><button type="button" class="btn" data-fast="yes">${F.yes}</button><button type="button" class="btn sec" data-fast="no">${F.no}</button></div></div>`,
+        );
     }
-    h += blockHtml();
-    h += packCardHtml();
+    const bh = blockHtml(),
+      blockAsk = bh.includes('data-blk="later');
+    asks.push(packCardHtml(), blockAsk ? bh : "", weekCheckHtml());
+    if (!blockAsk) h += bh;
+    h += asks.filter(Boolean).slice(0, 2).join("");
     h += starterHtml();
-    h += weekCheckHtml();
     h += promptsHtml();
     h += pulseHtml();
     if (S.profile.example) h += `<div class="note">${t("example")}</div>`;
@@ -10239,20 +10302,27 @@ ${setupFields(setup, ty)}
     if (!draft) draft = JSON.parse(JSON.stringify(S.profile));
     const p = draft,
       ml = Math.max(maxLevel(), S.profile.level);
-    let h = header(t("profTitle"));
-    h += `<div class="panel"><div class="field"><span class="lab">${t("level")}</span><div class="seg">${[0, 1, 2].map((k) => `<button type="button" data-p="level" data-v="${k}" aria-pressed="${p.level === k}" ${k > ml ? "disabled" : ""}>${t("levels")[k]}</button>`).join("")}</div>${ml < 2 ? `<span class="sub">${t("levelLock")}</span>` : ""}</div>
+    const sec = ui.profSec,
+      PS = t("psec");
+    if (!sec) return profOverview(p);
+    let h = header(PS[sec][0]) + `<button type="button" class="pback" data-psec="">‹ ${PS.back}</button>`;
+    let train = "",
+      goals = "",
+      life = "",
+      app = "";
+    train += `<div class="panel"><div class="field"><span class="lab">${t("level")}</span><div class="seg">${[0, 1, 2].map((k) => `<button type="button" data-p="level" data-v="${k}" aria-pressed="${p.level === k}" ${k > ml ? "disabled" : ""}>${t("levels")[k]}</button>`).join("")}</div>${ml < 2 ? `<span class="sub">${t("levelLock")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("discipline")}</span><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => `<button type="button" data-p="disc" data-v="${k}" aria-pressed="${p.disc === k}" ${p.level === 0 && (k === "fc" || k === "k1") ? "disabled" : ""}>${t("disc")[k]}</button>`).join("")}</div>${p.level === 0 ? `<span class="sub">${t("discLock")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("focus")}</span><div class="seg">${["box", "bal", "kick"].map((k) => `<button type="button" data-p="focus" data-v="${k}" aria-pressed="${(p.level === 0 ? "bal" : p.focus) === k}" ${p.level === 0 && k !== "bal" ? "disabled" : ""}>${t("focusOpt")[k]}</button>`).join("")}</div>${p.level === 0 ? `<span class="sub">${t("focusLock")}</span>` : ""}</div>
  <div class="field"><label class="lab" for="pBirth">${t("birth")}</label><input id="pBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${p.birthYear || ""}"><span class="sub">${t("birthHint")}${ageAt(today(), p) != null ? ` · ${ageAt(today(), p)} · ${t("ages")[ageGroup(p)]}` : ""}</span></div></div>`;
     const cap = 120,
       mv = Math.min(p.minutes, cap);
-    h += `<div class="panel"><div class="field"><span class="lab">${t("days")} · ${p.days.length}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip" data-day="${i}" aria-pressed="${p.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div></div>
+    train += `<div class="panel"><div class="field"><span class="lab">${t("days")} · ${p.days.length}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip" data-day="${i}" aria-pressed="${p.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div></div>
  <div class="field"><label class="lab" for="pMin">${t("minutes")}: <span id="pMinV">${mv}</span></label><input id="pMin" type="range" min="30" max="${cap}" step="15" value="${mv}"><span class="sub">${t("minCap")}</span></div>
  </div>`;
     const cl = p.club || { days: [], minutes: 90 },
       overlap = cl.days.some((d) => p.days.includes(d));
-    h += `<div class="panel"><div class="field"><span class="lab">${t("clubDays")}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip" data-cday="${i}" aria-pressed="${cl.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><span class="sub">${t("clubDaysHint")}</span></div>${cl.days.length ? `<div class="field"><span class="lab">${t("clubMin")}</span><div class="seg">${[60, 75, 90, 120].map((m) => `<button type="button" data-cmin="${m}" aria-pressed="${cl.minutes === m}">${m} ${t("min")}</button>`).join("")}</div>${overlap ? `<span class="sub">${t("clubOverlap")}</span>` : ""}</div>` : ""}</div>`;
-    h += `<div class="panel"><div class="field"><span class="lab">${t("comps")}</span>${(p.comps || []).length ? "" : `<span class="sub">${t("compNone")}</span>`}</div>${(
+    train += `<div class="panel"><div class="field"><span class="lab">${t("clubDays")}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip" data-cday="${i}" aria-pressed="${cl.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><span class="sub">${t("clubDaysHint")}</span></div>${cl.days.length ? `<div class="field"><span class="lab">${t("clubMin")}</span><div class="seg">${[60, 75, 90, 120].map((m) => `<button type="button" data-cmin="${m}" aria-pressed="${cl.minutes === m}">${m} ${t("min")}</button>`).join("")}</div>${overlap ? `<span class="sub">${t("clubOverlap")}</span>` : ""}</div>` : ""}</div>`;
+    goals += `<div class="panel"><div class="field"><span class="lab">${t("comps")}</span>${(p.comps || []).length ? "" : `<span class="sub">${t("compNone")}</span>`}</div>${(
       p.comps || []
     )
       .slice()
@@ -10271,7 +10341,7 @@ ${setupFields(setup, ty)}
       .join(
         "",
       )}<div class="field"><div class="seg">${["comp", "grade"].map((k) => `<button type="button" data-ckind="${k}" aria-pressed="${(ui.ckind || "comp") === k}">${t("compKind")[k]}</button>`).join("")}</div><div class="inline"><input id="pCompNew" type="date" min="${iso(today())}"><button type="button" class="btn sec" id="pCompAdd">${t("compAdd")}</button></div><span class="sub">${t("compHint")}</span></div></div>`;
-    h += `<div class="panel"><div class="field"><span class="lab">${t("limits")}</span><div class="chips">${Object.keys(
+    train += `<div class="panel"><div class="field"><span class="lab">${t("limits")}</span><div class="chips">${Object.keys(
       AV,
     )
       .map(
@@ -10279,11 +10349,13 @@ ${setupFields(setup, ty)}
           `<button type="button" class="chip" data-lim="${k}" aria-pressed="${p.limits.includes(k)}">${t("lim")[k]}</button>`,
       )
       .join("")}</div><span class="sub">${t("limitsHint")}</span></div></div>`;
-    h += `<p class="sub" style="text-align:center;margin:-4px 0 0">${p.days.length ? t("autoSave") : t("needDay")}</p>`;
+    const note = `<p class="sub" style="text-align:center;margin:-4px 0 0">${p.days.length ? t("autoSave") : t("needDay")}</p>`;
+    train += note;
+    goals += note;
     // breaks and KO act on the stored data directly (they are not part of the plan settings above)
     const pz = pausedOn(iso(today())),
       koUntil = S.ko ? addDays(parse(S.ko), 27) : null;
-    h += `<div class="panel"><div class="field"><span class="lab">${t("pauseSec")}</span>${pz ? `<span class="sub">${esc(t("pauseNow")(t("pauseWhy")[pz.why], fmtDate(pz.from)))}</span><button type="button" class="btn sec" data-pend="${pz.id}">${t("pauseEnd")}</button>` : `<div class="seg">${["ill", "inj", "vac"].map((k) => `<button type="button" data-pnew="${k}">${t("pauseWhy")[k]}</button>`).join("")}</div><span class="sub">${t("pauseHint")}</span>`}</div>${(
+    life += `<div class="panel"><div class="field"><span class="lab">${t("pauseSec")}</span>${pz ? `<span class="sub">${esc(t("pauseNow")(t("pauseWhy")[pz.why], fmtDate(pz.from)))}</span><button type="button" class="btn sec" data-pend="${pz.id}">${t("pauseEnd")}</button>` : `<div class="seg">${["ill", "inj", "vac"].map((k) => `<button type="button" data-pnew="${k}">${t("pauseWhy")[k]}</button>`).join("")}</div><span class="sub">${t("pauseHint")}</span>`}</div>${(
       S.pauses || []
     )
       .slice(-3)
@@ -10295,21 +10367,61 @@ ${setupFields(setup, ty)}
       .join(
         "",
       )}<div class="field"><span class="lab">${t("ko")}</span>${S.ko ? `<span class="sub">${esc(koLock(iso(today())) ? t("koActive")(fmtDate(iso(koUntil)), daysBetween(today(), koUntil) + 1) : t("koPast")(fmtDate(S.ko)))}</span><button type="button" class="btn ghost" data-kodel="1" style="align-self:flex-start">${t("del")}</button>` : `<span class="sub">${t("koHint")}</span><button type="button" class="btn sec" data-konew="1">${t("koAdd")}</button>`}</div></div>`;
-    h += blockProfHtml();
+    goals += blockProfHtml();
     {
       const hj = hijri(today()),
         F = t("fast");
       if (hj && hj.m === 9) {
         const on = !!(S.profile.fast && S.profile.fast.y === hj.y && S.profile.fast.on);
-        h += `<div class="panel"><div class="field"><span class="lab">${F.lbl}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-fast="${i ? "off" : "on"}" aria-pressed="${on === !i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${F.hint}</span></div></div>`;
+        life += `<div class="panel"><div class="field"><span class="lab">${F.lbl}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-fast="${i ? "off" : "on"}" aria-pressed="${on === !i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${F.hint}</span></div></div>`;
       }
     }
-    h += lifePanelHtml();
-    h += guidePanelHtml();
-    h += `<div class="panel"><div class="field"><span class="lab">${t("seasonLbl")}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-season="${i ? "off" : "on"}" aria-pressed="${!!S.profile.seasonOff === !!i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${t("seasonHint")}</span></div></div>`;
-    h += mycHtml();
-    h += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div></div><p class="foot" style="text-align:center">Ringzeit · Version ${APP_VER}</p>`;
-    h += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
+    life = lifePanelHtml() + life;
+    app += `<div class="panel"><div class="field"><span class="lab">${t("seasonLbl")}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-season="${i ? "off" : "on"}" aria-pressed="${!!S.profile.seasonOff === !!i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${t("seasonHint")}</span></div></div>`;
+    app = mycHtml() + app;
+    app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div></div>`;
+    app += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
+    h += { train, goals, life, guide: guidePanelHtml(), app }[sec] || "";
+    return h;
+  }
+  /* Profile overview: five sections like the iPhone settings, each with a one-line summary */
+  const PSEC_ICO = {
+    train: '<path d="M6.5 7.5v9M3.5 10v4M17.5 7.5v9M20.5 10v4M6.5 12h11"/>',
+    goals:
+      '<path d="M8 4.5h8v4.8a4 4 0 0 1-8 0z"/><path d="M8 6.2H5.4a2.8 2.8 0 0 0 2.8 3.6M16 6.2h2.6a2.8 2.8 0 0 1-2.8 3.6M12 13.3v3.9M9 19.5h6"/>',
+    life: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+    guide: '<rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/>',
+    app: '<circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v2.3M12 18.2v2.3M3.5 12h2.3M18.2 12h2.3M6 6l1.6 1.6M16.4 16.4L18 18M6 18l1.6-1.6M16.4 7.6L18 6"/>',
+  };
+  function profOverview(p) {
+    const PS = t("psec"),
+      nc = (p.comps || []).filter((c) => c.date >= iso(today())).sort((a, b) => a.date.localeCompare(b.date))[0],
+      bs = blockState(),
+      L = t("life"),
+      sum = {
+        train: `${t("disc")[p.disc]} · ${t("levels")[p.level]} · ${PS.days(p.days.length)}`,
+        goals:
+          [
+            nc ? (nc.kind === "grade" ? PS.nextGrade : PS.nextComp)(fmtDate(nc.date)) : "",
+            bs ? `${t("blk").names[bs.k]}${bs.wk ? " · " + t("blk").wkN(bs.wk) : ""}` : "",
+          ]
+            .filter(Boolean)
+            .join(" · ") || PS.noGoal,
+        life: [
+          pausedOn(iso(today())) ? PS.paused : "",
+          `${L.weekLbl}: ${L.moods[weekMood()]}`,
+          lowTime() ? L.lowLbl : "",
+        ]
+          .filter(Boolean)
+          .join(" · "),
+        guide: PS.guide[1],
+        app: PS.app[1],
+      };
+    let h = header(t("profTitle")) + `<div class="panel plist">`;
+    ["train", "goals", "life", "guide", "app"].forEach((k) => {
+      h += `<button type="button" class="grow" data-psec="${k}"><span class="gico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${PSEC_ICO[k]}</svg></span><span class="gtx"><b>${PS[k][0]}</b><small>${esc(sum[k])}</small></span><span class="chev">›</span></button>`;
+    });
+    h += `</div><p class="sub" style="text-align:center">${t("autoSave")}</p><p class="foot" style="text-align:center">Ringzeit · Version ${APP_VER}</p>`;
     return h;
   }
   const ICONS = {
@@ -10763,10 +10875,10 @@ ${setupFields(setup, ty)}
     { k: "ftimer", tab: "week", sel: "#tabs .tabft" },
     { k: "test", tab: "test", sel: "#tabs [data-tab=test]" },
     { k: "log", tab: "log", sel: "#tabs [data-tab=log]" },
-    { k: "club", tab: "profile", sel: "[data-cday]", up: ".field" },
-    { k: "comp", tab: "profile", sel: "#pCompNew", up: ".field" },
-    { k: "pause", tab: "profile", sel: "[data-pnew]", up: ".field" },
-    { k: "life", tab: "profile", sel: "[data-low]", up: ".panel" },
+    { k: "club", tab: "profile", sec: "train", sel: "[data-cday]", up: ".field" },
+    { k: "comp", tab: "profile", sec: "goals", sel: "#pCompNew", up: ".field" },
+    { k: "pause", tab: "profile", sec: "life", sel: "[data-pnew]", up: ".field" },
+    { k: "life", tab: "profile", sel: "[data-psec=life]" },
     { k: "end" },
   ];
   function startTour() {
@@ -10789,8 +10901,9 @@ ${setupFields(setup, ty)}
       tx = t("tour")[st.k],
       el = document.getElementById("tour");
     ui.focus = false;
-    if (st.tab && ui.tab !== st.tab) {
+    if (st.tab && (ui.tab !== st.tab || (st.tab === "profile" && (ui.profSec || null) !== (st.sec || null)))) {
       ui.tab = st.tab;
+      if (st.tab === "profile") ui.profSec = st.sec || null;
       if (st.tab === "session") ui.sel = nextTrainingDate();
       render();
     }
@@ -15750,12 +15863,18 @@ ${setupFields(setup, ty)}
   function starterSteps() {
     const p = S.profile;
     return [
-      { k: "profile", done: !!p.birthYear && p.days.length > 0, tab: "profile", sel: "#pBirth" },
-      { k: "club", done: !!(p.club && p.club.days && p.club.days.length), tab: "profile", sel: "[data-cday]" },
+      { k: "profile", done: !!p.birthYear && p.days.length > 0, tab: "profile", sec: "train", sel: "#pBirth" },
+      {
+        k: "club",
+        done: !!(p.club && p.club.days && p.club.days.length),
+        tab: "profile",
+        sec: "train",
+        sel: "[data-cday]",
+      },
       { k: "session", done: S.log.some(own), tab: "session" },
       { k: "timer", done: (p.ftRounds || 0) > 0, act: "timer" },
       { k: "test", done: S.tests.length > 0, tab: "test", view: "fit" },
-      { k: "combo", done: (p.myc || []).length > 0, tab: "profile", sel: "[data-cact=new]" },
+      { k: "combo", done: (p.myc || []).length > 0, tab: "profile", sec: "app", sel: "[data-cact=new]" },
     ];
   }
   function starterHtml() {
@@ -15779,6 +15898,7 @@ ${setupFields(setup, ty)}
     if (x.act === "timer") return openFt();
     if (x.tab === "session") ui.sel = nextTrainingDate();
     if (x.view) ui.testView = x.view;
+    if (x.tab === "profile") ui.profSec = x.sec || null;
     ui.tab = x.tab;
     if (x.tab !== "profile") draft = null;
     render(true);
@@ -17228,8 +17348,16 @@ ${setupFields(setup, ty)}
       window.scrollTo(0, y);
       return;
     }
+    if (ds.psec != null) {
+      ui.profSec = ds.psec || null;
+      render(true);
+      window.scrollTo(0, 0);
+      return;
+    }
     if (ds.tab) {
       if (ui.testOpen && ds.tab !== "test") ui.testOpen = false;
+      // the profile tab always opens on its overview
+      if (ds.tab === "profile") ui.profSec = null;
       ui.tab = ds.tab;
       if (ds.tab !== "profile") draft = null;
       render(true);
