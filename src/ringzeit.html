@@ -6244,6 +6244,10 @@
     back: ["Backkick gedreht", "Spinning back kick"],
     hookk: ["Hook-Kick", "Hook kick"],
     axe: ["Axe-Kick", "Axe kick"],
+    brazil: ["Brazilian Kick", "Brazilian kick"],
+    shook: ["Spinning Hook Kick", "Spinning hook kick"],
+    tornado: ["Tornado Kick", "Tornado kick"],
+    jknee: ["Gesprungenes Knie", "Flying knee"],
     sweep: ["Fußfeger", "Foot sweep"],
     lowk: ["Low Kick Oberschenkel", "Low kick thigh"],
     knee: ["Knie", "Knee"],
@@ -6251,9 +6255,26 @@
     step: ["Seitschritt", "Side step"],
     block: ["Block", "Block"],
   };
-  const KICKS = new Set(["front", "round", "roundh", "side", "back", "hookk", "axe", "sweep", "lowk", "knee"]);
+  const KICKS = new Set([
+    "front",
+    "round",
+    "roundh",
+    "side",
+    "back",
+    "hookk",
+    "axe",
+    "brazil",
+    "shook",
+    "tornado",
+    "sweep",
+    "lowk",
+    "knee",
+    "jknee",
+  ]);
   const STRIKE = new Set(["jab", "cross", "hook", "hookb", "upper", ...KICKS]);
-  const RISKY = new Set(["back", "hookk", "sweep", "lowk", "knee"]);
+  const RISKY = new Set(["back", "hookk", "brazil", "shook", "tornado", "sweep", "lowk", "knee", "jknee"]);
+  /* demanding spinning and jumping techniques – not in kids mode */
+  const ADV = new Set(["brazil", "shook", "tornado", "jknee"]);
   const COMBOS = [
     [
       ["jab", "cross"],
@@ -6275,6 +6296,10 @@
       ["round", "cross", "hook"],
       ["jab", "upper", "hook", "side"],
       ["block", "cross", "hook", "round"],
+      ["jab", "cross", "brazil"],
+      ["round", "cross", "brazil"],
+      ["jab", "cross", "shook"],
+      ["jab", "axe", "cross"],
     ],
     [
       ["jab", "cross", "hook", "roundh", "cross"],
@@ -6285,6 +6310,10 @@
       ["round", "roundh", "cross"],
       ["jab", "cross", "back"],
       ["slip", "hook", "upper", "cross", "round"],
+      ["jab", "cross", "tornado"],
+      ["round", "tornado"],
+      ["jab", "cross", "hook", "shook"],
+      ["brazil", "cross", "hook", "roundh"],
     ],
   ];
   const EXTRA = {
@@ -6298,6 +6327,8 @@
       ["jab", "cross", "lowk", "roundh"],
     ],
     k1: [
+      ["jab", "cross", "jknee"],
+      ["hook", "cross", "jknee"],
       ["jab", "cross", "knee"],
       ["hook", "lowk"],
       ["jab", "cross", "hook", "lowk"],
@@ -8012,7 +8043,8 @@
       if (ka) pool = pool.filter((c) => c.every((x) => !RISKY.has(x)));
       if (ka && kind === "bag") pool = HAND_ONLY;
       if (young()) pool = pool.filter((c) => !c.includes("back"));
-      if (ageGroup() === "kids") pool = pool.filter((c) => c.length <= 3);
+      if (ageGroup() === "kids") pool = pool.filter((c) => c.length <= 3 && !c.some((x) => ADV.has(x)));
+      if (p.level < 2) pool = pool.filter((c) => !c.includes("jknee"));
       if (!pool.length) pool = HAND_ONLY;
     }
     let c = weightedPick(pool, focus).slice();
@@ -8288,8 +8320,16 @@
     }));
   }
   /* head-height kicks: they need warm hips, so never in the opening round(s) */
-  const HIGHK = new Set(["roundh", "axe", "hookk"]);
-  const LOWER = { roundh: "round", axe: "front", hookk: "round" };
+  const HIGHK = new Set(["roundh", "axe", "hookk", "brazil", "shook", "tornado", "jknee"]);
+  const LOWER = {
+    roundh: "round",
+    axe: "front",
+    hookk: "round",
+    brazil: "round",
+    shook: "back",
+    tornado: "round",
+    jknee: "knee",
+  };
   function fightRounds(type, n, loc, eq, theme, easy = 1) {
     const p = S.profile,
       partner = eq.includes("partner"),
@@ -8347,7 +8387,12 @@
     if (EXTRA[p.disc] && !ka) need.push(...(p.disc === "k1" ? ["lowk", "knee"] : ["lowk"]));
     const highPool = COMBOS.slice(0, p.level + 1)
       .flat()
-      .filter((c) => c.includes("roundh") && c.every((x) => !ka || !RISKY.has(x)));
+      .filter(
+        (c) =>
+          c.includes("roundh") &&
+          c.every((x) => !ka || !RISKY.has(x)) &&
+          !(ageGroup() === "kids" && c.some((x) => ADV.has(x))),
+      );
     need.forEach((tech, j) => {
       const cnt = out.filter((r) => r.combo && r.combo.includes(tech)).length,
         want = tech === "roundh" ? Math.max(1, Math.round(n / 4)) : 1;
@@ -9917,7 +9962,7 @@
     );
   }
   /* Lead/rear side for hooks, uppercuts and kicks: hands alternate; a kick comes from the side opposite the last strike */
-  const FIXED = { jab: "L", cross: "R", side: "L", hookk: "L", sweep: "L", back: "R" };
+  const FIXED = { jab: "L", cross: "R", side: "L", hookk: "L", sweep: "L", back: "R", shook: "R" };
   const DEF = {
     hook: "L",
     hookb: "L",
@@ -9928,6 +9973,9 @@
     axe: "L",
     lowk: "R",
     knee: "R",
+    brazil: "R",
+    tornado: "R",
+    jknee: "R",
   };
   const SIDED = new Set([
     "hook",
@@ -9940,9 +9988,13 @@
     "back",
     "hookk",
     "axe",
+    "brazil",
+    "shook",
+    "tornado",
     "sweep",
     "lowk",
     "knee",
+    "jknee",
   ]);
   function sides(c) {
     let last = null;
@@ -15912,12 +15964,27 @@ ${setupFields(setup, ty)}
   /* ============ My combos: combos from club training, mixed into own sessions ============ */
   const MYC_GROUPS = {
     hand: ["jab", "cross", "hook", "hookb", "upper"],
-    kick: ["front", "round", "roundh", "side", "back", "hookk", "axe", "sweep", "lowk", "knee"],
+    kick: [
+      "front",
+      "round",
+      "roundh",
+      "side",
+      "back",
+      "hookk",
+      "axe",
+      "brazil",
+      "shook",
+      "tornado",
+      "sweep",
+      "lowk",
+      "knee",
+      "jknee",
+    ],
     def: ["slip", "step", "block"],
   };
   /* techniques the discipline allows: low kicks only in kick light and K1, knees only in K1 */
   const discOk = (x, disc = S.profile.disc) =>
-    x === "lowk" ? disc === "kl" || disc === "k1" : x === "knee" ? disc === "k1" : true;
+    x === "lowk" ? disc === "kl" || disc === "k1" : x === "knee" || x === "jknee" ? disc === "k1" : true;
   function myCombos(kind) {
     const p = S.profile,
       ka = kneeAnk();
