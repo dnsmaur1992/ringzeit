@@ -41,10 +41,10 @@
   * {
     box-sizing: border-box;
   }
-  /* no double-tap zoom (pinch zoom stays available) */
+  /* no zooming: no double-tap zoom, no pinch zoom – only scrolling */
   html,
   body {
-    touch-action: manipulation;
+    touch-action: pan-x pan-y;
   }
   button,
   input,
@@ -15109,6 +15109,15 @@ ${setupFields(setup, ty)}
     ["pointerdown", "touchend", "click"].forEach((x) => document.removeEventListener(x, unlockOnce, true));
   };
   ["pointerdown", "touchend", "click"].forEach((x) => document.addEventListener(x, unlockOnce, true));
+  /* no pinch zoom: iOS ignores the viewport setting, so its zoom gestures are stopped here */
+  ["gesturestart", "gesturechange"].forEach((x) => document.addEventListener(x, (e) => e.preventDefault()));
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      if (e.touches.length > 1) e.preventDefault();
+    },
+    { passive: false },
+  );
   /* Boxing ring bell, synthesised: inharmonic partials with a metallic strike and a long ring-out.
      n = number of strikes (1 = round start, 3 = round end) */
   /* iOS puts web audio into "interrupted" (or "suspended") after speech or a pause; wake it before playing */
