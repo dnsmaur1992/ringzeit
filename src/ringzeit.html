@@ -996,15 +996,18 @@
     left: 50%;
     transform: translateX(-50%);
     bottom: calc(100px + env(safe-area-inset-bottom, 0px));
-    z-index: 40;
+    z-index: 70;
     background: var(--frost);
     color: var(--ink);
-    border-radius: 999px;
+    border-radius: 18px;
     padding: 10px 18px;
     font-weight: 600;
     font-size: 14px;
+    line-height: 1.35;
+    text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    max-width: calc(100% - 32px);
+    width: max-content;
+    max-width: min(340px, calc(100% - 32px));
   }
   @keyframes rot {
     to {
@@ -3738,6 +3741,19 @@
   .chip.clubday {
     box-shadow: inset 0 -3px 0 var(--c-V);
   }
+  .seg button.locked {
+    opacity: 0.45;
+  }
+  .seg button .lk {
+    width: 13px;
+    height: 13px;
+    margin-right: 6px;
+    vertical-align: -1px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -4275,7 +4291,7 @@
         tag: "Block",
         hist: "Abgeschlossen",
         onbT: "Wo stehst du gerade?",
-        onbS: "Freiwillig: Mit einem kurzen Fitnesstest schlägt dir Ringzeit einen ersten 6-Wochen-Schwerpunkt vor – Ausdauer, Schnellkraft oder Beweglichkeit. Einzelne Teile kannst du auslassen und später nachtragen.",
+        onbS: "Freiwillig: Mit einem kurzen Fitnesstest schlägt dir Ringzeit einen ersten 6-Wochen-Schwerpunkt vor – Ausdauer, Schnellkraft oder Beweglichkeit. Einzelne Teile kannst du auslassen und später nachtragen. Damit schaltest du auch Full Contact und K1 Style frei.",
         onbTest: "Fitnesstest öffnen",
         onbLater: "Später – direkt loslegen",
         onbPts: ["Liegestütze am Stück", "Jab-Cross in 20 s", "2,4 km Lauf", "Sidekick-Höhe", "Technik-Einschätzung"],
@@ -4667,7 +4683,9 @@
       onbBack: "Zurück",
       onbGo: "Los geht's",
       onbQ1: "Welche Disziplin trainierst du?",
-      onbQ1s: "Full Contact und K1 Style schaltest du später über den Fitnesstest frei.",
+      onbQ1s:
+        "Starte mit Light Contact oder Kick Light. Full Contact und K1 Style schaltest du mit dem Fitnesstest frei – den kannst du am Ende der Einrichtung direkt machen.",
+      discLockT: "Erst den Fitnesstest machen: Ab Level Fortgeschritten sind Full Contact und K1 Style frei.",
       onbQ2: "Wann trainierst du zusätzlich mit Ringzeit?",
       onbQ2s:
         "Deine eigenen Einheiten neben dem Verein: Wähle die Tage und wie lange eine Einheit dauern soll. Blau markiert sind deine Vereinstage.",
@@ -4816,7 +4834,7 @@
       lang: "Sprache",
       discipline: "Disziplin",
       disc: { lc: "Light Contact", kl: "Kick Light", fc: "Full Contact", k1: "K1 Style" },
-      discLock: "Full Contact und K1 Style ab Level Fortgeschritten.",
+      discLock: "Full Contact und K1 Style schaltest du mit dem Fitnesstest frei (ab Level Fortgeschritten).",
       focus: "Technik-Schwerpunkt",
       focusOpt: { box: "Mehr Boxen", bal: "Ausgeglichen", kick: "Mehr Kicks" },
       focusLock: "Anfänger trainieren ausgeglichen.",
@@ -5241,7 +5259,7 @@
         tag: "Block",
         hist: "Completed",
         onbT: "Where do you stand right now?",
-        onbS: "Optional: with a short fitness test Ringzeit suggests a first 6-week focus – endurance, power or mobility. You can skip single parts and add them later.",
+        onbS: "Optional: with a short fitness test Ringzeit suggests a first 6-week focus – endurance, power or mobility. You can skip single parts and add them later. It also unlocks Full Contact and K1 Style.",
         onbTest: "Open fitness test",
         onbLater: "Later – just start",
         onbPts: ["Push-ups in a row", "Jab-cross in 20 s", "2.4 km run", "Side kick height", "Technique rating"],
@@ -5621,7 +5639,9 @@
       onbBack: "Back",
       onbGo: "Let's go",
       onbQ1: "Which discipline do you train?",
-      onbQ1s: "You unlock Full Contact and K1 Style later with the fitness test.",
+      onbQ1s:
+        "Start with Light Contact or Kick Light. You unlock Full Contact and K1 Style with the fitness test – you can take it right at the end of the setup.",
+      discLockT: "Take the fitness test first: Full Contact and K1 Style open up from Advanced level.",
       onbQ2: "When do you want to train extra with Ringzeit?",
       onbQ2s:
         "Your own sessions next to the club: pick the days and how long a session should be. Your club days are marked blue.",
@@ -5768,7 +5788,7 @@
       lang: "Language",
       discipline: "Discipline",
       disc: { lc: "Light Contact", kl: "Kick Light", fc: "Full Contact", k1: "K1 Style" },
-      discLock: "Full Contact and K1 Style from Advanced level.",
+      discLock: "You unlock Full Contact and K1 Style with the fitness test (from Advanced level).",
       focus: "Technique focus",
       focusOpt: { box: "More boxing", bal: "Balanced", kick: "More kicks" },
       focusLock: "Beginners train balanced.",
@@ -10350,7 +10370,7 @@ ${setupFields(setup, ty)}
       life = "",
       app = "";
     train += `<div class="panel"><div class="field"><span class="lab">${t("level")}</span><div class="seg">${[0, 1, 2].map((k) => `<button type="button" data-p="level" data-v="${k}" aria-pressed="${p.level === k}" ${k > ml ? "disabled" : ""}>${t("levels")[k]}</button>`).join("")}</div>${ml < 2 ? `<span class="sub">${t("levelLock")}</span>` : ""}</div>
- <div class="field"><span class="lab">${t("discipline")}</span><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => `<button type="button" data-p="disc" data-v="${k}" aria-pressed="${p.disc === k}" ${p.level === 0 && (k === "fc" || k === "k1") ? "disabled" : ""}>${t("disc")[k]}</button>`).join("")}</div>${p.level === 0 ? `<span class="sub">${t("discLock")}</span>` : ""}</div>
+ <div class="field"><span class="lab">${t("discipline")}</span><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => (p.level === 0 && (k === "fc" || k === "k1") ? `<button type="button" class="locked" data-lock="disc" aria-disabled="true"><svg class="lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>${t("disc")[k]}</button>` : `<button type="button" data-p="disc" data-v="${k}" aria-pressed="${p.disc === k}">${t("disc")[k]}</button>`)).join("")}</div>${p.level === 0 ? `<span class="sub">${t("discLock")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("focus")}</span><div class="seg">${["box", "bal", "kick"].map((k) => `<button type="button" data-p="focus" data-v="${k}" aria-pressed="${(p.level === 0 ? "bal" : p.focus) === k}" ${p.level === 0 && k !== "bal" ? "disabled" : ""}>${t("focusOpt")[k]}</button>`).join("")}</div>${p.level === 0 ? `<span class="sub">${t("focusLock")}</span>` : ""}</div>
  <div class="field"><label class="lab" for="pBirth">${t("birth")}</label><input id="pBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${p.birthYear || ""}"><span class="sub">${t("birthHint")}${ageAt(today(), p) != null ? ` · ${ageAt(today(), p)} · ${t("ages")[ageGroup(p)]}` : ""}</span></div></div>`;
     const cl = p.club || { days: [], minutes: 90 },
@@ -10485,7 +10505,7 @@ ${setupFields(setup, ty)}
     let h = `<button type="button" class="btn ghost skip" data-onb="skip">${t("onbSkip")}</button><div class="dots">${[0, 1, 2, 3, 4].map((i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>${step === 0 ? installHtml(true) : ""}`;
     h += `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair(step === 1 || step === 3 ? "box" : "kick")}</svg>`;
     if (step === 0) {
-      h += `<h1>${t("onbQ1")}</h1><div class="sub">${t("onbQ1s")}</div><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => `<button type="button" data-od="${k}" aria-pressed="${o.disc === k}" ${k === "fc" || k === "k1" ? "disabled" : ""}>${t("disc")[k]}</button>`).join("")}</div>`;
+      h += `<h1>${t("onbQ1")}</h1><div class="sub">${t("onbQ1s")}</div><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => (k === "fc" || k === "k1" ? `<button type="button" class="locked" data-lock="disc" aria-disabled="true"><svg class="lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>${t("disc")[k]}</button>` : `<button type="button" data-od="${k}" aria-pressed="${o.disc === k}">${t("disc")[k]}</button>`)).join("")}</div>`;
     } else if (step === 1) {
       h += `<h1>${t("onbClubQ")}</h1><div class="sub">${t("onbClubS")}</div><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip cday" data-ocday="${i}" aria-pressed="${o.clubDays.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div>${o.clubDays.length ? `<span class="lab">${t("onbClubMin")}</span><div class="seg">${[60, 75, 90, 120].map((m) => `<button type="button" data-ocmin="${m}" aria-pressed="${o.clubMin === m}">${m} ${t("min")}</button>`).join("")}</div>` : ""}`;
     } else if (step === 2) {
@@ -17079,6 +17099,7 @@ ${setupFields(setup, ty)}
     // ----- focus blocks
     if (ds.blk) return blockAction(ds.blk);
     if (ds.inst) return installAction(ds.inst);
+    if (ds.lock) return toast(t("discLockT"));
     if (ds.resetAll) return openSheet({ kind: "confirm", title: t("resetLbl"), lines: [t("resetAsk")], run: resetAll });
     if (ds.mood || ds.low || ds.work || ds.form) return lifeAction(ds);
     if (ds.guide || ds.wstep != null || ds.packOpen || ds.pack || ds.packAdd || ds.packReset) return guideAction(ds);
