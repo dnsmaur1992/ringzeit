@@ -4691,6 +4691,7 @@
       onbQ1: "Welche Disziplin trainierst du?",
       onbQ1s:
         "Starte mit Light Contact oder Kick Light. Full Contact und K1 Style schaltest du mit dem Fitnesstest frei – den kannst du am Ende der Einrichtung direkt machen.",
+      discAgeT: "Full Contact und K1 Style gibt es bei der WAKO erst ab 15 Jahren.",
       discLockT: "Erst den Fitnesstest machen: Ab Level Fortgeschritten sind Full Contact und K1 Style frei.",
       onbQ2: "Wann trainierst du zusätzlich mit Ringzeit?",
       onbQ2s:
@@ -4699,9 +4700,9 @@
       onbClubS:
         "Wähle deine festen Vereinstage – Ringzeit plant deine eigenen Einheiten drumherum. Kein Verein? Einfach weiter.",
       onbClubMin: "So lange dauert ein Vereinstraining",
-      onbQ3: "Wann bist du geboren?",
+      onbQ3: "Ein paar Angaben zu dir",
       onbQ3s:
-        "Daraus berechnet die App deine WAKO-Altersklasse und dein Kampfformat. Du kannst das auch später eintragen.",
+        "Aus dem Geburtsjahr berechnet die App deine WAKO-Altersklasse und dein Kampfformat. Alles kannst du auch später eintragen.",
       onbComp: "Nächstes Turnier (optional)",
       tabSession: "Einheit",
       tabTest: "Test",
@@ -4848,10 +4849,15 @@
       levels: ["Anfänger", "Fortgeschritten", "Wettkampf"],
       levelLock: "Höhere Level schaltest du mit dem Fitnesstest frei.",
       age: "Altersklasse",
-      ages: { youth: "Jugend 13–18", adult: "Erwachsene", masters: "Masters 40+" },
+      ages: { kids: "Kinder 8–12", youth: "Jugend 13–18", adult: "Erwachsene", masters: "Masters 40+" },
+      kidsNote:
+        "Kinder-Modus: kürzere Einheiten (bis 30 Min. bis 9 Jahre, bis 45 Min. ab 10) und Runden, nur Körpergewicht, keine Abhärtung, kein Sparring, Kombinationen mit höchstens 3 Techniken. Neben dem Verein reichen 1–2 Tage. Bitte mit Eltern oder Trainer abstimmen.",
       birth: "Geburtsjahr",
+      sex: "Geschlecht (optional)",
+      sexes: { m: "Männlich", f: "Weiblich", d: "Divers" },
+      sexHint: "Nur für die Auswertung des Fitnesstests. Training, Runden und Umfang sind für alle gleich.",
       birthHint: "Daraus berechnet die App deine WAKO-Altersklasse und das Kampfformat.",
-      cls: { oc: "Ältere Kadetten", j: "Junioren", s: "Senioren", v: "Masters" },
+      cls: { yc: "Jüngere Kadetten", oc: "Ältere Kadetten", j: "Junioren", s: "Senioren", v: "Masters" },
       comps: "Turniere",
       compAdd: "Hinzufügen",
       compNone: "Noch kein Turnier eingetragen. Mit einem Termin plant die App 4–6 Wochen Vorbereitung im Kampfformat.",
@@ -5647,6 +5653,7 @@
       onbQ1: "Which discipline do you train?",
       onbQ1s:
         "Start with Light Contact or Kick Light. You unlock Full Contact and K1 Style with the fitness test – you can take it right at the end of the setup.",
+      discAgeT: "WAKO ring disciplines (Full Contact, K1 Style) start at age 15.",
       discLockT: "Take the fitness test first: Full Contact and K1 Style open up from Advanced level.",
       onbQ2: "When do you want to train extra with Ringzeit?",
       onbQ2s:
@@ -5654,8 +5661,8 @@
       onbClubQ: "When do you already train at your club?",
       onbClubS: "Pick your fixed club days – Ringzeit plans your own sessions around them. No club? Just continue.",
       onbClubMin: "A club session lasts",
-      onbQ3: "When were you born?",
-      onbQ3s: "Used to work out your WAKO age category and bout format. You can also add it later.",
+      onbQ3: "A few details about you",
+      onbQ3s: "Your year of birth sets your WAKO age category and bout format. You can add everything later too.",
       onbComp: "Next tournament (optional)",
       tabSession: "Session",
       tabTest: "Test",
@@ -5802,10 +5809,15 @@
       levels: ["Beginner", "Advanced", "Competition"],
       levelLock: "Unlock higher levels with the fitness test.",
       age: "Age group",
-      ages: { youth: "Youth 13–18", adult: "Adults", masters: "Masters 40+" },
+      ages: { kids: "Kids 8–12", youth: "Youth 13–18", adult: "Adults", masters: "Masters 40+" },
+      kidsNote:
+        "Kids mode: shorter sessions (up to 30 min until age 9, up to 45 min from 10) and rounds, bodyweight only, no conditioning drills, no sparring, combinations with at most 3 techniques. Next to the club, 1–2 days are enough. Please agree on it with parents or the coach.",
       birth: "Year of birth",
+      sex: "Sex (optional)",
+      sexes: { m: "Male", f: "Female", d: "Diverse" },
+      sexHint: "Only used to score the fitness test. Training, rounds and volume are the same for everyone.",
       birthHint: "Used to work out your WAKO age category and bout format.",
-      cls: { oc: "Older cadets", j: "Juniors", s: "Seniors", v: "Masters" },
+      cls: { yc: "Younger cadets", oc: "Older cadets", j: "Juniors", s: "Seniors", v: "Masters" },
       comps: "Tournaments",
       compAdd: "Add",
       compNone: "No tournament yet. With a date, the app plans 4–6 weeks of preparation in your bout format.",
@@ -7290,6 +7302,7 @@
     focus: "bal",
     level: 0,
     age: "adult",
+    sex: "",
     days: [0, 2, 4],
     minutes: 75,
     comps: [],
@@ -7539,12 +7552,30 @@
   /* ============ Fitness test ============ */
   const TCATS = ["str", "spd", "end", "flx", "tec"];
   /* Each area scores 1–5; thresholds are fixed so results stay comparable over time */
+  /*
+   * Fitness test thresholds (score 1–5). Female norms are lower for push-ups and the 2.4 km run;
+   * "diverse" uses the male norms. Children 8–12 get estimated, age-adjusted norms.
+   */
+  function testNorms(prof = S.profile) {
+    const f = prof.sex === "f",
+      ka = kidAge(prof);
+    let str = f ? [5, 10, 17, 25] : [10, 20, 30, 40],
+      spd = f ? [13, 18, 23, 28] : [15, 20, 25, 30],
+      end = f ? [960, 840, 780, 720] : [840, 720, 660, 600];
+    if (ka != null) {
+      str = str.map((x) => Math.max(1, Math.round(x * 0.6)));
+      spd = spd.map((x) => x - 3);
+      end = end.map((x) => x + (ka <= 9 ? 180 : 120));
+    }
+    return { str, spd, end };
+  }
   function scoreTest(raw) {
-    const up = (v, th) => (v == null || isNaN(v) ? null : 1 + th.filter((x) => v >= x).length);
+    const up = (v, th) => (v == null || isNaN(v) ? null : 1 + th.filter((x) => v >= x).length),
+      N = testNorms();
     const s = {
-      str: up(raw.str, [10, 20, 30, 40]),
-      spd: up(raw.spd, [15, 20, 25, 30]),
-      end: raw.end == null ? null : 1 + [840, 720, 660, 600].filter((x) => raw.end <= x).length,
+      str: up(raw.str, N.str),
+      spd: up(raw.spd, N.spd),
+      end: raw.end == null ? null : 1 + N.end.filter((x) => raw.end <= x).length,
       flx: raw.flx ?? null,
       tec: raw.tec ?? null,
     };
@@ -7603,7 +7634,7 @@
     const m = {};
     days.forEach((d, i) => {
       let ty = pat[i];
-      if (p.level === 0 && ty === "P") ty = "T";
+      if ((p.level === 0 || ageGroup() === "kids") && ty === "P") ty = "T";
       m[d] = ty;
     });
     if (bk) blockTypes(m, days, bk);
@@ -7623,7 +7654,9 @@
     return sc <= 1 ? 0 : sc <= 2 ? 1 : 2;
   }
   const sessMin = (ty) => {
-    const m = ty === "M" ? Math.min(45, S.profile.minutes) : S.profile.minutes;
+    let m = ty === "M" ? Math.min(45, S.profile.minutes) : S.profile.minutes;
+    const ka = kidAge();
+    if (ka != null) m = Math.min(ka <= 9 ? 30 : 45, m);
     return lowTime() ? Math.min(30, m) : m;
   };
   const sessDur = (ds, ty) => (S.sessions[ds] && S.sessions[ds].min) || sessMin(ty);
@@ -7755,17 +7788,25 @@
   function ageGroup(prof = S.profile) {
     const a = ageAt(today(), prof);
     if (a == null) return prof.age || "adult";
-    return a < 19 ? "youth" : a > 40 ? "masters" : "adult";
+    return a < 13 ? "kids" : a < 19 ? "youth" : a > 40 ? "masters" : "adult";
   }
+  /* youth and kids share the youth adaptations; kids (8–12) get further limits (kidAge) */
+  const young = (prof = S.profile) => {
+    const g = ageGroup(prof);
+    return g === "youth" || g === "kids";
+  };
+  /* age of a child (8–12), otherwise null */
+  const kidAge = (prof = S.profile) => (ageGroup(prof) === "kids" ? ageAt(today(), prof) : null);
   /*
    * WAKO bout format by discipline and age (WAKO rules, tatami and ring general rules):
-   *   Tatami (LC, KL): older cadets 13–15 2×2 · juniors 16–18 3×2 · seniors 19–40 3×2 · masters 41–55 2×2, 1 min breaks
+   *   Tatami (LC, KL): younger cadets 10–12 2×1.5 · older cadets 13–15 2×2 · juniors 16–18 3×2 · seniors 19–40 3×2 · masters 41–55 2×2, 1 min breaks
    *   Ring (FC, K1):   juniors 15–18 and seniors 19–40 3×2 with 1 min breaks; no other ring age categories
    */
   function waFormat(disc, age) {
     if (age == null) return null;
     if (disc === "fc" || disc === "k1")
       return age >= 15 && age <= 40 ? { r: 3, w: 120, b: 60, cls: age <= 18 ? "j" : "s" } : null;
+    if (age >= 10 && age <= 12) return { r: 2, w: 90, b: 60, cls: "yc" };
     if (age >= 13 && age <= 15) return { r: 2, w: 120, b: 60, cls: "oc" };
     if (age >= 16 && age <= 18) return { r: 3, w: 120, b: 60, cls: "j" };
     if (age >= 19 && age <= 40) return { r: 3, w: 120, b: 60, cls: "s" };
@@ -7841,7 +7882,7 @@
     if (type === "S") r -= 0.5;
     if (type === "K") r += 0.5;
     if (ageGroup() === "masters") r -= 0.5;
-    if (ageGroup() === "youth") r = Math.min(r, 7);
+    if (young()) r = Math.min(r, ageGroup() === "kids" ? 6 : 7);
     return r;
   }
   /* Load management: a deload every 5th plan week, or after clearly-too-hard sessions in the week before */
@@ -7887,8 +7928,9 @@
     if (type !== "M" && weekLoad(ds).deload) r -= 1.5;
     const rp = rampOn(ds || iso(today()));
     if (rp && type !== "M") r -= rp.rpe;
-    const lo = Math.max(2, Math.floor(r)),
-      hi = Math.min(10, Math.ceil(r) + 1);
+    const cap = ageGroup() === "kids" ? 6 : young() ? 7 : 10,
+      hi = Math.min(cap, Math.ceil(r) + 1),
+      lo = Math.min(hi - 1, Math.max(2, Math.floor(r)));
     return { lo, hi, txt: `${lo}–${hi}` };
   }
   function okEx(e, loc, eq) {
@@ -7899,7 +7941,7 @@
     if (e.eq && !e.eq.split("|").some((q) => eq.includes(q))) return false;
     for (const c of av) if (e.avoid.includes(c)) return false;
     if (e.lvl > S.profile.level) return false;
-    if (ageGroup() === "youth" && /weights|kb|bb/.test(e.eq) && e.lvl > 0) return false;
+    if (young() && /weights|kb|bb/.test(e.eq) && (e.lvl > 0 || ageGroup() === "kids")) return false;
     return true;
   }
   /* prefer: optional scoring function – higher scores are picked first (shuffled within equal scores) */
@@ -7969,13 +8011,14 @@
       if (EXTRA[p.disc] && !ka && Math.random() < 0.35) pool = EXTRA[p.disc];
       if (ka) pool = pool.filter((c) => c.every((x) => !RISKY.has(x)));
       if (ka && kind === "bag") pool = HAND_ONLY;
-      if (ageGroup() === "youth") pool = pool.filter((c) => !c.includes("back"));
+      if (young()) pool = pool.filter((c) => !c.includes("back"));
+      if (ageGroup() === "kids") pool = pool.filter((c) => c.length <= 3);
       if (!pool.length) pool = HAND_ONLY;
     }
     let c = weightedPick(pool, focus).slice();
     if (theme && (!kickOnly || theme.kick)) {
       c = theme.ap(c, p);
-      const maxLen = p.level + 3;
+      const maxLen = ageGroup() === "kids" ? 3 : p.level + 3;
       while (c.length > maxLen) c.splice(1, 1);
       if (ka) c = c.filter((x) => !RISKY.has(x));
       if (c.length < 2) c.push("cross");
@@ -8334,6 +8377,9 @@
         [r.mine, o.mine] = [o.mine, r.mine];
       } else r.combo = r.combo.map((x) => LOWER[x] || x);
     }
+    // kids: at most 3 techniques (the opener and the finishing technique stay)
+    if (ageGroup() === "kids")
+      for (const r of out) if (r.combo && !r.mine) while (r.combo.length > 3) r.combo.splice(1, 1);
     return out;
   }
   /* Equipment that is relevant per session type – everything else the user selected is ignored */
@@ -8563,7 +8609,7 @@
         (!x.disc || x.disc.includes(p.disc)) &&
         !(x.risky && ka) &&
         !(x.lim && p.limits.includes("shoulder")) &&
-        !(x.adult && ageGroup() === "youth") &&
+        !(x.adult && young()) &&
         !(soft && x.strike),
     );
     // the fist is always covered (with the equipment at hand first), plus one other body area
@@ -8606,8 +8652,9 @@
       work = S.profile.work || "";
     // round length and break: the tournament bout format during preparation, otherwise training defaults
     const fmtR = prep ? ph.format : null,
-      fightW = fmtR ? fmtR.w : 180,
-      condW = fmtR ? fmtR.w : 120,
+      kAge = kidAge(),
+      fightW = fmtR ? fmtR.w : kAge != null ? (kAge <= 9 ? 60 : 90) : 180,
+      condW = fmtR ? fmtR.w : kAge != null ? (kAge <= 9 ? 45 : 60) : 120,
       restB = fmtR ? fmtR.b : 60;
     const roundsFor = (min, len = 3) => {
       let n = Math.max(2, Math.floor(min / len));
@@ -8704,7 +8751,7 @@
         items.push({ kind: "run", zone: 3, reps, on: 3, off: 2 }, { kind: "run", zone: 2, min: main - ivMin - z2a });
       blocks.push({ key: "warm", min: warm, items: pickEx("warm", 2, loc, [], used) });
       blocks.push({ key: "run", min: main, items });
-      blocks.push(hardBlock([], loc, soft));
+      if (ageGroup() !== "kids") blocks.push(hardBlock([], loc, soft));
       blocks.push({ key: "cool", min: cool, items: pickEx("cool", 2, loc, [], used) });
       // a run by feel is easy: zone 2 ≈ RPE 3–4, with zone-3 blocks up to 6
       return {
@@ -8725,7 +8772,7 @@
     const warmMin = Math.max(8, Math.round(D * 0.15)),
       coolMin = Math.max(5, Math.round(D * 0.1)) + (bk === "mob" ? 5 : 0),
       // 30-minute sessions skip the hardening block, so the main part keeps enough time
-      hardMin = D <= 30 ? 0 : 6,
+      hardMin = D <= 30 || ageGroup() === "kids" ? 0 : 6,
       rest = D - warmMin - coolMin - hardMin;
     // power exercises; with knee/ankle limits the jumps drop out and strength work fills in
     const powPick = (n) => {
@@ -8759,17 +8806,19 @@
         ? "3× 3–5 " + t("explosive")
         : load.deload || ph.phase === "recover"
           ? "2× 8–10"
-          : ageGroup() === "youth"
-            ? "3× 10–12"
-            : p.level === 2
-              ? "4× 5–8"
-              : "3× 8–12";
+          : ageGroup() === "kids"
+            ? "2× 8–10"
+            : young()
+              ? "3× 10–12"
+              : p.level === 2
+                ? "4× 5–8"
+                : "3× 8–12";
     const supSets = load.deload || work === "phys" ? "2×" : "3×";
     let theme = null;
     if (type === "S") {
       const main = Math.round(rest * 0.7),
         fin = rest - main,
-        light = p.level === 0 || ageGroup() === "youth",
+        light = p.level === 0 || young(),
         B = t("blk").sets;
       if (bk === "pow" && bi.st > 0 && !load.deload) {
         // explosive transfer / contrast: power work first, while fresh
@@ -10004,9 +10053,9 @@
     h += `<h2>${t("weekday")[i]} · ${t("types")[ty]} · ${setup.min} ${t("min")}</h2>`;
     // duration options: 30/45/60 and the usual length; mobility never longer than 45 minutes
     const durs = [...new Set(lowTime() ? [20, 30] : [30, 45, 60, S.profile.minutes])]
-      .filter((m) => ty !== "M" || m <= 45)
+      .filter((m) => (ty !== "M" || m <= 45) && (kidAge() == null || m <= (kidAge() <= 9 ? 30 : 45)))
       .sort((a, b) => a - b);
-    h += `<div class="panel"><div class="field"><span class="lab">${t("sessType")}</span><div class="seg g3">${["T", "C", "P", "S", "K", "M"].map((k) => `<button type="button" data-stype="${k}" aria-pressed="${ty === k}" ${k === "P" && koLock(ds) ? "disabled" : ""}>${t("types")[k]}${k === planned ? `<small>${t("suggested")}</small>` : ""}</button>`).join("")}</div>${koLock(ds) ? `<span class="sub">${t("koNote")}</span>` : ""}</div>
+    h += `<div class="panel"><div class="field"><span class="lab">${t("sessType")}</span><div class="seg g3">${["T", "C", "P", "S", "K", "M"].map((k) => `<button type="button" data-stype="${k}" aria-pressed="${ty === k}" ${k === "P" && (koLock(ds) || ageGroup() === "kids") ? "disabled" : ""}>${t("types")[k]}${k === planned ? `<small>${t("suggested")}</small>` : ""}</button>`).join("")}</div>${koLock(ds) ? `<span class="sub">${t("koNote")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("dur")}</span><div class="seg">${durs.map((m) => `<button type="button" data-dur="${m}" aria-pressed="${setup.min === m}">${m}</button>`).join("")}</div></div>
  <div class="field"><span class="lab">${t("where")}</span><div class="seg ${ty === "S" || ty === "K" ? "g2" : ""}">${(ty === "S" || ty === "K" ? ["gym", "studio", "home", "out"] : ["gym", "home", "out"]).map((l) => `<button type="button" data-loc="${l}" aria-pressed="${setup.loc === l}">${t("locs")[l]}</button>`).join("")}</div></div>
 ${setupFields(setup, ty)}
@@ -10376,9 +10425,10 @@ ${setupFields(setup, ty)}
       life = "",
       app = "";
     train += `<div class="panel"><div class="field"><span class="lab">${t("level")}</span><div class="seg">${[0, 1, 2].map((k) => `<button type="button" data-p="level" data-v="${k}" aria-pressed="${p.level === k}" ${k > ml ? "disabled" : ""}>${t("levels")[k]}</button>`).join("")}</div>${ml < 2 ? `<span class="sub">${t("levelLock")}</span>` : ""}</div>
- <div class="field"><span class="lab">${t("discipline")}</span><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => (p.level === 0 && (k === "fc" || k === "k1") ? `<button type="button" class="locked" data-lock="disc" aria-disabled="true"><svg class="lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>${t("disc")[k]}</button>` : `<button type="button" data-p="disc" data-v="${k}" aria-pressed="${p.disc === k}">${t("disc")[k]}</button>`)).join("")}</div>${p.level === 0 ? `<span class="sub">${t("discLock")}</span>` : ""}</div>
+ <div class="field"><span class="lab">${t("discipline")}</span><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => ((p.level === 0 || (ageAt(today(), p) != null && ageAt(today(), p) < 15)) && (k === "fc" || k === "k1") ? `<button type="button" class="locked" data-lock="${p.level === 0 ? "disc" : "age"}" aria-disabled="true"><svg class="lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>${t("disc")[k]}</button>` : `<button type="button" data-p="disc" data-v="${k}" aria-pressed="${p.disc === k}">${t("disc")[k]}</button>`)).join("")}</div>${p.level === 0 ? `<span class="sub">${t("discLock")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("focus")}</span><div class="seg">${["box", "bal", "kick"].map((k) => `<button type="button" data-p="focus" data-v="${k}" aria-pressed="${(p.level === 0 ? "bal" : p.focus) === k}" ${p.level === 0 && k !== "bal" ? "disabled" : ""}>${t("focusOpt")[k]}</button>`).join("")}</div>${p.level === 0 ? `<span class="sub">${t("focusLock")}</span>` : ""}</div>
- <div class="field"><label class="lab" for="pBirth">${t("birth")}</label><input id="pBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${p.birthYear || ""}"><span class="sub">${t("birthHint")}${ageAt(today(), p) != null ? ` · ${ageAt(today(), p)} · ${t("ages")[ageGroup(p)]}` : ""}</span></div></div>`;
+ <div class="field"><label class="lab" for="pBirth">${t("birth")}</label><input id="pBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${p.birthYear || ""}"><span class="sub">${t("birthHint")}${ageAt(today(), p) != null ? ` · ${ageAt(today(), p)} · ${t("ages")[ageGroup(p)]}` : ""}</span>${ageGroup(p) === "kids" ? `<span class="sub">${t("kidsNote")}</span>` : ""}</div>
+ <div class="field"><span class="lab">${t("sex")}</span><div class="seg g3">${["m", "f", "d"].map((k) => `<button type="button" data-p="sex" data-v="${k}" aria-pressed="${p.sex === k}">${t("sexes")[k]}</button>`).join("")}</div><span class="sub">${t("sexHint")}</span></div></div>`;
     const cl = p.club || { days: [], minutes: 90 },
       overlap = cl.days.some((d) => p.days.includes(d));
     train += `<div class="panel"><div class="field"><span class="lab">${t("clubDays")}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip cday" data-cday="${i}" aria-pressed="${cl.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><span class="sub">${t("clubDaysHint")}</span></div>${cl.days.length ? `<div class="field"><span class="lab">${t("clubMin")}</span><div class="seg">${[60, 75, 90, 120].map((m) => `<button type="button" data-cmin="${m}" aria-pressed="${cl.minutes === m}">${m} ${t("min")}</button>`).join("")}</div>${overlap ? `<span class="sub">${t("clubOverlap")}</span>` : ""}</div>` : ""}</div>`;
@@ -10520,7 +10570,7 @@ ${setupFields(setup, ty)}
       const B = t("blk");
       h += `<h1>${B.onbT}</h1><div class="sub">${B.onbS}</div><div class="onbpts">${B.onbPts.map((x) => `<span>${x}</span>`).join("")}</div>`;
     } else {
-      h += `<h1>${t("onbQ3")}</h1><div class="sub">${t("onbQ3s")}</div><input id="oBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${o.birthYear || ""}"><label class="lab" for="oComp">${t("onbComp")}</label><input id="oComp" type="date" min="${iso(today())}" value="${o.comp || ""}">`;
+      h += `<h1>${t("onbQ3")}</h1><div class="sub">${t("onbQ3s")}</div><input id="oBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${o.birthYear || ""}"><span class="lab">${t("sex")}</span><div class="seg g3">${["m", "f", "d"].map((k) => `<button type="button" data-osex="${k}" aria-pressed="${o.sex === k}">${t("sexes")[k]}</button>`).join("")}</div><span class="sub">${t("sexHint")}</span><label class="lab" for="oComp">${t("onbComp")}</label><input id="oComp" type="date" min="${iso(today())}" value="${o.comp || ""}">`;
     }
     if (step === 4)
       h += `<div class="acts"><button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button><button type="button" class="btn" data-onb="test">${t("blk").onbTest}</button></div><button type="button" class="btn ghost later" data-onb="done">${t("blk").onbLater}</button>`;
@@ -10549,6 +10599,7 @@ ${setupFields(setup, ty)}
         minutes: o.minutes,
         club: { days: (o.clubDays || []).slice(), minutes: o.clubMin || 90 },
         birthYear: o.birthYear || "",
+        sex: o.sex || "",
         comps: o.comp ? [{ id: "c" + Date.now().toString(36), date: o.comp }] : [],
         example: false,
         planStart: iso(today()),
@@ -15868,7 +15919,7 @@ ${setupFields(setup, ty)}
         (c) =>
           c.every((x) => TECH[x] && discOk(x)) &&
           !(ka && c.some((x) => RISKY.has(x))) &&
-          !(ageGroup() === "youth" && c.includes("back")) &&
+          !(young() && c.includes("back")) &&
           !(
             kind === "bag" &&
             (p.limits.includes("wrist") || p.limits.includes("shoulder")) &&
@@ -16045,7 +16096,7 @@ ${setupFields(setup, ty)}
     // overload: short rests (a little longer for beginners and youth)
     return {
       w: 120,
-      b: dl ? 60 : L === 0 || ageGroup() === "youth" ? 45 : 30,
+      b: dl ? 60 : L === 0 || young() ? 45 : 30,
       n: Math.max(3, 4 + (L === 2 ? 1 : 0) - (L === 0 ? 1 : 0) - m - dl),
       cue: "end2o",
     };
@@ -17097,7 +17148,7 @@ ${setupFields(setup, ty)}
     // ----- focus blocks
     if (ds.blk) return blockAction(ds.blk);
     if (ds.inst) return installAction(ds.inst);
-    if (ds.lock) return toast(t("discLockT"));
+    if (ds.lock) return toast(t(ds.lock === "age" ? "discAgeT" : "discLockT"));
     if (ds.resetAll) return openSheet({ kind: "confirm", title: t("resetLbl"), lines: [t("resetAsk")], run: resetAll });
     if (ds.mood || ds.low || ds.work || ds.form) return lifeAction(ds);
     if (ds.guide || ds.wstep != null || ds.packOpen || ds.pack || ds.packAdd || ds.packReset) return guideAction(ds);
@@ -17562,6 +17613,12 @@ ${setupFields(setup, ty)}
       renderOnb();
       return;
     }
+    if (ds.osex) {
+      readOnb();
+      ui.onb.sex = ui.onb.sex === ds.osex ? "" : ds.osex;
+      renderOnb();
+      return;
+    }
     if (ds.ocmin) {
       ui.onb.clubMin = +ds.ocmin;
       renderOnb();
@@ -17776,7 +17833,7 @@ ${setupFields(setup, ty)}
     }
   });
   /* Profile changes take effect at once: the plan settings are copied over and planned sessions from today on are rebuilt */
-  const PLAN_KEYS = ["level", "disc", "focus", "birthYear", "days", "minutes", "club", "comps", "limits"];
+  const PLAN_KEYS = ["level", "disc", "focus", "birthYear", "sex", "days", "minutes", "club", "comps", "limits"];
   function applyPlan() {
     if (!draft) return;
     if (!draft.days.length) return toast(t("needDay"));
@@ -17857,6 +17914,9 @@ ${setupFields(setup, ty)}
     if (ev.target.id === "pBirth") {
       const y = parseInt(ev.target.value);
       draft.birthYear = y >= 1950 && y <= today().getFullYear() - 8 ? y : "";
+      // WAKO ring disciplines only from 15
+      if (draft.birthYear && ageAt(today(), draft) < 15 && (draft.disc === "fc" || draft.disc === "k1"))
+        draft.disc = "kl";
       applyPlan();
       render();
     }
