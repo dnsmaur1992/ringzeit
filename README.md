@@ -47,6 +47,12 @@
     <td align="center"><img src="docs/verlauf.jpg" width="200" alt="Verlauf"><br><sub><b>Verlauf</b> – Abzeichen und Kalender</sub></td>
     <td align="center"><img src="docs/rundentimer.jpg" width="200" alt="Rundentimer"><br><sub><b>Rundentimer</b> mit Ringglocke</sub></td>
   </tr>
+  <tr>
+    <td align="center"><img src="docs/coach.jpg" width="200" alt="Coach-Modus"><br><sub><b>Coach-Modus</b> – Kombis werden angesagt</sub></td>
+    <td align="center"><img src="docs/bandagieren.jpg" width="200" alt="Bandagieren"><br><sub><b>Bandagieren</b> – Schritt für Schritt</sub></td>
+    <td align="center"><img src="docs/packliste.jpg" width="200" alt="Turnier-Packliste"><br><sub><b>Packliste</b> für den Turniertag</sub></td>
+    <td align="center"><img src="docs/feste.jpg" width="200" alt="Feiertage"><br><sub><b>Feiertage</b> – hier Chanukka</sub></td>
+  </tr>
 </table>
 
 ---
@@ -66,6 +72,7 @@
 - **Vollbild-Timer** mit Ringglocke, 10 Sekunden Vorbereitungszeit und Ansage der Übung
 - Eigener **Rundentimer** mit Vorlagen (WAKO, K1, Sparring, Pratzen, HIIT)
 - Leuchtring mit Fortschritt, pulsierende letzte 10 Sekunden und ein Blitz zum Rundenende
+- **Coach-Modus:** ruft während der Runde Kombis aus deinem Level aus – wie der Trainer am Ring
 
 ### 🏆 Ziele und Motivation
 - **Turniervorbereitung** im Wettkampf-Format der WAKO, Formkurve bis zum Wettkampftag
@@ -73,10 +80,19 @@
 - **Schwerpunkt-Blöcke** über 6 Wochen: Kampfausdauer, Schnellkraft oder Beweglichkeit
 - **Fitnesstest** mit Netzdiagramm und Vorher-nachher-Vergleich
 - **Abzeichen, Wochenserie und Trainingskalender**
+- **Turnier-Packliste** zum Abhaken, eine Woche vor dem Wettkampf
 - Automatische **Entlastungswochen** und Pausen bei Krankheit, Verletzung oder Urlaub
+- **Ramadan-Modus:** leichtere Einheiten für alle, die fasten – freiwillig
+
+### 🩹 Ratgeber
+- **Bandagieren** als animierte Schritt-für-Schritt-Anleitung, dazu ein Video
+- **Materialpflege** für Handschuhe, Bandagen, Schoner und Mundschutz – mit Erinnerung nach dem Training
+- **Pflege & Erste Hilfe:** PECH-Regel, Thai-Boxing-Öl, Nasenbluten und wann man zum Arzt sollte
 
 ### ✨ Liebe zum Detail
-- Lebendige Startseite, die sich der **Tages- und Jahreszeit** anpasst
+- Lebendige Startseite, die sich der **Tages- und Jahreszeit** anpasst – mit Mütze im Winter und Badehose im Sommer
+- **Feiertage** verschiedener Kulturen: Weihnachten, Silvester, Ostern, Karneval, Ramadan, Zuckerfest, Opferfest, Chanukka, Nouruz, Diwali und mehr
+- **Fun Facts und Technik-Tipps** beim Laden
 - **Deutsch und Englisch**, komplett offline nutzbar
 
 ---
@@ -111,7 +127,7 @@ Die ausführliche Anleitung mit QR-Code (auch zum Ausdrucken für die Halle): **
 
 Für den Betreiber des Repositorys:
 
-1. Die neuen Dateien `index.html` und `sw.js` hochladen (*Add file → Upload files*) und committen.
+1. Die neuen Dateien `index.html` und `sw.js` hochladen (*Add file → Upload files*) und committen – dazu die neue `ringzeit.html` in den Ordner `src`.
 2. GitHub Pages veröffentlicht die neue Version nach ein bis zwei Minuten.
 3. Die App lädt das Update beim nächsten Öffnen im Hintergrund – nach einem Neustart der App ist es aktiv. Die Versionsnummer steht unten im Profil.
 
@@ -121,7 +137,7 @@ Für den Betreiber des Repositorys:
 
 | | |
 |---|---|
-| **Aufbau** | Eine einzige HTML-Datei: HTML, CSS und JavaScript ohne Frameworks |
+| **Aufbau** | Eine einzige HTML-Datei: HTML, CSS und JavaScript ohne Frameworks; für die App komprimiert |
 | **Grafiken** | Alle Figuren, Skizzen und Diagramme als SVG im Code gezeichnet |
 | **Offline** | Service Worker (`sw.js`) speichert die App auf dem Gerät |
 | **Speicher** | `localStorage` auf dem Gerät |
@@ -134,6 +150,8 @@ ringzeit/
 ├── manifest.webmanifest   App-Name, Icons, Farben
 ├── installieren.html      Installationsanleitung mit QR-Code
 ├── icon-*.png             App-Icons
+├── src/ringzeit.html      Lesbarer Quellcode
+├── tools/build_pwa.py     Baut aus dem Quellcode index.html und sw.js
 └── docs/                  Bilder für diese Seite
 ```
 
