@@ -65,6 +65,22 @@ self.addEventListener("activate", (e) => {{
 }});
 self.addEventListener("fetch", (e) => {{
   if (e.request.method !== "GET" || new URL(e.request.url).origin !== location.origin) return;
+  // the app page itself: network first (so an update shows on the next start), the cached copy offline or after 3 s
+  if (e.request.mode === "navigate") {{
+    e.respondWith(
+      caches.open(CACHE).then((c) => {{
+        const net = fetch(e.request).then((r) => {{
+          if (r && r.ok) c.put("index.html", r.clone());
+          return r;
+        }});
+        const slow = new Promise((res) => setTimeout(res, 3000));
+        return Promise.race([net, slow.then(() => c.match("index.html"))])
+          .then((r) => r || net)
+          .catch(() => c.match("index.html", {{ ignoreSearch: true }}));
+      }}),
+    );
+    return;
+  }}
   e.respondWith(
     caches.open(CACHE).then((c) =>
       c.match(e.request, {{ ignoreSearch: true }}).then((hit) => {{
