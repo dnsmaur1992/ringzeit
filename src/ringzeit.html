@@ -3725,6 +3725,10 @@
     font-weight: 600;
     font-size: 16px;
   }
+  .btn.danger {
+    color: var(--ember);
+    align-self: flex-start;
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -3973,6 +3977,12 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      resetLbl: "Neu starten",
+      resetHint:
+        "Löscht alle Daten auf diesem Gerät – Plan, Einträge, Tests, Kombis – und startet die Einrichtung von vorn. Vorher am besten eine Sicherung speichern.",
+      resetBtn: "Alle Daten löschen",
+      resetAsk:
+        "Wirklich alles löschen? Das lässt sich nicht rückgängig machen – außer mit einer gespeicherten Sicherung.",
       psec: {
         back: "Profil",
         train: ["Training", "Disziplin, Level, Tage, Verein, Einschränkungen"],
@@ -4932,6 +4942,11 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      resetLbl: "Start over",
+      resetHint:
+        "Deletes all data on this device – plan, entries, tests, combos – and starts the setup again. Best save a backup first.",
+      resetBtn: "Delete all data",
+      resetAsk: "Really delete everything? This can't be undone – except with a saved backup.",
       psec: {
         back: "Profile",
         train: ["Training", "Discipline, level, days, club, limitations"],
@@ -10379,7 +10394,7 @@ ${setupFields(setup, ty)}
     life = lifePanelHtml() + life;
     app += `<div class="panel"><div class="field"><span class="lab">${t("seasonLbl")}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-season="${i ? "off" : "on"}" aria-pressed="${!!S.profile.seasonOff === !!i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${t("seasonHint")}</span></div></div>`;
     app = mycHtml() + app;
-    app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div></div>`;
+    app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div><div class="field"><span class="lab">${t("resetLbl")}</span><span class="sub">${t("resetHint")}</span><button type="button" class="btn ghost danger" data-reset-all="1">${t("resetBtn")}</button></div></div>`;
     app += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
     h += { train, goals, life, guide: guidePanelHtml(), app }[sec] || "";
     return h;
@@ -17037,6 +17052,7 @@ ${setupFields(setup, ty)}
     // ----- focus blocks
     if (ds.blk) return blockAction(ds.blk);
     if (ds.inst) return installAction(ds.inst);
+    if (ds.resetAll) return openSheet({ kind: "confirm", title: t("resetLbl"), lines: [t("resetAsk")], run: resetAll });
     if (ds.mood || ds.low || ds.work || ds.form) return lifeAction(ds);
     if (ds.guide || ds.wstep != null || ds.packOpen || ds.pack || ds.packAdd || ds.packReset) return guideAction(ds);
     if (ds.fast) {
@@ -17693,6 +17709,19 @@ ${setupFields(setup, ty)}
     // one short confirmation, even after several quick changes
     clearTimeout(applyPlan.t);
     applyPlan.t = setTimeout(() => toast(t("planUpd")), 700);
+  }
+  /* Start over: deletes everything on this device (and in Claude's storage) and opens the first-start setup again */
+  async function resetAll() {
+    try {
+      localStorage.removeItem(LS);
+    } catch (e) {}
+    if (store.mode === "cloud") {
+      clearTimeout(store.timer);
+      try {
+        await Promise.all([store.doc("app").set({}), store.doc("log").set({})]);
+      } catch (e) {}
+    }
+    location.reload();
   }
   function collectPerf(sess) {
     if (!sess || !sess.perf) return undefined;
