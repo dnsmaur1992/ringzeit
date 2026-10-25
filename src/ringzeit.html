@@ -3729,6 +3729,15 @@
     color: var(--ember);
     align-self: flex-start;
   }
+  /* club days (fixed) in blue, own Ringzeit days in the usual style */
+  .chip.cday[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--c-V) 22%, transparent);
+    border-color: var(--c-V);
+    color: var(--frost);
+  }
+  .chip.clubday {
+    box-shadow: inset 0 -3px 0 var(--c-V);
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -3955,9 +3964,9 @@
       todayTitle: "Heute",
       club: "Vereinstraining",
       clubKinds: { T: "Technik", P: "Sparring", K: "Kondition", S: "Kraft", X: "Gemischt" },
-      clubDays: "Vereinstraining",
+      clubDays: "Vereinstraining – deine festen Tage",
       clubDaysHint:
-        "Feste Trainingstage im Verein. Die App bezieht sie in Belastung und Übersicht ein und fragt am Tag danach nach.",
+        "Hier trainierst du schon fest. Ringzeit plant nichts dazu, rechnet diese Tage aber in deine Belastung ein und fragt am Tag danach kurz nach.",
       clubMin: "Dauer im Verein",
       clubOverlap: "An manchen Vereinstagen planst du auch eigene Einheiten – die App weist beim Erstellen darauf hin.",
       clubLog: "Eintragen",
@@ -3990,7 +3999,8 @@
         life: ["Alltag & Pausen", "Woche, Wenig-Zeit, Arbeit, Pausen, K.o."],
         guide: ["Ratgeber", "Bandagieren, Materialpflege, Erste Hilfe"],
         app: ["App & Daten", "Sicherung, Meine Kombis, Design, Tour"],
-        days: (n) => `${n} ${n === 1 ? "Tag" : "Tage"}/Woche`,
+        days: (n) => `${n} ${n === 1 ? "Tag" : "Tage"} Ringzeit`,
+        club: (n) => `${n}× Verein`,
         noGoal: "Noch kein Ziel eingetragen",
         nextComp: (d) => `Turnier am ${d}`,
         nextGrade: (d) => `Prüfung am ${d}`,
@@ -4331,7 +4341,7 @@
         hide: "Ausblenden",
         hidden: "Ausgeblendet – die App-Tour im Profil zeigt dir jederzeit alles noch einmal.",
         steps: {
-          profile: ["Geburtsjahr und Trainingstage festlegen", "Damit passen Rundenzeiten und Plan zu dir"],
+          profile: ["Geburtsjahr und Ringzeit-Tage festlegen", "Damit passen Rundenzeiten und Plan zu dir"],
           club: ["Vereinstage eintragen", "Ringzeit plant deine eigenen Einheiten drumherum"],
           session: ["Erste Einheit absolvieren", "Starten, trainieren, Anstrengung eintragen"],
           timer: ["Rundentimer ausprobieren", "Eine Runde mit Glocke, ganz ohne Plan"],
@@ -4658,8 +4668,13 @@
       onbGo: "Los geht's",
       onbQ1: "Welche Disziplin trainierst du?",
       onbQ1s: "Full Contact und K1 Style schaltest du später über den Fitnesstest frei.",
-      onbQ2: "Wann trainierst du?",
-      onbQ2s: "Wähle deine Trainingstage und wie lange eine Einheit dauern soll.",
+      onbQ2: "Wann trainierst du zusätzlich mit Ringzeit?",
+      onbQ2s:
+        "Deine eigenen Einheiten neben dem Verein: Wähle die Tage und wie lange eine Einheit dauern soll. Blau markiert sind deine Vereinstage.",
+      onbClubQ: "Wann trainierst du schon fest im Verein?",
+      onbClubS:
+        "Wähle deine festen Vereinstage – Ringzeit plant deine eigenen Einheiten drumherum. Kein Verein? Einfach weiter.",
+      onbClubMin: "So lange dauert ein Vereinstraining",
       onbQ3: "Wann bist du geboren?",
       onbQ3s:
         "Daraus berechnet die App deine WAKO-Altersklasse und dein Kampfformat. Du kannst das auch später eintragen.",
@@ -4691,7 +4706,7 @@
         k1: ["K1 Style · Ring", ["Keine Ellbogen", "Kein Halten/Clinchen"], ["Low Kicks", "Knie erlaubt", "3 × 2 min"]],
       },
       example:
-        "Beispielprofil. Unter <b>Profil</b> legst du Disziplin, Level und Trainingstage fest. Was du trainierst, wählst du in jeder Einheit selbst.",
+        "Beispielprofil. Unter <b>Profil</b> legst du Disziplin, Level, deine Vereinstage und deine Ringzeit-Tage fest. Was du trainierst, wählst du in jeder Einheit selbst.",
       nextUp: "Nächste Einheit",
       restWeek: "Diese Woche ist geschafft",
       phases: {
@@ -4846,7 +4861,9 @@
         "Disziplin zahlt sich aus.",
       ],
       explosive: "explosiv",
-      days: "Trainingstage",
+      days: "Zusätzlich mit Ringzeit",
+      ownHint:
+        "An diesen Tagen trainierst du extra mit Ringzeit – Ringzeit erstellt dafür die Einheiten. Blau markiert: deine Vereinstage.",
       dayNames: ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
       minutes: "Minuten pro Einheit",
       minCap: "Mobility-Einheiten dauern höchstens 45 min.",
@@ -4920,9 +4937,9 @@
       todayTitle: "Today",
       club: "Club training",
       clubKinds: { T: "Technique", P: "Sparring", K: "Conditioning", S: "Strength", X: "Mixed" },
-      clubDays: "Club training",
+      clubDays: "Club training – your fixed days",
       clubDaysHint:
-        "Your fixed club training days. The app counts them in your load and overview and asks about them the day after.",
+        "This is where you already train regularly. Ringzeit adds nothing here but counts these days in your load and asks about them the day after.",
       clubMin: "Club session length",
       clubOverlap:
         "On some club days you also plan your own sessions – the app will point that out when you build them.",
@@ -4954,7 +4971,8 @@
         life: ["Everyday life & breaks", "Week, short on time, work, breaks, KO"],
         guide: ["Guide", "Hand wraps, gear care, first aid"],
         app: ["App & data", "Backup, my combos, design, tour"],
-        days: (n) => `${n} ${n === 1 ? "day" : "days"}/week`,
+        days: (n) => `${n} ${n === 1 ? "day" : "days"} Ringzeit`,
+        club: (n) => `${n}× club`,
         noGoal: "No goal set yet",
         nextComp: (d) => `Tournament on ${d}`,
         nextGrade: (d) => `Grading on ${d}`,
@@ -5289,7 +5307,7 @@
         hide: "Hide",
         hidden: "Hidden – the app tour in the profile shows everything again any time.",
         steps: {
-          profile: ["Set birth year and training days", "So round times and the plan fit you"],
+          profile: ["Set birth year and Ringzeit days", "So round times and the plan fit you"],
           club: ["Add your club days", "Ringzeit plans your own sessions around them"],
           session: ["Finish your first session", "Start, train, log the effort"],
           timer: ["Try the round timer", "One round with the bell, no plan needed"],
@@ -5604,8 +5622,12 @@
       onbGo: "Let's go",
       onbQ1: "Which discipline do you train?",
       onbQ1s: "You unlock Full Contact and K1 Style later with the fitness test.",
-      onbQ2: "When do you train?",
-      onbQ2s: "Pick your training days and how long a session should be.",
+      onbQ2: "When do you want to train extra with Ringzeit?",
+      onbQ2s:
+        "Your own sessions next to the club: pick the days and how long a session should be. Your club days are marked blue.",
+      onbClubQ: "When do you already train at your club?",
+      onbClubS: "Pick your fixed club days – Ringzeit plans your own sessions around them. No club? Just continue.",
+      onbClubMin: "A club session lasts",
       onbQ3: "When were you born?",
       onbQ3s: "Used to work out your WAKO age category and bout format. You can also add it later.",
       onbComp: "Next tournament (optional)",
@@ -5636,7 +5658,7 @@
         k1: ["K1 Style · Ring", ["No elbows", "No holding/clinching"], ["Low kicks", "Knees allowed", "3 × 2 min"]],
       },
       example:
-        "Example profile. Set your discipline, level and training days under <b>Profile</b>. You choose what to train in each session.",
+        "Example profile. Set your discipline, level, club days and Ringzeit days under <b>Profile</b>. You choose what to train in each session.",
       nextUp: "Next session",
       restWeek: "This week is done",
       phases: {
@@ -5785,7 +5807,9 @@
       toComp: "Days to tournament",
       cheers: ["Strong!", "Round by round.", "Well fought.", "One step further.", "Discipline pays off."],
       explosive: "explosive",
-      days: "Training days",
+      days: "Extra with Ringzeit",
+      ownHint:
+        "On these days you train extra with Ringzeit – it builds the sessions for them. Marked blue: your club days.",
       dayNames: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
       minutes: "Minutes per session",
       minCap: "Mobility sessions last 45 min at most.",
@@ -10329,14 +10353,14 @@ ${setupFields(setup, ty)}
  <div class="field"><span class="lab">${t("discipline")}</span><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => `<button type="button" data-p="disc" data-v="${k}" aria-pressed="${p.disc === k}" ${p.level === 0 && (k === "fc" || k === "k1") ? "disabled" : ""}>${t("disc")[k]}</button>`).join("")}</div>${p.level === 0 ? `<span class="sub">${t("discLock")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("focus")}</span><div class="seg">${["box", "bal", "kick"].map((k) => `<button type="button" data-p="focus" data-v="${k}" aria-pressed="${(p.level === 0 ? "bal" : p.focus) === k}" ${p.level === 0 && k !== "bal" ? "disabled" : ""}>${t("focusOpt")[k]}</button>`).join("")}</div>${p.level === 0 ? `<span class="sub">${t("focusLock")}</span>` : ""}</div>
  <div class="field"><label class="lab" for="pBirth">${t("birth")}</label><input id="pBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${p.birthYear || ""}"><span class="sub">${t("birthHint")}${ageAt(today(), p) != null ? ` · ${ageAt(today(), p)} · ${t("ages")[ageGroup(p)]}` : ""}</span></div></div>`;
-    const cap = 120,
-      mv = Math.min(p.minutes, cap);
-    train += `<div class="panel"><div class="field"><span class="lab">${t("days")} · ${p.days.length}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip" data-day="${i}" aria-pressed="${p.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div></div>
- <div class="field"><label class="lab" for="pMin">${t("minutes")}: <span id="pMinV">${mv}</span></label><input id="pMin" type="range" min="30" max="${cap}" step="15" value="${mv}"><span class="sub">${t("minCap")}</span></div>
- </div>`;
     const cl = p.club || { days: [], minutes: 90 },
       overlap = cl.days.some((d) => p.days.includes(d));
-    train += `<div class="panel"><div class="field"><span class="lab">${t("clubDays")}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip" data-cday="${i}" aria-pressed="${cl.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><span class="sub">${t("clubDaysHint")}</span></div>${cl.days.length ? `<div class="field"><span class="lab">${t("clubMin")}</span><div class="seg">${[60, 75, 90, 120].map((m) => `<button type="button" data-cmin="${m}" aria-pressed="${cl.minutes === m}">${m} ${t("min")}</button>`).join("")}</div>${overlap ? `<span class="sub">${t("clubOverlap")}</span>` : ""}</div>` : ""}</div>`;
+    train += `<div class="panel"><div class="field"><span class="lab">${t("clubDays")}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip cday" data-cday="${i}" aria-pressed="${cl.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><span class="sub">${t("clubDaysHint")}</span></div>${cl.days.length ? `<div class="field"><span class="lab">${t("clubMin")}</span><div class="seg">${[60, 75, 90, 120].map((m) => `<button type="button" data-cmin="${m}" aria-pressed="${cl.minutes === m}">${m} ${t("min")}</button>`).join("")}</div>${overlap ? `<span class="sub">${t("clubOverlap")}</span>` : ""}</div>` : ""}</div>`;
+    const cap = 120,
+      mv = Math.min(p.minutes, cap);
+    train += `<div class="panel"><div class="field"><span class="lab">${t("days")} · ${p.days.length}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip${(p.club || { days: [] }).days.includes(i) ? " clubday" : ""}" data-day="${i}" aria-pressed="${p.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><span class="sub">${t("ownHint")}</span></div>
+ <div class="field"><label class="lab" for="pMin">${t("minutes")}: <span id="pMinV">${mv}</span></label><input id="pMin" type="range" min="30" max="${cap}" step="15" value="${mv}"><span class="sub">${t("minCap")}</span></div>
+ </div>`;
     goals += `<div class="panel"><div class="field"><span class="lab">${t("comps")}</span>${(p.comps || []).length ? "" : `<span class="sub">${t("compNone")}</span>`}</div>${(
       p.comps || []
     )
@@ -10414,7 +10438,7 @@ ${setupFields(setup, ty)}
       bs = blockState(),
       L = t("life"),
       sum = {
-        train: `${t("disc")[p.disc]} · ${t("levels")[p.level]} · ${PS.days(p.days.length)}`,
+        train: `${t("disc")[p.disc]} · ${(p.club && p.club.days.length ? PS.club(p.club.days.length) + " + " : "") + PS.days(p.days.length)}`,
         goals:
           [
             nc ? (nc.kind === "grade" ? PS.nextGrade : PS.nextComp)(fmtDate(nc.date)) : "",
@@ -10458,22 +10482,24 @@ ${setupFields(setup, ty)}
     }
     const o = ui.onb,
       step = o.step;
-    let h = `<button type="button" class="btn ghost skip" data-onb="skip">${t("onbSkip")}</button><div class="dots">${[0, 1, 2, 3].map((i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>${step === 0 ? installHtml(true) : ""}`;
-    h += `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair(step === 1 ? "box" : "kick")}</svg>`;
+    let h = `<button type="button" class="btn ghost skip" data-onb="skip">${t("onbSkip")}</button><div class="dots">${[0, 1, 2, 3, 4].map((i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>${step === 0 ? installHtml(true) : ""}`;
+    h += `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair(step === 1 || step === 3 ? "box" : "kick")}</svg>`;
     if (step === 0) {
       h += `<h1>${t("onbQ1")}</h1><div class="sub">${t("onbQ1s")}</div><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => `<button type="button" data-od="${k}" aria-pressed="${o.disc === k}" ${k === "fc" || k === "k1" ? "disabled" : ""}>${t("disc")[k]}</button>`).join("")}</div>`;
     } else if (step === 1) {
-      h += `<h1>${t("onbQ2")}</h1><div class="sub">${t("onbQ2s")}</div><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip" data-oday="${i}" aria-pressed="${o.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><div class="seg">${[45, 60, 75, 90].map((m) => `<button type="button" data-omin="${m}" aria-pressed="${o.minutes === m}">${m} ${t("min")}</button>`).join("")}</div>`;
-    } else if (step === 3) {
+      h += `<h1>${t("onbClubQ")}</h1><div class="sub">${t("onbClubS")}</div><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip cday" data-ocday="${i}" aria-pressed="${o.clubDays.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div>${o.clubDays.length ? `<span class="lab">${t("onbClubMin")}</span><div class="seg">${[60, 75, 90, 120].map((m) => `<button type="button" data-ocmin="${m}" aria-pressed="${o.clubMin === m}">${m} ${t("min")}</button>`).join("")}</div>` : ""}`;
+    } else if (step === 2) {
+      h += `<h1>${t("onbQ2")}</h1><div class="sub">${t("onbQ2s")}</div><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip${o.clubDays.includes(i) ? " clubday" : ""}" data-oday="${i}" aria-pressed="${o.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><div class="seg">${[45, 60, 75, 90].map((m) => `<button type="button" data-omin="${m}" aria-pressed="${o.minutes === m}">${m} ${t("min")}</button>`).join("")}</div>`;
+    } else if (step === 4) {
       const B = t("blk");
       h += `<h1>${B.onbT}</h1><div class="sub">${B.onbS}</div><div class="onbpts">${B.onbPts.map((x) => `<span>${x}</span>`).join("")}</div>`;
     } else {
       h += `<h1>${t("onbQ3")}</h1><div class="sub">${t("onbQ3s")}</div><input id="oBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${o.birthYear || ""}"><label class="lab" for="oComp">${t("onbComp")}</label><input id="oComp" type="date" min="${iso(today())}" value="${o.comp || ""}">`;
     }
-    if (step === 3)
+    if (step === 4)
       h += `<div class="acts"><button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button><button type="button" class="btn" data-onb="test">${t("blk").onbTest}</button></div><button type="button" class="btn ghost later" data-onb="done">${t("blk").onbLater}</button>`;
     else
-      h += `<div class="acts">${step ? `<button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button>` : ""}<button type="button" class="btn" data-onb="next" ${step === 1 && !o.days.length ? "disabled" : ""}>${t("onbNext")}</button></div>`;
+      h += `<div class="acts">${step ? `<button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button>` : ""}<button type="button" class="btn" data-onb="next" ${step === 2 && !o.days.length ? "disabled" : ""}>${t("onbNext")}</button></div>`;
     el.innerHTML = h;
     el.hidden = false;
   }
@@ -10495,6 +10521,7 @@ ${setupFields(setup, ty)}
         disc: o.disc,
         days: o.days.slice().sort((a, b) => a - b),
         minutes: o.minutes,
+        club: { days: (o.clubDays || []).slice(), minutes: o.clubMin || 90 },
         birthYear: o.birthYear || "",
         comps: o.comp ? [{ id: "c" + Date.now().toString(36), date: o.comp }] : [],
         example: false,
@@ -17475,8 +17502,29 @@ ${setupFields(setup, ty)}
     if (ds.restartTour) return startTour();
     if (ds.onb) {
       readOnb();
-      if (ds.onb === "next") ui.onb.step++;
-      else if (ds.onb === "back") ui.onb.step--;
+      if (ds.onb === "next") {
+        ui.onb.step++;
+        const o = ui.onb;
+        if (o.step === 2 && !o.ownTouched && o.clubDays.length) {
+          // suggest free days with as few training neighbours as possible (2 next to a busy club week, else 3)
+          const busy = new Set(o.clubDays),
+            want = o.clubDays.length >= 2 ? 2 : 3,
+            pick = [];
+          for (let k = 0; k < want; k++) {
+            let best = -1,
+              bs = 9;
+            for (let d = 0; d < 7; d++) {
+              if (busy.has(d)) continue;
+              const sc = busy.has((d + 6) % 7) + busy.has((d + 1) % 7);
+              if (sc < bs) (bs = sc), (best = d);
+            }
+            if (best < 0) break;
+            pick.push(best);
+            busy.add(best);
+          }
+          o.days = pick.sort((x, y) => x - y);
+        }
+      } else if (ds.onb === "back") ui.onb.step--;
       else return finishOnb(ds.onb === "skip", ds.onb === "test");
       renderOnb();
       return;
@@ -17486,7 +17534,22 @@ ${setupFields(setup, ty)}
       renderOnb();
       return;
     }
+    if (ds.ocday) {
+      const a = ui.onb.clubDays,
+        i = +ds.ocday,
+        j = a.indexOf(i);
+      j >= 0 ? a.splice(j, 1) : a.push(i);
+      a.sort((x, y) => x - y);
+      renderOnb();
+      return;
+    }
+    if (ds.ocmin) {
+      ui.onb.clubMin = +ds.ocmin;
+      renderOnb();
+      return;
+    }
     if (ds.oday) {
+      ui.onb.ownTouched = true;
       const a = ui.onb.days,
         i = +ds.oday,
         j = a.indexOf(i);
@@ -17801,7 +17864,16 @@ ${setupFields(setup, ty)}
     }
     if (!S.profile.planStart) S.profile.planStart = iso(today());
     if (!local && S.profile.example)
-      ui.onb = { step: 0, disc: "lc", days: [0, 2, 4], minutes: 75, birthYear: "", comp: "" };
+      ui.onb = {
+        step: 0,
+        disc: "lc",
+        days: [0, 2, 4],
+        minutes: 75,
+        birthYear: "",
+        comp: "",
+        clubDays: [],
+        clubMin: 90,
+      };
     ensureExample();
     render();
     prepLoader("loadingApp");
