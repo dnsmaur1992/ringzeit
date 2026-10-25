@@ -3528,9 +3528,44 @@
     display: flex;
     flex-direction: column;
   }
-  .glist .strow i {
+  .glist {
+    padding: 0 16px 6px;
+  }
+  .grow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 11px 0;
     border: 0;
-    font-size: 18px;
+    border-top: 1px solid var(--line);
+    background: none;
+    color: var(--frost);
+    font: inherit;
+    text-align: left;
+  }
+  .grow b {
+    flex: 1;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .grow .chev {
+    color: var(--mist);
+    font-size: 22px;
+  }
+  .gico {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    color: var(--ice);
+    background: color-mix(in srgb, var(--ice) 15%, transparent);
+  }
+  .gico svg {
+    width: 21px;
+    height: 21px;
   }
   .gsec {
     border-top: 1px solid var(--line);
@@ -16306,11 +16341,16 @@ ${setupFields(setup, ty)}
       return `<h3>${G.care}</h3>${secs(G.careSecs)}<div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
     return `<h3>${G.aid}</h3>${secs(G.aidSecs)}<div class="note warn">${G.aidNote}</div><div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
   }
+  const GUIDE_ICO = {
+    wrap: '<circle cx="8" cy="12" r="4.5"/><circle cx="8" cy="12" r="1.6"/><path d="M8 7.5h10.5v9H8"/><path d="M13 7.5v9"/>',
+    care: '<path d="M8 20h8v-3.2c2.4-.9 3.5-2.9 3.5-5.3V9a5 5 0 0 0-5-5H11a5 5 0 0 0-5 5v3.5c0 1.8.8 3.3 2 4.3z"/><path d="M8 16.8h8"/><path d="M10 11h3.5a2 2 0 0 0 2-2"/>',
+    aid: '<rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/>',
+  };
   function guidePanelHtml() {
     const G = t("guide"),
-      row = (k, ico) =>
-        `<button type="button" class="strow" data-guide="${k}"><i>${ico}</i><span><b>${G[k]}</b></span><span class="chev">›</span></button>`;
-    return `<div class="panel"><div class="field"><span class="lab">${G.title}</span><span class="sub">${G.hint}</span></div><div class="glist">${row("wrap", "🩹")}${row("care", "🧤")}${row("aid", "➕")}</div></div>`;
+      row = (k) =>
+        `<button type="button" class="grow" data-guide="${k}"><span class="gico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${GUIDE_ICO[k]}</svg></span><b>${G[k]}</b><span class="chev">›</span></button>`;
+    return `<div class="panel"><div class="field"><span class="lab">${G.title}</span><span class="sub">${G.hint}</span></div><div class="glist">${row("wrap")}${row("care")}${row("aid")}</div></div>`;
   }
   /* ============ Tournament packing list (the coach's list, ticked per tournament) ============ */
   function packFor(id) {
