@@ -3760,6 +3760,35 @@
     stroke-width: 2.2;
     stroke-linecap: round;
   }
+  .ackl {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+  .ackl li {
+    position: relative;
+    padding-left: 22px;
+    line-height: 1.4;
+  }
+  .ackl li::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 0.5em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ice);
+  }
+  .legal p {
+    margin: 0 0 10px;
+    line-height: 1.45;
+  }
+  .legal h4 {
+    margin: 14px 0 8px;
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -4008,6 +4037,35 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      ack: {
+        h: "Kurz zur Sicherheit",
+        pts: [
+          "Du trainierst auf eigene Verantwortung. Ringzeit ersetzt keinen Trainer und keine ärztliche Beratung.",
+          "Bei Vorerkrankungen, Verletzungen oder Beschwerden vorher ärztlich abklären. Bei Schmerzen, Schwindel oder Atemnot sofort aufhören.",
+          "Sparring und Partnerübungen nur unter Aufsicht.",
+          "Unter 18 nur mit Einverständnis deiner Eltern.",
+        ],
+        priv: "Ringzeit ist ein privates Projekt – kein Angebot deines Vereins, der WAKO oder eines Verbands.",
+        ok: "Verstanden – los geht's",
+      },
+      legal: {
+        row: "Hinweise & Datenschutz",
+        sub: "Sicherheit, Haftung, deine Daten",
+        h1: "Sicherheit & Haftung",
+        p1: [
+          "Ringzeit ist ein privates, kostenloses Projekt. Es ist kein Angebot eines Vereins, der WAKO, der WAKO Deutschland oder eines Verbands.",
+          "Die Trainingsvorschläge sind allgemeine Empfehlungen und ersetzen weder Trainer noch ärztliche Beratung. Die Nutzung erfolgt auf eigene Verantwortung.",
+          "Bei Vorerkrankungen, Verletzungen, Schwangerschaft oder Beschwerden das Training vorher ärztlich abklären. Bei Schmerzen, Schwindel oder Atemnot sofort aufhören.",
+          "Sparring und Partnerübungen nur unter Aufsicht. Kinder und Jugendliche unter 18 nutzen Ringzeit nur mit Einverständnis der Eltern.",
+          "Verbindlich sind immer die aktuellen Regelwerke der WAKO Deutschland und die Anweisungen deiner Trainer.",
+        ],
+        h2: "Datenschutz",
+        p2: [
+          "Ringzeit hat kein Konto, keine Werbung und kein Tracking. Alles, was du einträgst, bleibt nur auf deinem Gerät.",
+          "Ringzeit wird über GitHub Pages bereitgestellt. Beim Laden und bei Updates verarbeitet GitHub technisch übliche Zugriffsdaten wie die IP-Adresse.",
+          "Sicherungen speicherst du selbst. Mit „Neu starten“ löschst du alle Daten auf diesem Gerät.",
+        ],
+      },
       resetLbl: "Neu starten",
       resetHint:
         "Löscht alle Daten auf diesem Gerät – Plan, Einträge, Tests, Kombis – und startet die Einrichtung von vorn. Vorher am besten eine Sicherung speichern.",
@@ -4989,6 +5047,35 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      ack: {
+        h: "Quick safety note",
+        pts: [
+          "You train at your own risk. Ringzeit doesn't replace a coach or medical advice.",
+          "With pre-existing conditions, injuries or complaints, check with a doctor first. Stop at once with pain, dizziness or shortness of breath.",
+          "Sparring and partner drills only under supervision.",
+          "Under 18 only with your parents' consent.",
+        ],
+        priv: "Ringzeit is a private project – not offered by your club, WAKO or any federation.",
+        ok: "Got it – let's go",
+      },
+      legal: {
+        row: "Notes & privacy",
+        sub: "Safety, liability, your data",
+        h1: "Safety & liability",
+        p1: [
+          "Ringzeit is a private, free project. It is not offered by a club, WAKO, WAKO Germany or any federation.",
+          "The training suggestions are general recommendations and replace neither a coach nor medical advice. Use at your own risk.",
+          "With pre-existing conditions, injuries, pregnancy or complaints, check with a doctor before training. Stop at once with pain, dizziness or shortness of breath.",
+          "Sparring and partner drills only under supervision. Children and teenagers under 18 use Ringzeit only with their parents' consent.",
+          "The current WAKO Germany rulebooks and your coaches' instructions always take precedence.",
+        ],
+        h2: "Privacy",
+        p2: [
+          "Ringzeit has no account, no ads and no tracking. Everything you enter stays on your device only.",
+          "Ringzeit is served via GitHub Pages. When loading and updating, GitHub processes the usual technical access data such as the IP address.",
+          "You save backups yourself. “Start over” deletes all data on this device.",
+        ],
+      },
       resetLbl: "Start over",
       resetHint:
         "Deletes all data on this device – plan, entries, tests, combos – and starts the setup again. Best save a backup first.",
@@ -10547,6 +10634,7 @@ ${setupFields(setup, ty)}
     app += `<div class="panel"><div class="field"><span class="lab">${t("seasonLbl")}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-season="${i ? "off" : "on"}" aria-pressed="${!!S.profile.seasonOff === !!i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${t("seasonHint")}</span></div></div>`;
     app = mycHtml() + app;
     app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div><div class="field"><span class="lab">${t("resetLbl")}</span><span class="sub">${t("resetHint")}</span><button type="button" class="btn ghost danger" data-reset-all="1">${t("resetBtn")}</button></div></div>`;
+    app += `<div class="panel"><button type="button" class="row" data-legal="1" style="width:100%;background:none;border:0;text-align:left;padding:0"><span style="flex:1">${t("legal").row}<div class="sub">${t("legal").sub}</div></span><span class="sub" aria-hidden="true">›</span></button></div>`;
     app += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
     h += { train, goals, life, guide: guidePanelHtml(), app }[sec] || "";
     return h;
@@ -10608,6 +10696,12 @@ ${setupFields(setup, ty)}
       el.hidden = true;
       return;
     }
+    if (ui.onb.ack) {
+      const A = t("ack");
+      el.innerHTML = `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair("box")}</svg><h1>${A.h}</h1><ul class="ackl">${A.pts.map((x) => `<li>${x}</li>`).join("")}</ul><div class="sub">${A.priv}</div><div class="acts"><button type="button" class="btn" data-onb="ack">${A.ok}</button></div>`;
+      el.hidden = false;
+      return;
+    }
     const o = ui.onb,
       step = o.step;
     let h = `<button type="button" class="btn ghost skip" data-onb="skip">${t("onbSkip")}</button><div class="dots">${[0, 1, 2, 3, 4].map((i) => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>${step === 0 ? installHtml(true) : ""}`;
@@ -10641,6 +10735,12 @@ ${setupFields(setup, ty)}
     if (c) ui.onb.comp = c.value;
   }
   async function finishOnb(skip, test) {
+    // the safety note is confirmed once before the app starts
+    if (!S.profile.ackSafe) {
+      ui.onb.ack = { skip, test };
+      renderOnb();
+      return;
+    }
     const o = ui.onb;
     ui.onb = null;
     if (!skip) {
@@ -17224,6 +17324,14 @@ ${setupFields(setup, ty)}
     // ----- focus blocks
     if (ds.blk) return blockAction(ds.blk);
     if (ds.inst) return installAction(ds.inst);
+    if (ds.legal) {
+      const G = t("legal");
+      return openSheet({
+        kind: "show",
+        title: G.row,
+        html: `<div class="legal"><h4>${G.h1}</h4>${G.p1.map((x) => `<p>${x}</p>`).join("")}<h4>${G.h2}</h4>${G.p2.map((x) => `<p>${x}</p>`).join("")}</div>`,
+      });
+    }
     if (ds.lock) return toast(t(ds.lock === "age" ? "discAgeT" : "discLockT"));
     if (ds.resetAll) return openSheet({ kind: "confirm", title: t("resetLbl"), lines: [t("resetAsk")], run: resetAll });
     if (ds.mood || ds.low || ds.work || ds.form) return lifeAction(ds);
@@ -17646,6 +17754,19 @@ ${setupFields(setup, ty)}
       return showTour();
     }
     if (ds.restartTour) return startTour();
+    if (ds.onb === "ack") {
+      S.profile.ackSafe = iso(today());
+      const a = ui.onb.ack;
+      if (ui.onb.ackOnly) {
+        ui.onb = null;
+        store.save();
+        renderOnb();
+        if (!S.profile.toured) startTour();
+        return;
+      }
+      delete ui.onb.ack;
+      return finishOnb(a.skip, a.test);
+    }
     if (ds.onb) {
       readOnb();
       if (ds.onb === "next") {
@@ -18033,6 +18154,11 @@ ${setupFields(setup, ty)}
     render();
     prepLoader("loadingApp");
     openLoader(3500).then(() => {
+      if (!ui.onb && !S.profile.ackSafe && !S.profile.example) {
+        ui.onb = { ack: {}, ackOnly: true };
+        renderOnb();
+        return;
+      }
       if (!ui.onb && !S.profile.toured) startTour();
     });
     store.init().then(async () => {
