@@ -3888,6 +3888,9 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      planUpd: "Plan aktualisiert",
+      autoSave: "Änderungen werden sofort in deinen Plan übernommen.",
+      needDay: "Wähle mindestens einen Trainingstag.",
       guide: {
         title: "Ratgeber",
         hint: "Bandagieren, Pflege der Ausrüstung und Erste Hilfe bei kleinen Blessuren.",
@@ -4361,7 +4364,7 @@
         ],
         comp: [
           "Turniere & Prüfungen",
-          "Mit einem Turnier oder einer Gürtelprüfung als Ziel baut Ringzeit den Plan in Phasen auf, bis hin zur Entlastung kurz davor.",
+          "Mit einem Turnier oder einer Gürtelprüfung als Ziel baut Ringzeit den Plan in Phasen auf, bis hin zur Entlastung kurz davor. Alles, was du im Profil änderst, gilt sofort – speichern musst du nichts.",
         ],
         pause: [
           "Pausen",
@@ -4702,7 +4705,6 @@
       limits: "Einschränkungen",
       lim: { knee: "Knie", shoulder: "Schulter", wrist: "Handgelenk", back: "Rücken", ankle: "Sprunggelenk" },
       limitsHint: "Übungen, die diese Bereiche belasten, werden ersetzt.",
-      savePlan: "Plan erstellen",
       planMade: "Neuer Plan steht",
       storage: "Speicherung",
       cloud: "In deinem Konto, auf allen Geräten",
@@ -4791,6 +4793,9 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      planUpd: "Plan updated",
+      autoSave: "Changes go into your plan right away.",
+      needDay: "Pick at least one training day.",
       guide: {
         title: "Guide",
         hint: "Wrapping your hands, caring for your gear and first aid for small knocks.",
@@ -5252,7 +5257,7 @@
         ],
         comp: [
           "Tournaments & gradings",
-          "With a tournament or belt grading as the goal, Ringzeit builds the plan in phases, down to a taper just before.",
+          "With a tournament or belt grading as the goal, Ringzeit builds the plan in phases, down to a taper just before. Everything you change in your profile applies right away – no need to save.",
         ],
         pause: [
           "Breaks",
@@ -5580,7 +5585,6 @@
       limits: "Limitations",
       lim: { knee: "Knee", shoulder: "Shoulder", wrist: "Wrist", back: "Back", ankle: "Ankle" },
       limitsHint: "Exercises that load these areas get replaced.",
-      savePlan: "Build plan",
       planMade: "New plan is set",
       storage: "Storage",
       cloud: "In your account, on all devices",
@@ -10087,7 +10091,7 @@ ${setupFields(setup, ty)}
           `<button type="button" class="chip" data-lim="${k}" aria-pressed="${p.limits.includes(k)}">${t("lim")[k]}</button>`,
       )
       .join("")}</div><span class="sub">${t("limitsHint")}</span></div></div>`;
-    h += `<button type="button" class="btn" id="pSave" ${p.days.length ? "" : "disabled"}>${t("savePlan")}</button>`;
+    h += `<p class="sub" style="text-align:center;margin:-4px 0 0">${p.days.length ? t("autoSave") : t("needDay")}</p>`;
     // breaks and KO act on the stored data directly (they are not part of the plan settings above)
     const pz = pausedOn(iso(today())),
       koUntil = S.ko ? addDays(parse(S.ko), 27) : null;
@@ -16903,11 +16907,13 @@ ${setupFields(setup, ty)}
         j = a.indexOf(i);
       j >= 0 ? a.splice(j, 1) : a.push(i);
       a.sort((x, y) => x - y);
+      applyPlan();
       render();
       return;
     }
     if (ds.cmin) {
       draft.club.minutes = +ds.cmin;
+      applyPlan();
       render();
       return;
     }
@@ -17226,6 +17232,7 @@ ${setupFields(setup, ty)}
         if (draft.disc === "fc" || draft.disc === "k1") draft.disc = "lc";
         draft.focus = "bal";
       }
+      applyPlan();
       render();
       return;
     }
@@ -17235,6 +17242,7 @@ ${setupFields(setup, ty)}
         j = a.indexOf(i);
       j >= 0 ? a.splice(j, 1) : a.push(i);
       a.sort((x, y) => x - y);
+      applyPlan();
       render();
       return;
     }
@@ -17242,6 +17250,7 @@ ${setupFields(setup, ty)}
       const a = draft.limits,
         j = a.indexOf(ds.lim);
       j >= 0 ? a.splice(j, 1) : a.push(ds.lim);
+      applyPlan();
       render();
       return;
     }
@@ -17250,40 +17259,34 @@ ${setupFields(setup, ty)}
       if (!v) return;
       draft.comps = (draft.comps || []).filter((c) => c.date !== v);
       draft.comps.push({ id: "c" + Date.now().toString(36), date: v, kind: ui.ckind || "comp" });
+      applyPlan();
       render();
       return;
     }
     if (ds.cdel) {
       draft.comps = draft.comps.filter((c) => c.id !== ds.cdel);
+      applyPlan();
       render();
-      return;
-    }
-    if (b.id === "pSave") {
-      await loading("loadingPlan");
-      // the focus block is managed on its own (not part of the plan draft)
-      S.profile = {
-        ...draft,
-        example: false,
-        planStart: S.profile.planStart || iso(today()),
-        block: S.profile.block,
-        blockHist: S.profile.blockHist,
-        blkSeen: S.profile.blkSeen,
-        fast: S.profile.fast,
-        pack: S.profile.pack,
-      };
-      draft = null;
-      const td = iso(today());
-      for (const k of Object.keys(S.sessions)) if (k >= td && !doneOn(k)) delete S.sessions[k];
-      store.save();
-      ui.tab = "week";
-      ui.sel = null;
-      ui.setup = null;
-      render();
-      toast(t("planMade"));
-      window.scrollTo(0, 0);
       return;
     }
   });
+  /* Profile changes take effect at once: the plan settings are copied over and planned sessions from today on are rebuilt */
+  const PLAN_KEYS = ["level", "disc", "focus", "birthYear", "days", "minutes", "club", "comps", "limits"];
+  function applyPlan() {
+    if (!draft) return;
+    if (!draft.days.length) return toast(t("needDay"));
+    PLAN_KEYS.forEach((k) => (S.profile[k] = JSON.parse(JSON.stringify(draft[k] ?? null))));
+    S.profile.example = false;
+    if (!S.profile.planStart) S.profile.planStart = iso(today());
+    const td = iso(today());
+    for (const k of Object.keys(S.sessions)) if (k >= td && !doneOn(k)) delete S.sessions[k];
+    ui.setup = null;
+    loadCache = {};
+    store.save();
+    // one short confirmation, even after several quick changes
+    clearTimeout(applyPlan.t);
+    applyPlan.t = setTimeout(() => toast(t("planUpd")), 700);
+  }
   function collectPerf(sess) {
     if (!sess || !sess.perf) return undefined;
     const out = [];
@@ -17330,11 +17333,18 @@ ${setupFields(setup, ty)}
       const c = draft.comps.find((x) => x.id === ev.target.dataset.wc),
         v = parseFloat(ev.target.value.replace(",", "."));
       if (c) c.wc = v >= 20 && v <= 150 ? v : null;
+      applyPlan();
       return;
     }
     if (ev.target.id === "pBirth") {
       const y = parseInt(ev.target.value);
       draft.birthYear = y >= 1950 && y <= today().getFullYear() - 8 ? y : "";
+      applyPlan();
+      render();
+    }
+    // the minutes slider applies when it is let go, not on every step while dragging
+    if (ev.target.id === "pMin" && draft) {
+      applyPlan();
       render();
     }
   });
