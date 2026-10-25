@@ -3675,6 +3675,25 @@
     text-decoration: none;
     padding: 4px 0;
   }
+  /* everyday life */
+  .frow {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .frow .seg button {
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+  .frow > span {
+    font-size: 13.5px;
+    color: var(--mist);
+  }
+  .blks .seg {
+    margin: 0;
+  }
   /* app tour */
   .tour {
     position: fixed;
@@ -3923,6 +3942,43 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      life: {
+        title: "Alltag",
+        hint: "Job, Schule, Studium und Familie kosten auch Kraft. Alles hier ist freiwillig.",
+        weekQ: "Wie wird deine Woche?",
+        weekS: "Ringzeit passt die Einheiten an – ein Tipp genügt.",
+        moods: { easy: "Entspannt", normal: "Normal", hard: "Stressig" },
+        weekLbl: "Diese Woche",
+        moodToast: {
+          easy: "Woche angepasst – etwas mehr drin",
+          normal: "Alles klar – normaler Plan",
+          hard: "Woche angepasst – leichter und mehr Technik",
+        },
+        lowLbl: "Wenig-Zeit-Modus",
+        lowHint:
+          "Für Prüfungszeit, Umzug, Baby & Co.: Einheiten höchstens 30 Minuten, nur das Wesentliche. Deine Serie läuft weiter.",
+        lowOn: "Wenig-Zeit-Modus an – höchstens 30 Minuten",
+        lowOff: "Wenig-Zeit-Modus aus",
+        workLbl: "Art der Arbeit",
+        workHint: "Sitzend: mehr Mobility für Hüfte und Rücken. Körperlich schwer: etwas weniger Kraftvolumen.",
+        works: { "": "Keine Angabe", sit: "Sitzend", phys: "Körperlich" },
+        formQ: "Tagesform",
+        formS: "Optional – passt die heutige Einheit an.",
+        sleep: "Schlaf",
+        energy: "Energie",
+        lv: ["Schlecht", "Okay", "Gut"],
+        formDone: "Einheit an deine Tagesform angepasst",
+        notes: {
+          hard: "Stressige Woche: weniger Runden, kein Sparring, keine harte Kondition – Training soll heute Energie geben, nicht nehmen.",
+          easy: "Entspannte Woche: eine Runde mehr ist drin.",
+          formLow:
+            "Tagesform niedrig: heute leichter. Technik sauber, kein Vollgas – lieber gut erholt in die nächste Einheit.",
+          formMid: "Tagesform mittel: etwas weniger Umfang, Tempo nach Gefühl.",
+          low: "Wenig-Zeit-Modus: nur das Wesentliche.",
+          sit: "Viel Sitzen: zum Schluss Hüfte und Brustwirbelsäule mobilisieren.",
+          phys: "Körperlich schwere Arbeit: etwas weniger Kraftvolumen.",
+        },
+      },
       planUpd: "Plan aktualisiert",
       autoSave: "Änderungen werden sofort in deinen Plan übernommen.",
       needDay: "Wähle mindestens einen Trainingstag.",
@@ -4828,6 +4884,43 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      life: {
+        title: "Everyday life",
+        hint: "Work, school, studies and family take energy too. Everything here is optional.",
+        weekQ: "How is your week looking?",
+        weekS: "Ringzeit adapts your sessions – one tap is enough.",
+        moods: { easy: "Relaxed", normal: "Normal", hard: "Stressful" },
+        weekLbl: "This week",
+        moodToast: {
+          easy: "Week adjusted – a bit more on",
+          normal: "Got it – normal plan",
+          hard: "Week adjusted – lighter, more technique",
+        },
+        lowLbl: "Short-on-time mode",
+        lowHint:
+          "For exams, moving house, a new baby and the like: sessions of 30 minutes at most, essentials only. Your streak keeps going.",
+        lowOn: "Short-on-time mode on – 30 minutes at most",
+        lowOff: "Short-on-time mode off",
+        workLbl: "Type of work",
+        workHint: "Desk job: more mobility for hips and back. Physical job: a little less strength volume.",
+        works: { "": "Not set", sit: "Desk", phys: "Physical" },
+        formQ: "How do you feel today?",
+        formS: "Optional – adjusts today's session.",
+        sleep: "Sleep",
+        energy: "Energy",
+        lv: ["Poor", "Okay", "Good"],
+        formDone: "Session adjusted to how you feel",
+        notes: {
+          hard: "Stressful week: fewer rounds, no sparring, no hard conditioning – training should give energy today, not take it.",
+          easy: "Relaxed week: one extra round is on.",
+          formLow:
+            "Low on energy today: go lighter. Clean technique, no all-out – better to be well rested for the next session.",
+          formMid: "Medium form: a bit less volume, pace by feel.",
+          low: "Short-on-time mode: essentials only.",
+          sit: "Lots of sitting: finish by mobilising hips and upper back.",
+          phys: "Physical job: a little less strength volume.",
+        },
+      },
       planUpd: "Plan updated",
       autoSave: "Changes go into your plan right away.",
       needDay: "Pick at least one training day.",
@@ -7389,7 +7482,20 @@
 
   /* The type actually used on a date: the built session's type, otherwise the plan */
   const typeOn = (ds) => planOn(ds) && ((S.sessions[ds] && S.sessions[ds].type) || planOn(ds));
-  const sessMin = (ty) => (ty === "M" ? Math.min(45, S.profile.minutes) : S.profile.minutes);
+  /* everyday life: week check-in (per Monday), short-on-time mode, today's form (per date), type of work */
+  const weekMood = (ds) => (S.profile.weekMood || {})[iso(monday(ds ? parse(ds) : today()))] || "normal";
+  const lowTime = () => !!(S.profile.lowTime && S.profile.lowTime.on);
+  /* today's form: 0 = low, 1 = medium, 2 = fine (sleep + energy, each 0–2) */
+  function formOn(ds) {
+    const f = (S.profile.form || {})[ds];
+    if (!f || f.sleep == null || f.energy == null) return 2;
+    const sc = f.sleep + f.energy;
+    return sc <= 1 ? 0 : sc <= 2 ? 1 : 2;
+  }
+  const sessMin = (ty) => {
+    const m = ty === "M" ? Math.min(45, S.profile.minutes) : S.profile.minutes;
+    return lowTime() ? Math.min(30, m) : m;
+  };
   const sessDur = (ds, ty) => (S.sessions[ds] && S.sessions[ds].min) || sessMin(ty);
   const own = (e) => e.src !== "club";
   /* Numbers with the decimal separator of the chosen language */
@@ -7447,6 +7553,8 @@
     let ty = dayTypes(bi && bi.k)[wd(ds)];
     if (!ty) return null;
     if (ramadanOn(ds) && (ty === "K" || ty === "C")) ty = "T";
+    // a stressful week: technique instead of sparring and hard conditioning
+    if (weekMood(ds) === "hard" && (ty === "K" || ty === "C" || ty === "P")) ty = "T";
     const y = clubDone(iso(addDays(parse(ds), -1)));
     if (ty === "P" && (koLock(ds) || (y && y.ck === "P"))) ty = "T";
     return ty;
@@ -7644,6 +7752,8 @@
   function rpeRange(type, ds) {
     let r = baseRpe(type, ds);
     if (type !== "M" && ramadanOn(ds)) r -= 1;
+    if (type !== "M" && weekMood(ds) === "hard") r -= 1;
+    if (type !== "M") r -= [1.5, 0.5, 0][formOn(ds || iso(today()))];
     if (type !== "M" && weekLoad(ds).deload) r -= 1.5;
     const rp = rampOn(ds || iso(today()));
     if (rp && type !== "M") r -= rp.rpe;
@@ -8360,7 +8470,10 @@
       soft = ph.phase === "taper" || ph.phase === "recover" || ko,
       taper = ph.phase === "taper",
       masters = ageGroup() === "masters",
-      fasting = ramadanOn(dateStr);
+      fasting = ramadanOn(dateStr),
+      mood = weekMood(dateStr),
+      form = formOn(dateStr),
+      work = S.profile.work || "";
     // round length and break: the tournament bout format during preparation, otherwise training defaults
     const fmtR = prep ? ph.format : null,
       fightW = fmtR ? fmtR.w : 180,
@@ -8375,10 +8488,24 @@
       if (ramp) n = Math.max(2, Math.round(n * ramp.f));
       if (prep && p.level === 0) n = Math.max(2, Math.round(n * 0.8));
       if (fasting) n = Math.max(2, Math.round(n * 0.8));
+      if (mood === "hard") n = Math.max(2, Math.round(n * 0.8));
+      if (mood === "easy") n += 1;
+      if (form < 2) n = Math.max(2, Math.round(n * (form === 0 ? 0.7 : 0.85)));
       return n;
     };
     const rpe = rpeRange(type, dateStr);
     if (fasting) notes.push(t("fast").note);
+    {
+      const N = t("life").notes;
+      if (type !== "M") {
+        if (mood === "hard") notes.push(N.hard);
+        if (mood === "easy") notes.push(N.easy);
+        if (form < 2) notes.push(form === 0 ? N.formLow : N.formMid);
+      }
+      if (lowTime()) notes.push(N.low);
+      if (work === "sit" && type !== "M") notes.push(N.sit);
+      if (work === "phys" && (type === "S" || type === "K")) notes.push(N.phys);
+    }
     // focus block: adapts round lengths, exercise choice and sets; tournament phases switch it off (see blockInfo)
     const bi = blockInfo(dateStr),
       bk = bi && bi.k,
@@ -8507,7 +8634,7 @@
             : p.level === 2
               ? "4× 5–8"
               : "3× 8–12";
-    const supSets = load.deload ? "2×" : "3×";
+    const supSets = load.deload || work === "phys" ? "2×" : "3×";
     let theme = null;
     if (type === "S") {
       const main = Math.round(rest * 0.7),
@@ -8533,7 +8660,14 @@
         blocks.push({
           key: "str",
           min: main,
-          items: pickEx("str", taper ? 3 : p.level === 0 ? 4 : 5, loc, eq, used, machines),
+          items: pickEx(
+            "str",
+            (taper ? 3 : p.level === 0 ? 4 : 5) - (work === "phys" ? 1 : 0),
+            loc,
+            eq,
+            used,
+            machines,
+          ),
           sets: bk === "pow" && !load.deload ? (light ? "3× 8–10 · " + B.clean : "4× 4–6 · " + B.heavy) : sets,
         });
       const n = Math.max(2, Math.floor(fin / 3)),
@@ -8646,6 +8780,15 @@
             ]
           : pickEx("cool", 3, loc, eq, used),
     });
+    if (work === "sit" && type !== "M") {
+      const cb = blocks[blocks.length - 1];
+      cb.items.push(
+        ...pickEx("mob", 1, loc, eq, used, (e) =>
+          ["Offenes Buch", "90/90 Hüftwechsel", "World's Greatest Stretch"].includes(e.de) ? 3 : 0,
+        ),
+      );
+      cb.min += 2;
+    }
     if (ph.phase !== "base" && type !== "M") {
       notes.unshift(prepText(ph, type));
       if (prep && !S.profile.birthYear) notes.push(t("needBirth"));
@@ -9467,6 +9610,7 @@
     }
     h += blockHtml();
     h += packCardHtml();
+    h += weekCheckHtml();
     h += starterHtml();
     h += promptsHtml();
     h += pulseHtml();
@@ -9720,9 +9864,10 @@
           : { ds, loc: "gym", eq: ["bag", "rope"], type: planned, run: false, min: sessMin(planned) };
     ui.setup = setup;
     const ty = setup.type;
+    h += formHtml(ds, sess);
     h += `<h2>${t("weekday")[i]} · ${t("types")[ty]} · ${setup.min} ${t("min")}</h2>`;
     // duration options: 30/45/60 and the usual length; mobility never longer than 45 minutes
-    const durs = [...new Set([30, 45, 60, S.profile.minutes])]
+    const durs = [...new Set(lowTime() ? [20, 30] : [30, 45, 60, S.profile.minutes])]
       .filter((m) => ty !== "M" || m <= 45)
       .sort((a, b) => a - b);
     h += `<div class="panel"><div class="field"><span class="lab">${t("sessType")}</span><div class="seg g3">${["T", "C", "P", "S", "K", "M"].map((k) => `<button type="button" data-stype="${k}" aria-pressed="${ty === k}" ${k === "P" && koLock(ds) ? "disabled" : ""}>${t("types")[k]}${k === planned ? `<small>${t("suggested")}</small>` : ""}</button>`).join("")}</div>${koLock(ds) ? `<span class="sub">${t("koNote")}</span>` : ""}</div>
@@ -10151,6 +10296,7 @@ ${setupFields(setup, ty)}
         h += `<div class="panel"><div class="field"><span class="lab">${F.lbl}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-fast="${i ? "off" : "on"}" aria-pressed="${on === !i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${F.hint}</span></div></div>`;
       }
     }
+    h += lifePanelHtml();
     h += guidePanelHtml();
     h += `<div class="panel"><div class="field"><span class="lab">${t("seasonLbl")}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-season="${i ? "off" : "on"}" aria-pressed="${!!S.profile.seasonOff === !!i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${t("seasonHint")}</span></div></div>`;
     h += mycHtml();
@@ -16411,6 +16557,87 @@ ${setupFields(setup, ty)}
     renderSheet();
   }
 
+  /* ============ Everyday life: week check-in, today's form, profile panel ============ */
+  function lifeReplan(fromDs) {
+    const td = fromDs || iso(today());
+    for (const k of Object.keys(S.sessions)) if (k >= td && !doneOn(k)) delete S.sessions[k];
+    ui.setup = null;
+    loadCache = {};
+    ["weekMood", "lowTime", "work", "form"].forEach((k) => draft && (draft[k] = S.profile[k]));
+    store.save();
+  }
+  /* Today: one question per week, asked until it is answered (from Monday on) */
+  function weekCheckHtml() {
+    const key = iso(monday(today()));
+    if ((S.profile.weekMood || {})[key] || S.profile.example) return "";
+    const L = t("life");
+    return `<div class="blks" style="--bc:#6f9fe0"><div class="bsrow"><span class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><b>${L.weekQ}</b><span class="sub">${L.weekS}</span></div></div><div class="seg">${["easy", "normal", "hard"].map((k) => `<button type="button" data-mood="${k}">${L.moods[k]}</button>`).join("")}</div></div>`;
+  }
+  /* Session page: today's form, two optional taps */
+  function formHtml(ds, sess) {
+    if (ds !== iso(today()) || doneOn(ds) || (sess && sess.type === "M")) return "";
+    const L = t("life"),
+      f = (S.profile.form || {})[ds] || {},
+      row = (k) =>
+        `<div class="frow"><span>${L[k]}</span><div class="seg">${[0, 1, 2].map((v) => `<button type="button" data-form="${k}:${v}" aria-pressed="${f[k] === v}">${L.lv[v]}</button>`).join("")}</div></div>`;
+    return `<div class="panel formp"><div class="field"><span class="lab">${L.formQ}</span><span class="sub">${f.sleep != null && f.energy != null && formOn(ds) < 2 ? "✓ " + L.formDone : L.formS}</span>${row("sleep")}${row("energy")}</div></div>`;
+  }
+  function lifePanelHtml() {
+    const L = t("life"),
+      mood = weekMood(),
+      low = lowTime(),
+      work = S.profile.work || "";
+    return `<div class="panel"><div class="field"><span class="lab">${L.title}</span><span class="sub">${L.hint}</span></div>
+      <div class="field"><span class="lab">${L.weekLbl}</span><div class="seg">${["easy", "normal", "hard"].map((k) => `<button type="button" data-mood="${k}" aria-pressed="${mood === k}">${L.moods[k]}</button>`).join("")}</div></div>
+      <div class="field"><span class="lab">${L.lowLbl}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-low="${i ? "off" : "on"}" aria-pressed="${low === !i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${L.lowHint}</span></div>
+      <div class="field"><span class="lab">${L.workLbl}</span><div class="seg">${["", "sit", "phys"].map((k) => `<button type="button" data-work="${k || "none"}" aria-pressed="${work === k}">${L.works[k]}</button>`).join("")}</div><span class="sub">${L.workHint}</span></div></div>`;
+  }
+  function lifeAction(ds) {
+    const L = t("life");
+    if (ds.mood) {
+      const key = iso(monday(today()));
+      S.profile.weekMood = { ...(S.profile.weekMood || {}), [key]: ds.mood };
+      // keep the last ten weeks
+      const ks = Object.keys(S.profile.weekMood).sort();
+      while (ks.length > 10) delete S.profile.weekMood[ks.shift()];
+      lifeReplan();
+      render();
+      return toast(L.moodToast[ds.mood]);
+    }
+    if (ds.low) {
+      S.profile.lowTime = { on: ds.low === "on", since: iso(today()) };
+      lifeReplan();
+      render();
+      return toast(ds.low === "on" ? L.lowOn : L.lowOff);
+    }
+    if (ds.work) {
+      S.profile.work = ds.work === "none" ? "" : ds.work;
+      lifeReplan();
+      render();
+      return toast(t("planUpd"));
+    }
+    if (ds.form) {
+      const [k, v] = ds.form.split(":"),
+        d = iso(today());
+      S.profile.form = { ...(S.profile.form || {}) };
+      S.profile.form[d] = { ...(S.profile.form[d] || {}), [k]: +v };
+      const ks = Object.keys(S.profile.form).sort();
+      while (ks.length > 30) delete S.profile.form[ks.shift()];
+      // today's session follows the new form, unless sets were already logged or the timer is running
+      const sess = S.sessions[d],
+        logged =
+          sess && sess.perf && Object.values(sess.perf).some((rows) => rows.some((r) => r.r != null || r.kg != null)),
+        busy = logged || (ui.timer && ui.timer.ds === d && ui.timer.phase !== "ready" && ui.timer.phase !== "done");
+      if (sess && !busy) {
+        S.sessions[d] = buildSession(d, sess.type, sess.loc, sess.eq, { min: sess.min, run: sess.run });
+        ui.timer = null;
+      }
+      if (draft) draft.form = S.profile.form;
+      store.save();
+      return render();
+    }
+  }
+
   /* ============ Training mode (full screen) ============ */
   /* Title, description and combo of one round item, used by the training mode */
   function roundInfo(it) {
@@ -16679,6 +16906,7 @@ ${setupFields(setup, ty)}
     // ----- focus blocks
     if (ds.blk) return blockAction(ds.blk);
     if (ds.inst) return installAction(ds.inst);
+    if (ds.mood || ds.low || ds.work || ds.form) return lifeAction(ds);
     if (ds.guide || ds.wstep != null || ds.packOpen || ds.pack || ds.packAdd || ds.packReset) return guideAction(ds);
     if (ds.fast) {
       const hj = hijri(today());
