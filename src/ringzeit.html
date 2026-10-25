@@ -41,6 +41,11 @@
   * {
     box-sizing: border-box;
   }
+  /* no double-tap zoom (pinch zoom stays available) */
+  html,
+  body {
+    touch-action: manipulation;
+  }
   button,
   input,
   textarea {
@@ -410,6 +415,7 @@
     border-radius: 10px;
     padding: 10px 12px;
     width: 100%;
+    font-size: 16px; /* below 16px iOS zooms in on focus */
   }
   input:focus,
   textarea:focus {
