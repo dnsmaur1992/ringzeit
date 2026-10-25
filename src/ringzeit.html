@@ -532,12 +532,36 @@
     background: linear-gradient(90deg, rgba(142, 201, 164, 0.1), transparent 85%);
     box-shadow: inset 2px 0 0 var(--done);
   }
+  /* completed rounds: green bar, tick, struck-through title */
   .ex.past {
-    opacity: 0.4;
+    opacity: 0.55;
+    box-shadow: inset 2px 0 0 var(--done);
+  }
+  .ex.past .num {
+    color: var(--done);
   }
   .ex.past .num::after {
     content: " ✓";
     color: var(--done);
+  }
+  .ex.past .tx > b,
+  .ex.past .tx > .exn b {
+    text-decoration: line-through;
+    text-decoration-color: var(--done);
+    text-decoration-thickness: 2px;
+  }
+  /* completed sets */
+  .sets .sl.ok {
+    color: var(--done);
+  }
+  .sets .sl.ok::after {
+    content: " ✓";
+  }
+  .sets .si.ok {
+    border-color: color-mix(in srgb, var(--done) 55%, var(--line));
+    background: color-mix(in srgb, var(--done) 9%, var(--night));
+    color: var(--frost);
+    font-weight: 600;
   }
   .combo {
     display: flex;
@@ -10050,7 +10074,8 @@
     let h = timed ? `<div class="last" style="margin-top:6px">${t("holdTarget")(rows.length, hold)}</div>` : "";
     h += `<div class="sets ${kg ? "" : "nokg"}"><span></span><span class="hd">${timed ? t("secs") : t("reps")}</span>${kg ? `<span class="hd">${t("kg")}</span>` : ""}<span></span>`;
     rows.forEach((r, i) => {
-      h += `<span class="sl">${t("setL")} ${i + 1}</span><input class="si" type="text" inputmode="numeric" data-k="${key}" data-i="${i}" data-f="r" value="${r.r ?? ""}" placeholder="${ph}" aria-label="${t("setL")} ${i + 1} ${timed ? t("secs") : t("reps")}">${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${i}" data-f="kg" value="${r.kg ?? ""}" placeholder="kg" aria-label="${t("setL")} ${i + 1} kg">` : ""}<button type="button" class="x" data-rmset="${key}" data-i="${i}" aria-label="−">−</button>`;
+      const ok = r.r != null && r.r !== "" ? " ok" : "";
+      h += `<span class="sl${ok}" data-sl="${key}.${i}">${t("setL")} ${i + 1}</span><input class="si${ok}" type="text" inputmode="numeric" data-k="${key}" data-i="${i}" data-f="r" value="${r.r ?? ""}" placeholder="${ph}" aria-label="${t("setL")} ${i + 1} ${timed ? t("secs") : t("reps")}">${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${i}" data-f="kg" value="${r.kg ?? ""}" placeholder="kg" aria-label="${t("setL")} ${i + 1} kg">` : ""}<button type="button" class="x" data-rmset="${key}" data-i="${i}" aria-label="−">−</button>`;
     });
     const last = lastPerf(id, sess.date);
     return (
@@ -15518,15 +15543,18 @@ ${setupFields(setup, ty)}
   };
   /* Timer phases: ready (waits for the user) -> work -> rest (automatic) -> ready for the next round … -> done */
   function newTimer(ds) {
-    const sess = S.sessions[ds];
+    const sess = S.sessions[ds],
+      total = roundBlock(sess).items.length,
+      rd = sess.rdone || 0;
     return {
       ds,
       phase: "ready",
-      round: 1,
+      // continue after the last completed round (e.g. after leaving the page)
+      round: rd > 0 && rd < total ? rd + 1 : 1,
       left: workLen(sess),
       work: workLen(sess),
       rest: restLen(sess),
-      total: roundBlock(sess).items.length,
+      total,
       running: false,
     };
   }
@@ -17224,12 +17252,23 @@ ${setupFields(setup, ty)}
     releaseWake();
   }
   function markRounds(scroll) {
-    const tm = ui.timer;
+    const tm = ui.timer && ui.timer.ds === ui.sel ? ui.timer : null,
+      sess = S.sessions[ui.sel];
+    // completed rounds are remembered per session, so the marks survive leaving the page or a restart
+    if (tm && sess && tm.phase !== "ready") {
+      const n = tm.phase === "done" ? 99 : tm.phase === "rest" ? tm.round : tm.round - 1;
+      if (n > (sess.rdone || 0)) {
+        sess.rdone = n;
+        store.save();
+      }
+    }
+    const rd = (sess && sess.rdone) || 0;
     document.querySelectorAll("[data-rd]").forEach((el) => {
-      const n = +el.dataset.rd;
-      el.classList.toggle("cur", !!tm && tm.phase !== "done" && n === tm.round);
+      const n = +el.dataset.rd,
+        isCur = !!tm && tm.phase !== "done" && n === tm.round && !(tm.phase === "ready" && n <= rd);
+      el.classList.toggle("cur", isCur);
       el.classList.toggle("resting", !!tm && tm.phase === "rest" && n === tm.round);
-      el.classList.toggle("past", !!tm && (n < tm.round || tm.phase === "done"));
+      el.classList.toggle("past", !isCur && ((!!tm && (n < tm.round || tm.phase === "done")) || n <= rd));
       if (scroll && n === tm.round && el.scrollIntoView) {
         try {
           el.scrollIntoView({
@@ -17929,6 +17968,7 @@ ${setupFields(setup, ty)}
     }
     if (b.id === "treset") {
       ui.timer = newTimer(ui.sel);
+      if (S.sessions[ui.sel]) delete S.sessions[ui.sel].rdone;
       releaseWake();
       render();
       return;
@@ -18134,6 +18174,12 @@ ${setupFields(setup, ty)}
       if (!rows) return;
       const v = parseFloat(el.value.replace(",", "."));
       rows[+el.dataset.i][el.dataset.f] = isNaN(v) || v < 0 ? null : Math.round(v * 10) / 10;
+      if (el.dataset.f === "r") {
+        const done = rows[+el.dataset.i].r != null,
+          sl = document.querySelector(`[data-sl="${el.dataset.k}.${el.dataset.i}"]`);
+        if (sl) sl.classList.toggle("ok", done);
+        el.classList.toggle("ok", done);
+      }
       store.save();
       return;
     }
