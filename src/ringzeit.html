@@ -4259,6 +4259,11 @@
       },
       easeRound: "Einstiegsrunde: 70 % Tempo, Kicks höchstens auf Körperhöhe.",
       seasonLbl: "Jahreszeiten-Design",
+      music: {
+        lbl: "Musik bei den Rundentimern",
+        opts: ["Unterbrechen", "Weiterspielen"],
+        hint: "Weiterspielen: Deine Musik läuft weiter, Glocke und Ansagen kommen darüber. Dafür muss der Stummschalter am iPhone aus sein – sonst bleibt die Glocke stumm. Unterbrechen: Die Glocke klingt immer, die Musik startest du danach selbst wieder.",
+      },
       seasonHint:
         "Heute-Seite, Ladebildschirm und Funken passen sich der Jahreszeit an – mit Mütze im Winter und Badehose im Sommer.",
       onOff: ["An", "Aus"],
@@ -5264,6 +5269,11 @@
       },
       easeRound: "Opening round: 70 % pace, kicks no higher than the body.",
       seasonLbl: "Seasonal design",
+      music: {
+        lbl: "Music during round timers",
+        opts: ["Interrupt", "Keep playing"],
+        hint: "Keep playing: your music continues, bell and voice play on top. The iPhone's silent switch must be off – otherwise the bell stays silent. Interrupt: the bell always sounds, you restart the music yourself afterwards.",
+      },
       seasonHint:
         "Today page, loading screen and sparks follow the season – with a hat in winter and swim shorts in summer.",
       onOff: ["On", "Off"],
@@ -10632,6 +10642,15 @@ ${setupFields(setup, ty)}
     }
     life = lifePanelHtml() + life;
     app += `<div class="panel"><div class="field"><span class="lab">${t("seasonLbl")}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-season="${i ? "off" : "on"}" aria-pressed="${!!S.profile.seasonOff === !!i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${t("seasonHint")}</span></div></div>`;
+    if (audioSessionOk())
+      app += `<div class="panel"><div class="field"><span class="lab">${t("music").lbl}</span><div class="seg">${t(
+        "music",
+      )
+        .opts.map(
+          (x, i) =>
+            `<button type="button" data-mix="${i}" aria-pressed="${!!S.profile.mixMusic === !!i}">${x}</button>`,
+        )
+        .join("")}</div><span class="sub">${t("music").hint}</span></div></div>`;
     app = mycHtml() + app;
     app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div><div class="field"><span class="lab">${t("resetLbl")}</span><span class="sub">${t("resetHint")}</span><button type="button" class="btn ghost danger" data-reset-all="1">${t("resetBtn")}</button></div></div>`;
     app += `<div class="panel"><button type="button" class="row" data-legal="1" style="width:100%;background:none;border:0;text-align:left;padding:0"><span style="flex:1">${t("legal").row}<div class="sub">${t("legal").sub}</div></span><span class="sub" aria-hidden="true">›</span></button></div>`;
@@ -15447,21 +15466,44 @@ ${setupFields(setup, ty)}
       }
     } catch (e) {}
   }
+  /* Screen stays on while any round timer runs (session timer, full screen, free round timer).
+     The system drops the lock when the app is hidden or the screen locks – it is requested again on return. */
+  let wantWake = false;
   async function getWake() {
+    wantWake = true;
+    applyAudioMode();
     audioKeep(true);
     unlockBells();
+    if (wake) return;
     try {
-      wake = await navigator.wakeLock?.request("screen");
+      wake = (await navigator.wakeLock?.request("screen")) || null;
+      if (wake)
+        wake.addEventListener("release", () => {
+          wake = null;
+          if (wantWake && document.visibilityState === "visible") getWake();
+        });
     } catch (e) {
       wake = null;
     }
   }
   function releaseWake() {
+    wantWake = false;
     audioKeep(false);
     try {
       wake && wake.release();
     } catch (e) {}
     wake = null;
+  }
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && wantWake && !wake) getWake();
+  });
+  /* Music while training (iPhone): "pause" = bell and voice interrupt the music (default, works on silent mode);
+     "mix" = music keeps playing and the bell sounds on top (needs the ring/silent switch on ring) */
+  const audioSessionOk = () => typeof navigator !== "undefined" && "audioSession" in navigator;
+  function applyAudioMode() {
+    try {
+      if (audioSessionOk()) navigator.audioSession.type = S.profile.mixMusic ? "ambient" : "auto";
+    } catch (e) {}
   }
   const roundBlock = (sess) => sess && sess.blocks.find((b) => b.rounds);
   /* Round length and break come from the round block (tournament format in prep weeks); older sessions fall back */
@@ -17349,6 +17391,12 @@ ${setupFields(setup, ty)}
       render();
       return toast(on ? t("fast").on : t("fast").off);
     }
+    if (ds.mix) {
+      S.profile.mixMusic = ds.mix === "1";
+      applyAudioMode();
+      store.save();
+      return render();
+    }
     if (ds.season) {
       S.profile.seasonOff = ds.season === "off";
       if (draft) draft.seasonOff = S.profile.seasonOff;
@@ -18151,6 +18199,7 @@ ${setupFields(setup, ty)}
         clubMin: 90,
       };
     ensureExample();
+    applyAudioMode();
     render();
     prepLoader("loadingApp");
     openLoader(3500).then(() => {
