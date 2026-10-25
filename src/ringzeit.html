@@ -4442,7 +4442,7 @@
         ],
         ftimer: [
           "Rundentimer",
-          "Der rote Knopf in der Mitte startet einen freien Rundentimer mit Ringglocke – fürs Vereinstraining, Sparring oder zwischendurch, ganz ohne Plan.",
+          "Der rote Knopf in der Mitte startet einen freien Rundentimer mit Ringglocke – fürs Vereinstraining, Sparring oder zwischendurch, ganz ohne Plan. Mit „Coach-Ansagen“ ruft er dir Kombis zu.",
         ],
         test: [
           "Tests & Gürtelprüfung",
@@ -4460,6 +4460,10 @@
         pause: [
           "Pausen",
           "Krank, verletzt, im Urlaub oder nach einem KO: Pause eintragen. Danach steigt die Belastung behutsam wieder an.",
+        ],
+        life: [
+          "Alltag & Ratgeber",
+          "Stressige Woche, wenig Zeit oder ein körperlicher Job? Hier passt du Ringzeit an deinen Alltag an. Darunter findest du Bandagieren, Materialpflege und Erste Hilfe.",
         ],
         end: [
           "Bereit",
@@ -5372,7 +5376,7 @@
         ],
         ftimer: [
           "Round timer",
-          "The red button in the middle starts a free round timer with a ring bell – for club training, sparring or in between, no plan needed.",
+          "The red button in the middle starts a free round timer with a ring bell – for club training, sparring or in between, no plan needed. With “coach calls” it calls out combos for you.",
         ],
         test: [
           "Tests & belt grading",
@@ -5390,6 +5394,10 @@
         pause: [
           "Breaks",
           "Sick, injured, on holiday or after a KO: log a break. Afterwards the load ramps back up gently.",
+        ],
+        life: [
+          "Everyday life & guide",
+          "Stressful week, short on time or a physical job? Adapt Ringzeit to your everyday life here. Below you'll find hand wrapping, gear care and first aid.",
         ],
         end: ["Ready", "That's it. You can find the tour any time in the profile under “App tour”. Enjoy training!"],
       },
@@ -9610,8 +9618,8 @@
     }
     h += blockHtml();
     h += packCardHtml();
-    h += weekCheckHtml();
     h += starterHtml();
+    h += weekCheckHtml();
     h += promptsHtml();
     h += pulseHtml();
     if (S.profile.example) h += `<div class="note">${t("example")}</div>`;
@@ -10758,6 +10766,7 @@ ${setupFields(setup, ty)}
     { k: "club", tab: "profile", sel: "[data-cday]", up: ".field" },
     { k: "comp", tab: "profile", sel: "#pCompNew", up: ".field" },
     { k: "pause", tab: "profile", sel: "[data-pnew]", up: ".field" },
+    { k: "life", tab: "profile", sel: "[data-low]", up: ".panel" },
     { k: "end" },
   ];
   function startTour() {
@@ -16569,7 +16578,9 @@ ${setupFields(setup, ty)}
   /* Today: one question per week, asked until it is answered (from Monday on) */
   function weekCheckHtml() {
     const key = iso(monday(today()));
+    // not in the very first week: new users first get to know the app
     if ((S.profile.weekMood || {})[key] || S.profile.example) return "";
+    if (S.profile.planStart && iso(monday(parse(S.profile.planStart))) >= key) return "";
     const L = t("life");
     return `<div class="blks" style="--bc:#6f9fe0"><div class="bsrow"><span class="bico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span><div><b>${L.weekQ}</b><span class="sub">${L.weekS}</span></div></div><div class="seg">${["easy", "normal", "hard"].map((k) => `<button type="button" data-mood="${k}">${L.moods[k]}</button>`).join("")}</div></div>`;
   }
