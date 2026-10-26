@@ -3992,6 +3992,9 @@
       opacity: 1;
     }
   }
+  .ex .excheck { background: transparent; border: 0; border-radius: 6px; padding: 3px 0; align-self: flex-start; min-height: 36px; }
+  .ex .excheck:focus-visible { outline: 2px solid var(--ice); }
+  .btn.all-done { background: var(--done); color: var(--ink); box-shadow: 0 0 0 2px #8ec9a444; }
 </style>
 
 <div class="wrap" id="app"></div>
@@ -8889,7 +8892,7 @@
         min: cool,
         items: pickEx("cool", 2, loc, eq, used).concat(used.has(breath.id) ? [] : [{ kind: "ex", id: breath.id }]),
       });
-      return {
+      return progressSession({
         date: dateStr,
         type,
         loc,
@@ -8901,7 +8904,7 @@
         min: D,
         blk,
         created: Date.now(),
-      };
+      });
     }
     if (run) {
       // Simple run by feel: easy zone 2; outside the foundation phase with a short zone-3 block in the middle
@@ -8920,7 +8923,7 @@
       if (ageGroup() !== "kids") blocks.push(hardBlock([], loc, soft));
       blocks.push({ key: "cool", min: cool, items: pickEx("cool", 2, loc, [], used) });
       // a run by feel is easy: zone 2 ≈ RPE 3–4, with zone-3 blocks up to 6
-      return {
+      return progressSession({
         date: dateStr,
         type,
         loc,
@@ -8933,7 +8936,7 @@
         tHi: iv ? 6 : 4,
         min: D,
         created: Date.now(),
-      };
+      });
     }
     const warmMin = Math.max(8, Math.round(D * 0.15)),
       coolMin = Math.max(5, Math.round(D * 0.1)) + (bk === "mob" ? 5 : 0),
@@ -9147,7 +9150,7 @@
     if (p.limits.includes("wrist") && theme) notes.push(t("wrNote"));
     if (kneeAnk()) notes.push(t("knNote"));
     if (kneeAnk() && EXTRA[p.disc] && theme) notes.push(t("noLowNote")(p.disc));
-    return {
+    return progressSession({
       date: dateStr,
       type,
       loc,
@@ -9160,7 +9163,7 @@
       min: D,
       blk,
       created: Date.now(),
-    };
+    });
   }
 
   /* ============ Illustrations (original, drawn in code) ============ */
@@ -10037,6 +10040,376 @@
   );
   const tracksSets = (id) => EX[id].cat === "str";
   const hasKg = (id) => /weights|kb|bb/.test(EX[id].eq) || (EX[id].eq.includes("studio") && EX[id].cat === "str");
+
+  /* ============ Completion and performance-based progression ============ */
+  const trainingText = () =>
+    S.profile.lang === "de"
+      ? {
+          check: "Übung abhaken",
+          uncheck: "Haken entfernen",
+          complete: "Einheit abschließen",
+          ready: "Alles erledigt · Einheit abschließen",
+          open: (n) => `Noch ${n} ${n === 1 ? "Übung" : "Übungen"} offen – trotzdem abschließen?`,
+          partial:
+            "Die Einheit zählt weiterhin für Belastung und Verlauf. Offene Übungen gelten nicht als geschafft.",
+          target: "Dein Ziel",
+          up: "Gut bewältigt: der nächste Zyklus wird leicht gesteigert.",
+          repeat:
+            "Belastung beibehalten: für eine Steigerung fehlen ausreichend vollständig bewältigte Einheiten.",
+          down: "Wiederholt über dem Anstrengungsziel: der nächste Zyklus wird leichter.",
+          initial:
+            "Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+          cap: "Die Pausendichte bleibt auf dieser Stufe. Kraftziele können bei ausreichender Leistung weiter steigen.",
+          protected: "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung.",
+          cycle: (week, weeks) => `Belastungszyklus: Woche ${week}/${weeks}.`,
+          density: (old, next) =>
+            `Gleiche Rundenzeit, angepasste Pausen: ${old} → ${next} s; innerhalb deiner Trainingszeit.`,
+          targetWhy: {
+            up: "Ziel zweimal erreicht: leicht erhöht.",
+            down: "Wiederholt zu schwer: Ziel reduziert.",
+            repeat: "Bisheriges Ziel wiederholen.",
+            initial: "Ausgangsziel; Gewicht selbst wählen.",
+          },
+        }
+      : {
+          check: "Mark exercise complete",
+          uncheck: "Remove check",
+          complete: "Finish session",
+          ready: "Everything done · finish session",
+          open: (n) => `${n} ${n === 1 ? "exercise" : "exercises"} still open – finish anyway?`,
+          partial:
+            "The session still counts towards load and history. Open exercises do not count as completed.",
+          target: "Your target",
+          up: "Well managed: the next cycle increases slightly.",
+          repeat: "Maintain load: not enough fully completed sessions to increase yet.",
+          down: "Repeatedly above the effort target: the next cycle is lighter.",
+          initial: "Baseline: complete comparable sessions and record effort first.",
+          cap: "Maintain rest density at this level. Strength targets may still increase when performance supports it.",
+          protected: "Deload, preparation or recovery takes priority over progression today.",
+          cycle: (week, weeks) => `Load cycle: week ${week}/${weeks}.`,
+          density: (old, next) =>
+            `Same work time, adjusted rests: ${old} → ${next} s; within your session time.`,
+          targetWhy: {
+            up: "Target met twice: slightly increased.",
+            down: "Repeatedly too hard: target reduced.",
+            repeat: "Repeat the previous target.",
+            initial: "Starting target; choose your own weight.",
+          },
+        };
+  const validEffort = (e) => Number.isFinite(e.rpe) && e.rpe >= 1 && e.rpe <= 10 && Number.isFinite(e.tHi);
+  const clampStep = (n) => Math.max(-2, Math.min(4, Number.isFinite(n) ? Math.round(n) : 0));
+  function roundDone(sess, n) {
+    return typeof sess.roundChecks?.[n] === "boolean" ? sess.roundChecks[n] : n <= (sess.rdone || 0);
+  }
+  function itemDone(sess, bi, ni) {
+    const b = sess.blocks[bi],
+      it = b.items[ni],
+      key = `${bi}.${ni}`;
+    if (b.rounds) return roundDone(sess, ni + 1);
+    if (EX[it.id]?.cat === "str" && !["warm", "cool"].includes(b.key)) {
+      const rows = sess.perf?.[key] || [];
+      // Same rule as the set inputs: an entered repetition/time value completes a set (including zero).
+      return rows.length >= blockSets(b) && rows.every((r) => r.r != null && r.r !== "");
+    }
+    return sess.checked?.[key] === true;
+  }
+  function sessionCompletion(sess) {
+    let total = 0,
+      done = 0;
+    if (sess)
+      sess.blocks.forEach((b, bi) =>
+        b.items.forEach((it, ni) => {
+          total++;
+          if (itemDone(sess, bi, ni)) done++;
+        }),
+      );
+    return { total, done, open: total - done, complete: total > 0 && done === total };
+  }
+  function checkButton(sess, bi, ni, label) {
+    const done = itemDone(sess, bi, ni),
+      txt = trainingText();
+    return `<button type="button" class="num excheck${sess.blocks[bi].rounds ? " r" : ""}" data-check="${bi}.${ni}" aria-pressed="${done}" aria-label="${done ? txt.uncheck : txt.check}">${label}</button>`;
+  }
+  function updateCompletionUI() {
+    const sess = S.sessions[ui.sel];
+    if (!sess) return;
+    document.querySelectorAll("[data-item]").forEach((el) => {
+      const [bi, ni] = el.dataset.item.split(".").map(Number),
+        done = itemDone(sess, bi, ni);
+      el.classList.toggle("past", done);
+      const btn = el.querySelector("[data-check]");
+      if (btn) {
+        btn.setAttribute("aria-pressed", String(done));
+        btn.setAttribute("aria-label", done ? trainingText().uncheck : trainingText().check);
+      }
+    });
+    const btn = document.getElementById("fSave");
+    if (btn) {
+      const done = sessionCompletion(sess).complete;
+      btn.classList.toggle("all-done", done);
+      btn.textContent = done ? trainingText().ready : trainingText().complete;
+    }
+  }
+  // A five-week wave reuses the existing fifth-week deload. Focus blocks retain their six-week stages.
+  function progressionCycle(ds) {
+    const bi = blockInfo(ds);
+    if (bi) {
+      const start = S.profile.block.start;
+      return {
+        id: `block:${bi.k}:${start}`,
+        start,
+        end: iso(addDays(parse(start), 41)),
+        week: bi.wk,
+        weeks: 6,
+        block: bi.k,
+      };
+    }
+    const anchor = monday(parse(S.profile.planStart || ds)),
+      age = Math.max(0, daysBetween(anchor, parse(ds))),
+      index = Math.floor(age / 35),
+      start = iso(addDays(anchor, index * 35));
+    return {
+      id: `base:${start}`,
+      start,
+      end: iso(addDays(parse(start), 34)),
+      week: Math.floor((age % 35) / 7) + 1,
+      weeks: 5,
+      block: null,
+    };
+  }
+  function progressionState(ds, type, run) {
+    const cycle = progressionCycle(ds),
+      signature = `${S.profile.disc}:${S.profile.level}:${type}:${run ? "run" : "regular"}`,
+      cutoff = ds < iso(today()) ? ds : iso(today()),
+      groups = new Map();
+    // Legacy logs remain valid load/history entries, but lack the evidence needed for an increase.
+    for (const e of S.log) {
+      const p = e.progression;
+      if (
+        e.src === "club" ||
+        !p ||
+        p.v !== 1 ||
+        p.signature !== signature ||
+        p.end >= cutoff ||
+        e.date > p.end ||
+        e.date < p.start ||
+        e.date >= cutoff ||
+        !p.eligible ||
+        !validEffort(e)
+      )
+        continue;
+      if (!groups.has(p.id)) groups.set(p.id, []);
+      groups.get(p.id).push(e);
+    }
+    const previous = [...groups.values()].sort((a, b) =>
+      b[0].progression.end.localeCompare(a[0].progression.end),
+    )[0];
+    let step = 0,
+      reason = "initial";
+    if (previous) {
+      // One vote per date; re-saving or importing duplicates must never manufacture successful sessions.
+      const entries = [...new Map(previous.map((e) => [e.date, e])).values()],
+        old = clampStep(previous[0].progression.step),
+        good = entries.filter(
+          (e) => e.completed === true && e.minutes >= e.progression.plannedMin * 0.8 && e.rpe <= e.tHi,
+        ),
+        hard = entries.filter((e) => e.rpe >= e.tHi + 2);
+      step = old;
+      if (hard.length >= 2) {
+        step = clampStep(old - 1);
+        reason = "down";
+      } else if (
+        good.length >= 2 &&
+        good.length / entries.length >= 0.8 &&
+        daysBetween(
+          parse(
+            entries
+              .map((e) => e.date)
+              .sort()
+              .slice(-1)[0],
+          ),
+          parse(cutoff),
+        ) <= 42
+      ) {
+        step = clampStep(old + 1);
+        reason = old === 4 ? "cap" : "up";
+      } else reason = "repeat";
+    }
+    const eligible =
+      ["T", "C", "K", "S"].includes(type) &&
+      !run &&
+      !young() &&
+      phaseInfo(ds).phase === "base" &&
+      !weekLoad(ds).deload &&
+      !rampOn(ds) &&
+      !koLock(ds) &&
+      !ramadanOn(ds) &&
+      weekMood(ds) !== "hard" &&
+      formOn(ds) === 2 &&
+      !(type === "S" && S.profile.work === "phys");
+    return { v: 1, ...cycle, signature, step, reason, eligible };
+  }
+  function strengthTarget(sess, b, it) {
+    const pr = sess.progression,
+      timed = TIMED.has(it.id),
+      match = (b.sets || "").match(/^\d+×\s*(\d+)[–-](\d+)/),
+      range = timed
+        ? [
+            [20, 30],
+            [30, 45],
+            [45, 60],
+          ][S.profile.level]
+        : match && [+match[1], +match[2]];
+    // Circuits, explosive lifts, AMRAP/special prescriptions and changed equipment keep their own dosing.
+    if (!range || isCirc(b) || EX[it.id]?.cat !== "str" || (DOSE_FIX[EX[it.id].de] && !timed)) return null;
+    const n = blockSets(b),
+      [lo, hi] = range,
+      kind = `${pr.signature}:${sess.loc}:${sess.eq.slice().sort().join(",")}:${lo}-${hi}:${n}:${timed ? "s" : "r"}`,
+      history = S.log
+        .filter(
+          (e) => e.date < sess.date && e.date <= iso(today()) && e.progression?.eligible && validEffort(e),
+        )
+        .sort((a, b) => b.date.localeCompare(a.date)),
+      matches = [];
+    for (const e of history) {
+      const perf = e.perf?.find((x) => x.id === it.id && x.target?.kind === kind);
+      if (perf) matches.push({ e, perf });
+    }
+    const last = matches[0],
+      old = last?.perf.target,
+      target = {
+        kind,
+        cycle: pr.id,
+        n,
+        lo,
+        hi,
+        r: old?.baseR ?? old?.r ?? lo,
+        kg: old?.kg ?? null,
+        timed,
+        reason: old ? "repeat" : "initial",
+      };
+    const waveTarget = () => ({
+      ...target,
+      baseR: target.r,
+      r: Math.max(
+        lo,
+        Math.min(hi, target.r + (pr.block ? 0 : [-1, 0, 1, 2, 0][pr.week - 1] * (timed ? 5 : 1))),
+      ),
+    });
+    if (!last) return waveTarget();
+    // A load is only suggested once it was actually entered for all sets; never invent a starting weight.
+    if (hasKg(it.id) && target.kg == null) {
+      const weights = last.perf.sets.slice(0, n).map((r) => r.kg);
+      if (weights.length === n && weights.every((w) => Number.isFinite(w) && w > 0 && w === weights[0]))
+        target.kg = weights[0];
+    }
+    const same = matches.filter(
+        (x) =>
+          x.perf.target.cycle === old.cycle &&
+          (x.perf.target.baseR ?? x.perf.target.r) === (old.baseR ?? old.r) &&
+          x.perf.target.kg === old.kg,
+      ),
+      entries = [...new Map(same.map((x) => [x.e.date, x])).values()],
+      met = (x) =>
+        x.e.completed === true &&
+        x.e.rpe <= x.e.tHi &&
+        x.perf.sets.length >= n &&
+        x.perf.sets
+          .slice(0, n)
+          .every(
+            (r) =>
+              Number.isFinite(r.r) &&
+              r.r >= x.perf.target.r &&
+              (!hasKg(it.id) || (target.kg != null && Number.isFinite(r.kg) && r.kg >= target.kg)),
+          );
+    // At most one adjustment per closed cycle, and only when that cycle supports the decision.
+    if (old.cycle === pr.id || last.e.progression.end >= sess.date || last.e.progression.end >= iso(today()))
+      return waveTarget();
+    if (pr.reason === "down" && entries.filter((x) => x.e.rpe >= x.e.tHi + 2).length >= 2) {
+      if (target.kg != null) target.kg = Math.round(target.kg * 0.95 * 10) / 10;
+      else target.r = Math.max(lo, target.r - (timed ? 5 : 1));
+      target.reason = "down";
+    } else if (
+      ["up", "cap"].includes(pr.reason) &&
+      entries.length >= 2 &&
+      entries.filter(met).length / entries.length >= 0.8
+    ) {
+      if (target.r < hi) target.r = Math.min(hi, target.r + (timed ? 5 : 1));
+      else if (hasKg(it.id) && target.kg != null) {
+        target.kg = Math.floor(target.kg * 1.025 * 10) / 10;
+        // Increase weight alone; retain repetitions until the new load has been completed.
+      }
+      target.reason = "up";
+    }
+    return waveTarget();
+  }
+  function targetText(target) {
+    return `${trainingText().target}: ${target.n} × ${target.r}${target.timed ? " s" : ""}${target.kg != null ? ` × ${numF(target.kg)} kg` : ""} · ${trainingText().targetWhy[target.reason]}`;
+  }
+  function progressSession(sess) {
+    const pr = progressionState(sess.date, sess.type, sess.run),
+      txt = trainingText();
+    sess.progression = { ...pr, plannedMin: sess.min };
+    if (!["T", "C", "K", "S"].includes(sess.type) || sess.run || young()) return sess;
+    sess.notes.push(pr.eligible ? `${txt.cycle(pr.week, pr.weeks, pr.step)} ${txt[pr.reason]}` : txt.protected);
+    if (!pr.eligible) return sess;
+    // Increase density alone, never contact intensity or the official competition format.
+    // Changing pauses, with fewer rounds if needed, keeps the existing time budget intact.
+    if (["T", "C", "K"].includes(sess.type)) {
+      const b = roundBlock(sess),
+        wave = pr.block ? 1 : [0.9, 0.95, 1, 1.05, 1][pr.week - 1];
+      if (b && b.w && b.b) {
+        const old = b.b,
+          factor = (1 + pr.step * 0.05) * wave;
+        b.b = Math.max(30, Math.round(old / factor));
+        const maxRounds = Math.max(1, Math.floor((b.min * 60 + b.b) / (b.w + b.b)));
+        if (b.items.length > maxRounds) b.items = b.items.slice(0, maxRounds);
+        if (old !== b.b) sess.notes.push(txt.density(old, b.b));
+      }
+    }
+    sess.blocks.forEach((b) => {
+      if (S.profile.work === "phys" || ["warm", "cool"].includes(b.key) || b.rounds) return;
+      b.items.forEach((it) => {
+        const target = strengthTarget(sess, b, it);
+        if (target) it.target = target;
+      });
+    });
+    return sess;
+  }
+  function saveTrainingSession() {
+    const sess = S.sessions[ui.sel],
+      ty = sess ? sess.type : planOn(ui.sel);
+    if (doneOn(ui.sel)) return;
+    const completion = sessionCompletion(sess),
+      minutes = Math.max(
+        1,
+        Math.min(300, parseInt(document.getElementById("fMin").value) || S.profile.minutes),
+      );
+    S.log.push({
+      id: "e" + Date.now().toString(36),
+      date: ui.sel,
+      src: "own",
+      type: ty,
+      minutes,
+      perf: collectPerf(sess),
+      plannedRounds: (roundBlock(sess) || { items: [] }).items.length,
+      rounds: sess ? (roundBlock(sess)?.items || []).filter((it, i) => roundDone(sess, i + 1)).length : 0,
+      completedRounds: sess
+        ? (roundBlock(sess)?.items || []).filter((it, i) => roundDone(sess, i + 1)).length
+        : 0,
+      completed: completion.complete,
+      openExercises: completion.open,
+      progression: sess?.progression,
+      rpe: +document.getElementById("fRpe").value,
+      tHi: sess ? sess.tHi : rpeRange(ty, ui.sel).hi,
+      note: document.getElementById("fNote").value.slice(0, 300),
+    });
+    store.save();
+    ui.win = true;
+    render();
+    showWin(S.log[S.log.length - 1]);
+  }
+
   function lastPerf(id, before) {
     const logs = S.log.filter((e) => e.perf && e.date < before).sort((a, b) => b.date.localeCompare(a.date));
     for (const e of logs) {
@@ -10064,6 +10437,7 @@
       return `<div class="sets nokg" style="grid-template-columns:auto minmax(0,1fr)"><span class="sl">${t("kg")}</span><input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="0" data-f="kg" value="${rows[0].kg ?? ""}" aria-label="${t("kg")}"></div>`;
     }
     const rows = perfRows(sess, key, b),
+      target = b.items[n].target,
       timed = TIMED.has(id),
       hold = [
         [20, 30],
@@ -10075,7 +10449,7 @@
     h += `<div class="sets ${kg ? "" : "nokg"}"><span></span><span class="hd">${timed ? t("secs") : t("reps")}</span>${kg ? `<span class="hd">${t("kg")}</span>` : ""}<span></span>`;
     rows.forEach((r, i) => {
       const ok = r.r != null && r.r !== "" ? " ok" : "";
-      h += `<span class="sl${ok}" data-sl="${key}.${i}">${t("setL")} ${i + 1}</span><input class="si${ok}" type="text" inputmode="numeric" data-k="${key}" data-i="${i}" data-f="r" value="${r.r ?? ""}" placeholder="${ph}" aria-label="${t("setL")} ${i + 1} ${timed ? t("secs") : t("reps")}">${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${i}" data-f="kg" value="${r.kg ?? ""}" placeholder="kg" aria-label="${t("setL")} ${i + 1} kg">` : ""}<button type="button" class="x" data-rmset="${key}" data-i="${i}" aria-label="−">−</button>`;
+      h += `<span class="sl${ok}" data-sl="${key}.${i}">${t("setL")} ${i + 1}</span><input class="si${ok}" type="text" inputmode="numeric" data-k="${key}" data-i="${i}" data-f="r" value="${r.r ?? ""}" placeholder="${target ? target.r : ph}" aria-label="${t("setL")} ${i + 1} ${timed ? t("secs") : t("reps")}">${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${i}" data-f="kg" value="${r.kg ?? ""}" placeholder="${target?.kg ?? "kg"}" aria-label="${t("setL")} ${i + 1} kg">` : ""}<button type="button" class="x" data-rmset="${key}" data-i="${i}" aria-label="−">−</button>`;
     });
     const last = lastPerf(id, sess.date);
     return (
@@ -10250,34 +10624,35 @@ ${setupFields(setup, ty)}
       h += `<div class="block">${blockHead(b)}`;
       if (b.items.some((it) => it.combo)) h += `<div class="legend">${t("legend")}</div>`;
       b.items.forEach((it, n) => {
+        const checked = itemDone(sess, bi, n), itemAttr = `data-item="${bi}.${n}"`;
         if (it.kind === "round" && it.k === "ex") {
           const x = exText(it.id);
-          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx">${exName(it.id, x.name)}<div>${esc(x.desc)}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
+          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} data-rd="${n + 1}">${checkButton(sess, bi, n, t("roundAbbr") + (n + 1))}<div class="tx">${exName(it.id, x.name)}<div>${esc(x.desc)}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
         } else if (it.kind === "run") {
           const z3 = it.zone === 3;
-          h += `<div class="ex"><span class="num r">Z${it.zone}</span><div class="tx"><b>${z3 ? t("z3set")(it.reps, it.on, it.off) : `${it.min} ${t("min")} · ${t("z2")}`}</b><div>${z3 ? t("z3d") : t("z2d")}</div></div></div>`;
+          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, "Z" + it.zone)}<div class="tx"><b>${z3 ? t("z3set")(it.reps, it.on, it.off) : `${it.min} ${t("min")} · ${t("z2")}`}</b><div>${z3 ? t("z3d") : t("z2d")}</div></div></div>`;
         } else if (it.kind === "hard") {
           const hd = HARD.find((q) => q.id === it.id) || HARD[0],
             x = hd[S.profile.lang];
-          h += `<div class="ex"><span class="num">${pad(n + 1)}</span><div class="tx">${SKETCH[hd.de[0]] ? `<button type="button" class="exn" data-hardinfo="${hd.id}"><b>${esc(x[0])}</b><span class="exi" aria-hidden="true">i</span></button>` : `<b>${esc(x[0])}</b>`}<div>${esc(x[1])}</div></div></div>`;
+          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1))}<div class="tx">${SKETCH[hd.de[0]] ? `<button type="button" class="exn" data-hardinfo="${hd.id}"><b>${esc(x[0])}</b><span class="exi" aria-hidden="true">i</span></button>` : `<b>${esc(x[0])}</b>`}<div>${esc(x[1])}</div></div></div>`;
         } else if (it.k === "sim") {
-          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx"><b>${t("simT")(it.fight, it.r)}</b><div>${it.fight > 1 && it.r === 1 ? t("simD2") : t("simD1")}${it.beg ? t("simBeg") : ""}</div></div></div>`;
+          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} data-rd="${n + 1}">${checkButton(sess, bi, n, t("roundAbbr") + (n + 1))}<div class="tx"><b>${t("simT")(it.fight, it.r)}</b><div>${it.fight > 1 && it.r === 1 ? t("simD2") : t("simD1")}${it.beg ? t("simBeg") : ""}</div></div></div>`;
         } else if (it.k === "task") {
           const x = TASKS.find((q) => q.id === it.id) || TASKS[0],
             tx = x[S.profile.lang],
             d = it.m === "p" ? tx[1] : tx[2] || tx[1];
-          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx"><span class="last">${t("sparMode")[it.m]}</span><br><b>${esc(tx[0])}</b><div>${esc(d)}</div></div></div>`;
+          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} data-rd="${n + 1}">${checkButton(sess, bi, n, t("roundAbbr") + (n + 1))}<div class="tx"><span class="last">${t("sparMode")[it.m]}</span><br><b>${esc(tx[0])}</b><div>${esc(d)}</div></div></div>`;
         } else if (it.kind === "exam") {
           const x = examItem(it.id);
-          if (x) h += examRow(x, n, sess.eq);
+          if (x) h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1))}<div class="tx">${examRow(x, n, sess.eq)}</div></div>`;
         } else if (it.kind === "round") {
           const r = RT[it.k];
-          h += `<div class="ex" data-rd="${n + 1}"><span class="num r">${t("roundAbbr")}${n + 1}</span><div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? comboHtml(it.combo) : ""}</div></div>`;
+          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} data-rd="${n + 1}">${checkButton(sess, bi, n, t("roundAbbr") + (n + 1))}<div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? comboHtml(it.combo) : ""}</div></div>`;
         } else {
           const x = exText(it.id),
             tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
-          const dz = doseTxt(it.id, b);
-          h += `<div class="ex"><span class="num">${pad(n + 1)}</span><div class="tx">${exName(it.id, x.name)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${tr ? setsHtml(sess, bi, n, b, it.id, false) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
+          const dz = it.target ? targetText(it.target) : doseTxt(it.id, b);
+          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${tr ? `<span class="num">${pad(n + 1)}</span>` : checkButton(sess, bi, n, pad(n + 1))}<div class="tx">${exName(it.id, x.name)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${tr ? setsHtml(sess, bi, n, b, it.id, false) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
         }
       });
       h += `</div>`;
@@ -10288,7 +10663,7 @@ ${setupFields(setup, ty)}
       h += `<div><h2>${t("finish")}</h2><div class="panel"><div class="field"><label class="lab" for="fMin">${t("duration")}</label><input id="fMin" type="number" inputmode="numeric" min="5" max="300" value="${sess.min || setup.min}"></div>
   <div class="field"><label class="lab" for="fRpe">${t("rpe")}: <span id="fRpeV">7</span></label><input id="fRpe" type="range" min="1" max="10" value="7"></div>
   <div class="field"><label class="lab" for="fNote">${t("note")}</label><textarea id="fNote" placeholder="${esc(t("notePh"))}"></textarea></div>
-  <div class="field"><button type="button" class="btn" id="fSave">${t("save")}</button></div></div></div>`;
+  <div class="field"><button type="button" class="btn${sessionCompletion(sess).complete ? " all-done" : ""}" id="fSave">${sessionCompletion(sess).complete ? trainingText().ready : trainingText().complete}</button></div></div></div>`;
     return h;
   }
   function radar(cur, prev) {
@@ -15541,16 +15916,16 @@ ${setupFields(setup, ty)}
     const rb = roundBlock(sess);
     return (rb && rb.b) || 60;
   };
-  /* Timer phases: ready (waits for the user) -> work -> rest (automatic) -> ready for the next round … -> done */
+  /* Timer phases: ready -> prep -> work -> rest -> work … -> done. Only start/resume is manual. */
   function newTimer(ds) {
     const sess = S.sessions[ds],
       total = roundBlock(sess).items.length,
-      rd = sess.rdone || 0;
+      next = roundBlock(sess).items.findIndex((it, i) => !roundDone(sess, i + 1));
     return {
       ds,
       phase: "ready",
       // continue after the last completed round (e.g. after leaving the page)
-      round: rd > 0 && rd < total ? rd + 1 : 1,
+      round: next < 0 ? 1 : next + 1,
       left: workLen(sess),
       work: workLen(sess),
       rest: restLen(sess),
@@ -15622,17 +15997,21 @@ ${setupFields(setup, ty)}
   }
   /* Announces the round once at its start, slowly and clearly: round number, exercise and (if any) the combo */
   function callTick(tm) {
-    if (!voiceOn() || (tm.phase !== "work" && tm.phase !== "prep") || tm.called === tm.round) return;
+    const round = tm.phase === "rest" ? tm.round + 1 : tm.round;
+    if (!voiceOn() || !["work", "prep", "rest"].includes(tm.phase) || tm.called === round || round > tm.total) return;
     const sess = S.sessions[tm.ds],
       rb = roundBlock(sess),
-      it = rb && rb.items[tm.round - 1];
+      it = rb && rb.items[round - 1];
     if (!it) return;
-    tm.called = tm.round;
+    tm.called = round;
     const info = roundInfo(it),
       de = S.profile.lang === "de",
-      text = `${de ? "Runde" : "Round"} ${tm.round}. ${info.title}.${it.combo ? " " + comboWords(it.combo) + "." : ""}`;
-    // announced at the start of the 10 s lead-in, so it is finished before the bell rings
-    setTimeout(() => say(text, 0.88), 300);
+      text = `${de ? "Runde" : "Round"} ${round}. ${info.title}.${it.combo ? " " + comboWords(it.combo) + "." : ""}`;
+    // Announce during prep / the end of rest; cancel stale scheduled calls after pause, skip or navigation.
+    setTimeout(() => {
+      if (ui.timer === tm && tm.running && tm.called === round &&
+          ((tm.phase === "rest" && tm.round + 1 === round) || (tm.phase !== "rest" && tm.round === round))) say(text, 0.88);
+    }, 300);
   }
 
   /* ============ Badges (in the spirit of Apple Fitness awards): earned from the data, kept with their date ============ */
@@ -16721,7 +17100,7 @@ ${setupFields(setup, ty)}
       sess = S.sessions[e.date],
       rb = own(e) && sess && roundBlock(sess),
       nEx = own(e) && sess ? sess.blocks.reduce((a, b) => a + b.items.length, 0) : 0,
-      stats = [[e.minutes, W.min], rb ? [rb.items.length, W.rounds] : nEx ? [nEx, W.ex] : null, [e.rpe, "RPE"]].filter(
+      stats = [[e.minutes, W.min], rb ? [e.completedRounds ?? rb.items.length, W.rounds] : nEx ? [nEx, W.ex] : null, [e.rpe, "RPE"]].filter(
         Boolean,
       ),
       ownN = S.log.filter(own).length,
@@ -17233,19 +17612,21 @@ ${setupFields(setup, ty)}
       tm.phase = "prep";
       tm.left = 10;
       tm.running = true;
+      lastTick = Date.now();
       getWake();
       callTick(tm);
       return;
     }
     tm.running = !tm.running;
-    if (tm.running) getWake();
-    else releaseWake();
+    if (tm.running) { lastTick = Date.now(); getWake(); callTick(tm); }
+    else { tm.called = null; releaseWake(); }
   }
   function timerJump(d) {
     const tm = ui.timer;
     if (!tm) return;
     tm.round = Math.max(1, Math.min(tm.total, tm.round + d));
     tm.call = null;
+    tm.called = null;
     tm.phase = "ready";
     tm.left = tm.work;
     tm.running = false;
@@ -17254,21 +17635,13 @@ ${setupFields(setup, ty)}
   function markRounds(scroll) {
     const tm = ui.timer && ui.timer.ds === ui.sel ? ui.timer : null,
       sess = S.sessions[ui.sel];
-    // completed rounds are remembered per session, so the marks survive leaving the page or a restart
-    if (tm && sess && tm.phase !== "ready") {
-      const n = tm.phase === "done" ? 99 : tm.phase === "rest" ? tm.round : tm.round - 1;
-      if (n > (sess.rdone || 0)) {
-        sess.rdone = n;
-        store.save();
-      }
-    }
-    const rd = (sess && sess.rdone) || 0;
     document.querySelectorAll("[data-rd]").forEach((el) => {
       const n = +el.dataset.rd,
-        isCur = !!tm && tm.phase !== "done" && n === tm.round && !(tm.phase === "ready" && n <= rd);
+        done = !!sess && roundDone(sess, n),
+        isCur = !done && !!tm && tm.phase !== "done" && n === tm.round;
       el.classList.toggle("cur", isCur);
       el.classList.toggle("resting", !!tm && tm.phase === "rest" && n === tm.round);
-      el.classList.toggle("past", !isCur && ((!!tm && (n < tm.round || tm.phase === "done")) || n <= rd));
+      el.classList.toggle("past", done);
       if (scroll && n === tm.round && el.scrollIntoView) {
         try {
           el.scrollIntoView({
@@ -17278,12 +17651,23 @@ ${setupFields(setup, ty)}
         } catch (e) {}
       }
     });
+    updateCompletionUI();
+  }
+  function completeTimerRound(tm) {
+    const sess = S.sessions[tm.ds];
+    if (!sess) return;
+    // Snapshot legacy rdone before moving the resume cursor, including explicit false values for skipped rounds.
+    sess.roundChecks = Object.fromEntries(Array.from({ length: tm.total }, (_, i) => [i + 1, roundDone(sess, i + 1)]));
+    sess.roundChecks[tm.round] = true;
+    sess.rdone = Math.max(sess.rdone || 0, tm.round);
+    store.save();
   }
   /* One timer second. quiet = catching up after the phone paused the page: no sounds, no splashes */
   function timerStep(tm, quiet) {
     tm.left--;
     if (!quiet && tm.left === 10 && tm.phase === "work") beep(660, 0.12, 1);
-    if (!quiet && tm.phase === "prep" && tm.left > 0 && tm.left <= 3) beep(740, 0.08, 1);
+    if (!quiet && ["prep", "rest"].includes(tm.phase) && tm.left > 0 && tm.left <= 3) beep(740, 0.08, 1);
+    if (!quiet && tm.phase === "rest" && tm.left === Math.min(10, tm.rest - 1)) callTick(tm);
     if (tm.left > 0) return false;
     const W = t("win"),
       fx = (k, txt) => !quiet && ui.focus && timerFx(k, txt);
@@ -17293,11 +17677,12 @@ ${setupFields(setup, ty)}
       if (!quiet) bell(1);
       fx("go", tm.round === tm.total && tm.total > 1 ? W.last : W.go);
     } else if (tm.phase === "work") {
+      completeTimerRound(tm);
       if (tm.round >= tm.total) {
         tm.phase = "done";
         tm.running = false;
         tm.left = 0;
-        bell(3);
+        if (!quiet) bell(3);
         releaseWake();
         fx("done", W.fin);
       } else {
@@ -17308,26 +17693,29 @@ ${setupFields(setup, ty)}
         fx("end", W.end(tm.round));
       }
     } else {
-      tm.phase = "ready";
+      tm.phase = "work";
       tm.call = null;
       tm.round++;
       tm.left = tm.work;
-      tm.running = false;
-      beep(988, 0.12, 2);
+      if (!quiet) {
+        bell(1);
+        callTick(tm);
+      }
+      fx("go", tm.round === tm.total ? W.last : W.go);
     }
     return true;
   }
   /* Runs every second; counts the real time that passed, so a locked screen doesn't stop the clock */
   let lastTick = Date.now();
   function tick() {
-    const now = Date.now(),
-      gap = Math.round((now - lastTick) / 1000);
-    lastTick = now;
+    const now = Date.now(), gap = Math.floor((now - lastTick) / 1000);
+    if (gap < 1) return;
+    lastTick += gap * 1000;
     const tm = ui.timer;
     if (!tm || !tm.running) return;
     let changed = false;
-    for (let i = 1; i < Math.min(gap, 3600) && tm.running; i++) changed = timerStep(tm, true) || changed;
-    if (tm.running) changed = timerStep(tm, false) || changed;
+    const max = Math.min(gap, tm.total * (tm.work + tm.rest) + 10);
+    for (let i = 0; i < max && tm.running; i++) changed = timerStep(tm, i < gap - 1) || changed;
     updTimer();
     if (changed) {
       markRounds(false);
@@ -17379,6 +17767,24 @@ ${setupFields(setup, ty)}
     d.endS = num("tEndS");
   }
   document.addEventListener("click", async (ev) => {
+    const check = ev.target.closest("[data-check]"), row = ev.target.closest("[data-item]"),
+      manualRow = row && !ev.target.closest("button,input,textarea,a") && row.querySelector("[data-check]");
+    if (check || manualRow) {
+      const sess = S.sessions[ui.sel], key = (check || manualRow).dataset.check;
+      if (!sess) return;
+      const [bi, ni] = key.split(".").map(Number), done = itemDone(sess, bi, ni);
+      if (sess.blocks[bi].rounds) {
+        sess.roundChecks = sess.roundChecks || {};
+        sess.roundChecks[ni + 1] = !done;
+      } else {
+        sess.checked = sess.checked || {};
+        sess.checked[key] = !done;
+      }
+      store.save();
+      markRounds(false);
+      updateCompletionUI();
+      return;
+    }
     const rd = ev.target.closest("[data-rd]");
     if (
       rd &&
@@ -17967,33 +18373,23 @@ ${setupFields(setup, ty)}
       return;
     }
     if (b.id === "treset") {
+      if (S.sessions[ui.sel]) {
+        delete S.sessions[ui.sel].rdone;
+        delete S.sessions[ui.sel].roundChecks;
+      }
       ui.timer = newTimer(ui.sel);
-      if (S.sessions[ui.sel]) delete S.sessions[ui.sel].rdone;
+      store.save();
       releaseWake();
       render();
       return;
     }
     if (b.id === "fSave") {
-      const sess = S.sessions[ui.sel],
-        ty = sess ? sess.type : planOn(ui.sel);
-      const minutes = Math.max(1, Math.min(300, parseInt(document.getElementById("fMin").value) || S.profile.minutes));
-      S.log.push({
-        id: "e" + Date.now().toString(36),
-        date: ui.sel,
-        src: "own",
-        type: ty,
-        minutes,
-        perf: collectPerf(sess),
-        rounds: (roundBlock(sess) || { items: [] }).items.length,
-        rpe: +document.getElementById("fRpe").value,
-        tHi: sess ? sess.tHi : rpeRange(ty, ui.sel).hi,
-        note: document.getElementById("fNote").value.slice(0, 300),
+      const completion = sessionCompletion(S.sessions[ui.sel]);
+      if (completion.open) return openSheet({
+        kind: "confirm", title: trainingText().complete,
+        lines: [trainingText().open(completion.open), trainingText().partial], run: saveTrainingSession,
       });
-      store.save();
-      // the summary shows new badges itself: keep the badge sheets back while rendering
-      ui.win = true;
-      render();
-      showWin(S.log[S.log.length - 1]);
+      saveTrainingSession();
       return;
     }
     if (ds.del) {
@@ -18155,7 +18551,7 @@ ${setupFields(setup, ty)}
         it = sess.blocks[bi] && sess.blocks[bi].items[n];
       if (!it) continue;
       const sets = rows.filter((r) => r.r != null || r.kg != null);
-      if (sets.length) out.push({ id: it.id, sets });
+      if (sets.length) out.push({ id: it.id, sets, ...(it.target ? { target: it.target } : {}) });
     }
     return out.length ? out : undefined;
   }
@@ -18181,6 +18577,7 @@ ${setupFields(setup, ty)}
         el.classList.toggle("ok", done);
       }
       store.save();
+      updateCompletionUI();
       return;
     }
     if (el.id === "fRpe") document.getElementById("fRpeV").textContent = el.value;
