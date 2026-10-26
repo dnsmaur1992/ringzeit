@@ -3823,6 +3823,8 @@
   }
   /* app tour */
   .tour {
+    touch-action: none;
+    overscroll-behavior: none;
     position: fixed;
     inset: 0;
     z-index: 70;
@@ -11982,6 +11984,21 @@ ${setupFields(setup, ty)}
     { k: "life", tab: "profile", sel: "[data-psec=life]" },
     { k: "end" },
   ];
+  // Block user scrolling without locking the document: scrollIntoView must
+  // still position the highlighted element when moving between tour steps.
+  function preventTourScroll(e) {
+    if (ui.tour != null && e.cancelable) e.preventDefault();
+  }
+  document.addEventListener("touchmove", preventTourScroll, { passive: false, capture: true });
+  document.addEventListener("wheel", preventTourScroll, { passive: false, capture: true });
+  document.addEventListener("keydown", (e) => {
+    if (ui.tour == null || e.ctrlKey || e.metaKey || e.altKey) return;
+    const scrollKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End", " ", "Spacebar"];
+    if (!scrollKeys.includes(e.key)) return;
+    // Space must continue to activate the focused tour button.
+    if ((e.key === " " || e.key === "Spacebar") && e.target.closest?.("#tour button")) return;
+    preventTourScroll(e);
+  }, { capture: true });
   function startTour() {
     ui.tour = 0;
     ui.sheet = null;
