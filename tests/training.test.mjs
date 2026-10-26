@@ -5,8 +5,14 @@ import vm from "node:vm";
 
 // Execute the actual inline application, without starting the DOM boot/animation loop.
 // Only browser services are stubbed; planning, state, rendering and event handlers are the production code.
-const html = readFileSync(new URL("../src/ringzeit.html", import.meta.url), "utf8");
-const script = html.slice(html.lastIndexOf("<script>") + 8, html.lastIndexOf("</script>"));
+const html = readFileSync(
+  new URL("../src/ringzeit.html", import.meta.url),
+  "utf8",
+);
+const script = html.slice(
+  html.lastIndexOf("<script>") + 8,
+  html.lastIndexOf("</script>"),
+);
 function app() {
   let calendar = [2026, 10, 2],
     nowMs = new Date(2026, 10, 2).getTime(),
@@ -94,10 +100,16 @@ function app() {
       },
       removeEventListener() {},
     },
-    localStorage: { getItem: (k) => saved.get(k) ?? null, setItem: (k, v) => saved.set(k, v) },
+    localStorage: {
+      getItem: (k) => saved.get(k) ?? null,
+      setItem: (k, v) => saved.set(k, v),
+    },
     matchMedia: () => ({ matches: true }),
   });
-  new vm.Script(unbooted).runInContext(context, { timeout: 2000, breakOnSigint: true });
+  new vm.Script(unbooted).runInContext(context, {
+    timeout: 2000,
+    breakOnSigint: true,
+  });
   // Boot was deliberately not run (see script replacement below).
   const run = (code) => vm.runInContext(code, context, { timeout: 3000 });
   run(
@@ -214,7 +226,9 @@ test("skipped rounds stay open, manual uncheck survives timer refresh and reload
   );
   assert.equal(a.run(`roundDone(S.sessions.x,1)`), false);
   assert.equal(a.run(`roundDone(S.sessions.x,2)`), true);
-  a.run(`S.sessions.x.roundChecks[2]=false; markRounds(false); S=hydrate(JSON.parse(JSON.stringify(S)));`);
+  a.run(
+    `S.sessions.x.roundChecks[2]=false; markRounds(false); S=hydrate(JSON.parse(JSON.stringify(S)));`,
+  );
   assert.equal(a.run(`roundDone(S.sessions.x,2)`), false);
   assert.equal(a.run(`newTimer('x').round`), 1);
 });
@@ -239,7 +253,9 @@ test("exercise checks, legacy rounds and entered sets survive backup round trip"
     `const id=EX.findIndex(e=>e.cat==='str'); S.sessions.x={date:'2026-11-02',rdone:1,checked:{'0.0':true,'2.0':true},blocks:[{key:'warm',items:[{id}]},{key:'main',rounds:true,items:[{},{}]},{key:'hard',items:[{kind:'hard',id:'fPush'}]},{key:'str',sets:'2× 8–12',items:[{id}]}],perf:{'3.0':[{r:0},{r:8}]}};`,
   );
   assert.equal(a.run("sessionCompletion(S.sessions.x).open"), 1);
-  a.run(`S.sessions.x.roundChecks={2:true}; S=hydrate(JSON.parse(JSON.stringify(S)));`);
+  a.run(
+    `S.sessions.x.roundChecks={2:true}; S=hydrate(JSON.parse(JSON.stringify(S)));`,
+  );
   assert.equal(a.run("sessionCompletion(S.sessions.x).complete"), true);
 });
 
@@ -269,7 +285,9 @@ test("fully completed session saves directly and render includes manual checks a
   a.run(`ui.sel='2026-11-02'; S.ov[ui.sel]={t:'T'}; S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:30});
     S.sessions[ui.sel].blocks.forEach((b,bi)=>b.items.forEach((it,ni)=>{if(b.rounds){(S.sessions[ui.sel].roundChecks ||= {})[ni+1]=true;}else{(S.sessions[ui.sel].checked ||= {})[bi+'.'+ni]=true;if(EX[it.id]?.cat==='str'){(S.sessions[ui.sel].perf ||= {})[bi+'.'+ni]=Array.from({length:blockSets(b)},()=>({r:10}));}}}));`);
   assert.equal(a.run("sessionCompletion(S.sessions[ui.sel]).complete"), true);
-  const rendered = a.run("renderSession()");
+  const rendered = a.run(
+    "S.sessions[ui.sel].blocks.map((b,bi)=>sessionBlockHtml(S.sessions[ui.sel],bi,false)).join('') + finishFormHtml(S.sessions[ui.sel])",
+  );
   assert.match(rendered, /data-check=/);
   assert.match(rendered, /btn all-done/);
   a.node("fMin").value = "30";
@@ -301,17 +319,34 @@ test("overload lowers baseline, partial cycles repeat; protection wins over incr
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), -1);
   history(a);
   a.run(`S.profile.weekMood={'2026-11-02':'hard'}`);
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).eligible`), false);
-  a.run(`S.profile.weekMood={}; S.profile.comps=[{date:'2026-11-05',kind:'comp'}]`);
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).eligible`), false);
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).eligible`),
+    false,
+  );
+  a.run(
+    `S.profile.weekMood={}; S.profile.comps=[{date:'2026-11-05',kind:'comp'}]`,
+  );
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).eligible`),
+    false,
+  );
   a.run(`S.profile.comps=[]; S.pauses=[{from:'2026-10-20',to:'2026-10-31'}]`);
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).eligible`), false);
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).eligible`),
+    false,
+  );
 });
 
 test("wave increases density within time budget and preserves deload, children, official formats and focus stages", () => {
   const a = app();
   history(a);
-  for (const day of ["2026-10-26", "2026-11-02", "2026-11-09", "2026-11-16", "2026-11-23"]) {
+  for (const day of [
+    "2026-10-26",
+    "2026-11-02",
+    "2026-11-09",
+    "2026-11-16",
+    "2026-11-23",
+  ]) {
     a.run(
       `{ const sess=buildSession(${JSON.stringify(day)},'T','gym',['bag'],{min:45}); const b=roundBlock(sess); globalThis.result={eligible:sess.progression.eligible,week:sess.progression.week,rest:b.b,seconds:b.items.length*b.w+(b.items.length-1)*b.b,budget:b.min*60}; }`,
     );
@@ -329,7 +364,10 @@ test("wave increases density within time budget and preserves deload, children, 
   assert.equal(JSON.stringify(a.run("prepFormat")), "[120,60]");
   a.run(`S.profile.comps=[]; S.profile.block={k:'end',start:'2026-10-26'};`);
   assert.equal(a.run(`progressionCycle('2026-11-02').weeks`), 6);
-  assert.equal(a.run(`blockRounds(blockInfo('2026-11-02'),'2026-11-02').w`), 300);
+  assert.equal(
+    a.run(`blockRounds(blockInfo('2026-11-02'),'2026-11-02').w`),
+    300,
+  );
 });
 
 test("strength targets use actual same-exercise data, advance one variable per closed cycle and survive backup", () => {
@@ -409,8 +447,15 @@ test("every rendered exercise has completion markup, including running, hardenin
         a.run("S.sessions[ui.sel].blocks.reduce((n,b)=>n+b.items.length,0)"),
       );
     }
-  a.run(`ui.setup=null; S.sessions[ui.sel]=buildSession(ui.sel,'K','out',[],{min:60,run:true});`);
-  assert.match(a.run("renderSession()"), /data-check=/);
+  a.run(
+    `ui.setup=null; S.sessions[ui.sel]=buildSession(ui.sel,'K','out',[],{min:60,run:true});`,
+  );
+  assert.match(
+    a.run(
+      "S.sessions[ui.sel].blocks.map((b,bi)=>sessionBlockHtml(S.sessions[ui.sel],bi,false)).join('')",
+    ),
+    /data-check=/,
+  );
   a.run(
     `ui.setup=null; S.profile.belt=0; S.profile.comps=[{kind:'grade',date:'2026-11-10'}]; S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['partner'],{min:75});`,
   );
@@ -466,13 +511,17 @@ function simulateCycles(type, behavior, cycles = 4) {
       }`);
       a.node("fMin").value = "60";
       a.node("fDurationConfirmed").checked = true;
-      a.node("fRpe").value = a.run(`Math.min(10,S.sessions[ui.sel].tHi + ${mode === "hard" ? 2 : 0})`);
+      a.node("fRpe").value = a.run(
+        `Math.min(10,S.sessions[ui.sel].tHi + ${mode === "hard" ? 2 : 0})`,
+      );
       a.node("fNote").value = "";
       const summary = a.run(
         `({step:S.sessions[ui.sel].progression.step, eligible:S.sessions[ui.sel].progression.eligible,reason:S.sessions[ui.sel].progression.reason,rest:roundBlock(S.sessions[ui.sel])?.b,targets:S.sessions[ui.sel].blocks.flatMap(b=>b.items.filter(it=>it.target).map(it=>({id:it.id,...it.target})))})`,
       );
       weeks.push(summary);
-      a.run("saveTrainingSession(); S=hydrate(JSON.parse(localStorage.getItem(LS)));");
+      a.run(
+        "saveTrainingSession(); S=hydrate(JSON.parse(localStorage.getItem(LS)));",
+      );
     }
     output.push(weeks);
   }
@@ -492,7 +541,10 @@ test("20 weeks of generated, fully completed technique plans raise baselines onl
     else assert.ok(c[0].rest > c[3].rest);
   });
   assert.ok(result[1][0].rest < result[0][0].rest);
-  console.log("Simulated technique cycle baselines:", result.map((c) => c[0].step).join(" → "));
+  console.log(
+    "Simulated technique cycle baselines:",
+    result.map((c) => c[0].step).join(" → "),
+  );
 });
 
 test("20 weeks with partial training hold the baseline, and an overloaded cycle lowers the next baseline", () => {
@@ -501,19 +553,26 @@ test("20 weeks with partial training hold the baseline, and an overloaded cycle 
     partial.map((c) => c[0].step),
     [0, 0, 0, 0],
   );
-  const overload = simulateCycles("T", (cycle) => (cycle === 1 ? "hard" : "good"));
+  const overload = simulateCycles("T", (cycle) =>
+    cycle === 1 ? "hard" : "good",
+  );
   assert.deepEqual(
     overload.map((c) => c[0].step),
     [0, 1, 0, 1],
   );
-  console.log("Simulated overload cycle baselines:", overload.map((c) => c[0].step).join(" → "));
+  console.log(
+    "Simulated overload cycle baselines:",
+    overload.map((c) => c[0].step).join(" → "),
+  );
 });
 
 test("40 weeks of generated strength plans carry base reps and earned weights through deloads without inventing entered values", () => {
   const result = simulateCycles("S", () => "good", 8);
   const first = result[0][0].targets.find((t) => t.kg == null && !t.timed);
   assert.ok(first);
-  const trajectory = result.map((c) => c[0].targets.find((t) => t.id === first.id));
+  const trajectory = result.map((c) =>
+    c[0].targets.find((t) => t.id === first.id),
+  );
   assert.deepEqual(
     trajectory.slice(0, 5).map((t) => t.baseR),
     [8, 9, 10, 11, 12],
@@ -523,16 +582,27 @@ test("40 weeks of generated strength plans carry base reps and earned weights th
     assert.equal(c[4].eligible, false);
     assert.equal(c[4].targets.length, 0);
   });
-  console.log("Simulated strength base reps:", trajectory.map((t) => t.baseR).join(" → "));
-  console.log("Simulated strength weight suggestions:", trajectory.map((t) => t.kg ?? "choose").join(" → "));
+  console.log(
+    "Simulated strength base reps:",
+    trajectory.map((t) => t.baseR).join(" → "),
+  );
+  console.log(
+    "Simulated strength weight suggestions:",
+    trajectory.map((t) => t.kg ?? "choose").join(" → "),
+  );
 });
 
 test("two successful entries or many entries in one week do not establish regular evidence", () => {
   const a = app();
   history(a, { dates: ["2026-10-06", "2026-10-20"] });
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.level`), "collecting");
-  history(a, { dates: ["2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08"] });
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).data.level`),
+    "collecting",
+  );
+  history(a, {
+    dates: ["2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08"],
+  });
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
 });
 
@@ -543,7 +613,10 @@ test("unrecorded planned sessions and missing effort values prevent an increase"
     `S.log.forEach(e=>e.progression.plannedDates.push('2026-09-22','2026-09-29','2026-10-07','2026-10-14'))`,
   );
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.reason`), "coverage");
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).data.reason`),
+    "coverage",
+  );
   history(a);
   a.run(`delete S.log[0].rpe;`);
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
@@ -552,7 +625,10 @@ test("unrecorded planned sessions and missing effort values prevent an increase"
 test("more high-quality evidence improves confidence without increasing the size of the step", () => {
   const a = app();
   history(a);
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.level`), "sufficient");
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).data.level`),
+    "sufficient",
+  );
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 1);
   history(a, {
     dates: [
@@ -566,11 +642,17 @@ test("more high-quality evidence improves confidence without increasing the size
       "2026-10-20",
     ],
   });
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.level`), "reliable");
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).data.level`),
+    "reliable",
+  );
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 1);
   a.run(`S.log.forEach((e,i)=>e.rpe=i<4?4:6);`);
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.reason`), "trend");
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).data.reason`),
+    "trend",
+  );
 });
 
 test("data remains scoped to the training type and missing legacy plan snapshots cannot justify an increase", () => {
@@ -580,7 +662,10 @@ test("data remains scoped to the training type and missing legacy plan snapshots
   history(a, { step: 2 });
   a.run(`S.log.forEach(e=>delete e.progression.plannedDates)`);
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 2);
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.reason`), "missing");
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).data.reason`),
+    "missing",
+  );
 });
 
 test("historical plan snapshots survive later changes to profile days and backup round-trips", () => {
@@ -589,7 +674,10 @@ test("historical plan snapshots survive later changes to profile days and backup
   a.run(
     `S.log.forEach(e=>e.progression.plannedDates.push('2026-09-22','2026-09-29','2026-10-07','2026-10-14'));S=hydrate(JSON.parse(JSON.stringify(S)));S.profile.days=[];`,
   );
-  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.coverage`), 0.5);
+  assert.equal(
+    a.run(`progressionState('2026-11-02','T',false).data.coverage`),
+    0.5,
+  );
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
 });
 
@@ -612,8 +700,13 @@ test("skipping setup keeps the first-session explanation pending; finishing setu
     `S.profile.ackSafe='2026-11-02';S.profile.toured=true;ui.onb={step:0,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90}; loading=async()=>{};`,
   );
   await a.run("finishOnb(true,false)");
-  assert.match(a.run("progressionInfoHtml(true)"), /Ringzeit passt dein Training/);
-  a.run(`ui.onb={step:4,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90};`);
+  assert.match(
+    a.run("progressionInfoHtml(true)"),
+    /Ringzeit passt dein Training/,
+  );
+  a.run(
+    `ui.onb={step:4,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90};`,
+  );
   await a.run("finishOnb(false,false)");
   assert.equal(a.run("S.profile.progressInfoSeen"), true);
   assert.equal(a.run("progressionInfoHtml(true)"), "");
@@ -642,7 +735,9 @@ test("finishing requires deliberate effort and duration; no default values manuf
 
 test("editing actual duration confirms it and draft effort/notes survive a render", async () => {
   const a = app();
-  a.run(`ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60})`);
+  a.run(
+    `ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60})`,
+  );
   a.node("fMin").value = "35";
   a.node("fNote").value = "Früher fertig";
   await a.emit("input", a.node("fMin"));
@@ -678,7 +773,9 @@ test("a session save stops active timers, scheduled speech and the central clock
 test("there is one deadline clock while active and none while paused or idle", () => {
   const a = app();
   assert.equal(a.run("timerClock"), null);
-  a.run(`ui.sel='x';S.sessions.x={blocks:[{rounds:true,w:20,b:10,items:[{},{}]}]};timerGo()`);
+  a.run(
+    `ui.sel='x';S.sessions.x={blocks:[{rounds:true,w:20,b:10,items:[{},{}]}]};timerGo()`,
+  );
   assert.equal(a.jobs.size, 1);
   a.advance(2000);
   assert.equal(a.run("ui.timer.left"), 8);
@@ -695,7 +792,9 @@ test("there is one deadline clock while active and none while paused or idle", (
 
 test("switching to free timer pauses session timer and closing free timer cancels resources", () => {
   const a = app();
-  a.run(`ui.sel='x';S.sessions.x={blocks:[{rounds:true,w:20,b:10,items:[{},{}]}]};timerGo();openFt();`);
+  a.run(
+    `ui.sel='x';S.sessions.x={blocks:[{rounds:true,w:20,b:10,items:[{},{}]}]};timerGo();openFt();`,
+  );
   assert.equal(a.run("ui.timer.running"), false);
   assert.equal(a.run("timerRunning()"), false);
   a.run(`ui.ft.cfg={r:2,w:20,b:10,prep:false,warn:true,coach:false};ftStart()`);
@@ -708,7 +807,9 @@ test("switching to free timer pauses session timer and closing free timer cancel
 
 test("free timer catches up across several missed phases with exact deadlines and no stale bells", () => {
   const a = app();
-  a.run(`openFt();ui.ft.cfg={r:3,w:20,b:10,prep:false,warn:true,coach:false};ftStart()`);
+  a.run(
+    `openFt();ui.ft.cfg={r:3,w:20,b:10,prep:false,warn:true,coach:false};ftStart()`,
+  );
   const bells = a.calls.filter((x) => x[0] === "bell").length;
   a.elapse(45000);
   a.run("ftTick()");
@@ -725,7 +826,9 @@ test("free timer catches up across several missed phases with exact deadlines an
 
 test("free timer pause/resume retains fractional remaining time; manual skip does not count a completed round", () => {
   const a = app();
-  a.run(`openFt();ui.ft.cfg={r:2,w:20,b:10,prep:false,warn:true,coach:false};ftStart()`);
+  a.run(
+    `openFt();ui.ft.cfg={r:2,w:20,b:10,prep:false,warn:true,coach:false};ftStart()`,
+  );
   a.elapse(450);
   a.run(`ftAction('pause')`);
   assert.equal(a.run("ui.ft.remainingMs"), 19550);
@@ -782,12 +885,17 @@ test("Wake Lock stays requested during both work and rest and idle audio suspend
 
 test("settings are collapsed for an existing session; warm-up, progress and exercise-specific labels are exposed", async () => {
   const a = app();
-  a.run(`ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60})`);
+  a.run(
+    `ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60})`,
+  );
   const rendered = a.run("renderSession()");
-  assert.match(rendered, /<details class="panel session-settings"[^>]*>\s*<summary>Einheit anpassen/);
-  assert.match(rendered, /Mit dem Aufwärmen beginnen/);
-  assert.match(rendered, /id="sessionProgress"/);
-  assert.match(rendered, /Übung abhaken: /);
+  assert.match(
+    rendered,
+    /<details class="panel session-settings"[^>]*>\s*<summary>Einheit anpassen/,
+  );
+  assert.match(rendered, /data-workout="start"/);
+  assert.doesNotMatch(rendered, /data-check=|id="fSave"|class="si|data-fx=/);
+  assert.match(rendered, /Bereitlegen/);
   assert.match(rendered, /<details class="note"><summary>Warum diese Einheit/);
   await a.click({ dataset: { go: "2026-11-02" } });
   assert.equal(a.run("ui.focus"), false);
@@ -799,10 +907,20 @@ test("basic strength movements recur, respect limits, and unrelated equipment do
     `globalThis.one=buildSession('2026-11-02','S','gym',['weights'],{min:60});globalThis.two=buildSession('2026-11-09','S','gym',['weights','rope'],{min:60})`,
   );
   assert.equal(
-    JSON.stringify(a.run("one.blocks.flatMap(b=>b.items.filter(it=>it.basic).map(it=>it.id))")),
-    JSON.stringify(a.run("two.blocks.flatMap(b=>b.items.filter(it=>it.basic).map(it=>it.id))")),
+    JSON.stringify(
+      a.run(
+        "one.blocks.flatMap(b=>b.items.filter(it=>it.basic).map(it=>it.id))",
+      ),
+    ),
+    JSON.stringify(
+      a.run(
+        "two.blocks.flatMap(b=>b.items.filter(it=>it.basic).map(it=>it.id))",
+      ),
+    ),
   );
-  assert.ok(a.run("one.blocks.flatMap(b=>b.items.filter(it=>it.basic)).length") >= 2);
+  assert.ok(
+    a.run("one.blocks.flatMap(b=>b.items.filter(it=>it.basic)).length") >= 2,
+  );
   a.run(`globalThis.id=EX.findIndex(e=>e.de==='Goblet Squats')`);
   assert.equal(
     a.run('relevantEquipment(id,["weights"])'),
@@ -812,7 +930,9 @@ test("basic strength movements recur, respect limits, and unrelated equipment do
     `S.profile.limits=['knee'];globalThis.limited=buildSession('2026-11-02','S','gym',['weights'],{min:60})`,
   );
   assert.equal(
-    a.run(`limited.blocks.flatMap(b=>b.items.filter(it=>it.basic)).some(it=>EX[it.id].avoid.includes('k'))`),
+    a.run(
+      `limited.blocks.flatMap(b=>b.items.filter(it=>it.basic)).some(it=>EX[it.id].avoid.includes('k'))`,
+    ),
     false,
   );
 });
@@ -832,7 +952,9 @@ test("old unconfirmed defaults are not evidence; optional hard exercise feedback
 
 test("one minute of the free timer needs only second-aligned callbacks and pause stops them", () => {
   const a = app();
-  a.run(`openFt();ui.ft.cfg={r:3,w:120,b:60,prep:false,warn:true,coach:false};ftStart()`);
+  a.run(
+    `openFt();ui.ft.cfg={r:3,w:120,b:60,prep:false,warn:true,coach:false};ftStart()`,
+  );
   const callbacks = a.advance(60000);
   assert.ok(callbacks >= 60 && callbacks <= 62, `callbacks: ${callbacks}`);
   a.run(`ftAction('pause')`);
@@ -864,4 +986,150 @@ test("non-Apple audio can sleep between sounds while screen stays awake and resu
   await Promise.resolve();
   assert.equal(a.run("actx.state"), "running");
   assert.ok(a.calls.some((x) => x[0] === "signal"));
+});
+
+test("the day plan is a read-only preview; starting opens the saved section without auto-completing anything", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';ui.tab='session';S.ov[ui.sel]={t:'S'};S.sessions[ui.sel]=buildSession(ui.sel,'S','gym',['weights'],{min:60});`,
+  );
+  const html = a.run("renderSession()");
+  assert.match(html, /data-workout="start"/);
+  assert.ok(
+    html.lastIndexOf('data-workout="start"') > html.lastIndexOf("data-block="),
+  );
+  assert.doesNotMatch(
+    html,
+    /data-check=|class="si|data-addset=|data-rmset=|id="fSave"|data-rd=|id="tgo"|data-exercise-timer=/,
+  );
+  assert.equal(a.run("Object.values(S.sessions[ui.sel].perf||{}).length"), 0);
+  await a.click({ dataset: { workout: "start" } });
+  assert.equal(a.run("ui.workout.block"), 0);
+  assert.match(a.run("workoutHtml()"), /data-check=|data-exercise-timer=/);
+  assert.equal(a.run("sessionCompletion(S.sessions[ui.sel]).done"), 0);
+  a.run("moveWorkout(1)");
+  assert.equal(a.run("S.sessions[ui.sel].flow.block"), 1);
+  a.run("closeWorkout();startWorkout()");
+  assert.equal(a.run("ui.workout.block"), 1);
+  assert.equal(a.run("sessionCompletion(S.sessions[ui.sel]).done"), 0);
+  a.run(
+    "S=hydrate(JSON.parse(JSON.stringify(S)));ui.workout=null;startWorkout()",
+  );
+  assert.equal(a.run("ui.workout.block"), 1);
+});
+
+test("warm-up timers follow the displayed minutes, pause precisely, and only complete after the full duration", () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';const id=EX.findIndex(e=>e.de==='Einlaufen');S.sessions.x={date:'2026-11-02',type:'T',min:30,eq:[],blocks:[{key:'warm',min:4,items:[{id},{id}]}]};ui.workout={ds:'x',block:0};S.sessions.x.flow={block:0};exerciseTimerAction('start',{key:'0.0'});`,
+  );
+  assert.equal(a.run("ui.exerciseTimer.phases[0].seconds"), 120);
+  a.advance(1500);
+  a.run("pauseExerciseTimer()");
+  assert.equal(a.run("ui.exerciseTimer.remainingMs"), 118500);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  a.advance(10000);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  a.run("exerciseTimerAction('toggle')");
+  a.advance(118499);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  a.advance(1);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), true);
+  assert.equal(a.run("itemDone(S.sessions.x,0,1)"), false);
+  assert.equal(a.run("timerClock"), null);
+});
+
+test("per-side cool-down holds include both sides and a changeover; ranges never fabricate a fixed duration", () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';S.sessions.x={date:'2026-11-02',type:'M',eq:[],blocks:[{key:'cool',min:6,items:[{id:EX.findIndex(e=>e.de==='Hüftbeuger dehnen')},{id:EX.findIndex(e=>e.de==='Adduktoren & Spagat')}]}]};ui.workout={ds:'x',block:0};S.sessions.x.flow={block:0};exerciseTimerAction('start',{key:'0.0'});`,
+  );
+  assert.deepEqual(
+    Array.from(a.run("ui.exerciseTimer.phases.map(p=>p.seconds)")),
+    [45, 5, 45],
+  );
+  a.advance(45000);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  a.advance(50000);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), true);
+  assert.deepEqual(
+    Array.from(a.run("exerciseTiming(S.sessions.x,0,1).choices")),
+    [60, 90],
+  );
+  a.run("exerciseTimerAction('start',{key:'0.1',seconds:'90'})");
+  assert.equal(a.run("ui.exerciseTimer.phases[0].seconds"), 90);
+});
+
+test("finishing a timed strength set fills only that set; set rests do not complete an exercise", () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';const id=EX.findIndex(e=>e.de==='Unterarmstütz');S.sessions.x={date:'2026-11-02',type:'S',eq:[],blocks:[{key:'str',min:10,sets:'3× 8–12',items:[{id,target:{r:30}}]}]};ui.workout={ds:'x',block:0};S.sessions.x.flow={block:0};exerciseTimerAction('start',{key:'0.0',setIndex:'1'});`,
+  );
+  a.advance(30000);
+  assert.deepEqual(
+    JSON.parse(a.run("JSON.stringify(S.sessions.x.perf['0.0'].map(r=>r.r))")),
+    [null, 30, null],
+  );
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  a.run("exerciseTimerAction('rest',{key:'0.0'})");
+  a.advance(60000);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  assert.deepEqual(
+    JSON.parse(a.run("JSON.stringify(S.sessions.x.perf['0.0'].map(r=>r.r))")),
+    [null, 30, null],
+  );
+});
+
+test("conditioning intervals catch up quietly, circuit laps remain distinct, and closing pauses without marking", () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';const id=EX.findIndex(e=>e.de==='Sack-Sprints');S.sessions.x={date:'2026-11-02',type:'K',eq:[],blocks:[{key:'cond',min:12,sets:'3×',items:[{id}]}]};ui.workout={ds:'x',block:0};S.sessions.x.flow={block:0};exerciseTimerAction('start',{key:'0.0'});`,
+  );
+  assert.equal(a.run("ui.exerciseTimer.phases.length"), 8);
+  a.elapse(130000);
+  a.run("exerciseTick();scheduleTimers()");
+  assert.equal(a.run("S.sessions.x.timedLaps['0.0']"), 1);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  a.run("exerciseTimerAction('start',{key:'0.0'})");
+  a.advance(20000);
+  a.run("closeWorkout()");
+  assert.equal(a.run("ui.exerciseTimer.running"), false);
+  assert.equal(a.run("S.sessions.x.timedLaps['0.0']"), 1);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+});
+
+test("exercise timers share the central clock and cannot run alongside round timers or the free timer", () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60});ui.workout={ds:ui.sel,block:0};S.sessions[ui.sel].flow={block:0};exerciseTimerAction('start',{key:'0.0'});`,
+  );
+  assert.equal(a.run("ui.exerciseTimer.running"), true);
+  a.run("timerGo()");
+  assert.equal(a.run("ui.exerciseTimer.running"), false);
+  assert.equal(a.run("ui.timer.running"), true);
+  a.run("exerciseTimerAction('start',{key:'0.0'})");
+  assert.equal(a.run("ui.timer.running"), false);
+  assert.equal(a.run("ui.exerciseTimer.running"), true);
+  a.run("pauseOtherTimer('free')");
+  assert.equal(a.run("ui.exerciseTimer.running"), false);
+  assert.equal(a.run("timerClock"), null);
+});
+
+test("mobility time frames and hardening holds use their existing prescription", () => {
+ const a=app();
+ a.run(`ui.sel='x';S.sessions.x={blocks:[{key:'mob',min:12,items:[{id:EX.findIndex(e=>e.de==='90/90 Hüftwechsel')},{id:EX.findIndex(e=>e.de==='Taube')}]}]};`);
+ assert.equal(a.run('exerciseTiming(S.sessions.x,0,0).phases[0].seconds'),360);
+ assert.deepEqual(Array.from(a.run('exerciseTiming(S.sessions.x,0,1,90).phases.map(p=>p.seconds)')),[90,5,90]);
+ a.run("S.sessions.x.blocks=[{key:'hard',min:6,items:[{kind:'hard',id:'fPlank'}]}]");
+ assert.deepEqual(Array.from(a.run('exerciseTiming(S.sessions.x,0,0,30).phases.map(p=>p.seconds)')),[30,5,30,5,30]);
+});
+
+test("completed rounds lead to the following planned section instead of skipping to session save", async () => {
+ const a=app();
+ a.run(`ui.sel='2026-11-02';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60});S.sessions[ui.sel].flow={block:1};ui.workout={ds:ui.sel,block:1};ui.focus=true;ui.timer=newTimer(ui.sel);ui.timer.phase='done';`);
+ await a.click({dataset:{fx:'finish'}});
+ assert.equal(a.run('ui.workout.block'),2);
+ assert.equal(a.run('ui.focus'),false);
+ assert.equal(a.run('S.log.length'),0);
+ assert.equal(a.run('sessionCompletion(S.sessions[ui.sel]).done'),0);
 });
