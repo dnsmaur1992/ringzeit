@@ -4002,24 +4002,163 @@
       opacity: 1;
     }
   }
-  .ex .excheck { background: transparent; border: 0; border-radius: 6px; padding: 3px 0; align-self: flex-start; min-height: 36px; }
-  .ex .excheck:focus-visible { outline: 2px solid var(--ice); }
-  .btn.all-done { background: var(--done); color: var(--ink); box-shadow: 0 0 0 2px #8ec9a444; }
-  .session-settings>summary,.note>summary {cursor:pointer;font-weight:600;padding:12px;}
-  .session-settings>div {padding:0 12px 12px;}
-  .note>div {margin-top:8px;}
-  .session-progress .minirow {margin-block:6px;}
-  .effort-options {display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
-  .effort-options button {min-height:44px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--frost);}
-  .effort-options button[aria-pressed=true] {border-color:var(--ice);background:var(--ice-dim);}
-  .confirm-duration {display:flex;gap:10px;align-items:flex-start;font-size:14px;}
-  .confirm-duration input {width:22px;height:22px;flex:none;accent-color:var(--ice);}
-  .ex .excheck {min-width:44px;min-height:44px;display:flex;flex-direction:column;align-items:center;gap:2px;}
-  .ex .excheck .check-icon {font-size:24px;line-height:1;}
-  .ex .excheck small {font-size:10px;}
-  .ex.past .excheck:after {content:none;}
-  .exercise-effort {margin-top:12px;}
-  .exercise-effort .chip {min-height:44px;}
+  .ex .excheck {
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    padding: 3px 0;
+    align-self: flex-start;
+    min-height: 36px;
+  }
+  .ex .excheck:focus-visible {
+    outline: 2px solid var(--ice);
+  }
+  .btn.all-done {
+    background: var(--done);
+    color: var(--ink);
+    box-shadow: 0 0 0 2px #8ec9a444;
+  }
+  .session-settings > summary,
+  .note > summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 12px;
+  }
+  .session-settings > div {
+    padding: 0 12px 12px;
+  }
+  .note > div {
+    margin-top: 8px;
+  }
+  .session-progress .minirow {
+    margin-block: 6px;
+  }
+  .effort-options {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .effort-options button {
+    min-height: 44px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--frost);
+  }
+  .effort-options button[aria-pressed="true"] {
+    border-color: var(--ice);
+    background: var(--ice-dim);
+  }
+  .confirm-duration {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+  }
+  .confirm-duration input {
+    width: 22px;
+    height: 22px;
+    flex: none;
+    accent-color: var(--ice);
+  }
+  .ex .excheck {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .ex .excheck .check-icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+  .ex .excheck small {
+    font-size: 10px;
+  }
+  .ex.past .excheck:after {
+    content: none;
+  }
+  .exercise-effort {
+    margin-top: 12px;
+  }
+  .exercise-effort .chip {
+    min-height: 44px;
+  }
+
+  body.training-open {
+    overflow: hidden;
+  }
+  .training-start .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .training-start .btn svg {
+    width: 24px;
+    height: 24px;
+  }
+  .workout {
+    position: fixed;
+    inset: 0;
+    z-index: 44;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--night);
+    padding: calc(14px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px))
+      calc(24px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));
+  }
+  .workout-inner {
+    max-width: 620px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .workout-inner h1 {
+    margin: 0;
+  }
+  .workout-steps {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    list-style: none;
+    padding: 0 0 8px;
+    margin: 0;
+    font-size: 12px;
+    color: var(--mist);
+  }
+  .workout-steps li {
+    flex-shrink: 0;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 6px;
+  }
+  .workout-steps [aria-current] {
+    color: var(--ice);
+    border-color: var(--ice);
+  }
+  .exercise-timing {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+  }
+  .exercise-countdown {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  .exercise-countdown strong {
+    font-size: 64px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+  .workout-nav {
+    justify-content: space-between;
+  }
 </style>
 
 <div class="wrap" id="app"></div>
@@ -4036,6 +4175,7 @@
   <button class="btn ghost" id="factNext" type="button"></button>
   <div class="hint" id="loaderHint"></div>
 </div>
+<div class="workout" id="workout" role="dialog" aria-modal="true" aria-labelledby="workoutTitle" hidden></div>
 <div class="focus" id="focus" hidden></div>
 <div class="ftimer" id="ftimer" hidden></div>
 <div class="onb" id="onb" hidden></div>
@@ -4066,7 +4206,13 @@
       tabWeek: "Heute",
       todayTitle: "Heute",
       club: "Vereinstraining",
-      clubKinds: { T: "Technik", P: "Sparring", K: "Kondition", S: "Kraft", X: "Gemischt" },
+      clubKinds: {
+        T: "Technik",
+        P: "Sparring",
+        K: "Kondition",
+        S: "Kraft",
+        X: "Gemischt",
+      },
       clubDays: "Vereinstraining – deine festen Tage",
       clubDaysHint:
         "Hier trainierst du schon fest. Ringzeit plant nichts dazu, rechnet diese Tage aber in deine Belastung ein und fragt am Tag danach kurz nach.",
@@ -4355,7 +4501,11 @@
       },
       pow: "Schnellkraft",
       blk: {
-        names: { end: "Kampfausdauer", pow: "Schnellkraft", mob: "Beweglichkeit" },
+        names: {
+          end: "Kampfausdauer",
+          pow: "Schnellkraft",
+          mob: "Beweglichkeit",
+        },
         subs: {
           end: "Länger hohes Tempo halten, schneller erholen",
           pow: "Härter und schneller treffen, explosiver starten",
@@ -4498,7 +4648,14 @@
       ft: {
         title: "Rundentimer",
         restShort: "Pause",
-        pre: { wako: "WAKO", k1: "K1", spar: "Sparring", pads: "Pratzen", hiit: "HIIT", pro: "Profi" },
+        pre: {
+          wako: "WAKO",
+          k1: "K1",
+          spar: "Sparring",
+          pads: "Pratzen",
+          hiit: "HIIT",
+          pro: "Profi",
+        },
         rounds: "Runden",
         work: "Rundenzeit",
         rest: "Pause",
@@ -4631,11 +4788,11 @@
         ],
         timer: [
           "Timer der Einheit",
-          "Jede Runde startest du selbst. Im Vollbild siehst du Zeit, Runde und bei Conditioning eine Skizze der Übung.",
+          "Sichte zuerst deinen Tagesplan. Ganz unten öffnet „Training beginnen“ die Vollbildführung. Die Runden laufen mit ihren Pausen automatisch weiter; auch Zeitübungen haben eigene Timer.",
         ],
         exinfo: [
           "Übungen",
-          "Das ⓘ neben einer Übung zeigt Skizze, Ausführungshinweise und den typischen Fehler. Sätze, Wiederholungen und Gewicht trägst du direkt darunter ein.",
+          "Das ⓘ neben einer Übung zeigt Skizze, Ausführungshinweise und den typischen Fehler. Erst nach „Training beginnen“ hakst du Übungen ab und trägst Wiederholungen und Gewicht ein.",
         ],
         finish: [
           "Abschließen",
@@ -4878,7 +5035,12 @@
       sessType: "Was trainierst du heute?",
       suggested: "Vorschlag",
       where: "Wo trainierst du?",
-      locs: { gym: "Halle", studio: "Fitnessstudio", home: "Zuhause", out: "Draußen" },
+      locs: {
+        gym: "Halle",
+        studio: "Fitnessstudio",
+        home: "Zuhause",
+        out: "Draußen",
+      },
       studioNote:
         "Im Fitnessstudio plant die App mit Geräten, die es überall gibt: Langhantel, Kurzhanteln, Kabelzug, Latzug, Beinpresse, Klimmzugstange und Cardio-Geräte.",
       equipQ: "Was steht dir zur Verfügung?",
@@ -4927,7 +5089,11 @@
       adapted: "Angepasst",
       pbQ: "Trainingspartner oder Sandsack?",
       pb: { partner: "Partner", bag: "Sandsack", none: "Keins" },
-      sparMode: { p: "Partner-Sparring", b: "Sack-Sparring", s: "Schatten-Sparring" },
+      sparMode: {
+        p: "Partner-Sparring",
+        b: "Sack-Sparring",
+        s: "Schatten-Sparring",
+      },
       gearNote: "Sparring mit Partner nur mit kompletter Schutzausrüstung und unter Aufsicht eines Trainers.",
       finish: "Einheit abschließen",
       duration: "Dauer (Minuten)",
@@ -4955,7 +5121,12 @@
       del: "Löschen",
       lang: "Sprache",
       discipline: "Disziplin",
-      disc: { lc: "Light Contact", kl: "Kick Light", fc: "Full Contact", k1: "K1 Style" },
+      disc: {
+        lc: "Light Contact",
+        kl: "Kick Light",
+        fc: "Full Contact",
+        k1: "K1 Style",
+      },
       discLock: "Full Contact und K1 Style schaltest du mit dem Fitnesstest frei (ab Level Fortgeschritten).",
       focus: "Technik-Schwerpunkt",
       focusOpt: { box: "Mehr Boxen", bal: "Ausgeglichen", kick: "Mehr Kicks" },
@@ -4964,7 +5135,12 @@
       levels: ["Anfänger", "Fortgeschritten", "Wettkampf"],
       levelLock: "Höhere Level schaltest du mit dem Fitnesstest frei.",
       age: "Altersklasse",
-      ages: { kids: "Kinder 8–12", youth: "Jugend 13–18", adult: "Erwachsene", masters: "Masters 40+" },
+      ages: {
+        kids: "Kinder 8–12",
+        youth: "Jugend 13–18",
+        adult: "Erwachsene",
+        masters: "Masters 40+",
+      },
       kidsNote:
         "Kinder-Modus: kürzere Einheiten (bis 30 Min. bis 9 Jahre, bis 45 Min. ab 10) und Runden, nur Körpergewicht, keine Abhärtung, kein Sparring, Kombinationen mit höchstens 3 Techniken. Neben dem Verein reichen 1–2 Tage. Bitte mit Eltern oder Trainer abstimmen.",
       birth: "Geburtsjahr",
@@ -4972,7 +5148,13 @@
       sexes: { m: "Männlich", f: "Weiblich", d: "Divers" },
       sexHint: "Nur für die Auswertung des Fitnesstests. Training, Runden und Umfang sind für alle gleich.",
       birthHint: "Daraus berechnet die App deine WAKO-Altersklasse und das Kampfformat.",
-      cls: { yc: "Jüngere Kadetten", oc: "Ältere Kadetten", j: "Junioren", s: "Senioren", v: "Masters" },
+      cls: {
+        yc: "Jüngere Kadetten",
+        oc: "Ältere Kadetten",
+        j: "Junioren",
+        s: "Senioren",
+        v: "Masters",
+      },
       comps: "Turniere",
       compAdd: "Hinzufügen",
       compNone: "Noch kein Turnier eingetragen. Mit einem Termin plant die App 4–6 Wochen Vorbereitung im Kampfformat.",
@@ -5014,7 +5196,13 @@
       minCap: "Mobility-Einheiten dauern höchstens 45 min.",
       compClear: "Entfernen",
       limits: "Einschränkungen",
-      lim: { knee: "Knie", shoulder: "Schulter", wrist: "Handgelenk", back: "Rücken", ankle: "Sprunggelenk" },
+      lim: {
+        knee: "Knie",
+        shoulder: "Schulter",
+        wrist: "Handgelenk",
+        back: "Rücken",
+        ankle: "Sprunggelenk",
+      },
       limitsHint: "Übungen, die diese Bereiche belasten, werden ersetzt.",
       planMade: "Neuer Plan steht",
       storage: "Speicherung",
@@ -5038,7 +5226,13 @@
       deloadNote: "Entlastungswoche: Runden und Sätze reduziert.",
       holdNote: "je 60–90 s, ruhig atmen",
       weekday: ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
-      cats: { str: "Kraft", spd: "Schnelligkeit", end: "Ausdauer", flx: "Beweglichkeit", tec: "Technik" },
+      cats: {
+        str: "Kraft",
+        spd: "Schnelligkeit",
+        end: "Ausdauer",
+        flx: "Beweglichkeit",
+        tec: "Technik",
+      },
       tDesc: {
         str: "Liegestütze am Stück, sauber: Körper gerade, Brust bis eine Faust über dem Boden.",
         spd: "Jab-Cross-Paare in 20 Sekunden – am Sack oder in die Pratzen, ein Partner zählt.",
@@ -5081,7 +5275,13 @@
       tabWeek: "Today",
       todayTitle: "Today",
       club: "Club training",
-      clubKinds: { T: "Technique", P: "Sparring", K: "Conditioning", S: "Strength", X: "Mixed" },
+      clubKinds: {
+        T: "Technique",
+        P: "Sparring",
+        K: "Conditioning",
+        S: "Strength",
+        X: "Mixed",
+      },
       clubDays: "Club training – your fixed days",
       clubDaysHint:
         "This is where you already train regularly. Ringzeit adds nothing here but counts these days in your load and asks about them the day after.",
@@ -5506,7 +5706,14 @@
       ft: {
         title: "Round timer",
         restShort: "rest",
-        pre: { wako: "WAKO", k1: "K1", spar: "Sparring", pads: "Pads", hiit: "HIIT", pro: "Pro" },
+        pre: {
+          wako: "WAKO",
+          k1: "K1",
+          spar: "Sparring",
+          pads: "Pads",
+          hiit: "HIIT",
+          pro: "Pro",
+        },
         rounds: "Rounds",
         work: "Round time",
         rest: "Rest",
@@ -5633,11 +5840,11 @@
         ],
         timer: [
           "Session timer",
-          "You start every round yourself. Full screen shows time, round and, for conditioning, a sketch of the exercise.",
+          "Review your plan first. At the bottom, Begin training opens the full-screen guide. Rounds and rests advance automatically; timed exercises have their own timers too.",
         ],
         exinfo: [
           "Exercises",
-          "The ⓘ next to an exercise shows a sketch, form cues and the common mistake. Log sets, reps and weight right below.",
+          "The ⓘ shows a sketch, form cues and the common mistake. Checking exercises and logging reps and weight become available after Begin training.",
         ],
         finish: [
           "Finish",
@@ -5872,7 +6079,12 @@
       sessType: "What are you training today?",
       suggested: "suggested",
       where: "Where are you training?",
-      locs: { gym: "Hall", studio: "Fitness gym", home: "Home", out: "Outdoors" },
+      locs: {
+        gym: "Hall",
+        studio: "Fitness gym",
+        home: "Home",
+        out: "Outdoors",
+      },
       studioNote:
         "In a fitness gym the app uses equipment every gym has: barbell, dumbbells, cable station, lat pulldown, leg press, pull-up bar and cardio machines.",
       equipQ: "What do you have?",
@@ -5921,7 +6133,11 @@
       adapted: "Adapted",
       pbQ: "Training partner or heavy bag?",
       pb: { partner: "Partner", bag: "Heavy bag", none: "Neither" },
-      sparMode: { p: "Partner sparring", b: "Bag sparring", s: "Shadow sparring" },
+      sparMode: {
+        p: "Partner sparring",
+        b: "Bag sparring",
+        s: "Shadow sparring",
+      },
       gearNote: "Partner sparring only in full protective gear and under a coach's supervision.",
       finish: "Finish session",
       duration: "Duration (minutes)",
@@ -5949,7 +6165,12 @@
       del: "Delete",
       lang: "Language",
       discipline: "Discipline",
-      disc: { lc: "Light Contact", kl: "Kick Light", fc: "Full Contact", k1: "K1 Style" },
+      disc: {
+        lc: "Light Contact",
+        kl: "Kick Light",
+        fc: "Full Contact",
+        k1: "K1 Style",
+      },
       discLock: "You unlock Full Contact and K1 Style with the fitness test (from Advanced level).",
       focus: "Technique focus",
       focusOpt: { box: "More boxing", bal: "Balanced", kick: "More kicks" },
@@ -5958,7 +6179,12 @@
       levels: ["Beginner", "Advanced", "Competition"],
       levelLock: "Unlock higher levels with the fitness test.",
       age: "Age group",
-      ages: { kids: "Kids 8–12", youth: "Youth 13–18", adult: "Adults", masters: "Masters 40+" },
+      ages: {
+        kids: "Kids 8–12",
+        youth: "Youth 13–18",
+        adult: "Adults",
+        masters: "Masters 40+",
+      },
       kidsNote:
         "Kids mode: shorter sessions (up to 30 min until age 9, up to 45 min from 10) and rounds, bodyweight only, no conditioning drills, no sparring, combinations with at most 3 techniques. Next to the club, 1–2 days are enough. Please agree on it with parents or the coach.",
       birth: "Year of birth",
@@ -5966,7 +6192,13 @@
       sexes: { m: "Male", f: "Female", d: "Diverse" },
       sexHint: "Only used to score the fitness test. Training, rounds and volume are the same for everyone.",
       birthHint: "Used to work out your WAKO age category and bout format.",
-      cls: { yc: "Younger cadets", oc: "Older cadets", j: "Juniors", s: "Seniors", v: "Masters" },
+      cls: {
+        yc: "Younger cadets",
+        oc: "Older cadets",
+        j: "Juniors",
+        s: "Seniors",
+        v: "Masters",
+      },
       comps: "Tournaments",
       compAdd: "Add",
       compNone: "No tournament yet. With a date, the app plans 4–6 weeks of preparation in your bout format.",
@@ -6002,7 +6234,13 @@
       minCap: "Mobility sessions last 45 min at most.",
       compClear: "Remove",
       limits: "Limitations",
-      lim: { knee: "Knee", shoulder: "Shoulder", wrist: "Wrist", back: "Back", ankle: "Ankle" },
+      lim: {
+        knee: "Knee",
+        shoulder: "Shoulder",
+        wrist: "Wrist",
+        back: "Back",
+        ankle: "Ankle",
+      },
       limitsHint: "Exercises that load these areas get replaced.",
       planMade: "New plan is set",
       storage: "Storage",
@@ -6026,7 +6264,13 @@
       deloadNote: "Deload week: rounds and sets reduced.",
       holdNote: "60–90 s each, breathe slowly",
       weekday: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      cats: { str: "Strength", spd: "Speed", end: "Endurance", flx: "Flexibility", tec: "Technique" },
+      cats: {
+        str: "Strength",
+        spd: "Speed",
+        end: "Endurance",
+        flx: "Flexibility",
+        tec: "Technique",
+      },
       tDesc: {
         str: "Push-ups in one set, clean: body straight, chest to a fist above the floor.",
         spd: "Jab-cross pairs in 20 seconds – on the bag or pads, a partner counts.",
@@ -6507,8 +6751,16 @@
 
   /* Hidden technique themes — chosen automatically and balanced, never shown */
   const THEMES = [
-    { id: "startJab", tag: "hand", ap: (c) => (c[0] === "jab" ? c : ["jab", ...c]) },
-    { id: "doubleJab", tag: "hand", ap: (c) => ["jab", "jab", ...c.filter((x, i) => !(i < 2 && x === "jab"))] },
+    {
+      id: "startJab",
+      tag: "hand",
+      ap: (c) => (c[0] === "jab" ? c : ["jab", ...c]),
+    },
+    {
+      id: "doubleJab",
+      tag: "hand",
+      ap: (c) => ["jab", "jab", ...c.filter((x, i) => !(i < 2 && x === "jab"))],
+    },
     {
       id: "counter",
       tag: "mix",
@@ -6525,9 +6777,25 @@
       kick: true,
       ap: (c) => (c[0] === "front" ? c : ["front", ...c.filter((x) => x !== "front")]),
     },
-    { id: "sideOpener", tag: "kick", kick: true, ap: (c) => ["side", ...c.filter((x) => x !== "side")] },
-    { id: "headFinish", tag: "kick", kick: true, ap: (c) => [...c.filter((x) => x !== "roundh"), "roundh"] },
-    { id: "sweepFinish", tag: "kick", risky: true, lvl: 1, ap: (c) => [...c.filter((x) => x !== "sweep"), "sweep"] },
+    {
+      id: "sideOpener",
+      tag: "kick",
+      kick: true,
+      ap: (c) => ["side", ...c.filter((x) => x !== "side")],
+    },
+    {
+      id: "headFinish",
+      tag: "kick",
+      kick: true,
+      ap: (c) => [...c.filter((x) => x !== "roundh"), "roundh"],
+    },
+    {
+      id: "sweepFinish",
+      tag: "kick",
+      risky: true,
+      lvl: 1,
+      ap: (c) => [...c.filter((x) => x !== "sweep"), "sweep"],
+    },
     {
       id: "lowFinish",
       tag: "kick",
@@ -6536,7 +6804,13 @@
       disc: ["kl", "k1"],
       ap: (c) => [...c.filter((x) => x !== "lowk"), "lowk"],
     },
-    { id: "kneeFinish", tag: "mix", risky: true, disc: ["k1"], ap: (c) => [...c.filter((x) => x !== "knee"), "knee"] },
+    {
+      id: "kneeFinish",
+      tag: "mix",
+      risky: true,
+      disc: ["k1"],
+      ap: (c) => [...c.filter((x) => x !== "knee"), "knee"],
+    },
   ];
 
   /* ============ Exercises: cat, de, en, dDE, dEN, equip, locs, avoid, minLevel ============ */
@@ -7525,7 +7799,14 @@
   const esc = (s) =>
     String(s ?? "").replace(
       /[&<>"']/g,
-      (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[c],
     );
   const pad = (n) => String(n).padStart(2, "0");
   const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -7679,7 +7960,11 @@
         pauses: (S.pauses || []).slice(-30),
         ko: S.ko || "",
       });
-      this.put("log", { log: S.log, weights: S.weights.slice(-400), tests: S.tests.slice(-60) });
+      this.put("log", {
+        log: S.log,
+        weights: S.weights.slice(-400),
+        tests: S.tests.slice(-60),
+      });
     },
   };
   /* Upgrades profiles saved by older versions of the app */
@@ -7886,7 +8171,11 @@
       d = daysBetween(parse(ended.to), parse(ds));
     if (len < 4 || d > span) return null;
     const early = d <= span / 2;
-    return { f: early ? 0.6 : 0.8, rpe: early ? 1.5 : 0.75, left: span - d + 1 };
+    return {
+      f: early ? 0.6 : 0.8,
+      rpe: early ? 1.5 : 0.75,
+      left: span - d + 1,
+    };
   }
   /* WAKO: no competing for at least 4 weeks after a KO or a stoppage by head blows */
   const koLock = (ds) => !!S.ko && ds >= S.ko && daysBetween(parse(S.ko), parse(ds)) < 28;
@@ -8018,7 +8307,14 @@
       weeks = Math.ceil(window / 7),
       week = Math.min(weeks, Math.max(1, weeks - Math.ceil(n / 7) + 1));
     const fmtNext = waFormat(S.profile.disc, ageAt(parse(next)));
-    const base = { days: n, comp: next, weeks, week, format: fmtNext || STD_FORMAT, official: !!fmtNext };
+    const base = {
+      days: n,
+      comp: next,
+      weeks,
+      week,
+      format: fmtNext || STD_FORMAT,
+      official: !!fmtNext,
+    };
     if (n <= 7) return { ...base, phase: "taper" };
     if (n > window) return { ...base, phase: "base" };
     return { ...base, phase: n <= 21 ? "peak" : "build" };
@@ -8034,7 +8330,12 @@
         .sort()
         .find((x) => parse(x) >= d);
     if (g && daysBetween(d, parse(g)) <= 28)
-      return { phase: "grade", days: daysBetween(d, parse(g)), comp: g, kind: "grade" };
+      return {
+        phase: "grade",
+        days: daysBetween(d, parse(g)),
+        comp: g,
+        kind: "grade",
+      };
     return r;
   }
   const isPrep = (ph) => ph.phase === "build" || ph.phase === "peak" || ph.phase === "taper";
@@ -8811,7 +9112,11 @@
       fistPick = shuffle(fists.filter((x) => x.m !== "s"))[0] || shuffle(fists)[0];
     const others = ok.filter((x) => !x.fist),
       other = shuffle(others.filter((x) => x.m !== "s"))[0] || shuffle(others)[0];
-    return { key: "hard", min: 6, items: [fistPick, other].filter(Boolean).map((x) => ({ kind: "hard", id: x.id })) };
+    return {
+      key: "hard",
+      min: 6,
+      items: [fistPick, other].filter(Boolean).map((x) => ({ kind: "hard", id: x.id })),
+    };
   }
   function buildSession(dateStr, type, loc, eqIn, opts = {}) {
     loadCache = {};
@@ -8943,10 +9248,18 @@
       const items = [{ kind: "run", zone: 2, min: z2a }];
       if (iv)
         items.push({ kind: "run", zone: 3, reps, on: 3, off: 2 }, { kind: "run", zone: 2, min: main - ivMin - z2a });
-      blocks.push({ key: "warm", min: warm, items: pickEx("warm", 2, loc, [], used) });
+      blocks.push({
+        key: "warm",
+        min: warm,
+        items: pickEx("warm", 2, loc, [], used),
+      });
       blocks.push({ key: "run", min: main, items });
       if (ageGroup() !== "kids") blocks.push(hardBlock([], loc, soft));
-      blocks.push({ key: "cool", min: cool, items: pickEx("cool", 2, loc, [], used) });
+      blocks.push({
+        key: "cool",
+        min: cool,
+        items: pickEx("cool", 2, loc, [], used),
+      });
       // a run by feel is easy: zone 2 ≈ RPE 3–4, with zone-3 blocks up to 6
       return progressSession({
         date: dateStr,
@@ -9048,7 +9361,11 @@
         key: "cond",
         min: fin,
         rounds: true,
-        items: pickEx("cond", n, loc, eq, used, cpref).map((x) => ({ kind: "round", k: "ex", id: x.id })),
+        items: pickEx("cond", n, loc, eq, used, cpref).map((x) => ({
+          kind: "round",
+          k: "ex",
+          id: x.id,
+        })),
       });
     } else if (type === "K") {
       const br = bk === "end" ? blockRounds(bi, dateStr) : null,
@@ -9079,9 +9396,25 @@
       if (br && br.cue) cb.items.forEach((it, i) => (!br.n || i >= cb.items.length - br.n) && (it.cue = br.cue));
       // a lot of time left after the fixed rounds: strength endurance before the core work
       if (core > coreMax + 5) {
-        blocks.push({ key: "str", min: core - coreMax, items: pickEx("str", 3, loc, eq, used), sets: supSets });
-        blocks.push({ key: "core", min: coreMax, items: pickEx("str", 3, loc, eq, used), sets: supSets });
-      } else blocks.push({ key: "core", min: core, items: pickEx("str", 3, loc, eq, used), sets: supSets });
+        blocks.push({
+          key: "str",
+          min: core - coreMax,
+          items: pickEx("str", 3, loc, eq, used),
+          sets: supSets,
+        });
+        blocks.push({
+          key: "core",
+          min: coreMax,
+          items: pickEx("str", 3, loc, eq, used),
+          sets: supSets,
+        });
+      } else
+        blocks.push({
+          key: "core",
+          min: core,
+          items: pickEx("str", 3, loc, eq, used),
+          sets: supSets,
+        });
     } else {
       theme = chooseTheme();
       // grading prep: part of the session drills the belt programme
@@ -9111,7 +9444,14 @@
         items = [];
         // beginners simulate one bout, as shadow or bag sparring
         for (let k = 1; k <= (p.level === 0 ? 1 : 2); k++)
-          for (let r = 1; r <= fmtR.r; r++) items.push({ kind: "round", k: "sim", fight: k, r, beg: p.level === 0 });
+          for (let r = 1; r <= fmtR.r; r++)
+            items.push({
+              kind: "round",
+              k: "sim",
+              fight: k,
+              r,
+              beg: p.level === 0,
+            });
       } else if (type === "P") items = sparRounds(nR, loc, eq, soft || ph.phase === "grade");
       else {
         // short sessions have a short warm-up: two easy opening rounds instead of one
@@ -9126,7 +9466,14 @@
         // bursts stage: every second technique round in 15/15 intervals
         if (bk === "end" && bi.st === 2 && type === "T") items.forEach((it, i) => (it.pace = !it.ease && i % 2 === 1));
       }
-      blocks.push({ key: "main", min: main, rounds: true, w: fw, b: rb, items });
+      blocks.push({
+        key: "main",
+        min: main,
+        rounds: true,
+        w: fw,
+        b: rb,
+        items,
+      });
       if (exItems.length) {
         blocks.push({ key: "exam", min: exMin, items: exItems });
         const pr = examProgress(targetStage());
@@ -9138,7 +9485,12 @@
           : bk === "pow" && bi.st > 0
             ? [...powPick(1), ...pickEx("cond", 1, loc, eq, used), ...pickEx("str", 2, loc, eq, used)]
             : [...pickEx("cond", 2, loc, eq, used), ...pickEx("str", 2, loc, eq, used)];
-      blocks.push({ key: type === "C" ? "cond" : "str", min: sup, items: supItems, sets: supSets });
+      blocks.push({
+        key: type === "C" ? "cond" : "str",
+        min: sup,
+        items: supItems,
+        sets: supSets,
+      });
     }
     if (hardMin) blocks.push(hardBlock(eq, loc, soft));
     blocks.push({
@@ -9210,7 +9562,11 @@
     try {
       const p = new Intl.DateTimeFormat("en-u-ca-" + cal, opts).formatToParts(d),
         g = (t) => (p.find((x) => x.type === t) || {}).value;
-      r = { d: +g("day"), m: g("month"), y: +String(g("year") || g("relatedYear") || "").replace(/\D/g, "") };
+      r = {
+        d: +g("day"),
+        m: g("month"),
+        y: +String(g("year") || g("relatedYear") || "").replace(/\D/g, ""),
+      };
     } catch (e) {}
     if (calCache.size > 500) calCache.clear();
     calCache.set(k, r);
@@ -9307,7 +9663,13 @@
     // a woolly hat for the rest of the winter, a jester's cap at carnival
     const santa = (m === 12 || (m === 1 && day <= 6)) && !fe.some((f) => NO_SANTA.has(f.k));
     const hat = has("karneval") ? "jester" : santa ? "santa" : k === "winter" ? "beanie" : null;
-    return { k, ev, hat, trunks: k === "summer", greet: [...new Set(fe.map((f) => f.g))] };
+    return {
+      k,
+      ev,
+      hat,
+      trunks: k === "summer",
+      greet: [...new Set(fe.map((f) => f.g))],
+    };
   }
   const seasonOn = () => !S.profile.seasonOff;
   /* Ramadan mode: asked once per Ramadan; lighter sessions, technique instead of hard conditioning */
@@ -9507,7 +9869,15 @@
     if (h >= 17 && h < 21) return { top: "#2a1626", glow: "#D9705C", stars: 10 };
     return { top: "#14161B", glow: "#C9A86A", stars: 28, moon: 1 };
   }
-  const TYPE_HEX = { T: "#d9545c", C: "#e0914a", P: "#e5683c", S: "#c9a86a", K: "#5fb3a6", M: "#8ec9a4", V: "#6f9fe0" };
+  const TYPE_HEX = {
+    T: "#d9545c",
+    C: "#e0914a",
+    P: "#e5683c",
+    S: "#c9a86a",
+    K: "#5fb3a6",
+    M: "#8ec9a4",
+    V: "#6f9fe0",
+  };
   /* the front-most point of an attacking pose (where the blow lands) */
   function strikePoint(o) {
     let best = [0, 0];
@@ -9584,7 +9954,14 @@
       dust += `<circle class="dust" style="animation-duration:${(5 + srand() * 5).toFixed(1)}s;animation-delay:-${(srand() * 8).toFixed(1)}s;--o:${(0.25 + srand() * 0.45).toFixed(2)}" cx="${x.toFixed(1)}" cy="${yy.toFixed(1)}" r="${(0.6 + srand() * 1.1).toFixed(2)}" fill="#F3EEE4"/>`;
     }
     const se2 = season(),
-      tint = se2 ? { spring: "#8ec9a4", summer: "#F2B36B", autumn: "#E0914A", winter: "#9FB8D9" }[se2.k] : null;
+      tint = se2
+        ? {
+            spring: "#8ec9a4",
+            summer: "#F2B36B",
+            autumn: "#E0914A",
+            winter: "#9FB8D9",
+          }[se2.k]
+        : null;
     let extra = "";
     const ev = se2 && se2.ev;
     // lanterns for Ramadan and Eid (with stars at Eid)
@@ -10048,7 +10425,10 @@
   function exText(id) {
     const e = EX[id],
       lg = S.profile.lang;
-    return { name: lg === "de" ? e.de : e.en, desc: lg === "de" ? e.dde : e.den };
+    return {
+      name: lg === "de" ? e.de : e.en,
+      desc: lg === "de" ? e.dde : e.den,
+    };
   }
   /* Hold exercises are logged in seconds instead of reps (looked up by German name in the library) */
   const TIMED = new Set(
@@ -10172,9 +10552,15 @@
           if (itemDone(sess, bi, ni)) done++;
         }),
       );
-    return { total, done, open: total - done, complete: total > 0 && done === total };
+    return {
+      total,
+      done,
+      open: total - done,
+      complete: total > 0 && done === total,
+    };
   }
-  function checkButton(sess, bi, ni, label) {
+  function checkButton(sess, bi, ni, label, preview = false) {
+    if (preview) return `<span class="num">${label}</span>`;
     const done = itemDone(sess, bi, ni),
       txt = trainingText();
     return `<button type="button" class="num excheck${sess.blocks[bi].rounds ? " r" : ""}" data-check="${bi}.${ni}" aria-pressed="${done}" aria-label="${esc((done ? txt.uncheck : txt.check) + ": " + itemTitle(sess, bi, ni))}"><span class="check-icon" aria-hidden="true">${done ? "✓" : "○"}</span><small>${label}</small></button>`;
@@ -10210,6 +10596,7 @@
         warm >= 0 && sess.blocks[warm].items.some((it, ni) => !itemDone(sess, warm, ni))
           ? flowText().warm
           : flowText().jump;
+    updateWorkoutProgress();
     const btn = document.getElementById("fSave");
     if (btn) {
       const done = sessionCompletion(sess).complete;
@@ -10298,9 +10685,9 @@
   function progressionData(entries, end) {
     // At most 12 weeks of closed-cycle data, one vote per date, scoped to the training signature.
     const from = iso(addDays(parse(end), -83)),
-      all = [
-        ...new Map(entries.filter((e) => e.date >= from && e.date <= end).map((e) => [e.date, e])).values(),
-      ].sort((a, b) => a.date.localeCompare(b.date)),
+      all = [...new Map(entries.filter((e) => e.date >= from && e.date <= end).map((e) => [e.date, e])).values()].sort(
+        (a, b) => a.date.localeCompare(b.date),
+      ),
       valid = all.filter(progressionRecordComplete),
       weeks = new Set(valid.map((e) => iso(monday(parse(e.date))))).size,
       known = all.filter((e) => Array.isArray(e.progression.plannedDates)),
@@ -10333,7 +10720,17 @@
       mid = Math.floor(recent.length / 2),
       effort = (list) => list.reduce((sum, e) => sum + e.rpe - e.tHi, 0) / list.length,
       worsening = recent.length >= 8 && effort(recent.slice(mid)) - effort(recent.slice(0, mid)) > 1;
-    return { level, reason, count: valid.length, weeks, planned, coverage, completeness, planKnown, worsening };
+    return {
+      level,
+      reason,
+      count: valid.length,
+      weeks,
+      planned,
+      coverage,
+      completeness,
+      planKnown,
+      worsening,
+    };
   }
   function progressionInfoHtml(dismissible = false) {
     if (dismissible && S.profile.progressInfoSeen) return "";
@@ -10362,9 +10759,7 @@
       if (!groups.has(p.id)) groups.set(p.id, []);
       groups.get(p.id).push(e);
     }
-    const previous = [...groups.values()].sort((a, b) =>
-      b[0].progression.end.localeCompare(a[0].progression.end),
-    )[0];
+    const previous = [...groups.values()].sort((a, b) => b[0].progression.end.localeCompare(a[0].progression.end))[0];
     let step = 0,
       reason = "initial",
       data = progressionData([], cycle.start);
@@ -10426,7 +10821,16 @@
     }
     const eligible = progressionEligible(ds, type, run),
       plannedDates = progressionPlannedDates(cycle, type, ds);
-    return { v: 1, ...cycle, signature, step, reason, eligible, data, plannedDates };
+    return {
+      v: 1,
+      ...cycle,
+      signature,
+      step,
+      reason,
+      eligible,
+      data,
+      plannedDates,
+    };
   }
   function strengthTarget(sess, b, it) {
     const pr = sess.progression,
@@ -10706,6 +11110,7 @@
     const it = sess.blocks[bi].items[ni];
     if (it.kind === "hard") return (HARD.find((x) => x.id === it.id) || HARD[0])[S.profile.lang][0];
     if (it.kind === "run") return t("run");
+    if (it.kind === "exam") return examItem(it.id)?.[S.profile.lang] || t("main");
     if (EX[it.id]) return exText(it.id).name;
     if (it.kind === "round") return roundInfo(it).title;
     return `${t("main")} ${ni + 1}`;
@@ -10784,6 +11189,8 @@
     if (doneOn(ui.sel) || !validateFinish()) return;
     const actual = readFinishDraft();
     stopAllTimers();
+    ui.workout = null;
+    ui.focus = false;
     const completion = sessionCompletion(sess),
       minutes = actual.minutes;
     S.log.push({
@@ -10831,7 +11238,8 @@
     }
     return sess.perf[key];
   }
-  function setsHtml(sess, bi, n, b, id, rounds) {
+  function setsHtml(sess, bi, n, b, id, rounds, preview = false) {
+    if (preview) return "";
     const key = `${bi}.${n}`,
       kg = hasKg(id);
     if (rounds) {
@@ -10860,7 +11268,15 @@
     );
   }
   /* Lead/rear side for hooks, uppercuts and kicks: hands alternate; a kick comes from the side opposite the last strike */
-  const FIXED = { jab: "L", cross: "R", side: "L", hookk: "L", sweep: "L", back: "R", shook: "R" };
+  const FIXED = {
+    jab: "L",
+    cross: "R",
+    side: "L",
+    hookk: "L",
+    sweep: "L",
+    back: "R",
+    shook: "R",
+  };
   const DEF = {
     hook: "L",
     hookb: "L",
@@ -10996,7 +11412,14 @@
               run: !!sess.run,
               min: sess.min || sessMin(sess.type),
             }
-          : { ds, loc: "gym", eq: ["bag", "rope"], type: planned, run: false, min: sessMin(planned) };
+          : {
+              ds,
+              loc: "gym",
+              eq: ["bag", "rope"],
+              type: planned,
+              run: false,
+              min: sessMin(planned),
+            };
     ui.setup = setup;
     const ty = setup.type;
     h += `<h2>${t("weekday")[i]} · ${t("types")[ty]} · ${setup.min} ${t("min")}</h2>`;
@@ -11013,69 +11436,603 @@ ${setupFields(setup, ty)}
  <div class="field"><button class="btn${sess ? " sec" : ""}" type="button" id="buildSess">${sess ? t("recreate") : t("create")}</button><div class="minirow" style="justify-content:space-between">${recent && !doneOn(ds) ? `<button type="button" class="btn ghost" data-move="${ds}">${t("move")}</button>` : ""}${ow.t && !ow.from && !doneOn(ds) ? `<button type="button" class="btn ghost" data-unplan="${ds}">${t("removeExtra")}</button>` : ""}${ow.from ? `<span class="sub">${t("movedFrom")(dayLbl(ow.from))}</span>` : ""}</div></div></div>`;
     h += `</div></details>`;
     if (!sess) return h;
-    h += sessionNavigationHtml(sess);
+    h += `<div class="note">${workoutText().preview}</div>`;
     h += progressionInfoHtml(true);
     const rbS = roundBlock(sess);
     h += `<div class="tags"><span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<button type="button" class="tg tgbtn" data-guide="wrap">🩹 ${t("guide").wrapLink} ›</button>` : ""}${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
-    if(sess.progression?.data) {
-      const data=sess.progression.data,de=S.profile.lang==="de",labels=de?{collecting:"im Aufbau",sufficient:"ausreichend",reliable:"gut belegt"}:{collecting:"building up",sufficient:"sufficient",reliable:"well supported"};
-      h+=`<div class="sub">${de?"Datengrundlage":"Training data"}: ${labels[data.level]||labels.collecting}</div>`;
+    if (sess.progression?.data) {
+      const data = sess.progression.data,
+        de = S.profile.lang === "de",
+        labels = de
+          ? {
+              collecting: "im Aufbau",
+              sufficient: "ausreichend",
+              reliable: "gut belegt",
+            }
+          : {
+              collecting: "building up",
+              sufficient: "sufficient",
+              reliable: "well supported",
+            };
+      h += `<div class="sub">${de ? "Datengrundlage" : "Training data"}: ${labels[data.level] || labels.collecting}</div>`;
     }
     if (sess.notes && sess.notes.length) {
-      const safety=["koNote","gearNote","wrNote","knNote"].flatMap(key=>[L.de[key],L.en[key]]).filter(x=>typeof x==="string");
-      const critical=sess.notes.filter(n=>safety.includes(n));
-      if(critical.length) h+=`<div class="note warn">${critical.map(esc).join("<br>")}</div>`;
+      const safety = ["koNote", "gearNote", "wrNote", "knNote"]
+        .flatMap((key) => [L.de[key], L.en[key]])
+        .filter((x) => typeof x === "string");
+      const critical = sess.notes.filter((n) => safety.includes(n));
+      if (critical.length) h += `<div class="note warn">${critical.map(esc).join("<br>")}</div>`;
       h += `<details class="note"><summary>${flowText().why}</summary><div>${sess.notes.map(esc).join("<br>")}</div></details>`;
     }
-    const rb = sess.blocks.find((b) => b.rounds);
-    if (rb) {
-      selectSessionTimer(ds);
-      const st = ui.timer,
-        total = st.total;
-      h += `<div class="timer ${st.phase === "rest" || st.phase === "ready" ? "rest" : ""}" id="timer"><div class="bar"><span id="tbar"></span></div><div class="info"><span class="ph" id="tph">${st.phase === "rest" ? t("pause") : st.phase === "done" ? t("finished") : st.phase === "ready" ? t("timer") : t("work")}</span><div class="clock" id="tclock">${fmt(st.left)}</div><span class="tr" id="tround">${t("round")} ${Math.min(st.round, total)}/${total} · ${fmt(st.work)} / ${fmt(st.rest)}</span>${canSpeak() ? `<button type="button" class="vchip" data-voice="1" aria-pressed="${voiceOn()}">${voiceOn() ? "🔊 " + t("voiceOn") : "🔈 " + t("voiceOff")}</button>` : ""}</div>
-  <div class="tb"><button type="button" id="tgo">${tlabel(st)}</button><button type="button" class="fs" data-fx="open">${t("focusOpen")}</button><button type="button" id="treset">${t("reset")}</button></div></div>`;
-    }
     sess.blocks.forEach((b, bi) => {
-      h += `<div class="block" data-block="${bi}">${blockHead(b)}`;
-      if (b.items.some((it) => it.combo)) h += `<div class="legend">${t("legend")}</div>`;
-      b.items.forEach((it, n) => {
-        const checked = itemDone(sess, bi, n), itemAttr = `data-item="${bi}.${n}"`;
-        if (it.kind === "round" && it.k === "ex") {
-          const x = exText(it.id);
-          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} data-rd="${n + 1}">${checkButton(sess, bi, n, t("roundAbbr") + (n + 1))}<div class="tx">${exName(it.id, x.name)}<div>${esc(x.desc)}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
-        } else if (it.kind === "run") {
-          const z3 = it.zone === 3;
-          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, "Z" + it.zone)}<div class="tx"><b>${z3 ? t("z3set")(it.reps, it.on, it.off) : `${it.min} ${t("min")} · ${t("z2")}`}</b><div>${z3 ? t("z3d") : t("z2d")}</div></div></div>`;
-        } else if (it.kind === "hard") {
-          const hd = HARD.find((q) => q.id === it.id) || HARD[0],
-            x = hd[S.profile.lang];
-          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1))}<div class="tx">${SKETCH[hd.de[0]] ? `<button type="button" class="exn" data-hardinfo="${hd.id}"><b>${esc(x[0])}</b><span class="exi" aria-hidden="true">i</span></button>` : `<b>${esc(x[0])}</b>`}<div>${esc(x[1])}</div></div></div>`;
-        } else if (it.k === "sim") {
-          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} data-rd="${n + 1}">${checkButton(sess, bi, n, t("roundAbbr") + (n + 1))}<div class="tx"><b>${t("simT")(it.fight, it.r)}</b><div>${it.fight > 1 && it.r === 1 ? t("simD2") : t("simD1")}${it.beg ? t("simBeg") : ""}</div></div></div>`;
-        } else if (it.k === "task") {
-          const x = TASKS.find((q) => q.id === it.id) || TASKS[0],
-            tx = x[S.profile.lang],
-            d = it.m === "p" ? tx[1] : tx[2] || tx[1];
-          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} data-rd="${n + 1}">${checkButton(sess, bi, n, t("roundAbbr") + (n + 1))}<div class="tx"><span class="last">${t("sparMode")[it.m]}</span><br><b>${esc(tx[0])}</b><div>${esc(d)}</div></div></div>`;
-        } else if (it.kind === "exam") {
-          const x = examItem(it.id);
-          if (x) h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1))}<div class="tx">${examRow(x, n, sess.eq)}</div></div>`;
-        } else if (it.kind === "round") {
-          const r = RT[it.k];
-          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} data-rd="${n + 1}">${checkButton(sess, bi, n, t("roundAbbr") + (n + 1))}<div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? comboHtml(it.combo) : ""}</div></div>`;
-        } else {
-          const x = exText(it.id),
-            tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
-          const dz = it.target ? targetText(it.target) : doseTxt(it.id, b);
-          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${tr ? `<span class="num">${pad(n + 1)}</span>` : checkButton(sess, bi, n, pad(n + 1))}<div class="tx">${exName(it.id, x.name)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${tr ? setsHtml(sess, bi, n, b, it.id, false) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true) : ""}</div></div>`;
-        }
-      });
-      h += `</div>`;
+      h += sessionBlockHtml(sess, bi, true);
     });
     const done = S.log.find((e) => e.date === ds && own(e));
     if (done) h += `<div class="note ok">✓ ${t("already")} RPE ${done.rpe} · ${done.minutes} ${t("min")}</div>`;
-    else h += finishFormHtml(sess);
+    else
+      h += `<div class="panel training-start"><p class="sub">${workoutText().preview}</p><p class="sub">${S.profile.lang === "de" ? "Bereitlegen" : "Prepare"}: ${esc(sess.eq.map((k) => t("equip")[k] || t("pb")?.[k] || k).join(", ") || (S.profile.lang === "de" ? "keine zusätzliche Ausrüstung" : "no extra equipment"))}</p><button type="button" class="btn" data-workout="start">${PLAY}<span>${sess.flow ? workoutText().resume : workoutText().start}</span></button></div>`;
     return h;
+  }
+  function sessionBlockHtml(sess, bi, preview = false) {
+    const b = sess.blocks[bi],
+      lg = S.profile.lang === "de" ? 0 : 1;
+    let h = "";
+    h += `<div class="block" data-block="${bi}">${blockHead(b)}`;
+    if (b.items.some((it) => it.combo)) h += `<div class="legend">${t("legend")}</div>`;
+    b.items.forEach((it, n) => {
+      const checked = itemDone(sess, bi, n),
+        itemAttr = `data-item="${bi}.${n}"`;
+      if (it.kind === "round" && it.k === "ex") {
+        const x = exText(it.id);
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${exName(it.id, x.name)}<div>${esc(x.desc)}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true, preview) : ""}</div></div>`;
+      } else if (it.kind === "run") {
+        const z3 = it.zone === 3;
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, "Z" + it.zone, preview)}<div class="tx"><b>${z3 ? t("z3set")(it.reps, it.on, it.off) : `${it.min} ${t("min")} · ${t("z2")}`}</b><div>${z3 ? t("z3d") : t("z2d")}</div></div></div>`;
+      } else if (it.kind === "hard") {
+        const hd = HARD.find((q) => q.id === it.id) || HARD[0],
+          x = hd[S.profile.lang];
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${SKETCH[hd.de[0]] ? `<button type="button" class="exn" data-hardinfo="${hd.id}"><b>${esc(x[0])}</b><span class="exi" aria-hidden="true">i</span></button>` : `<b>${esc(x[0])}</b>`}<div>${esc(x[1])}</div></div></div>`;
+      } else if (it.k === "sim") {
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx"><b>${t("simT")(it.fight, it.r)}</b><div>${it.fight > 1 && it.r === 1 ? t("simD2") : t("simD1")}${it.beg ? t("simBeg") : ""}</div></div></div>`;
+      } else if (it.k === "task") {
+        const x = TASKS.find((q) => q.id === it.id) || TASKS[0],
+          tx = x[S.profile.lang],
+          d = it.m === "p" ? tx[1] : tx[2] || tx[1];
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx"><span class="last">${t("sparMode")[it.m]}</span><br><b>${esc(tx[0])}</b><div>${esc(d)}</div></div></div>`;
+      } else if (it.kind === "exam") {
+        const x = examItem(it.id);
+        if (x)
+          h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${preview ? `<b>${esc(x[S.profile.lang])}</b>` : examRow(x, n, sess.eq)}</div></div>`;
+      } else if (it.kind === "round") {
+        const r = RT[it.k];
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? comboHtml(it.combo) : ""}</div></div>`;
+      } else {
+        const x = exText(it.id),
+          tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
+        const dz = it.target ? targetText(it.target) : doseTxt(it.id, b);
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${tr ? `<span class="num">${pad(n + 1)}</span>` : checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${exName(it.id, x.name)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${tr ? setsHtml(sess, bi, n, b, it.id, false, preview) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true, preview) : ""}</div></div>`;
+      }
+      if (!preview && !b.rounds) h += exerciseTimerHtml(sess, bi, n);
+    });
+    h += `</div>`;
+    return h;
+  }
+  /* ============ Guided training: preview first, execution after an explicit start ============ */
+  const workoutText = () =>
+    S.profile.lang === "de"
+      ? {
+          start: "Training beginnen",
+          resume: "Training fortsetzen",
+          preview:
+            "Sieh dir den Plan an und lege deine Ausrüstung bereit. Abhaken, Eingaben und Timer stehen nach „Training beginnen“ zur Verfügung.",
+          finish: "Abschluss",
+          back: "Zurück",
+          close: "Zur Planübersicht",
+          skip: "Abschnitt überspringen",
+          next: "Weiter zu",
+          ready: "Abschnitt erledigt",
+          open: "Noch offene Übungen – beim Weitergehen bleiben sie offen.",
+          timer: "Timer starten",
+          pause: "Pausieren",
+          continue: "Fortsetzen",
+          reset: "Zurücksetzen",
+          done: "Zeit abgelaufen",
+          side: "Seite",
+          change: "Seitenwechsel",
+          set: "Satz",
+          lap: "Durchgang",
+          rest: "Pause",
+          work: "Belastung",
+          choose: "Dauer wählen",
+          rounds: "Rundentimer öffnen",
+          restStart: "Satzpause starten",
+          saved: "Deine Eingaben werden gespeichert. Schließen pausiert laufende Timer.",
+        }
+      : {
+          start: "Begin training",
+          resume: "Resume training",
+          preview:
+            "Review the plan and prepare your equipment. Checks, entries and timers become available after you begin training.",
+          finish: "Finish",
+          back: "Back",
+          close: "Back to plan",
+          skip: "Skip section",
+          next: "Continue to",
+          ready: "Section complete",
+          open: "Some exercises are still open. Continuing will leave them open.",
+          timer: "Start timer",
+          pause: "Pause",
+          continue: "Resume",
+          reset: "Reset",
+          done: "Time elapsed",
+          side: "Side",
+          change: "Change sides",
+          set: "Set",
+          lap: "Lap",
+          rest: "Rest",
+          work: "Work",
+          choose: "Choose duration",
+          rounds: "Open round timer",
+          restStart: "Start set rest",
+          saved: "Your entries are saved. Closing pauses running timers.",
+        };
+  function workoutNextLabel() {
+    const sess = S.sessions[ui.sel],
+      next = sess?.blocks[(ui.workout?.block ?? 0) + 1];
+    return `${workoutText().next} ${next ? t(next.key) : workoutText().finish}`;
+  }
+  function workoutProgress(sess, bi) {
+    const b = sess.blocks[bi];
+    if (!b) return sessionCompletion(sess);
+    const done = b.items.filter((it, ni) => itemDone(sess, bi, ni)).length;
+    return { done, total: b.items.length, complete: done === b.items.length };
+  }
+  function updateWorkoutProgress() {
+    if (!ui.workout) return;
+    const sess = S.sessions[ui.sel];
+    if (!sess) return;
+    const p = workoutProgress(sess, ui.workout.block),
+      el = document.getElementById("workoutProgress");
+    if (el) el.textContent = flowText().progress(p.done, p.total);
+    const hint = document.getElementById("workoutOpen");
+    if (hint) hint.textContent = p.complete ? workoutText().ready : workoutText().open;
+  }
+  function focusWorkout() {
+    const root = document.getElementById(ui.focus ? "focus" : "workout");
+    root?.querySelector(ui.focus ? "button" : "#workoutTitle")?.focus?.({ preventScroll: true });
+  }
+  function startWorkout() {
+    const sess = S.sessions[ui.sel];
+    if (!sess || doneOn(ui.sel)) return;
+    pauseOtherTimer("exercise");
+    if (ui.exerciseTimer?.running) pauseExerciseTimer();
+    const stored = sess.flow?.block;
+    const firstOpen = sess.blocks.findIndex((b, bi) => b.items.some((it, ni) => !itemDone(sess, bi, ni)));
+    const block = Number.isInteger(stored) ? Math.max(0, Math.min(sess.blocks.length, stored)) : firstOpen < 0 ? sess.blocks.length : firstOpen;
+    sess.flow = { block, startedAt: sess.flow?.startedAt || Date.now() };
+    ui.workout = { ds: ui.sel, block };
+    ui.focus = !!sess.blocks[block]?.rounds;
+    store.save();
+    render();
+    focusWorkout();
+  }
+  function pauseWorkoutTimers() {
+    if (ui.exerciseTimer?.running) pauseExerciseTimer();
+    if (ui.timer?.running) {
+      tick();
+      if (ui.timer) {
+        ui.timer.carryMs = Math.max(0, Date.now() - lastTick);
+        ui.timer.running = false;
+        ui.timer.called = null;
+      }
+      cancelTimerSpeech();
+      syncTimers();
+    }
+  }
+  function closeWorkout(redraw = true) {
+    if (!ui.workout) return;
+    readFinishDraft();
+    pauseWorkoutTimers();
+    ui.workout = null;
+    ui.focus = false;
+    if (redraw) render();
+  }
+  function moveWorkout(delta) {
+    if (!ui.workout) return;
+    const sess = S.sessions[ui.sel];
+    readFinishDraft();
+    pauseWorkoutTimers();
+    ui.workout.block = Math.max(0, Math.min(sess.blocks.length, ui.workout.block + delta));
+    sess.flow.block = ui.workout.block;
+    ui.focus = !!sess.blocks[ui.workout.block]?.rounds;
+    store.save();
+    render();
+    const el = document.getElementById("workout");
+    if (el) el.scrollTop = 0;
+    focusWorkout();
+  }
+  function workoutAction(action) {
+    if (action === "start") return startWorkout();
+    if (!ui.workout) return;
+    if (action === "close") return closeWorkout();
+    if (action === "next") return moveWorkout(1);
+    if (action === "back") return moveWorkout(-1);
+    if (action === "finish") {
+      const sess = S.sessions[ui.sel];
+      moveWorkout(sess.blocks.length - ui.workout.block);
+    }
+  }
+  function workoutHtml() {
+    if (!ui.workout) return "";
+    const sess = S.sessions[ui.sel],
+      bi = ui.workout.block,
+      b = sess.blocks[bi],
+      W = workoutText();
+    let h = `<div class="workout-inner"><div class="fbar"><button type="button" class="x" data-workout="close" aria-label="${W.close}">✕</button><span>${esc(t("types")[sess.type])}</span><span>${bi + 1}/${sess.blocks.length + 1}</span></div><h1 id="workoutTitle" tabindex="-1">${b ? t(b.key) : W.finish}</h1>`;
+    h += `<ol class="workout-steps" aria-label="${S.profile.lang === "de" ? "Trainingsabschnitte" : "Training sections"}">${sess.blocks.map((block, i) => `<li ${i === bi ? 'aria-current="step"' : ""}>${esc(t(block.key))}</li>`).join("")}<li ${!b ? 'aria-current="step"' : ""}>${W.finish}</li></ol>`;
+    if (b) {
+      h += `<p id="workoutProgress" class="sub" aria-live="polite"></p>`;
+      if (b.rounds)
+        h += `<p class="sub" id="workoutRoundStatus"></p><button type="button" class="btn" data-fx="open">${W.rounds}</button>`;
+      h += sessionBlockHtml(sess, bi, false);
+      h += `<p id="workoutOpen" class="sub"></p><button type="button" class="btn" data-workout="next">${esc(workoutNextLabel())}</button><div class="minirow workout-nav">${bi ? `<button type="button" class="btn ghost" data-workout="back">${W.back}</button>` : ""}<button type="button" class="btn ghost" data-workout="finish">${S.profile.lang === "de" ? "Vorzeitig abschließen" : "Finish early"}</button></div>`;
+    } else {
+      h += finishFormHtml(sess) + `<button type="button" class="btn sec" data-workout="back">${W.back}</button>`;
+    }
+    return h + `<p class="sub">${W.saved}</p></div>`;
+  }
+  function renderWorkout() {
+    const el = document.getElementById("workout");
+    if (!el) return;
+    el.hidden = !ui.workout;
+    document.body?.classList.toggle("training-open", !!ui.workout);
+    if (!ui.workout) {
+      el.innerHTML = "";
+      return;
+    }
+    el.innerHTML = workoutHtml();
+    updateWorkoutProgress();
+    updateExerciseTimerUI();
+    updateWorkoutRoundStatus();
+  }
+  // Structured phase plans use the same prescription as the visible exercise dose.
+  // Work and rests stay distinct; per-side holds include an explicit changeover.
+  function exerciseTiming(sess, bi, ni, choice, setIndex) {
+    const b = sess.blocks[bi],
+      it = b.items[ni],
+      name = EX[it.id]?.de,
+      W = workoutText();
+    if (b.rounds) return null;
+    const phase = (seconds, label = W.work) => ({ seconds, label }),
+      interval = (n, on, off) =>
+        Array.from({ length: n }, (_, i) => [
+          phase(on, `${W.work} ${i + 1}/${n}`),
+          ...(off ? [phase(off, W.rest)] : []),
+        ]).flat();
+    let phases = [],
+      choices = [],
+      seconds = 0,
+      sides = 1;
+    const tracked = EX[it.id]?.cat === "str" && !["warm", "cool"].includes(b.key) && tracksSets(it.id);
+    if (it.kind === "hard") {
+      const durations = {
+        fGlove: [3, 20],
+        fWraps: [2, 30],
+        fBare: [2, 20],
+        fPads: [3, 20],
+        fPlank: [3, [20, 30]],
+        fWring: [3, 20],
+        abs: [3, 20],
+        arms: [2, 30],
+        checks: [2, 30],
+      }[it.id];
+      if (durations) {
+        choices = Array.isArray(durations[1]) ? durations[1] : [durations[1]];
+        seconds = choices.includes(choice) ? choice : choices[0];
+        phases = Array.from({ length: durations[0] }, (_, i) => [
+          phase(seconds, `${W.set} ${i + 1}/${durations[0]}`),
+          ...(i < durations[0] - 1 ? [phase(5, W.change)] : []),
+        ]).flat();
+      } else if (it.id === "fTap" || it.id === "bodybag")
+        phases = Array.from({ length: 6 }, (_, i) => [
+          phase(it.id === "fTap" ? 30 : 20, `${W.side} ${(i % 2) + 1}/2 · ${W.set} ${Math.floor(i / 2) + 1}/3`),
+          ...(i < 5 ? [phase(5, W.change)] : []),
+        ]).flat();
+      else if (it.id === "shintap")
+        phases = [phase(60, `${W.side} 1/2`), phase(5, W.change), phase(60, `${W.side} 2/2`)];
+      else if (it.id === "neck")
+        phases = Array.from({ length: 4 }, (_, i) => [
+          phase(10, `${S.profile.lang === "de" ? "Richtung" : "Direction"} ${i + 1}/4`),
+          ...(i < 3 ? [phase(5, W.change)] : []),
+        ]).flat();
+      else if (it.id === "fFinger")
+        phases = Array.from({ length: 20 }, (_, i) => [
+          phase(3, `${W.work} ${(i % 10) + 1}/10 · ${W.lap} ${Math.floor(i / 10) + 1}/2`),
+          ...(i < 19 ? [phase(3, S.profile.lang === "de" ? "Finger spreizen" : "Spread fingers")] : []),
+        ]).flat();
+    } else if (it.kind === "run")
+      phases = it.zone === 3 ? interval(it.reps, it.on * 60, it.off * 60) : [phase(it.min * 60, t("run"))];
+    else if (b.key === "warm" && name && EX[it.id]?.cat !== "pre")
+      seconds = Math.max(2, Math.round(b.min / Math.max(1, b.items.length))) * 60;
+    else if (tracked && ["Nackenstärkung", "Einbeinstand mit Kick-Hold"].includes(name)) {
+      seconds = it.target?.r || 10;
+      const n = 4;
+      phases = Array.from({ length: n }, (_, i) => [
+        phase(
+          seconds,
+          name === "Nackenstärkung"
+            ? `${S.profile.lang === "de" ? "Richtung" : "Direction"} ${i + 1}/4`
+            : `${W.side} ${(i % 2) + 1}/2 · ${W.work} ${Math.floor(i / 2) + 1}/2`,
+        ),
+        ...(i < n - 1 ? [phase(5, W.change)] : []),
+      ]).flat();
+    } else if (TIMED.has(it.id) && tracked) {
+      choices = it.target
+        ? [it.target.r]
+        : [
+            [20, 30],
+            [30, 45],
+            [45, 60],
+          ][S.profile.level] || [30, 45];
+      seconds = choices.includes(choice) ? choice : choices[0];
+      sides = DOSE_SIDE.has(name) ? 2 : 1;
+    } else {
+      const fixed = {
+        "Hüftbeuger dehnen": [45, 2],
+        "Oberschenkel hinten": [45, 2],
+        "Schulter & Brust": [30, 2],
+        "Adduktoren & Spagat": [[60, 90], 1],
+        Froschdehnung: [[60, 90], 1],
+        Taube: [[60, 90], 2],
+        "Tiefe Hocke halten": [[60, 90], 1],
+        Atmung: [120, 1],
+        Auslaufen: [300, 1],
+        "Seil-Intervalle": [120, 1],
+        "Rudergerät-Intervalle": [120, 1],
+        "Laufband-Intervalle": [120, 1],
+        "Steppen und leichte Beinarbeit": [180, 1],
+        "Kurz andehnen": [120, 1],
+      }[name];
+      const intervals = {
+        "Schatten-Sprints": [3, 20, 10],
+        "Sack-Sprints": [4, 15, 15],
+        "Kick-Intervalle": [3, 20, 10],
+        "Rad-Sprints": [2, 20, 40],
+        "Speed-Runden": [4, 10, 20],
+      }[name];
+      if (intervals) phases = interval(...intervals);
+      else if (fixed) {
+        choices = Array.isArray(fixed[0]) ? fixed[0] : [fixed[0]];
+        seconds = choices.includes(choice) ? choice : choices[0];
+        sides = fixed[1];
+      } else if (EX[it.id]?.cat === "cond" && !DOSE_FIX[name]) {
+        phases = interval(1, [30, 40, 45][S.profile.level], [30, 20, 15][S.profile.level]);
+      } else if (["cool", "mob"].includes(b.key) && !DOSE_FIX[name]) {
+        choices = b.key === "mob" ? [60, 90] : [45, 60];
+        seconds = choices.includes(choice) ? choice : choices[0];
+      } else if (name === "Kick-Halten") {
+        seconds = 3;
+        choices = [3, 5];
+        seconds = choices.includes(choice) ? choice : 3;
+        sides = 2;
+        phases = interval(5, seconds, 3)
+          .map((p) => ({ ...p, label: `${W.side} 1 · ${p.label}` }))
+          .concat(
+            [phase(5, W.change)],
+            interval(5, seconds, 3).map((p) => ({
+              ...p,
+              label: `${W.side} 2 · ${p.label}`,
+            })),
+          );
+      } else if (name === "Einbeinstand mit Kick-Hold") {
+        seconds = 10;
+        sides = 2;
+        phases = interval(2, 10, 3)
+          .map((p) => ({ ...p, label: `${W.side} 1 · ${p.label}` }))
+          .concat(
+            [phase(5, W.change)],
+            interval(2, 10, 3).map((p) => ({
+              ...p,
+              label: `${W.side} 2 · ${p.label}`,
+            })),
+          );
+      } else if (name === "Nackenstärkung") {
+        phases = Array.from({ length: 4 }, (_, i) => [
+          phase(10, `${S.profile.lang === "de" ? "Richtung" : "Direction"} ${i + 1}/4`),
+          ...(i < 3 ? [phase(5, W.change)] : []),
+        ]).flat();
+      } else if (b.key === "mob") {
+        seconds = Math.max(2, Math.round(b.min / Math.max(1, b.items.length))) * 60;
+      }
+    }
+    if (!phases.length && seconds)
+      phases =
+        sides === 2
+          ? [phase(seconds, `${W.side} 1/2`), phase(5, W.change), phase(seconds, `${W.side} 2/2`)]
+          : [phase(seconds)];
+    if (!phases.length || phases.some((p) => !Number.isFinite(p.seconds) || p.seconds <= 0)) return null;
+    return {
+      phases,
+      choices,
+      seconds,
+      tracked,
+      setIndex: tracked ? Math.max(0, setIndex || 0) : null,
+    };
+  }
+  function exerciseTimerHtml(sess, bi, ni) {
+    const key = `${bi}.${ni}`,
+      b = sess.blocks[bi],
+      W = workoutText(),
+      tm = ui.exerciseTimer;
+    const plan = exerciseTiming(sess, bi, ni, undefined, 0),
+      tracked = plan?.tracked;
+    const active = tm?.ds === ui.sel && tm.key === key;
+    if (!plan && !(EX[b.items[ni].id]?.cat === "str" && !["warm", "cool"].includes(b.key))) return "";
+    let h = `<div class="exercise-timing" data-timing="${key}">`;
+    if (isCirc(b) && !tracked)
+      h += `<span class="sub" data-lap-progress="${key}">${W.lap}: ${sess.timedLaps?.[key] || 0}/${circN(b)}</span>`;
+    if (plan) {
+      if (plan.choices.length > 1)
+        h += `<div class="sub">${W.choose}: ${plan.choices.map((n) => `<button type="button" class="btn ghost" data-exercise-timer="start" ${active && tm.running ? "disabled" : ""} data-key="${key}" data-seconds="${n}">${n} s</button>`).join("")}</div>`;
+      if (tracked) {
+        const rows = perfRows(sess, key, b);
+        h += rows
+          .map(
+            (r, i) =>
+              `<button type="button" class="btn sec" data-exercise-timer="start" ${active && tm.running ? "disabled" : ""} data-key="${key}" data-set-index="${i}">${W.set} ${i + 1} · ${fmt(plan.seconds)} · ${W.timer}</button>`,
+          )
+          .join("");
+      } else
+        h += `<button type="button" class="btn sec" data-exercise-timer="start" ${active && tm.running ? "disabled" : ""} data-key="${key}">${W.timer} · ${fmt(plan.phases.reduce((n, p) => n + p.seconds, 0))}</button>`;
+    }
+    if (EX[b.items[ni].id]?.cat === "str" && !["warm", "cool"].includes(b.key))
+      h += `<button type="button" class="btn ghost" data-exercise-timer="rest" data-key="${key}">${W.restStart} · 1:00</button>`;
+    if (active)
+      h += `<div class="exercise-countdown" role="timer"><span id="exercisePhase"></span><strong id="exerciseClock">${fmt(Math.ceil((tm.remainingMs ?? 0) / 1000))}</strong><div class="minirow"><button type="button" class="btn" data-exercise-timer="toggle" id="exerciseToggle"></button><button type="button" class="btn sec" data-exercise-timer="reset">${W.reset}</button></div></div>`;
+    return h + "</div>";
+  }
+  function pauseExerciseTimer() {
+    exerciseTick();
+    const tm = ui.exerciseTimer;
+    if (tm?.running) {
+      tm.remainingMs = Math.max(0, tm.endAt - Date.now());
+      tm.running = false;
+    }
+    cancelTimerSpeech();
+    syncTimers();
+    updateExerciseTimerUI();
+  }
+  function exerciseTimerAction(action, ds = {}) {
+    if (!ui.workout) return;
+    if (action === "toggle") {
+      const tm = ui.exerciseTimer;
+      if (!tm || tm.done) return;
+      if (tm.running) return pauseExerciseTimer();
+      pauseOtherTimer("exercise");
+      tm.running = true;
+      tm.endAt = Date.now() + tm.remainingMs;
+      syncTimers();
+      updateExerciseTimerUI();
+      return;
+    }
+    if (action === "reset") {
+      pauseExerciseTimer();
+      ui.exerciseTimer = null;
+      renderWorkout();
+      return;
+    }
+    const sess = S.sessions[ui.sel],
+      [bi, ni] = (ds.key || "").split(".").map(Number);
+    if (!sess?.blocks[bi]?.items[ni] || bi !== ui.workout.block) return;
+    const plan =
+      action === "rest"
+        ? {
+            phases: [{ seconds: 60, label: workoutText().rest }],
+            tracked: false,
+          }
+        : exerciseTiming(sess, bi, ni, +ds.seconds, +ds.setIndex);
+    if (!plan) return;
+    if (plan.tracked && (+ds.setIndex < 0 || +ds.setIndex >= perfRows(sess, ds.key, sess.blocks[bi]).length)) return;
+    pauseOtherTimer("exercise");
+    if (ui.exerciseTimer?.running) pauseExerciseTimer();
+    ui.exerciseTimer = {
+      ds: ui.sel,
+      key: ds.key,
+      bi,
+      ni,
+      phases: plan.phases,
+      index: 0,
+      seconds: plan.seconds,
+      setIndex: plan.setIndex,
+      tracked: plan.tracked,
+      restOnly: action === "rest",
+      running: true,
+      done: false,
+      remainingMs: plan.phases[0].seconds * 1000,
+      endAt: Date.now() + plan.phases[0].seconds * 1000,
+    };
+    bell(1);
+    syncTimers();
+    renderWorkout();
+    document.querySelector(`[data-timing="${ds.key}"]`)?.scrollIntoView({ block: "center", behavior: "auto" });
+  }
+  function completeExerciseTimer(tm) {
+    const sess = S.sessions[tm.ds];
+    if (!sess || tm.restOnly) return;
+    const b = sess.blocks[tm.bi];
+    if (!b?.items[tm.ni]) return;
+    if (tm.tracked) {
+      const rows = perfRows(sess, tm.key, b);
+      if (rows[tm.setIndex] && rows[tm.setIndex].r == null) rows[tm.setIndex].r = tm.seconds;
+    } else {
+      sess.timedLaps ||= {};
+      const laps = isCirc(b) ? circN(b) : 1;
+      sess.timedLaps[tm.key] = Math.min(laps, (sess.timedLaps[tm.key] || 0) + 1);
+      if (sess.timedLaps[tm.key] >= laps) {
+        (sess.checked ||= {})[tm.key] = true;
+      }
+    }
+    store.save();
+  }
+  function exerciseTick() {
+    const tm = ui.exerciseTimer;
+    if (!tm?.running) return;
+    const now = Date.now();
+    let changed = false;
+    while (tm.running && now >= tm.endAt) {
+      tm.index++;
+      changed = true;
+      if (tm.index >= tm.phases.length) {
+        tm.done = true;
+        tm.running = false;
+        tm.remainingMs = 0;
+        completeExerciseTimer(tm);
+        if (now - tm.endAt < 1000) bell(3);
+        releaseWake();
+      } else {
+        tm.endAt += tm.phases[tm.index].seconds * 1000;
+        if (now < tm.endAt && now - (tm.endAt - tm.phases[tm.index].seconds * 1000) < 1000) bell(1);
+      }
+    }
+    if (tm.running) tm.remainingMs = Math.max(0, tm.endAt - now);
+    if (!timerVisible()) return;
+    if (changed && ui.workout?.ds === tm.ds) {
+      if (tm.done && tm.tracked) {
+        const input = document.querySelector(`[data-k="${tm.key}"][data-i="${tm.setIndex}"][data-f="r"]`);
+        if (input) {
+          input.value = String(S.sessions[tm.ds].perf[tm.key][tm.setIndex].r);
+          input.classList.add("ok");
+        }
+        document.querySelector(`[data-sl="${tm.key}.${tm.setIndex}"]`)?.classList.add("ok");
+      }
+      updateCompletionUI();
+    }
+    updateExerciseTimerUI();
+  }
+  function updateExerciseTimerUI() {
+    const tm = ui.exerciseTimer;
+    if (!tm || !ui.workout || ui.focus) return;
+    if (tm.done && tm.tracked) {
+      const input = document.querySelector(`[data-k="${tm.key}"][data-i="${tm.setIndex}"][data-f="r"]`),
+        value = S.sessions[tm.ds]?.perf?.[tm.key]?.[tm.setIndex]?.r;
+      if (input && value != null && document.activeElement !== input) {
+        input.value = String(value);
+        input.classList.add("ok");
+      }
+    }
+    const block = S.sessions[tm.ds]?.blocks[tm.bi],
+      lap = document.querySelector(`[data-lap-progress="${tm.key}"]`);
+    if (lap && block)
+      lap.textContent = `${workoutText().lap}: ${S.sessions[tm.ds].timedLaps?.[tm.key] || 0}/${circN(block)}`;
+    const clock = document.getElementById("exerciseClock"),
+      phase = document.getElementById("exercisePhase"),
+      toggle = document.getElementById("exerciseToggle");
+    if (clock) clock.textContent = fmt(Math.ceil((tm.remainingMs || 0) / 1000));
+    if (phase) phase.textContent = tm.done ? workoutText().done : tm.phases[tm.index]?.label || "";
+    if (toggle) {
+      toggle.textContent = tm.running ? workoutText().pause : workoutText().continue;
+      toggle.disabled = tm.done;
+    }
   }
   function radar(cur, prev) {
     const cx = 110,
@@ -11629,7 +12586,14 @@ ${setupFields(setup, ty)}
   /* blocks: mv stance/footwork/shadow, hd hand techniques, hc hand combos, ft kicks, hf hand-kick combos,
      db double kicks, df defence combinations, ms model sparring, fa break-falls, sd self-defence, th theory */
   const EXAM_BLK = ["mv", "hd", "hc", "ft", "hf", "db", "df", "ms", "fa", "sd", "th"];
-  const EXAM_NEED = { db: "partner", df: "partner", ms: "partner", sd: "partner", fa: "mat", th: "none" };
+  const EXAM_NEED = {
+    db: "partner",
+    df: "partner",
+    ms: "partner",
+    sd: "partner",
+    fa: "mat",
+    th: "none",
+  };
   const EXAM = {
     1: {
       prep: 6,
@@ -11971,16 +12935,28 @@ ${setupFields(setup, ty)}
     { k: "today", tab: "week", sel: ".today" },
     { k: "strip", tab: "week", sel: ".week" },
     { k: "plan", tab: "week", sel: ".sess", up: ".panel" },
-    { k: "setup", tab: "session", sel: "[data-stype]", up: ".field" },
-    { k: "timer", tab: "session", sel: "#timer" },
+    { k: "setup", tab: "session", sel: "[data-session-settings]" },
+    { k: "timer", tab: "session", sel: "[data-workout=start]" },
     { k: "exinfo", tab: "session", sel: "[data-exinfo]", up: ".ex" },
-    { k: "finish", tab: "session", sel: "#fSave", up: ".panel" },
+    { k: "finish", tab: "session", sel: "[data-workout=start]", up: ".panel" },
     { k: "ftimer", tab: "week", sel: "#tabs .tabft" },
     { k: "test", tab: "test", sel: "#tabs [data-tab=test]" },
     { k: "log", tab: "log", sel: "#tabs [data-tab=log]" },
-    { k: "club", tab: "profile", sec: "train", sel: "[data-cday]", up: ".field" },
+    {
+      k: "club",
+      tab: "profile",
+      sec: "train",
+      sel: "[data-cday]",
+      up: ".field",
+    },
     { k: "comp", tab: "profile", sec: "goals", sel: "#pCompNew", up: ".field" },
-    { k: "pause", tab: "profile", sec: "life", sel: "[data-pnew]", up: ".field" },
+    {
+      k: "pause",
+      tab: "profile",
+      sec: "life",
+      sel: "[data-pnew]",
+      up: ".field",
+    },
     { k: "life", tab: "profile", sel: "[data-psec=life]" },
     { k: "end" },
   ];
@@ -11989,16 +12965,37 @@ ${setupFields(setup, ty)}
   function preventTourScroll(e) {
     if (ui.tour != null && e.cancelable) e.preventDefault();
   }
-  document.addEventListener("touchmove", preventTourScroll, { passive: false, capture: true });
-  document.addEventListener("wheel", preventTourScroll, { passive: false, capture: true });
-  document.addEventListener("keydown", (e) => {
-    if (ui.tour == null || e.ctrlKey || e.metaKey || e.altKey) return;
-    const scrollKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End", " ", "Spacebar"];
-    if (!scrollKeys.includes(e.key)) return;
-    // Space must continue to activate the focused tour button.
-    if ((e.key === " " || e.key === "Spacebar") && e.target.closest?.("#tour button")) return;
-    preventTourScroll(e);
-  }, { capture: true });
+  document.addEventListener("touchmove", preventTourScroll, {
+    passive: false,
+    capture: true,
+  });
+  document.addEventListener("wheel", preventTourScroll, {
+    passive: false,
+    capture: true,
+  });
+  document.addEventListener(
+    "keydown",
+    (e) => {
+      if (ui.tour == null || e.ctrlKey || e.metaKey || e.altKey) return;
+      const scrollKeys = [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "PageUp",
+        "PageDown",
+        "Home",
+        "End",
+        " ",
+        "Spacebar",
+      ];
+      if (!scrollKeys.includes(e.key)) return;
+      // Space must continue to activate the focused tour button.
+      if ((e.key === " " || e.key === "Spacebar") && e.target.closest?.("#tour button")) return;
+      preventTourScroll(e);
+    },
+    { capture: true },
+  );
   function startTour() {
     ui.tour = 0;
     ui.sheet = null;
@@ -12072,7 +13069,14 @@ ${setupFields(setup, ty)}
    * are solved from fixed segment lengths, bending towards the hint direction (ea/EA elbows, ka/KA knees).
    * Two poses (a → b) cross-fade to show the movement; props draw the equipment.
    */
-  const SK = { W: "#F2EEE7", FAR: "#9E988F", BG: "#15171c", LINE: "#8C9099", BRASS: "#C9A86A", BAND: "#D9545C" };
+  const SK = {
+    W: "#F2EEE7",
+    FAR: "#9E988F",
+    BG: "#15171c",
+    LINE: "#8C9099",
+    BRASS: "#C9A86A",
+    BAND: "#D9545C",
+  };
   const skDir = (deg) => [Math.cos((deg * Math.PI) / 180), -Math.sin((deg * Math.PI) / 180)];
   const skAlong = (a, d, len) => [a[0] + d[0] * len, a[1] + d[1] * len];
   /* two-segment limb from a to b; the middle joint bends towards the hint vector */
@@ -12186,8 +13190,22 @@ ${setupFields(setup, ty)}
     F: [116, 148],
   };
   const st = (o) => ({ ...STAND, ...o });
-  const SQUAT = { h: [123, 65], s: [112, 86], p: [96, 116], f: [126, 148], F: [120, 148], ka: [1, -0.4] };
-  const SEAT = { p: [112, 114], s: [114, 80], h: [116, 56], f: [142, 148], F: [138, 148], ka: [1, -1] };
+  const SQUAT = {
+    h: [123, 65],
+    s: [112, 86],
+    p: [96, 116],
+    f: [126, 148],
+    F: [120, 148],
+    ka: [1, -0.4],
+  };
+  const SEAT = {
+    p: [112, 114],
+    s: [114, 80],
+    h: [116, 56],
+    f: [142, 148],
+    F: [138, 148],
+    ka: [1, -1],
+  };
   const HINGE = (o) => ({
     p: [100, 96],
     s: [133, 88],
@@ -12222,7 +13240,14 @@ ${setupFields(setup, ty)}
       ka: [1, 0],
     },
     BENCH = ["rect", [56, 118], [100, 8]],
-    SUP = { p: [90, 110], s: [124, 110], h: [148, 106], f: [62, 148], F: [66, 148], ka: [-1, -1] };
+    SUP = {
+      p: [90, 110],
+      s: [124, 110],
+      h: [148, 106],
+      f: [62, 148],
+      F: [66, 148],
+      ka: [-1, -1],
+    };
   const cpl = skLine([66, 98], -20);
   /* Key = German exercise name. a/b = poses, props/pb = props per pose, arrow = movement, hold = static hold */
   const SKETCH = {
@@ -12238,9 +13263,20 @@ ${setupFields(setup, ty)}
       a: { ...pu, w: [119, 147], ea: [-1, 0] },
       b: { ...pu, w: [pu.s[0] + 8, pu.s[1] + 10], W: [119, 147], ea: [1, 1] },
     },
-    Unterarmstütz: { a: { ...fp, w: [fp.s[0] + 21, 146], ea: [0, 1] }, hold: true },
+    Unterarmstütz: {
+      a: { ...fp, w: [fp.s[0] + 21, 146], ea: [0, 1] },
+      hold: true,
+    },
     "Hollow Hold": {
-      a: { p: [100, 138], s: [134, 134], h: [156, 126], f: [50, 122], F: [50, 122], w: [184, 118], ka: [0, -1] },
+      a: {
+        p: [100, 138],
+        s: [134, 134],
+        h: [156, 126],
+        f: [50, 122],
+        F: [50, 122],
+        w: [184, 118],
+        ka: [0, -1],
+      },
       hold: true,
     },
     Klimmzüge: {
@@ -12263,7 +13299,13 @@ ${setupFields(setup, ty)}
     },
     "Hängendes Knieheben": {
       a: HANG,
-      b: { ...HANG, f: [150, 124], F: [152, 124], ka: [0.3, -1], KA: [0.3, -1] },
+      b: {
+        ...HANG,
+        f: [150, 124],
+        F: [152, 124],
+        ka: [0.3, -1],
+        KA: [0.3, -1],
+      },
       props: [["pullbar", 24]],
       arrow: [
         [184, 134],
@@ -12460,8 +13502,20 @@ ${setupFields(setup, ty)}
       ],
     },
     "Woodchopper am Kabelzug": {
-      a: st({ w: [80, 26], W: [80, 26], ea: [0, -1], f: [134, 148], F: [104, 148] }),
-      b: st({ w: [164, 112], W: [164, 112], ea: [0, 1], f: [134, 148], F: [104, 148] }),
+      a: st({
+        w: [80, 26],
+        W: [80, 26],
+        ea: [0, -1],
+        f: [134, 148],
+        F: [104, 148],
+      }),
+      b: st({
+        w: [164, 112],
+        W: [164, 112],
+        ea: [0, 1],
+        f: [134, 148],
+        F: [104, 148],
+      }),
       props: [
         ["tower", 20],
         ["cable", [30, 16], [80, 26]],
@@ -12687,8 +13741,24 @@ ${setupFields(setup, ty)}
       ],
     },
     "Step-ups": {
-      a: { h: [118, 36], s: [118, 60], p: [118, 94], w: [122, 100], f: [154, 126], F: [114, 148], ka: [1, -1] },
-      b: { h: [156, 14], s: [156, 38], p: [156, 72], w: [160, 78], f: [158, 126], F: [152, 126], ka: [1, 0] },
+      a: {
+        h: [118, 36],
+        s: [118, 60],
+        p: [118, 94],
+        w: [122, 100],
+        f: [154, 126],
+        F: [114, 148],
+        ka: [1, -1],
+      },
+      b: {
+        h: [156, 14],
+        s: [156, 38],
+        p: [156, 72],
+        w: [160, 78],
+        f: [158, 126],
+        F: [152, 126],
+        ka: [1, 0],
+      },
       props: [["rect", [130, 127], [56, 22]]],
       arrow: [
         [196, 70],
@@ -12723,13 +13793,25 @@ ${setupFields(setup, ty)}
       ],
     },
     "Copenhagen Plank": {
-      a: { ...cpl, w: [cpl.s[0] + 20, 146], ea: [0, 1], F: [92, 146], KA: [0, 1] },
+      a: {
+        ...cpl,
+        w: [cpl.s[0] + 20, 146],
+        ea: [0, 1],
+        F: [92, 146],
+        KA: [0, 1],
+      },
       props: [["rect", [26, 100], [44, 8]]],
       hold: true,
     },
     "Einbeinstand mit Kick-Hold": {
       a: st({ w: [136, 52], W: [130, 48], ea: [0.5, 1] }),
-      b: st({ w: [136, 52], W: [130, 48], ea: [0.5, 1], f: [170, 84], ka: [0, -1] }),
+      b: st({
+        w: [136, 52],
+        W: [130, 48],
+        ea: [0.5, 1],
+        f: [170, 84],
+        ka: [0, -1],
+      }),
       arrow: [
         [196, 130],
         [196, 96],
@@ -12912,7 +13994,14 @@ ${setupFields(setup, ty)}
       ],
     },
     "Seil-Intervalle": {
-      a: { ...STAND, w: [134, 100], W: [108, 100], f: [124, 148], F: [118, 148], ea: [0, 1] },
+      a: {
+        ...STAND,
+        w: [134, 100],
+        W: [108, 100],
+        f: [124, 148],
+        F: [118, 148],
+        ea: [0, 1],
+      },
       b: {
         h: [120, 26],
         s: [120, 50],
@@ -13016,16 +14105,42 @@ ${setupFields(setup, ty)}
     return o;
   };
   /* attackers facing left */
-  const ATK = { h: [150, 36], s: [150, 60], p: [150, 94], f: [144, 148], F: [156, 148], ka: [-1, 0], KA: [-1, 0] };
+  const ATK = {
+    h: [150, 36],
+    s: [150, 60],
+    p: [150, 94],
+    f: [144, 148],
+    F: [156, 148],
+    ka: [-1, 0],
+    KA: [-1, 0],
+  };
   const SDSK = {
     /* choke from the front: arm straight up and turn */
     "1.sd.0": {
       parts: [
         [
           "d",
-          st({ h: [104, 38], s: [104, 62], p: [104, 96], w: [112, 96], W: [100, 98], f: [96, 148], F: [110, 148] }),
+          st({
+            h: [104, 38],
+            s: [104, 62],
+            p: [104, 96],
+            w: [112, 96],
+            W: [100, 98],
+            f: [96, 148],
+            F: [110, 148],
+          }),
         ],
-        ["a", { ...ATK, h: [146, 38], w: [114, 52], W: [118, 56], ea: [0, 1], EA: [0, 1] }],
+        [
+          "a",
+          {
+            ...ATK,
+            h: [146, 38],
+            w: [114, 52],
+            W: [118, 56],
+            ea: [0, 1],
+            EA: [0, 1],
+          },
+        ],
       ],
       arrow: [
         [78, 100],
@@ -13035,10 +14150,29 @@ ${setupFields(setup, ty)}
     /* choke from behind: arm up and turn towards the attacker */
     "1.sd.1": {
       parts: [
-        ["a", st({ h: [100, 38], s: [102, 62], p: [102, 96], W: [130, 56], f: [96, 148], F: [108, 148], EA: [0, 1] })],
+        [
+          "a",
+          st({
+            h: [100, 38],
+            s: [102, 62],
+            p: [102, 96],
+            W: [130, 56],
+            f: [96, 148],
+            F: [108, 148],
+            EA: [0, 1],
+          }),
+        ],
         [
           "d",
-          st({ h: [132, 38], s: [130, 62], p: [130, 96], w: [138, 98], W: [126, 98], f: [134, 148], F: [124, 148] }),
+          st({
+            h: [132, 38],
+            s: [130, 62],
+            p: [130, 96],
+            w: [138, 98],
+            W: [126, 98],
+            f: [134, 148],
+            F: [124, 148],
+          }),
         ],
         ["a", st({ s: [102, 62], w: [134, 52], ea: [0, 1] }), "arm"],
       ],
@@ -13088,7 +14222,18 @@ ${setupFields(setup, ty)}
     /* forearm choke from behind: pull the forearm down, sink, elbow back */
     "2.sd.1": {
       parts: [
-        ["a", st({ h: [104, 36], s: [104, 60], p: [104, 94], W: [126, 66], f: [98, 148], F: [110, 148], EA: [1, 1] })],
+        [
+          "a",
+          st({
+            h: [104, 36],
+            s: [104, 60],
+            p: [104, 94],
+            W: [126, 66],
+            f: [98, 148],
+            F: [110, 148],
+            EA: [1, 1],
+          }),
+        ],
         [
           "d",
           st({
@@ -13114,7 +14259,18 @@ ${setupFields(setup, ty)}
     /* nelson: press the arms down, weight low */
     "2.sd.2": {
       parts: [
-        ["a", st({ h: [104, 36], s: [106, 60], p: [106, 94], W: [124, 52], f: [100, 148], F: [112, 148], EA: [1, 1] })],
+        [
+          "a",
+          st({
+            h: [104, 36],
+            s: [106, 60],
+            p: [106, 94],
+            W: [124, 52],
+            f: [100, 148],
+            F: [112, 148],
+            EA: [1, 1],
+          }),
+        ],
         [
           "d",
           st({
@@ -13139,7 +14295,19 @@ ${setupFields(setup, ty)}
     /* bear hug under the arms (front): hips back, push the chin away */
     "3.sd.0": {
       parts: [
-        ["a", { ...ATK, h: [134, 44], s: [136, 66], p: [146, 98], w: [104, 80], W: [104, 82], ea: [0, 1], EA: [0, 1] }],
+        [
+          "a",
+          {
+            ...ATK,
+            h: [134, 44],
+            s: [136, 66],
+            p: [146, 98],
+            w: [104, 80],
+            W: [104, 82],
+            ea: [0, 1],
+            EA: [0, 1],
+          },
+        ],
         [
           "d",
           st({
@@ -13177,7 +14345,19 @@ ${setupFields(setup, ty)}
             ea: [0, 1],
           }),
         ],
-        ["a", { ...ATK, h: [134, 40], s: [134, 64], p: [144, 98], w: [100, 70], W: [104, 74], ea: [0, 1], EA: [0, 1] }],
+        [
+          "a",
+          {
+            ...ATK,
+            h: [134, 40],
+            s: [134, 64],
+            p: [144, 98],
+            w: [100, 70],
+            W: [104, 74],
+            ea: [0, 1],
+            EA: [0, 1],
+          },
+        ],
       ],
       arrow: [
         [76, 54],
@@ -13394,8 +14574,24 @@ ${setupFields(setup, ty)}
       ea: [1, 1],
       EA: [-1, 0.3],
     },
-    SPR_A = { ...RUN_A, h: [140, 42], s: [132, 64], f: [150, 122], F: [80, 140], w: [106, 88], W: [154, 66] },
-    SPR_B = { ...RUN_B, h: [140, 42], s: [132, 64], f: [80, 140], F: [150, 122], w: [154, 66], W: [106, 88] },
+    SPR_A = {
+      ...RUN_A,
+      h: [140, 42],
+      s: [132, 64],
+      f: [150, 122],
+      F: [80, 140],
+      w: [106, 88],
+      W: [154, 66],
+    },
+    SPR_B = {
+      ...RUN_B,
+      h: [140, 42],
+      s: [132, 64],
+      f: [80, 140],
+      F: [150, 122],
+      w: [154, 66],
+      W: [106, 88],
+    },
     WALK_A = {
       ...STAND,
       f: [136, 148],
@@ -13496,8 +14692,20 @@ ${setupFields(setup, ty)}
       arc: [[120, 60], 52, -150, 30],
     },
     "Dynamisches Dehnen": {
-      a: st({ f: [168, 104], ka: [1, 0], w: [84, 70], ea: [0, 1], W: [116, 100] }),
-      b: st({ f: [82, 134], ka: [0, 1], w: [84, 70], ea: [0, 1], W: [116, 100] }),
+      a: st({
+        f: [168, 104],
+        ka: [1, 0],
+        w: [84, 70],
+        ea: [0, 1],
+        W: [116, 100],
+      }),
+      b: st({
+        f: [82, 134],
+        ka: [0, 1],
+        w: [84, 70],
+        ea: [0, 1],
+        W: [116, 100],
+      }),
       props: [["wall", 62]],
       arc: [[120, 94], 54, 120, 20],
     },
@@ -13758,7 +14966,14 @@ ${setupFields(setup, ty)}
     /* cool-down */
     "Hüftbeuger dehnen": {
       a: LUNGE_K,
-      b: { ...LUNGE_K, p: [122, 116], s: [122, 82], h: [122, 58], w: [126, 106], W: [120, 106] },
+      b: {
+        ...LUNGE_K,
+        p: [122, 116],
+        s: [122, 82],
+        h: [122, 58],
+        w: [126, 106],
+        W: [120, 106],
+      },
       arrow: [
         [150, 104],
         [176, 104],
@@ -13796,7 +15011,11 @@ ${setupFields(setup, ty)}
       },
       hold: true,
     },
-    "Schulter & Brust": { a: st({ w: [76, 60], W: [116, 100], ea: [0, 1] }), props: [["wall", 62]], hold: true },
+    "Schulter & Brust": {
+      a: st({ w: [76, 60], W: [116, 100], ea: [0, 1] }),
+      props: [["wall", 62]],
+      hold: true,
+    },
     Atmung: {
       a: {
         p: [110, 140],
@@ -13850,8 +15069,16 @@ ${setupFields(setup, ty)}
         [204, 92],
       ],
     },
-    "Laufband-Intervalle": { a: skShift(RUN_A, -6, -8), b: skShift(RUN_B, -6, -8), props: TREAD },
-    "Rad-Sprints": { a: BIKE_A, b: { ...BIKE_A, f: [106, 119], F: [118, 136] }, props: BIKE },
+    "Laufband-Intervalle": {
+      a: skShift(RUN_A, -6, -8),
+      b: skShift(RUN_B, -6, -8),
+      props: TREAD,
+    },
+    "Rad-Sprints": {
+      a: BIKE_A,
+      b: { ...BIKE_A, f: [106, 119], F: [118, 136] },
+      props: BIKE,
+    },
     "Rudergerät-Intervalle": {
       a: {
         p: [118, 128],
@@ -14918,7 +16145,13 @@ ${setupFields(setup, ty)}
       const j = Math.floor(Math.random() * (i + 1));
       [all[i], all[j]] = [all[j], all[i]];
     }
-    Object.assign(o, { mode: "quiz", qs: all.slice(0, 10), qi: 0, pick: null, score: 0 });
+    Object.assign(o, {
+      mode: "quiz",
+      qs: all.slice(0, 10),
+      qi: 0,
+      pick: null,
+      score: 0,
+    });
   }
   /* Form cues: German name → [DE cues, EN cues, DE mistake, EN mistake] */
   /* focus blocks: power and active mobility */
@@ -14989,13 +16222,31 @@ ${setupFields(setup, ty)}
     "Speed-Runden": SKETCH["Schatten-Sprints"],
     "Kurz andehnen": SKETCH["Hüftbeuger dehnen"],
     "Beinpendel kontrolliert": {
-      a: st({ W: [94, 66], EA: [0, 1], w: [128, 96], f: [98, 142], ka: [1, 0] }),
-      b: st({ W: [94, 66], EA: [0, 1], w: [128, 96], f: [170, 80], ka: [0, -1] }),
+      a: st({
+        W: [94, 66],
+        EA: [0, 1],
+        w: [128, 96],
+        f: [98, 142],
+        ka: [1, 0],
+      }),
+      b: st({
+        W: [94, 66],
+        EA: [0, 1],
+        w: [128, 96],
+        f: [170, 80],
+        ka: [0, -1],
+      }),
       props: [["wall", 82]],
       arc: [[120, 94], 66, 115, -18],
     },
     "Kick-Halten": {
-      a: st({ w: [132, 50], W: [126, 54], ea: [0, 1], f: [146, 122], ka: [1, -1] }),
+      a: st({
+        w: [132, 50],
+        W: [126, 54],
+        ea: [0, 1],
+        f: [146, 122],
+        ka: [1, -1],
+      }),
       b: {
         h: [100, 44],
         s: [106, 66],
@@ -15628,7 +16879,12 @@ ${setupFields(setup, ty)}
       let from = o.from,
         to = o.to || null;
       if (to && to < from) [from, to] = [to, from];
-      S.pauses.push({ id: "p" + Date.now().toString(36), from, to, why: o.why });
+      S.pauses.push({
+        id: "p" + Date.now().toString(36),
+        from,
+        to,
+        why: o.why,
+      });
       store.save();
       closeSheet();
       render();
@@ -15792,7 +17048,12 @@ ${setupFields(setup, ty)}
     return false;
   }
   async function exportData() {
-    const json = JSON.stringify({ app: "ringzeit", v: 1, exported: new Date().toISOString(), data: S });
+    const json = JSON.stringify({
+      app: "ringzeit",
+      v: 1,
+      exported: new Date().toISOString(),
+      data: S,
+    });
     const ok = await offerFile(
       `ringzeit-${t("backupName")}-${iso(today())}.json`,
       json,
@@ -16055,10 +17316,17 @@ ${setupFields(setup, ty)}
     document.documentElement.lang = S.profile.lang;
     if (!ui.ft) checkBadges();
     renderTabs();
-    const v = { week: renderWeek, session: renderSession, test: renderTest, log: renderLog, profile: renderProfile }[
-      ui.tab
-    ];
-    document.getElementById("app").innerHTML = v();
+    const v = {
+      week: renderWeek,
+      session: renderSession,
+      test: renderTest,
+      log: renderLog,
+      profile: renderProfile,
+    }[ui.tab];
+    if (ui.workout && (ui.tab !== "session" || ui.workout.ds !== ui.sel || !S.sessions[ui.sel])) closeWorkout(false);
+    document.getElementById("app").innerHTML = ui.workout ? "" : v();
+    document.getElementById("tabs").hidden = !!ui.workout;
+    renderWorkout();
     if (ui.tab === "session") markRounds(false);
     else ui.focus = false;
     renderFocus();
@@ -16313,12 +17581,16 @@ ${setupFields(setup, ty)}
     audioIdle = null;
   const timerVisible = () => document.visibilityState !== "hidden";
   const freeRunning = () => !!ui.ft && !ui.ft.paused && ["prep", "work", "rest"].includes(ui.ft.phase);
-  const timerRunning = () => !!ui.timer?.running || freeRunning();
+  const timerRunning = () => !!ui.timer?.running || freeRunning() || !!ui.exerciseTimer?.running;
   function scheduleTimers() {
     clearTimeout(timerClock);
     timerClock = null;
     const delays = [],
       now = Date.now();
+    if (ui.exerciseTimer?.running) {
+      const remaining = ui.exerciseTimer.endAt - now;
+      delays.push(remaining <= 0 ? 1 : remaining % 1000 || 1000);
+    }
     if (ui.timer?.running) delays.push(Math.max(1, lastTick + 1000 - now));
     if (freeRunning()) {
       const remaining = ui.ft.endAt - now;
@@ -16330,6 +17602,7 @@ ${setupFields(setup, ty)}
         timerClock = null;
         tick();
         ftTick();
+        exerciseTick();
         scheduleTimers();
       },
       Math.min(...delays),
@@ -16369,6 +17642,8 @@ ${setupFields(setup, ty)}
     scheduleTimers();
   }
   function clearSessionTimer() {
+    if (ui.exerciseTimer?.running) pauseExerciseTimer();
+    ui.exerciseTimer = null;
     if (ui.timer?.running) ui.timer.running = false;
     ui.timer = null;
     cancelTimerSpeech();
@@ -16378,6 +17653,8 @@ ${setupFields(setup, ty)}
     // Account for elapsed full rounds before stopping, never mark the current unfinished round complete.
     tick();
     ftTick();
+    exerciseTick();
+    if (ui.exerciseTimer) ui.exerciseTimer.running = false;
     if (ui.timer) {
       ui.timer.running = false;
       ui.timer.called = null;
@@ -16403,7 +17680,8 @@ ${setupFields(setup, ty)}
     }
   }
   function pauseOtherTimer(kind) {
-    if (kind === "free" && ui.timer?.running) {
+    if (kind !== "exercise" && ui.exerciseTimer?.running) pauseExerciseTimer();
+    if ((kind === "free" || kind === "exercise") && ui.timer?.running) {
       tick();
       if (ui.timer) {
         ui.timer.carryMs = Math.max(0, Date.now() - lastTick);
@@ -16413,7 +17691,7 @@ ${setupFields(setup, ty)}
       cancelTimerSpeech();
       if (timerVisible()) toast(flowText().pausedSession);
     }
-    if (kind === "session" && freeRunning()) {
+    if ((kind === "session" || kind === "exercise") && freeRunning()) {
       ftTick();
       if (ui.ft) {
         ui.ft.remainingMs = Math.max(0, ui.ft.endAt - Date.now());
@@ -16492,6 +17770,8 @@ ${setupFields(setup, ty)}
     if (timerVisible()) {
       tick();
       ftTick();
+      exerciseTick();
+      updateExerciseTimerUI();
       if (ui.tab === "session") {
         markRounds(false);
         ui.focus ? renderFocus() : updTimer();
@@ -16660,15 +17940,7 @@ ${setupFields(setup, ty)}
       ["Erster Schritt", "Deine erste eigene Einheit"],
       ["First step", "Your first own session"],
     ],
-    [
-      "s10",
-      "sess",
-      1,
-      10,
-      "own",
-      ["Dranbleiber", "10 eigene Einheiten"],
-      ["Sticking with it", "10 own sessions"],
-    ],
+    ["s10", "sess", 1, 10, "own", ["Dranbleiber", "10 eigene Einheiten"], ["Sticking with it", "10 own sessions"]],
     ["s25", "sess", 2, 25, "own", ["Routine", "25 eigene Einheiten"], ["Routine", "25 own sessions"]],
     ["s50", "sess", 3, 50, "own", ["Ausdauernd", "50 eigene Einheiten"], ["Relentless", "50 own sessions"]],
     ["s100", "sess", 4, 100, "own", ["Hundert", "100 eigene Einheiten"], ["Century", "100 own sessions"]],
@@ -16834,15 +18106,7 @@ ${setupFields(setup, ty)}
       ["Ab in den Ring", "Dein erstes Turnier"],
       ["Into the ring", "Your first tournament"],
     ],
-    [
-      "k2",
-      "win",
-      3,
-      1,
-      "wins",
-      ["Erster Sieg", "Einen Turnierkampf gewonnen"],
-      ["First win", "Won a tournament bout"],
-    ],
+    ["k2", "win", 3, 1, "wins", ["Erster Sieg", "Einen Turnierkampf gewonnen"], ["First win", "Won a tournament bout"]],
     [
       "k3",
       "podium",
@@ -16957,7 +18221,15 @@ ${setupFields(setup, ty)}
     { id: "hiit", r: 8, w: 40, b: 20 },
     { id: "pro", r: 12, w: 180, b: 60 },
   ];
-  const ftCfg = () => ({ r: 3, w: 120, b: 60, prep: true, warn: true, coach: false, ...(S.profile.ft || {}) });
+  const ftCfg = () => ({
+    r: 3,
+    w: 120,
+    b: 60,
+    prep: true,
+    warn: true,
+    coach: false,
+    ...(S.profile.ft || {}),
+  });
   const fmtS = (s) => `${Math.floor(s / 60)}:${pad(s % 60)}`;
   function openFt() {
     pauseOtherTimer("free");
@@ -17266,7 +18538,13 @@ ${setupFields(setup, ty)}
   function starterSteps() {
     const p = S.profile;
     return [
-      { k: "profile", done: !!p.birthYear && p.days.length > 0, tab: "profile", sec: "train", sel: "#pBirth" },
+      {
+        k: "profile",
+        done: !!p.birthYear && p.days.length > 0,
+        tab: "profile",
+        sec: "train",
+        sel: "#pBirth",
+      },
       {
         k: "club",
         done: !!(p.club && p.club.days && p.club.days.length),
@@ -17277,7 +18555,13 @@ ${setupFields(setup, ty)}
       { k: "session", done: S.log.some(own), tab: "session" },
       { k: "timer", done: (p.ftRounds || 0) > 0, act: "timer" },
       { k: "test", done: S.tests.length > 0, tab: "test", view: "fit" },
-      { k: "combo", done: (p.myc || []).length > 0, tab: "profile", sec: "app", sel: "[data-cact=new]" },
+      {
+        k: "combo",
+        done: (p.myc || []).length > 0,
+        tab: "profile",
+        sec: "app",
+        sel: "[data-cact=new]",
+      },
     ];
   }
   function starterHtml() {
@@ -17340,21 +18624,8 @@ ${setupFields(setup, ty)}
   const BLK_END = ["Schatten-Sprints", "Sack-Sprints", "Kick-Intervalle", "Seil-Intervalle", "Speed-Runden"];
   /* mobility per stage: hips & adductors → dynamic kick mobility → active range */
   const BLK_MOB = [
-    [
-      "Hüftkreise im Vierfüßler",
-      "90/90 Hüftwechsel",
-      "Cossack Squats",
-      "Froschdehnung",
-      "Taube",
-      "Tiefe Hocke halten",
-    ],
-    [
-      "Beinpendel kontrolliert",
-      "Zeitlupen-Kicks",
-      "World's Greatest Stretch",
-      "Cossack Squats",
-      "90/90 Hüftwechsel",
-    ],
+    ["Hüftkreise im Vierfüßler", "90/90 Hüftwechsel", "Cossack Squats", "Froschdehnung", "Taube", "Tiefe Hocke halten"],
+    ["Beinpendel kontrolliert", "Zeitlupen-Kicks", "World's Greatest Stretch", "Cossack Squats", "90/90 Hüftwechsel"],
     ["Kick-Halten", "Aktive Beinheber", "Zeitlupen-Kicks", "Cossack Squats", "Beinpendel kontrolliert"],
   ];
   /* block week on a date (1–6) regardless of tournaments; null outside the block or while paused */
@@ -17387,7 +18658,13 @@ ${setupFields(setup, ty)}
     const st = Math.floor((wk - 1) / 2);
     if (b.paused) return { s: "paused", k: b.k, wk, st, days };
     const ph = phaseInfo(td).phase;
-    return { s: ph === "base" || ph === "grade" ? "run" : "comp", k: b.k, wk, st, days };
+    return {
+      s: ph === "base" || ph === "grade" ? "run" : "comp",
+      k: b.k,
+      wk,
+      st,
+      days,
+    };
   }
   /* fight endurance: round length, rest and (fixed) number of rounds per week */
   function blockRounds(bi, ds) {
@@ -17429,8 +18706,7 @@ ${setupFields(setup, ty)}
     }
   }
   /* round cue: fight-pace intervals or the block's pace hint */
-  const paceTxt = (it) =>
-    it.cue ? t("blk").cue[it.cue] || "" : it.pace ? t("paceIv") : it.ease ? t("easeRound") : "";
+  const paceTxt = (it) => (it.cue ? t("blk").cue[it.cue] || "" : it.pace ? t("paceIv") : it.ease ? t("easeRound") : "");
   /* weakest physical area of the latest test (technique doesn't pick a block) */
   function blockSuggest() {
     const tt = S.tests[S.tests.length - 1];
@@ -17442,7 +18718,11 @@ ${setupFields(setup, ty)}
       if (tt.scores[k] < tt.scores[w]) w = k;
     });
     if (tt.scores[w] >= 5) return null;
-    return { cat: w, k: { end: "end", spd: "pow", str: "pow", flx: "mob" }[w], test: tt };
+    return {
+      cat: w,
+      k: { end: "end", spd: "pow", str: "pow", flx: "mob" }[w],
+      test: tt,
+    };
   }
   /* last test before the block and the first one from week 6 on */
   function blockTests(b) {
@@ -17608,7 +18888,12 @@ ${setupFields(setup, ty)}
   }
   function openBlockSheet(k) {
     const sg = blockSuggest();
-    openSheet({ kind: "blk", k: k || (sg && sg.k) || "end", rec: sg && sg.k, start: "today" });
+    openSheet({
+      kind: "blk",
+      k: k || (sg && sg.k) || "end",
+      rec: sg && sg.k,
+      start: "today",
+    });
   }
   /* after a fitness test: suggest a block when none is running */
   function blockAfterTest() {
@@ -17716,7 +19001,12 @@ ${setupFields(setup, ty)}
       const url = new URL("installieren.html", location.href).href,
         I = t("inst");
       try {
-        if (navigator.share) return await navigator.share({ title: "Ringzeit", text: I.shareText, url });
+        if (navigator.share)
+          return await navigator.share({
+            title: "Ringzeit",
+            text: I.shareText,
+            url,
+          });
       } catch (e) {
         return;
       }
@@ -18192,7 +19482,10 @@ ${setupFields(setup, ty)}
         busy =
           logged || (ui.timer && ui.timer.ds === d && ui.timer.phase !== "ready" && ui.timer.phase !== "done");
       if (sess && !busy) {
-        S.sessions[d] = buildSession(d, sess.type, sess.loc, sess.eq, { min: sess.min, run: sess.run });
+        S.sessions[d] = buildSession(d, sess.type, sess.loc, sess.eq, {
+          min: sess.min,
+          run: sess.run,
+        });
         clearSessionTimer();
       }
       if (draft) draft.form = S.profile.form;
@@ -18207,13 +19500,23 @@ ${setupFields(setup, ty)}
     const lg = S.profile.lang === "de" ? 0 : 1;
     if (it.k === "ex") {
       const x = exText(it.id);
-      return { title: x.name, desc: x.desc + (paceTxt(it) ? " " + paceTxt(it) : "") };
+      return {
+        title: x.name,
+        desc: x.desc + (paceTxt(it) ? " " + paceTxt(it) : ""),
+      };
     }
     if (it.k === "sim")
-      return { title: t("simT")(it.fight, it.r), desc: it.fight > 1 && it.r === 1 ? t("simD2") : t("simD1") };
+      return {
+        title: t("simT")(it.fight, it.r),
+        desc: it.fight > 1 && it.r === 1 ? t("simD2") : t("simD1"),
+      };
     if (it.k === "task") {
       const x = (TASKS.find((q) => q.id === it.id) || TASKS[0])[S.profile.lang];
-      return { title: x[0], desc: it.m === "p" ? x[1] : x[2] || x[1], label: t("sparMode")[it.m] };
+      return {
+        title: x[0],
+        desc: it.m === "p" ? x[1] : x[2] || x[1],
+        label: t("sparMode")[it.m],
+      };
     }
     const r = RT[it.k] || ["", "", "", ""];
     return {
@@ -18235,8 +19538,12 @@ ${setupFields(setup, ty)}
       rb = sess && roundBlock(sess);
     if (!ui.focus || ui.tab !== "session" || !rb) {
       el.hidden = true;
+      const guide = document.getElementById("workout");
+      if (guide) guide.inert = false;
       return;
     }
+    const guide = document.getElementById("workout");
+    if (guide) guide.inert = true;
     selectSessionTimer(ui.sel);
     const tm = ui.timer,
       items = rb.items,
@@ -18256,7 +19563,7 @@ ${setupFields(setup, ty)}
     el.className = "focus" + (tm.phase === "rest" ? " rest" : "");
     let h = `<div class="fbar"><button type="button" class="x" data-fx="close" aria-label="${flowText().overview}">✕</button><span>${t("types")[sess.type]}</span>${canSpeak() ? `<button type="button" class="x vo" data-voice="1" aria-pressed="${voiceOn()}" aria-label="${t("voice")}">${voiceOn() ? "🔊" : "🔈"}</button>` : `<span style="width:40px"></span>`}</div>`;
     if (tm.phase === "done") {
-      h += `<div class="fdone">${CHECK_SVG}<b>${t("finishedT")}</b><div class="sub">${t("roundOf")(tm.total, tm.total)}</div><button type="button" class="btn" data-fx="finish">${t("finishNow")}</button></div>`;
+      h += `<div class="fdone">${CHECK_SVG}<b>${t("finishedT")}</b><div class="sub">${t("roundOf")(tm.total, tm.total)}</div><button type="button" class="btn" data-fx="finish">${ui.workout ? workoutNextLabel() : t("finishNow")}</button></div>`;
     } else {
       const C = 2 * Math.PI * 130;
       h += `<div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="farc" class="arc" cx="140" cy="140" r="130" fill="none" stroke="var(--tc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/><g class="fknob" id="fknob"><circle cx="270" cy="140" r="9" fill="var(--tc)" stroke="#0a0b0d" stroke-width="4"/></g></svg>
@@ -18269,6 +19576,13 @@ ${setupFields(setup, ty)}
     el.innerHTML = h;
     el.hidden = false;
     updFocus();
+  }
+  function updateWorkoutRoundStatus() {
+    if (!ui.workout || ui.focus) return;
+    const el = document.getElementById("workoutRoundStatus"),
+      tm = ui.timer;
+    if (el && tm)
+      el.textContent = `${tm.phase === "rest" ? t("restLbl") : tm.phase === "ready" ? t("ready") : tm.phase === "prep" ? t("prepLbl") : tm.phase === "done" ? t("finished") : t("work")} · ${t("round")} ${Math.min(tm.round, tm.total)}/${tm.total} · ${fmt(tm.left)}`;
   }
   /* Per-second update of the training mode without rebuilding it */
   function updFocus() {
@@ -18373,9 +19687,7 @@ ${setupFields(setup, ty)}
     const sess = S.sessions[tm.ds];
     if (!sess) return;
     // Snapshot legacy rdone before moving the resume cursor, including explicit false values for skipped rounds.
-    sess.roundChecks = Object.fromEntries(
-      Array.from({ length: tm.total }, (_, i) => [i + 1, roundDone(sess, i + 1)]),
-    );
+    sess.roundChecks = Object.fromEntries(Array.from({ length: tm.total }, (_, i) => [i + 1, roundDone(sess, i + 1)]));
     sess.roundChecks[tm.round] = true;
     sess.rdone = Math.max(sess.rdone || 0, tm.round);
     store.save();
@@ -18444,9 +19756,10 @@ ${setupFields(setup, ty)}
     else updTimer();
   }
   function updTimer() {
+    updateWorkoutRoundStatus();
     const tm = ui.timer,
       el = document.getElementById("timer");
-    if (!el || !tm) return;
+    if (!el || !tm || !document.getElementById("tclock")) return;
     el.className =
       "timer " +
       (tm.phase === "rest" || tm.phase === "ready" ? "rest" : "") +
@@ -18504,6 +19817,7 @@ ${setupFields(setup, ty)}
       } else {
         sess.checked = sess.checked || {};
         sess.checked[key] = !done;
+        if (done && sess.timedLaps) sess.timedLaps[key] = 0;
       }
       store.save();
       markRounds(false);
@@ -18530,6 +19844,8 @@ ${setupFields(setup, ty)}
     const b = ev.target.closest("button");
     if (!b || b.disabled) return;
     const ds = b.dataset;
+    if (ds.workout) return workoutAction(ds.workout);
+    if (ds.exerciseTimer) return exerciseTimerAction(ds.exerciseTimer, ds);
     if (ds.nextOpen) return nextOpenExercise();
     if (ds.effort) {
       const draft = finishDraft();
@@ -18577,7 +19893,12 @@ ${setupFields(setup, ty)}
     }
     if (ds.lock) return toast(t(ds.lock === "age" ? "discAgeT" : "discLockT"));
     if (ds.resetAll)
-      return openSheet({ kind: "confirm", title: t("resetLbl"), lines: [t("resetAsk")], run: resetAll });
+      return openSheet({
+        kind: "confirm",
+        title: t("resetLbl"),
+        lines: [t("resetAsk")],
+        run: resetAll,
+      });
     if (ds.mood || ds.low || ds.work || ds.form) return lifeAction(ds);
     if (ds.guide || ds.wstep != null || ds.packOpen || ds.pack || ds.packAdd || ds.packReset)
       return guideAction(ds);
@@ -18661,7 +19982,12 @@ ${setupFields(setup, ty)}
         return mycSheet();
       } else if (ds.cact === "save") {
         const cb = ui.cb,
-          m = { id: cb.id || "m" + Date.now().toString(36), c: cb.c.slice(), name: cb.name, on: true };
+          m = {
+            id: cb.id || "m" + Date.now().toString(36),
+            c: cb.c.slice(),
+            name: cb.name,
+            on: true,
+          };
         S.profile.myc = cb.id ? list.map((x) => (x.id === cb.id ? { ...x, ...m, on: x.on } : x)) : [...list, m];
         closeSheet();
         toast(t("myc").saved);
@@ -18758,7 +20084,9 @@ ${setupFields(setup, ty)}
       return;
     }
     if (ds.clubmiss || ds.ccancel) {
-      S.cov[ds.clubmiss || ds.ccancel] = { off: ds.clubmiss ? "miss" : "cancel" };
+      S.cov[ds.clubmiss || ds.ccancel] = {
+        off: ds.clubmiss ? "miss" : "cancel",
+      };
       store.save();
       render();
       return;
@@ -18782,7 +20110,12 @@ ${setupFields(setup, ty)}
           render();
         };
       if (clubOn(d))
-        openSheet({ kind: "confirm", title: t("addTraining"), lines: [t("clubSameDay")], run: go });
+        openSheet({
+          kind: "confirm",
+          title: t("addTraining"),
+          lines: [t("clubSameDay")],
+          run: go,
+        });
       else go();
       return;
     }
@@ -18828,7 +20161,13 @@ ${setupFields(setup, ty)}
       return;
     }
     // ----- breaks and KO
-    if (ds.pnew) return openSheet({ kind: "pause", why: ds.pnew, from: iso(today()), to: "" });
+    if (ds.pnew)
+      return openSheet({
+        kind: "pause",
+        why: ds.pnew,
+        from: iso(today()),
+        to: "",
+      });
     if (ds.pend) {
       endPause(ds.pend);
       store.save();
@@ -18949,9 +20288,7 @@ ${setupFields(setup, ty)}
     }
     /* partner and heavy bag are mutually exclusive: one, the other, or neither */
     if (ds.pb) {
-      ui.setup.eq = ui.setup.eq.filter(
-        (x) => x !== "partner" && x !== "bag" && (ds.pb === "partner" || x !== "pads"),
-      );
+      ui.setup.eq = ui.setup.eq.filter((x) => x !== "partner" && x !== "bag" && (ds.pb === "partner" || x !== "pads"));
       if (ds.pb !== "none") ui.setup.eq.push(ds.pb);
       render();
       return;
@@ -19096,6 +20433,7 @@ ${setupFields(setup, ty)}
       else if (ds.fx === "next") timerJump(1);
       else if (ds.fx === "prev") timerJump(-1);
       else if (ds.fx === "finish") {
+        if (ui.workout) return moveWorkout(1);
         ui.focus = false;
         render();
         const f = document.getElementById("fMin");
@@ -19215,12 +20553,23 @@ ${setupFields(setup, ty)}
       readTestInputs();
       const d = ui.testDraft;
       const end = d.endM != null ? d.endM * 60 + (d.endS || 0) : null;
-      const raw = { str: d.str, spd: d.spd, end, flx: d.flx ?? null, tec: d.tec ?? null };
+      const raw = {
+        str: d.str,
+        spd: d.spd,
+        end,
+        flx: d.flx ?? null,
+        tec: d.tec ?? null,
+      };
       if (Object.values(raw).every((v) => v == null)) return;
       const before = maxLevel(),
         r = scoreTest(raw);
       await loading("loadingTest");
-      S.tests.push({ id: "t" + Date.now().toString(36), date: iso(today()), raw, ...r });
+      S.tests.push({
+        id: "t" + Date.now().toString(36),
+        date: iso(today()),
+        raw,
+        ...r,
+      });
       ui.testOpen = false;
       store.save();
       render();
@@ -19267,7 +20616,11 @@ ${setupFields(setup, ty)}
       const v = document.getElementById("pCompNew").value;
       if (!v) return;
       draft.comps = (draft.comps || []).filter((c) => c.date !== v);
-      draft.comps.push({ id: "c" + Date.now().toString(36), date: v, kind: ui.ckind || "comp" });
+      draft.comps.push({
+        id: "c" + Date.now().toString(36),
+        date: v,
+        kind: ui.ckind || "comp",
+      });
       applyPlan();
       render();
       return;
@@ -19280,18 +20633,7 @@ ${setupFields(setup, ty)}
     }
   });
   /* Profile changes take effect at once: the plan settings are copied over and planned sessions from today on are rebuilt */
-  const PLAN_KEYS = [
-    "level",
-    "disc",
-    "focus",
-    "birthYear",
-    "sex",
-    "days",
-    "minutes",
-    "club",
-    "comps",
-    "limits",
-  ];
+  const PLAN_KEYS = ["level", "disc", "focus", "birthYear", "sex", "days", "minutes", "club", "comps", "limits"];
   function applyPlan() {
     if (!draft) return;
     if (!draft.days.length) return toast(t("needDay"));
