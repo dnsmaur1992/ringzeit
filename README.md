@@ -63,6 +63,10 @@
 - **Wochenplan** für Light Contact, Kick Light, Full Contact und K1 Style – abgestimmt auf Trainingstage, Dauer, Level und Vereinstraining
 - **Einheiten** für Technik, Technik & Kondition, Sparring, Kraft, Kondition und Mobility – zu Hause, in der Halle, draußen oder im Fitnessstudio
 - **Kombinationen** passend zum Level, mit Führ- und Schlaghand-Hinweis; eigene Kombis aus dem Verein werden eingebaut
+- **Vereinstage und Ringzeit-Tage** getrennt eintragen: eigene Einheiten werden neben dem Verein geplant
+- **Kinder-Modus (8–12 Jahre):** kürzere Einheiten und angepasste Übungen und Belastungen
+- **Weitere Kicks:** Brazilian Kick, Spinning Hook Kick, Tornado Kick und gesprungenes Knie; Axe-Kick ab Fortgeschritten
+- **Full Contact und K1 Style erst ab 15 Jahren** und mit freigeschaltetem Trainingslevel
 - **Klare Dosierung** bei jeder Übung: Wiederholungen, Sekunden, Strecke oder Minuten
 - **Sicherer Einstieg:** Aufwärmen mit kurzem Andehnen, Einstiegsrunden ohne Kopftritte
 - **Skizzen** zu allen Übungen, die nicht selbsterklärend sind
@@ -72,6 +76,8 @@
 - **Vollbild-Timer** mit Ringglocke, 10 Sekunden Vorbereitungszeit und Ansage der Übung
 - Eigener **Rundentimer** mit Vorlagen (WAKO, K1, Sparring, Pratzen, HIIT)
 - Leuchtring mit Fortschritt, pulsierende letzte 10 Sekunden und ein Blitz zum Rundenende
+- **Automatischer Rundenwechsel im geführten Training:** Nach der Pause läuft die nächste Runde direkt weiter; die 10 Sekunden Vorlauf gibt es nur beim manuellen Start
+- **Musik bei den Rundentimern** im Profil wählen; der Bildschirm bleibt mit unterstütztem Wake Lock während des Timers an
 - **Coach-Modus:** ruft während der Runde Kombis aus deinem Level aus – wie der Trainer am Ring
 
 ### 🏆 Ziele und Motivation
@@ -84,6 +90,24 @@
 - Automatische **Entlastungswochen** und Pausen bei Krankheit, Verletzung oder Urlaub
 - **Ramadan-Modus:** leichtere Einheiten für alle, die fasten – freiwillig
 
+### ✅ Übungen und Einheiten abhaken
+- Übungen auch ohne Eingabe antippen: Aufwärmen, Cool-down, Abhärtung und weitere Übungen
+- Einheitliche Darstellung: grüner Balken, Haken und durchgestrichener Titel
+- Runden werden nach Ablauf automatisch abgehakt und lassen sich zusätzlich manuell an- und abhaken
+- Kraftsätze gelten mit eingetragenem Wiederholungs- oder Sekundenwert als erledigt
+- Haken und Satzwerte bleiben pro Einheit gespeichert, auch nach Neuladen und in Sicherungen
+- **Abschließen bleibt immer möglich:** Sind Übungen offen, erscheint eine Rückfrage; die tatsächliche Dauer und Anstrengung zählen trotzdem für Belastung und Verlauf
+- Sind alle Übungen erledigt, wird **„Einheit abschließen“** grün hervorgehoben
+
+### 📈 Leistungsabhängige Progression
+- Fünf-Wochen-Wellen im Grundlagentraining mit vier Aufbauwochen und anschließender Entlastung; Schwerpunkt-Blöcke behalten ihre sechs Wochen
+- Vollständig absolvierte, vergleichbare Einheiten und die eingetragene Anstrengung entscheiden über Steigerung, Wiederholung oder Reduktion im nächsten Zyklus
+- Bei Technik und Kondition wird die **Pausendichte** in kleinen Schritten angepasst, innerhalb der eingeplanten Trainingszeit
+- Bei geeigneten Kraftübungen entstehen **individuelle Wiederholungs-, Haltezeit- oder Gewichtsziele** aus tatsächlich protokollierten Sätzen; Ziele sind Vorschläge und füllen keine Leistungswerte automatisch aus
+- Wettkampfvorbereitung, Entlastung, Wiedereinstieg und eingeschränkte Tagesform haben Vorrang
+- Alte Einträge bleiben erhalten; ohne ausreichende Leistungsdaten wird keine Steigerung daraus abgeleitet
+- Die App erklärt die Anpassungen direkt in der Einheit. Details und Grenzwerte: [Trainingslogik](docs/trainingslogik.md)
+
 ### 🩹 Ratgeber
 - **Bandagieren** als animierte Schritt-für-Schritt-Anleitung, dazu ein Video
 - **Materialpflege** für Handschuhe, Bandagen, Schoner und Mundschutz – mit Erinnerung nach dem Training
@@ -93,6 +117,8 @@
 - Lebendige Startseite, die sich der **Tages- und Jahreszeit** anpasst – mit Mütze im Winter und Badehose im Sommer
 - **Feiertage** verschiedener Kulturen: Weihnachten, Silvester, Ostern, Karneval, Ramadan, Zuckerfest, Opferfest, Chanukka, Nouruz, Diwali und mehr
 - **Fun Facts und Technik-Tipps** beim Laden
+- **Sicherheitshinweis beim Start**, dazu Hinweise und Datenschutz im Profil
+- **Freiwillige Geschlechtsangabe** zur Einordnung des Fitnesstests
 - **Deutsch und Englisch**, komplett offline nutzbar
 
 ---
@@ -122,6 +148,17 @@ Die ausführliche Anleitung mit QR-Code (auch zum Ausdrucken für die Halle): **
 - Die App erinnert alle 30 Tage an eine Sicherung.
 
 ---
+
+## Entwicklung und Prüfungen
+
+```bash
+node --test tests/training.test.mjs
+python3 tools/build_pwa.py
+cp pwa/index.html index.html
+cp pwa/sw.js sw.js
+```
+
+Die Tests führen die echte Trainingslogik und Ereignisbehandlung in Node aus. Timer-Signale, Musik und die Bildschirmsperre sollten zusätzlich auf echten iPhones und Android-Geräten geprüft werden.
 
 ## Updates veröffentlichen
 
