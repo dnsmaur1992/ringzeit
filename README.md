@@ -18,6 +18,8 @@
 
 > **Neu hier?** Öffne die [Installationsanleitung](https://dnsmaur1992.github.io/ringzeit/installieren.html) auf deinem Handy – mit QR-Code und Schritt-für-Schritt-Hilfe für iPhone und Android.
 
+**Dein erster Trainingsstart:** Heute → Tagesplan sichten und Ausrüstung bereitlegen → ganz unten **Training beginnen**. Abhaken, Kraft-Eingaben und Timer erscheinen erst in der Vollbildführung. Sie folgt den geplanten Abschnitten bis zum Cool-down und Abschluss. Zurück zur Planübersicht pausiert die laufenden Trainings-Timer. Einrichtung und Tour können übersprungen werden; die Tour ist unter **Profil → App & Daten** erneut erreichbar.
+
 ---
 
 ## Inhalt
