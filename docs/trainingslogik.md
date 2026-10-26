@@ -8,9 +8,19 @@ Die Runden werden erst nach tatsächlich abgelaufener Arbeitszeit automatisch ab
 
 Bei offenen Übungen fragt die App vor dem Speichern nach. Auch vorzeitig beendete Einheiten zählen mit ihrer eingegebenen Dauer und Anstrengung zur Belastung und zum Verlauf. Sie gelten jedoch nicht als vollständig bewältigt und lösen keine Steigerung aus. Neue Rundenzähler zählen erledigte Runden; die geplante Zahl bleibt separat gespeichert.
 
+Die Einheitenansicht zeigt den Gesamtfortschritt und einen Sprung zur nächsten offenen Übung. Beim normalen Start wird zuerst die Übersicht mit dem Aufwärmen geöffnet. Der explizit benannte Hauptteil-Timer bleibt separat erreichbar. Einstellungen vorhandener Einheiten und zusätzliche Erklärungen sind einklappbar; wichtige Hinweise zu Kontakt und Einschränkungen stehen separat.
+
+Zum Speichern muss die Anstrengung bewusst von 1 bis 10 ausgewählt werden. Die geplante Dauer ist nur ein Vorschlag: Ein Haken bestätigt sie als tatsächliche Zeit, oder aktives Ändern des Zahlenfelds bestätigt die neu eingegebene Dauer. Beides wird beim Speichern erneut validiert. Unvollständige Einheiten können nach bestätigten Angaben und der bestehenden Rückfrage weiterhin gespeichert werden. Abschlussentwürfe bleiben bei Änderungen der Ansicht erhalten, bis eine andere Einheit gewählt oder die Seite neu geladen wird.
+
+Neue Protokolle tragen `inputConfirmed: true`. Ältere Einträge ohne diese Bestätigung bleiben im Verlauf und in der Belastungsberechnung erhalten, gelten aber nicht als bewusst bestätigte neue Progressionsdaten.
+
 ## Automatischer Timer
 
 Nach einmaligem Start: 10 Sekunden Vorlauf → Arbeit → Pause → nächste Arbeitsrunde. Nach der letzten Arbeitsrunde endet der Timer. Pause/Fortsetzen, Zurücksetzen und manuelles Wechseln bleiben möglich. Der automatische Übergang nutzt denselben Timerzustand in der Listen- und Vollbildansicht. Die nächste Übung wird gegen Ende der Pause angekündigt, soweit Sprachausgabe verfügbar und aktiviert ist.
+
+Beide Timer verwenden einen gemeinsamen, an der nächsten Restsekunde ausgerichteten Zeitgeber. Im Leerlauf oder nach einer Pause läuft keine permanente Timerabfrage. Der Wechsel zum anderen Timer pausiert den bisher laufenden Timer. Das Schließen der Trainings-Vollbildansicht zeigt die Übersicht und lässt das laufende Training fortsetzen. Der bestätigte Einheitsabschluss stoppt dagegen Timer, ausstehende Ansagen und nicht mehr benötigte Bildschirm-/Audiofunktionen.
+
+Der freie Timer holt nach Verzögerungen alle verstrichenen Phasen anhand der tatsächlichen Zeitpunkte nach. Ausgelassene Tonsignale werden dabei nicht nachträglich abgespielt. Bei manueller Rundenüberspringung wird die übersprungene Runde nicht als vollständig absolviert gezählt.
 
 Vergangene Zeit beim Wechseln oder Sperren des Bildschirms wird beim nächsten Timer-Tick nachgeholt, ohne alte Tonsignale abzuspielen. Die tatsächliche Ton- und Hintergrundausführung hängt weiterhin vom Browser und Betriebssystem ab.
 
@@ -42,7 +52,11 @@ Ein Schritt entspricht 5 % höherer **Pausendichte**: Die ursprüngliche Pause w
 
 ## Kraftziele
 
-Geeignete protokollierte Kraftübungen erhalten individuelle Zielvorschläge. Verglichen werden dieselbe Übung, Ausrüstung, Trainingsort, Trainingsart, Satzanzahl und Wiederholungs-/Haltezeitspanne. Zirkel, explosive Übungen und besondere Dosierungen behalten ihre eigenen Vorgaben.
+Geeignete protokollierte Kraftübungen erhalten individuelle Zielvorschläge. Verglichen werden dieselbe Übung, die dafür relevante Ausrüstung, Trainingsort, Trainingsart, Satzanzahl und Wiederholungs-/Haltezeitspanne. Zusätzlich ausgewähltes, unbenutztes Equipment wird aus dem Vergleichsschlüssel entfernt; entsprechende alte Vergleichsschlüssel werden beim Lesen normalisiert. Zirkel, explosive Übungen und besondere Dosierungen behalten ihre eigenen Vorgaben.
+
+Im Kraft-Hauptteil werden geeignete Grundbewegungen wiederkehrend ausgewählt: eine verfügbare Beinübung, eine Druckübung und eine Zugübung beziehungsweise eine geeignete Rumpfübung als Ersatz. Verfügbarkeit, Einschränkungen, Alter und Level werden weiterhin geprüft. Weitere Plätze bleiben variabel. Die Auswahl bleibt bei vergleichbaren Rahmenbedingungen wiederkehrend, damit Protokolle entstehen können.
+
+Bei protokollierten Kraftübungen kann freiwillig „Leicht“, „Passend“ oder „Zu schwer“ angegeben und durch erneutes Antippen wieder entfernt werden. Zweimal „Zu schwer“ bei vergleichbaren Vorgaben führt bei der nächsten Zyklusbewertung zu einer Reduktion des Übungsziels, auch wenn die Gesamtanstrengung der Einheit passend war. Als „Zu schwer“ markierte Übungsleistungen rechtfertigen keine Steigerung.
 
 Ein höherer Zielwert setzt mindestens vier vergleichbare Protokolle derselben Übung aus einem abgeschlossenen Zyklus voraus, von denen mindestens 80 % das Ziel erreicht haben müssen. Die Übung muss über mindestens drei unterschiedliche Wochen dokumentiert worden sein. Viele Technik-Einheiten ersetzen diese übungsbezogenen Kraftdaten nicht. Pro Zyklus steigt nur eine Größe: eine Wiederholung bzw. fünf Sekunden bis zum oberen Bereichsende; danach bei Gewichtsübungen 2,5 % Gewicht, auf 0,1 kg abgerundet. Geeignete Geräteabstufungen wählt der Nutzer. Ein Startgewicht wird niemals erfunden. Das Gewicht muss zuvor für alle vorgesehenen Sätze tatsächlich eingetragen worden sein.
 
@@ -57,6 +71,16 @@ Auf der ersten Seite der Einrichtung erklärt ein kurzer Hinweis, warum regelmä
 Keine zusätzliche Progression bei Kindern/Jugendlichen, Sparring, Mobility, Läufen, Wettkampf- oder Prüfungsvorbereitung, Erholung nach Wettkampf, Entlastungswochen, Wiedereinstieg, K.o.-Sperre, Fasten, stressiger Woche oder eingeschränkter Tagesform. Körperliche Arbeit verhindert zusätzlich die Kraftsteigerung. Die vorhandenen Anpassungen bleiben zuständig; bereits erreichte Stufen werden dadurch nicht gelöscht.
 
 Alle neuen Felder liegen optional in den vorhandenen Einheiten und Protokollen. Der Speicherschlüssel bleibt unverändert. Export und Import behalten diese Felder mit bei; alte Sicherungen bleiben lesbar.
+
+## Bildschirm, Animationen und Audio
+
+Der Bildschirm bleibt während laufender Arbeits- und Pausenphasen bewusst an. Die vorhandenen Animationen und Übungsskizzen sind unverändert. Verdeckte Anzeigen werden nicht sekündlich neu geschrieben. Eine verspätet bewilligte Bildschirm-Wachhaltung wird wieder freigegeben, falls der Timer inzwischen beendet wurde.
+
+Auf erkannten Apple-Mobilgeräten beziehungsweise mit entsprechender Audio-Session-Unterstützung bleibt die bisherige nahezu unhörbare Audiowachhaltung während aktiver Timer erhalten. Andere Audiokontexte dürfen nach fünf Sekunden ohne neue Ausgabe ruhen; vor einer nächsten Web-Audio-Ausgabe werden sie wieder aktiviert. Nach dem Stoppen werden der Dauerton und seine Verbindungen beendet; eine letzte Glocke kann ausklingen. Auf dem Gerät müssen Glocke, Ansagen, Musik und Unterbrechungen zusätzlich praktisch geprüft werden.
+
+## Akkuvergleich auf dem Handy – noch offen
+
+Der Code vermeidet unnötige Dauerabfragen und räumt Ressourcen auf. Eine gemessene Akkuersparnis liegt nicht vor. Vergleich auf demselben Handy mit gleicher Helligkeit, Lautstärke, Musik, Netzwerkverbindung und gleich langem Rundenprogramm durchführen. Bildschirm-Wachhaltung und Animationen bleiben in beiden Durchläufen aktiv. Akku vor und nach ausreichend langen Läufen notieren und jeden Vergleich wiederholen. Zusätzlich Glockenbeginn, Ansagen, Timerwechsel, Sperren/Entsperren und Abschluss prüfen. Keine Einsparung in Prozent aus den reinen Programmtests ableiten.
 
 ## Prüfen
 
