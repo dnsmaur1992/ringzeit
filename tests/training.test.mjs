@@ -8,6 +8,7 @@ import vm from "node:vm";
 const html = readFileSync(new URL("../src/ringzeit.html", import.meta.url), "utf8");
 const script = html.slice(html.lastIndexOf("<script>") + 8, html.lastIndexOf("</script>"));
 function app() {
+  let calendar = [2026, 10, 2];
   const nodes = new Map(),
     listeners = new Map(),
     calls = [],
@@ -38,14 +39,14 @@ function app() {
     console,
     Date: class extends Date {
       constructor(...args) {
-        super(...(args.length ? args : [2026, 10, 2]));
+        super(...(args.length ? args : calendar));
       }
     },
     Intl,
     Map,
     Set,
     JSON,
-    Math,
+    Math: Object.create(Math),
     Object,
     Array,
     Number,
@@ -93,7 +94,17 @@ function app() {
     };
     for (const listener of listeners.get("click") || []) await listener({ target });
   }
-  return { run, calls, node, click, saved };
+  return {
+    run,
+    calls,
+    node,
+    click,
+    saved,
+    setDate(ds) {
+      const [y, m, d] = ds.split("-").map(Number);
+      calendar = [y, m - 1, d];
+    },
+  };
 }
 // Remove the invocation only, retaining every production function and listener.
 const bootAt = script.indexOf("  (function boot() {");
@@ -104,10 +115,17 @@ new vm.Script(script);
 
 function history(
   a,
-  { type = "T", step = 0, completed = true, rpe = 6, dates = ["2026-10-06", "2026-10-13"], extra = "" } = {},
+  {
+    type = "T",
+    step = 0,
+    completed = true,
+    rpe = 6,
+    dates = ["2026-10-01", "2026-10-06", "2026-10-13", "2026-10-20"],
+    extra = "",
+  } = {},
 ) {
   a.run(
-    `S.log = ${JSON.stringify(dates)}.map((date, i) => ({date, src:'own', type:${JSON.stringify(type)}, minutes:75, rpe:${rpe}, tHi:7, completed:${completed}, progression:{v:1,id:'base:2026-10-05',start:'2026-10-05',end:'2026-11-08',week:1,weeks:5,step:${step},eligible:true,signature:'lc:1:${type}:regular',plannedMin:75} ${extra}}));`,
+    `S.log = ${JSON.stringify(dates)}.map((date, i) => ({date, src:'own', type:${JSON.stringify(type)}, minutes:75, rpe:${rpe}, tHi:7, completed:${completed}, progression:{v:1,id:'base:2026-10-05',start:'2026-10-05',end:'2026-11-08',week:1,weeks:5,step:${step},eligible:true,signature:'lc:1:${type}:regular',plannedMin:75,plannedDates:${JSON.stringify(dates)}} ${extra}}));`,
   );
   // Use a completed five-week cycle immediately before today.
   a.run(
@@ -273,6 +291,7 @@ test("strength targets use actual same-exercise data, advance one variable per c
     const initial=strengthTarget(sess,b,b.items[0]);
     globalThis.fixture={id,sess,b,initial};
     S.log.forEach(e=>{e.perf=[{id,sets:[{r:8,kg:20},{r:8,kg:20},{r:8,kg:20}],target:{...initial,cycle:e.progression.id,kg:20}}]});
+    sess.progression=progressionState('2026-11-02','S',false);
     globalThis.target=strengthTarget(sess,b,b.items[0]);`);
   assert.equal(a.run("target.r"), 9);
   assert.equal(a.run("target.kg"), 20);
@@ -365,4 +384,186 @@ test("long gaps and future plans do not manufacture progression; capped density 
   history(a, { step: 4 });
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 4);
   assert.equal(a.run(`progressionState('2026-11-02','T',false).reason`), "cap");
+});
+
+// Advance the calendar, generate real plans, record real completion/performance snapshots,
+// and round-trip storage between sessions; no invented progression metadata.
+function simulateCycles(type, behavior, cycles = 4) {
+  const a = app(),
+    output = [];
+  a.run(
+    `S = hydrate({profile:{...DEFAULT_PROFILE,level:1,example:false,planStart:'2026-10-26',days:[0]}}); Math.random=()=>0.5;`,
+  );
+  for (let cycle = 0; cycle < cycles; cycle++) {
+    const weeks = [];
+    for (let week = 0; week < 5; week++) {
+      const date = new Date(2026, 9, 26 + cycle * 35 + week * 7);
+      const ds = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      a.setDate(ds);
+      a.run(
+        `ui.sel=${JSON.stringify(ds)}; S.ov[ui.sel]={t:${JSON.stringify(type)}}; S.sessions[ui.sel]=buildSession(ui.sel,${JSON.stringify(type)},'gym',['bag','weights','rope'],{min:60});`,
+      );
+      const mode = behavior(cycle, week);
+      if (mode !== "partial")
+        a.run(`{
+        const sess=S.sessions[ui.sel];
+        sess.blocks.forEach((b,bi)=>b.items.forEach((it,ni)=>{
+          if(b.rounds) (sess.roundChecks ||= {})[ni+1]=true;
+          else if(EX[it.id]?.cat==='str' && !['warm','cool'].includes(b.key))
+            (sess.perf ||= {})[bi+'.'+ni]=Array.from({length:blockSets(b)},()=>({r:it.target?.r ?? 12,kg:hasKg(it.id)?it.target?.kg ?? 20:null}));
+          else (sess.checked ||= {})[bi+'.'+ni]=true;
+        }));
+      }`);
+      a.node("fMin").value = "60";
+      a.node("fRpe").value = a.run(`Math.min(10,S.sessions[ui.sel].tHi + ${mode === "hard" ? 2 : 0})`);
+      a.node("fNote").value = "";
+      const summary = a.run(
+        `({step:S.sessions[ui.sel].progression.step, eligible:S.sessions[ui.sel].progression.eligible,reason:S.sessions[ui.sel].progression.reason,rest:roundBlock(S.sessions[ui.sel])?.b,targets:S.sessions[ui.sel].blocks.flatMap(b=>b.items.filter(it=>it.target).map(it=>({id:it.id,...it.target})))})`,
+      );
+      weeks.push(summary);
+      a.run("saveTrainingSession(); S=hydrate(JSON.parse(localStorage.getItem(LS)));");
+    }
+    output.push(weeks);
+  }
+  return output;
+}
+
+test("20 weeks of generated, fully completed technique plans raise baselines only after cycle boundaries", () => {
+  const result = simulateCycles("T", () => "good");
+  assert.deepEqual(
+    result.map((c) => c[0].step),
+    [0, 1, 2, 3],
+  );
+  result.forEach((c) => {
+    assert.equal(c[0].step, c[3].step);
+    assert.equal(c[4].eligible, false);
+    if (c[0].reason === "initial") assert.equal(c[0].rest, c[3].rest);
+    else assert.ok(c[0].rest > c[3].rest);
+  });
+  assert.ok(result[1][0].rest < result[0][0].rest);
+  console.log("Simulated technique cycle baselines:", result.map((c) => c[0].step).join(" → "));
+});
+
+test("20 weeks with partial training hold the baseline, and an overloaded cycle lowers the next baseline", () => {
+  const partial = simulateCycles("T", () => "partial");
+  assert.deepEqual(
+    partial.map((c) => c[0].step),
+    [0, 0, 0, 0],
+  );
+  const overload = simulateCycles("T", (cycle) => (cycle === 1 ? "hard" : "good"));
+  assert.deepEqual(
+    overload.map((c) => c[0].step),
+    [0, 1, 0, 1],
+  );
+  console.log("Simulated overload cycle baselines:", overload.map((c) => c[0].step).join(" → "));
+});
+
+test("40 weeks of generated strength plans carry base reps and earned weights through deloads without inventing entered values", () => {
+  const result = simulateCycles("S", () => "good", 8);
+  const first = result[0][0].targets.find((t) => t.kg == null && !t.timed);
+  assert.ok(first);
+  const trajectory = result.map((c) => c[0].targets.find((t) => t.id === first.id));
+  assert.deepEqual(
+    trajectory.slice(0, 5).map((t) => t.baseR),
+    [8, 9, 10, 11, 12],
+  );
+  assert.ok(trajectory[5].kg > trajectory[4].kg);
+  result.forEach((c) => {
+    assert.equal(c[4].eligible, false);
+    assert.equal(c[4].targets.length, 0);
+  });
+  console.log("Simulated strength base reps:", trajectory.map((t) => t.baseR).join(" → "));
+  console.log("Simulated strength weight suggestions:", trajectory.map((t) => t.kg ?? "choose").join(" → "));
+});
+
+test("two successful entries or many entries in one week do not establish regular evidence", () => {
+  const a = app();
+  history(a, { dates: ["2026-10-06", "2026-10-20"] });
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.level`), "collecting");
+  history(a, { dates: ["2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08"] });
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
+});
+
+test("unrecorded planned sessions and missing effort values prevent an increase", () => {
+  const a = app();
+  history(a);
+  a.run(
+    `S.log.forEach(e=>e.progression.plannedDates.push('2026-09-22','2026-09-29','2026-10-07','2026-10-14'))`,
+  );
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.reason`), "coverage");
+  history(a);
+  a.run(`delete S.log[0].rpe;`);
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
+});
+
+test("more high-quality evidence improves confidence without increasing the size of the step", () => {
+  const a = app();
+  history(a);
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.level`), "sufficient");
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 1);
+  history(a, {
+    dates: [
+      "2026-09-22",
+      "2026-09-24",
+      "2026-09-29",
+      "2026-10-01",
+      "2026-10-06",
+      "2026-10-08",
+      "2026-10-13",
+      "2026-10-20",
+    ],
+  });
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.level`), "reliable");
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 1);
+  a.run(`S.log.forEach((e,i)=>e.rpe=i<4?4:6);`);
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.reason`), "trend");
+});
+
+test("data remains scoped to the training type and missing legacy plan snapshots cannot justify an increase", () => {
+  const a = app();
+  history(a);
+  assert.equal(a.run(`progressionState('2026-11-02','S',false).data.count`), 0);
+  history(a, { step: 2 });
+  a.run(`S.log.forEach(e=>delete e.progression.plannedDates)`);
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 2);
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.reason`), "missing");
+});
+
+test("historical plan snapshots survive later changes to profile days and backup round-trips", () => {
+  const a = app();
+  history(a);
+  a.run(
+    `S.log.forEach(e=>e.progression.plannedDates.push('2026-09-22','2026-09-29','2026-10-07','2026-10-14'));S=hydrate(JSON.parse(JSON.stringify(S)));S.profile.days=[];`,
+  );
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).data.coverage`), 0.5);
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
+});
+
+test("learning explanation appears in onboarding and can be dismissed permanently in the first session", async () => {
+  const a = app();
+  a.run(
+    `ui.onb={step:0,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90}; installHtml=()=>''; renderOnb();`,
+  );
+  assert.match(a.node("onb").innerHTML, /So lernt Ringzeit/);
+  assert.match(a.run("progressionInfoHtml(true)"), /data-progress-info-close/);
+  await a.click({ dataset: { progressInfoClose: "1" } });
+  assert.equal(a.run("progressionInfoHtml(true)"), "");
+  a.run(`S=hydrate(JSON.parse(localStorage.getItem(LS)));`);
+  assert.equal(a.run("S.profile.progressInfoSeen"), true);
+});
+
+test("skipping setup keeps the first-session explanation pending; finishing setup records it as seen", async () => {
+  const a = app();
+  a.run(
+    `S.profile.ackSafe='2026-11-02';S.profile.toured=true;ui.onb={step:0,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90}; loading=async()=>{};`,
+  );
+  await a.run("finishOnb(true,false)");
+  assert.match(a.run("progressionInfoHtml(true)"), /Ringzeit passt dein Training/);
+  a.run(`ui.onb={step:4,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90};`);
+  await a.run("finishOnb(false,false)");
+  assert.equal(a.run("S.profile.progressInfoSeen"), true);
+  assert.equal(a.run("progressionInfoHtml(true)"), "");
 });
