@@ -27,7 +27,15 @@
     background: var(--night);
     color: var(--frost);
   }
+  html {
+    min-height: 100%;
+  }
   body {
+    /* Short views must fill the screen too: iOS otherwise leaves the fixed
+       navigation above the bottom after switching from a scrollable view. */
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
     font-family: var(--body);
     font-size: 16px;
     line-height: 1.55;
