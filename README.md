@@ -74,8 +74,10 @@
 
 ### ⏱️ Rundentimer
 - **Vollbild-Timer** mit Ringglocke, 10 Sekunden Vorbereitungszeit und Ansage der Übung
-- **Bewusster Trainingsstart:** zuerst die Einheitenübersicht mit Aufwärmen; der Hauptteil-Timer bleibt direkt erreichbar
-- **Gemeinsame Timersteuerung:** beim Wechsel wird der andere Timer pausiert, beim endgültigen Einheitsabschluss werden Timer und ausstehende Ansagen beendet
+- **Planvorschau vor dem Training:** „Heute“ öffnet den Tagesplan zum Sichten und Bereitlegen der Ausrüstung. Erst „Training beginnen“ ganz unten öffnet die Vollbildführung mit Abhaken, Kraft-Eingaben und Timern.
+- **Geführte Durchführung:** Aufwärmen, Hauptteil, Ergänzungen und Cool-down folgen dem tatsächlichen Plan. Zurückgehen, Abschnitte überspringen, pausieren und vorzeitig abschließen bleiben möglich; offene Übungen werden dabei nicht automatisch erledigt. Der Abschnitt wird pro Einheit gespeichert.
+- **Übungstimer:** Zeitvorgaben im Aufwärmen und Cool-down, beidseitige Dehnungen mit Seitenwechsel, Conditioning-Intervalle sowie einzelne zeitbasierte Kraftsätze. Bei Zeitspannen kann die Dauer gewählt werden; Wiederholungsübungen bleiben ohne erfundene Zeitvorgabe.
+- **Gemeinsame Timersteuerung:** Runden-, Übungs- und freier Timer teilen sich eine Uhr; beim Wechsel wird der andere Timer pausiert, beim endgültigen Einheitsabschluss werden Timer und ausstehende Ansagen beendet
 - **Weniger Hintergrundarbeit:** sekundengenau geplante Timeraufrufe während des Trainings, keine dauernde Abfrage im Leerlauf; verdeckte Anzeigen werden nicht laufend neu geschrieben
 - **Bildschirm und Animationen bleiben erhalten:** Die Restzeit ist während laufender Runden und Pausen sichtbar. Die Audiowachhaltung bleibt auf Apple-Mobilgeräten erhalten; andere Audiokontexte können zwischen Signalen ruhen
 - Eigener **Rundentimer** mit Vorlagen (WAKO, K1, Sparring, Pratzen, HIIT)
