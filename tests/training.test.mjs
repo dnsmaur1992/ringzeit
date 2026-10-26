@@ -8,7 +8,10 @@ import vm from "node:vm";
 const html = readFileSync(new URL("../src/ringzeit.html", import.meta.url), "utf8");
 const script = html.slice(html.lastIndexOf("<script>") + 8, html.lastIndexOf("</script>"));
 function app() {
-  let calendar = [2026, 10, 2];
+  let calendar = [2026, 10, 2],
+    nowMs = new Date(2026, 10, 2).getTime(),
+    jobId = 0;
+  const jobs = new Map();
   const nodes = new Map(),
     listeners = new Map(),
     calls = [],
@@ -22,7 +25,14 @@ function app() {
         innerHTML: "",
         hidden: true,
         dataset: {},
-        classList: { add() {}, remove() {}, toggle() {} },
+        classList: {
+          add() {},
+          remove() {},
+          toggle() {},
+          contains() {
+            return false;
+          },
+        },
         style: { setProperty() {} },
         addEventListener() {},
         setAttribute() {},
@@ -41,6 +51,9 @@ function app() {
       constructor(...args) {
         super(...(args.length ? args : calendar));
       }
+      static now() {
+        return nowMs;
+      }
     },
     Intl,
     Map,
@@ -54,11 +67,21 @@ function app() {
     Promise,
     setInterval() {},
     clearInterval() {},
-    setTimeout() {},
-    clearTimeout() {},
+    setTimeout(fn, delay = 0) {
+      const id = ++jobId;
+      jobs.set(id, { fn, at: nowMs + delay });
+      return id;
+    },
+    clearTimeout(id) {
+      jobs.delete(id);
+    },
     navigator: {},
     window: { addEventListener() {}, scrollTo() {} },
     document: {
+      visibilityState: "visible",
+      querySelector() {
+        return null;
+      },
       getElementById: node,
       querySelectorAll() {
         return [];
@@ -81,6 +104,7 @@ function app() {
     `S = hydrate({profile:{...DEFAULT_PROFILE, level:1, example:false, planStart:'2026-08-31'}}); ui.onb = null;`,
   );
   context.record = (...args) => calls.push(args);
+  run(`globalThis.originalResources={getWake,releaseWake};`);
   run(
     `bell = n => record('bell', n); beep = () => record('beep'); getWake = () => record('wake'); releaseWake = () => record('release'); render = () => {}; showWin = () => {};`,
   );
@@ -100,9 +124,33 @@ function app() {
     node,
     click,
     saved,
+    jobs,
+    async emit(name, target = {}) {
+      for (const fn of listeners.get(name) || []) await fn({ target });
+    },
+    advance(ms) {
+      const until = nowMs + ms;
+      let count = 0;
+      while (true) {
+        const next = [...jobs.entries()]
+          .filter(([, job]) => job.at <= until)
+          .sort((a, b) => a[1].at - b[1].at || a[0] - b[0])[0];
+        if (!next) break;
+        if (++count > 10000) throw new Error("Timer loop");
+        nowMs = next[1].at;
+        jobs.delete(next[0]);
+        next[1].fn();
+      }
+      nowMs = until;
+      return count;
+    },
+    elapse(ms) {
+      nowMs += ms;
+    },
     setDate(ds) {
       const [y, m, d] = ds.split("-").map(Number);
       calendar = [y, m - 1, d];
+      nowMs = new Date(y, m - 1, d).getTime();
     },
   };
 }
@@ -125,7 +173,7 @@ function history(
   } = {},
 ) {
   a.run(
-    `S.log = ${JSON.stringify(dates)}.map((date, i) => ({date, src:'own', type:${JSON.stringify(type)}, minutes:75, rpe:${rpe}, tHi:7, completed:${completed}, progression:{v:1,id:'base:2026-10-05',start:'2026-10-05',end:'2026-11-08',week:1,weeks:5,step:${step},eligible:true,signature:'lc:1:${type}:regular',plannedMin:75,plannedDates:${JSON.stringify(dates)}} ${extra}}));`,
+    `S.log = ${JSON.stringify(dates)}.map((date, i) => ({date, src:'own', type:${JSON.stringify(type)}, minutes:75, inputConfirmed:true, rpe:${rpe}, tHi:7, completed:${completed}, progression:{v:1,id:'base:2026-10-05',start:'2026-10-05',end:'2026-11-08',week:1,weeks:5,step:${step},eligible:true,signature:'lc:1:${type}:regular',plannedMin:75,plannedDates:${JSON.stringify(dates)}} ${extra}}));`,
   );
   // Use a completed five-week cycle immediately before today.
   a.run(
@@ -201,6 +249,7 @@ test("partial finish prompts, keeps form values and logs load without progressio
     `S.sessions.x={date:'2026-11-02',type:'T',min:60,tHi:7,blocks:[{key:'warm',items:[{}]}]}; ui.sel='x'; openSheet=o=>ui.sheet=o; closeSheet=()=>ui.sheet=null;`,
   );
   a.node("fMin").value = "25";
+  a.node("fDurationConfirmed").checked = true;
   a.node("fRpe").value = "8";
   a.node("fNote").value = "Zeitmangel";
   await a.click({ id: "fSave" });
@@ -224,6 +273,7 @@ test("fully completed session saves directly and render includes manual checks a
   assert.match(rendered, /data-check=/);
   assert.match(rendered, /btn all-done/);
   a.node("fMin").value = "30";
+  a.node("fDurationConfirmed").checked = true;
   a.node("fRpe").value = "6";
   await a.click({ id: "fSave" });
   assert.equal(a.run("S.log[0].completed"), true);
@@ -415,6 +465,7 @@ function simulateCycles(type, behavior, cycles = 4) {
         }));
       }`);
       a.node("fMin").value = "60";
+      a.node("fDurationConfirmed").checked = true;
       a.node("fRpe").value = a.run(`Math.min(10,S.sessions[ui.sel].tHi + ${mode === "hard" ? 2 : 0})`);
       a.node("fNote").value = "";
       const summary = a.run(
@@ -566,4 +617,251 @@ test("skipping setup keeps the first-session explanation pending; finishing setu
   await a.run("finishOnb(false,false)");
   assert.equal(a.run("S.profile.progressInfoSeen"), true);
   assert.equal(a.run("progressionInfoHtml(true)"), "");
+});
+
+test("finishing requires deliberate effort and duration; no default values manufacture records", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';S.sessions[ui.sel]={date:ui.sel,type:'T',min:60,tHi:7,blocks:[{key:'warm',items:[{}]}]};`,
+  );
+  a.node("fMin").value = "60";
+  a.node("fRpe").value = "";
+  await a.click({ id: "fSave" });
+  assert.equal(a.run("S.log.length"), 0);
+  assert.match(a.node("finishError").textContent, /Anstrengung/);
+  await a.click({ dataset: { effort: "6" } });
+  await a.click({ id: "fSave" });
+  assert.equal(a.run("S.log.length"), 0);
+  assert.match(a.node("finishError").textContent, /Dauer/);
+  a.node("fDurationConfirmed").checked = true;
+  a.run(`S.sessions[ui.sel].checked={'0.0':true}`);
+  await a.click({ id: "fSave" });
+  assert.equal(a.run("S.log[0].inputConfirmed"), true);
+  assert.equal(a.run("S.log[0].rpe"), 6);
+});
+
+test("editing actual duration confirms it and draft effort/notes survive a render", async () => {
+  const a = app();
+  a.run(`ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60})`);
+  a.node("fMin").value = "35";
+  a.node("fNote").value = "Früher fertig";
+  await a.emit("input", a.node("fMin"));
+  await a.click({ dataset: { effort: "5" } });
+  await a.emit("input", a.node("fNote"));
+  assert.equal(a.run("finishDraft().minutesConfirmed"), true);
+  const rendered = a.run("finishFormHtml(S.sessions[ui.sel])");
+  assert.match(rendered, /value="35"/);
+  assert.match(rendered, /value="5"/);
+  assert.match(rendered, /Früher fertig/);
+  a.node("fMin").value = "0";
+  await a.emit("input", a.node("fMin"));
+  assert.equal(a.run("validateFinish()"), false);
+});
+
+test("a session save stops active timers, scheduled speech and the central clock", () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60});timerGo();queueTimerSpeech('stale',100,()=>true);say=x=>record('say',x)`,
+  );
+  a.node("fMin").value = "30";
+  a.node("fRpe").value = "7";
+  a.node("fDurationConfirmed").checked = true;
+  a.run("saveTrainingSession()");
+  assert.equal(a.run("ui.timer.running"), false);
+  assert.equal(a.run("timerClock"), null);
+  assert.equal(a.run("timerSpeechJobs.size"), 0);
+  a.advance(2000);
+  assert.equal(a.calls.filter((x) => x[0] === "say").length, 0);
+  assert.equal(a.run("S.log[0].minutes"), 30);
+});
+
+test("there is one deadline clock while active and none while paused or idle", () => {
+  const a = app();
+  assert.equal(a.run("timerClock"), null);
+  a.run(`ui.sel='x';S.sessions.x={blocks:[{rounds:true,w:20,b:10,items:[{},{}]}]};timerGo()`);
+  assert.equal(a.jobs.size, 1);
+  a.advance(2000);
+  assert.equal(a.run("ui.timer.left"), 8);
+  a.run("timerGo()");
+  assert.equal(a.run("timerClock"), null);
+  assert.equal(a.jobs.size, 0);
+  a.advance(5000);
+  assert.equal(a.run("ui.timer.left"), 8);
+  a.run("timerGo()");
+  assert.equal(a.jobs.size, 1);
+  a.advance(1000);
+  assert.equal(a.run("ui.timer.left"), 7);
+});
+
+test("switching to free timer pauses session timer and closing free timer cancels resources", () => {
+  const a = app();
+  a.run(`ui.sel='x';S.sessions.x={blocks:[{rounds:true,w:20,b:10,items:[{},{}]}]};timerGo();openFt();`);
+  assert.equal(a.run("ui.timer.running"), false);
+  assert.equal(a.run("timerRunning()"), false);
+  a.run(`ui.ft.cfg={r:2,w:20,b:10,prep:false,warn:true,coach:false};ftStart()`);
+  assert.equal(a.run("freeRunning()"), true);
+  assert.equal(a.run("ui.timer.running"), false);
+  a.run("closeFt()");
+  assert.equal(a.run("timerRunning()"), false);
+  assert.equal(a.run("timerClock"), null);
+});
+
+test("free timer catches up across several missed phases with exact deadlines and no stale bells", () => {
+  const a = app();
+  a.run(`openFt();ui.ft.cfg={r:3,w:20,b:10,prep:false,warn:true,coach:false};ftStart()`);
+  const bells = a.calls.filter((x) => x[0] === "bell").length;
+  a.elapse(45000);
+  a.run("ftTick()");
+  assert.equal(a.run("ui.ft.round"), 2);
+  assert.equal(a.run("ui.ft.phase"), "work");
+  assert.equal(a.run("ui.ft.left"), 5);
+  assert.equal(a.calls.filter((x) => x[0] === "bell").length, bells);
+  a.elapse(40000);
+  a.run("ftTick()");
+  assert.equal(a.run("ui.ft.phase"), "done");
+  assert.equal(a.run("ui.ft.completed"), 3);
+  assert.equal(a.run("timerClock"), null);
+});
+
+test("free timer pause/resume retains fractional remaining time; manual skip does not count a completed round", () => {
+  const a = app();
+  a.run(`openFt();ui.ft.cfg={r:2,w:20,b:10,prep:false,warn:true,coach:false};ftStart()`);
+  a.elapse(450);
+  a.run(`ftAction('pause')`);
+  assert.equal(a.run("ui.ft.remainingMs"), 19550);
+  a.advance(5000);
+  a.run(`ftAction('pause')`);
+  assert.equal(a.run("ui.ft.endAt-Date.now()"), 19550);
+  a.run(`ftAction('skip')`);
+  assert.equal(a.run("ui.ft.phase"), "rest");
+  assert.equal(a.run("ui.ft.completed"), 0);
+});
+
+test("hidden session views do not receive clock DOM updates and refresh on return", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';S.sessions.x={blocks:[{rounds:true,w:20,b:10,items:[{},{}]}]};timerGo();document.visibilityState='hidden';updTimer=()=>record('paint');markRounds=()=>record('marks')`,
+  );
+  a.advance(12000);
+  assert.equal(a.run("ui.timer.phase"), "work");
+  assert.equal(a.calls.filter((x) => x[0] === "paint").length, 0);
+  a.run(`document.visibilityState='visible'`);
+  await a.emit("visibilitychange");
+  assert.ok(a.calls.some((x) => x[0] === "paint"));
+});
+
+test("pending Wake Lock is released when stop happens before the request resolves", async () => {
+  const a = app();
+  a.run(`getWake=originalResources.getWake;releaseWake=originalResources.releaseWake;unlockBells=()=>{};audioKeep=on=>record('keep',on);
+    ui.timer={running:true};navigator.wakeLock={request:()=>new Promise(resolve=>globalThis.grantLock=resolve)};globalThis.pending=getWake();`);
+  await Promise.resolve();
+  await Promise.resolve();
+  a.run(
+    `ui.timer.running=false;releaseWake();grantLock({release:()=>{record('lockReleased');return Promise.resolve()},addEventListener(){}})`,
+  );
+  await a.run("pending");
+  assert.equal(a.run("wake"), null);
+  assert.equal(a.run("wantWake"), false);
+  assert.ok(a.calls.some((x) => x[0] === "lockReleased"));
+});
+
+test("Wake Lock stays requested during both work and rest and idle audio suspends only after stop", async () => {
+  const a = app();
+  a.run(`getWake=originalResources.getWake;releaseWake=originalResources.releaseWake;unlockBells=()=>{};audioKeep=on=>record('keep',on);
+    actx={state:'running',suspend(){this.state='suspended';return Promise.resolve()}};
+    ui.timer={running:true,phase:'work'};navigator.userAgent='iPhone';navigator.wakeLock={request:()=>Promise.resolve({release:()=>Promise.resolve(),addEventListener(){}})};`);
+  await a.run("getWake()");
+  assert.equal(a.run("wantWake"), true);
+  assert.ok(a.calls.some((x) => x[0] === "keep" && x[1] === true));
+  a.run(`ui.timer.phase='rest';releaseWake()`);
+  assert.equal(a.run("wantWake"), true);
+  a.run(`ui.timer.running=false;releaseWake()`);
+  a.advance(5000);
+  assert.equal(a.run("actx.state"), "suspended");
+});
+
+test("settings are collapsed for an existing session; warm-up, progress and exercise-specific labels are exposed", async () => {
+  const a = app();
+  a.run(`ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60})`);
+  const rendered = a.run("renderSession()");
+  assert.match(rendered, /<details class="panel session-settings"[^>]*>\s*<summary>Einheit anpassen/);
+  assert.match(rendered, /Mit dem Aufwärmen beginnen/);
+  assert.match(rendered, /id="sessionProgress"/);
+  assert.match(rendered, /Übung abhaken: /);
+  assert.match(rendered, /<details class="note"><summary>Warum diese Einheit/);
+  await a.click({ dataset: { go: "2026-11-02" } });
+  assert.equal(a.run("ui.focus"), false);
+});
+
+test("basic strength movements recur, respect limits, and unrelated equipment does not change exercise identity", () => {
+  const a = app();
+  a.run(
+    `globalThis.one=buildSession('2026-11-02','S','gym',['weights'],{min:60});globalThis.two=buildSession('2026-11-09','S','gym',['weights','rope'],{min:60})`,
+  );
+  assert.equal(
+    JSON.stringify(a.run("one.blocks.flatMap(b=>b.items.filter(it=>it.basic).map(it=>it.id))")),
+    JSON.stringify(a.run("two.blocks.flatMap(b=>b.items.filter(it=>it.basic).map(it=>it.id))")),
+  );
+  assert.ok(a.run("one.blocks.flatMap(b=>b.items.filter(it=>it.basic)).length") >= 2);
+  a.run(`globalThis.id=EX.findIndex(e=>e.de==='Goblet Squats')`);
+  assert.equal(
+    a.run('relevantEquipment(id,["weights"])'),
+    a.run('relevantEquipment(id,["weights","rope","bag"])'),
+  );
+  a.run(
+    `S.profile.limits=['knee'];globalThis.limited=buildSession('2026-11-02','S','gym',['weights'],{min:60})`,
+  );
+  assert.equal(
+    a.run(`limited.blocks.flatMap(b=>b.items.filter(it=>it.basic)).some(it=>EX[it.id].avoid.includes('k'))`),
+    false,
+  );
+});
+
+test("old unconfirmed defaults are not evidence; optional hard exercise feedback can lower its next target", () => {
+  const a = app();
+  history(a);
+  a.run("S.log.forEach(e=>delete e.inputConfirmed)");
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
+  history(a, { type: "S" });
+  a.run(`const id=EX.findIndex(e=>e.de==='Goblet Squats'),sess={date:'2026-11-02',type:'S',loc:'gym',eq:['weights'],progression:progressionState('2026-11-02','S',false)},b={key:'str',sets:'3× 8–12',items:[{id}]};
+    const initial=strengthTarget(sess,b,b.items[0]);S.log.forEach(e=>e.perf=[{id,effort:'hard',sets:[{r:8,kg:20},{r:8,kg:20},{r:8,kg:20}],target:{...initial,kg:20,cycle:e.progression.id}}]);
+    sess.progression=progressionState('2026-11-02','S',false);globalThis.feedbackTarget=strengthTarget(sess,b,b.items[0])`);
+  assert.equal(a.run("feedbackTarget.kg"), 19);
+  assert.equal(a.run("feedbackTarget.reason"), "down");
+});
+
+test("one minute of the free timer needs only second-aligned callbacks and pause stops them", () => {
+  const a = app();
+  a.run(`openFt();ui.ft.cfg={r:3,w:120,b:60,prep:false,warn:true,coach:false};ftStart()`);
+  const callbacks = a.advance(60000);
+  assert.ok(callbacks >= 60 && callbacks <= 62, `callbacks: ${callbacks}`);
+  a.run(`ftAction('pause')`);
+  assert.equal(a.advance(60000), 0);
+});
+
+test("legacy exercise histories remain comparable when only unrelated equipment changes", () => {
+  const a = app();
+  history(a, { type: "S" });
+  a.run(`const id=EX.findIndex(e=>e.de==='Goblet Squats'),sess={date:'2026-11-02',type:'S',loc:'gym',eq:['weights'],progression:progressionState('2026-11-02','S',false)},b={key:'str',sets:'3× 8–12',items:[{id}]};
+    const initial=strengthTarget(sess,b,b.items[0]),parts=initial.kind.split(':');parts[parts.length-4]='bag,rope,weights';
+    S.log.forEach(e=>e.perf=[{id,sets:[{r:8,kg:20},{r:8,kg:20},{r:8,kg:20}],target:{...initial,kg:20,kind:parts.join(':'),cycle:e.progression.id}}]);
+    sess.progression=progressionState('2026-11-02','S',false);globalThis.carriedTarget=strengthTarget(sess,b,b.items[0]);`);
+  assert.equal(a.run("carriedTarget.r"), 9);
+  assert.equal(a.run("carriedTarget.kg"), 20);
+});
+
+test("non-Apple audio can sleep between sounds while screen stays awake and resumes for the next signal", async () => {
+  const a = app();
+  a.run(`getWake=originalResources.getWake;releaseWake=originalResources.releaseWake;unlockBells=()=>{};audioKeep=on=>record('keep',on);
+    actx={state:'running',suspend(){this.state='suspended';return Promise.resolve()},resume(){this.state='running';return Promise.resolve()}};
+    ui.timer={running:true};navigator.userAgent='Android';navigator.wakeLock={request:()=>Promise.resolve({release:()=>Promise.resolve(),addEventListener(){}})};`);
+  await a.run("getWake()");
+  a.advance(5000);
+  assert.equal(a.run("actx.state"), "suspended");
+  assert.equal(a.run("wantWake"), true);
+  a.run(`withAudio(()=>record('signal'))`);
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(a.run("actx.state"), "running");
+  assert.ok(a.calls.some((x) => x[0] === "signal"));
 });
