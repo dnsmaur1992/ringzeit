@@ -10053,6 +10053,19 @@
           partial:
             "Die Einheit zählt weiterhin für Belastung und Verlauf. Offene Übungen gelten nicht als geschafft.",
           target: "Dein Ziel",
+          learningTitle: "So lernt Ringzeit dein Training kennen",
+          learning:
+            "Ringzeit passt dein Training anhand deiner Einträge an. Je regelmäßiger du absolvierte Einheiten, Wiederholungen, Gewichte und deine empfundene Anstrengung erfasst, desto gezielter kann die App die Belastung anpassen. Zu Beginn bleibt die Planung vorsichtig.",
+          understood: "Verstanden",
+          data: (level, count, weeks) =>
+            `Datengrundlage: ${{ collecting: "im Aufbau", sufficient: "ausreichend", reliable: "gut belegt" }[level]} · ${count} vergleichbare Einheiten in ${weeks} Wochen.`,
+          dataWhy: {
+            few: "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten.",
+            missing: "Einige Leistungsangaben fehlen; die Belastung bleibt vorsichtig.",
+            coverage: "Vom geplanten Training ist noch zu wenig erfasst; das Niveau bleibt bestehen.",
+            trend:
+              "Die letzten Einheiten wurden im Verhältnis zum Ziel anstrengender; deshalb heute keine Steigerung.",
+          },
           up: "Gut bewältigt: der nächste Zyklus wird leicht gesteigert.",
           repeat:
             "Belastung beibehalten: für eine Steigerung fehlen ausreichend vollständig bewältigte Einheiten.",
@@ -10065,7 +10078,7 @@
           density: (old, next) =>
             `Gleiche Rundenzeit, angepasste Pausen: ${old} → ${next} s; innerhalb deiner Trainingszeit.`,
           targetWhy: {
-            up: "Ziel zweimal erreicht: leicht erhöht.",
+            up: "Ziel regelmäßig erreicht: leicht erhöht.",
             down: "Wiederholt zu schwer: Ziel reduziert.",
             repeat: "Bisheriges Ziel wiederholen.",
             initial: "Ausgangsziel; Gewicht selbst wählen.",
@@ -10080,6 +10093,18 @@
           partial:
             "The session still counts towards load and history. Open exercises do not count as completed.",
           target: "Your target",
+          learningTitle: "How Ringzeit learns about your training",
+          learning:
+            "Ringzeit adapts training using your entries. Regularly recording completed sessions, reps, weights and perceived effort helps the app tailor the load. Planning stays cautious at first.",
+          understood: "Got it",
+          data: (level, count, weeks) =>
+            `Training data: ${{ collecting: "building up", sufficient: "sufficient", reliable: "well supported" }[level]} · ${count} comparable sessions across ${weeks} weeks.`,
+          dataWhy: {
+            few: "More regularly recorded sessions are needed before increasing load.",
+            missing: "Some performance details are missing; training stays cautious.",
+            coverage: "Too little of the planned training has been recorded; maintain the current level.",
+            trend: "Recent sessions became harder relative to their targets; no increase today.",
+          },
           up: "Well managed: the next cycle increases slightly.",
           repeat: "Maintain load: not enough fully completed sessions to increase yet.",
           down: "Repeatedly above the effort target: the next cycle is lighter.",
@@ -10090,7 +10115,7 @@
           density: (old, next) =>
             `Same work time, adjusted rests: ${old} → ${next} s; within your session time.`,
           targetWhy: {
-            up: "Target met twice: slightly increased.",
+            up: "Target met regularly: slightly increased.",
             down: "Repeatedly too hard: target reduced.",
             repeat: "Repeat the previous target.",
             initial: "Starting target; choose your own weight.",
@@ -10177,12 +10202,106 @@
       block: null,
     };
   }
+  function progressionEligible(ds, type, run) {
+    return (
+      ["T", "C", "K", "S"].includes(type) &&
+      !run &&
+      !young() &&
+      phaseInfo(ds).phase === "base" &&
+      !weekLoad(ds).deload &&
+      !rampOn(ds) &&
+      !koLock(ds) &&
+      !ramadanOn(ds) &&
+      weekMood(ds) !== "hard" &&
+      formOn(ds) === 2 &&
+      !(type === "S" && S.profile.work === "phys")
+    );
+  }
+  // Save the plan when it is made: future profile edits must not rewrite past adherence.
+  function progressionPlannedDates(cycle, type, ds) {
+    const dates = [];
+    for (let date = cycle.start; date <= cycle.end; date = iso(addDays(parse(date), 1))) {
+      if (date < (S.profile.planStart || cycle.start) || pausedOn(date)) continue;
+      const override = S.ov[date] || {};
+      if (override.off === "moved") continue;
+      const planned = date === ds ? type : S.sessions[date]?.type || override.t || suggestOn(date);
+      if (planned === type && progressionEligible(date, type, false)) dates.push(date);
+    }
+    return dates;
+  }
+  function progressionRecordComplete(e) {
+    if (
+      !validEffort(e) ||
+      typeof e.completed !== "boolean" ||
+      !Number.isFinite(e.minutes) ||
+      e.minutes <= 0 ||
+      !Number.isFinite(e.progression?.plannedMin) ||
+      e.progression.plannedMin <= 0
+    )
+      return false;
+    if (e.type !== "S") return true;
+    const exercises = (e.perf || []).filter((p) => EX[p.id]?.cat === "str");
+    return (
+      exercises.length > 0 &&
+      exercises.every(
+        (p) =>
+          p.sets?.length &&
+          p.sets.every(
+            (r) => Number.isFinite(r.r) && r.r >= 0 && (!hasKg(p.id) || (Number.isFinite(r.kg) && r.kg > 0)),
+          ),
+      )
+    );
+  }
+  function progressionData(entries, end) {
+    // At most 12 weeks of closed-cycle data, one vote per date, scoped to the training signature.
+    const from = iso(addDays(parse(end), -83)),
+      all = [
+        ...new Map(entries.filter((e) => e.date >= from && e.date <= end).map((e) => [e.date, e])).values(),
+      ].sort((a, b) => a.date.localeCompare(b.date)),
+      valid = all.filter(progressionRecordComplete),
+      weeks = new Set(valid.map((e) => iso(monday(parse(e.date))))).size,
+      known = all.filter((e) => Array.isArray(e.progression.plannedDates)),
+      expected = new Set(
+        known
+          .flatMap((e) => e.progression.plannedDates)
+          .filter((date) => date >= from && date <= end && !pausedOn(date) && S.ov[date]?.off !== "moved"),
+      );
+    // Extra sessions count as planned opportunities too; they cannot cancel out missed dates.
+    valid.forEach((e) => expected.add(e.date));
+    const planned = expected.size,
+      covered = valid.filter((e) => expected.has(e.date)).length,
+      coverage = planned ? covered / planned : 0,
+      completeness = all.length ? valid.length / all.length : 0,
+      planKnown = all.length ? known.length / all.length : 0;
+    let level = "collecting",
+      reason = "few";
+    if (valid.length >= 4 && weeks >= 3) {
+      if (completeness < 0.8 || planKnown < 0.8) reason = "missing";
+      else if (coverage < 0.8) reason = "coverage";
+      else {
+        level =
+          valid.length >= 8 && weeks >= 4 && completeness >= 0.9 && planKnown >= 0.9 && coverage >= 0.9
+            ? "reliable"
+            : "sufficient";
+        reason = null;
+      }
+    }
+    const recent = valid.slice(-8),
+      mid = Math.floor(recent.length / 2),
+      effort = (list) => list.reduce((sum, e) => sum + e.rpe - e.tHi, 0) / list.length,
+      worsening = recent.length >= 8 && effort(recent.slice(mid)) - effort(recent.slice(0, mid)) > 1;
+    return { level, reason, count: valid.length, weeks, planned, coverage, completeness, planKnown, worsening };
+  }
+  function progressionInfoHtml(dismissible = false) {
+    if (dismissible && S.profile.progressInfoSeen) return "";
+    const txt = trainingText();
+    return `<div class="note" data-progress-info="1"><b>${txt.learningTitle}</b><div>${txt.learning}</div>${dismissible ? `<button type="button" class="btn ghost" data-progress-info-close="1">${txt.understood}</button>` : ""}</div>`;
+  }
   function progressionState(ds, type, run) {
     const cycle = progressionCycle(ds),
       signature = `${S.profile.disc}:${S.profile.level}:${type}:${run ? "run" : "regular"}`,
       cutoff = ds < iso(today()) ? ds : iso(today()),
       groups = new Map();
-    // Legacy logs remain valid load/history entries, but lack the evidence needed for an increase.
     for (const e of S.log) {
       const p = e.progression;
       if (
@@ -10194,8 +10313,7 @@
         e.date > p.end ||
         e.date < p.start ||
         e.date >= cutoff ||
-        !p.eligible ||
-        !validEffort(e)
+        !p.eligible
       )
         continue;
       if (!groups.has(p.id)) groups.set(p.id, []);
@@ -10205,21 +10323,45 @@
       b[0].progression.end.localeCompare(a[0].progression.end),
     )[0];
     let step = 0,
-      reason = "initial";
+      reason = "initial",
+      data = progressionData([], cycle.start);
     if (previous) {
-      // One vote per date; re-saving or importing duplicates must never manufacture successful sessions.
       const entries = [...new Map(previous.map((e) => [e.date, e])).values()],
         old = clampStep(previous[0].progression.step),
         good = entries.filter(
-          (e) => e.completed === true && e.minutes >= e.progression.plannedMin * 0.8 && e.rpe <= e.tHi,
+          (e) =>
+            progressionRecordComplete(e) &&
+            e.completed === true &&
+            e.minutes >= e.progression.plannedMin * 0.8 &&
+            e.rpe <= e.tHi,
         ),
-        hard = entries.filter((e) => e.rpe >= e.tHi + 2);
+        hard = entries.filter((e) => validEffort(e) && e.rpe >= e.tHi + 2),
+        lastCycle = progressionData(entries, previous[0].progression.end);
+      data = progressionData([...groups.values()].flat(), previous[0].progression.end);
+      if (
+        daysBetween(
+          parse(
+            entries
+              .map((e) => e.date)
+              .sort()
+              .slice(-1)[0],
+          ),
+          parse(cutoff),
+        ) > 42
+      ) {
+        data.level = "collecting";
+        data.reason = "few";
+      }
       step = old;
       if (hard.length >= 2) {
         step = clampStep(old - 1);
         reason = "down";
       } else if (
-        good.length >= 2 &&
+        data.level !== "collecting" &&
+        !data.worsening &&
+        lastCycle.planKnown >= 0.8 &&
+        lastCycle.coverage >= 0.8 &&
+        good.length >= 3 &&
         good.length / entries.length >= 0.8 &&
         daysBetween(
           parse(
@@ -10233,21 +10375,15 @@
       ) {
         step = clampStep(old + 1);
         reason = old === 4 ? "cap" : "up";
-      } else reason = "repeat";
+      } else {
+        reason = "repeat";
+        if (data.worsening) data.reason = "trend";
+        else if (lastCycle.coverage < 0.8 && data.level !== "collecting") data.reason = "coverage";
+      }
     }
-    const eligible =
-      ["T", "C", "K", "S"].includes(type) &&
-      !run &&
-      !young() &&
-      phaseInfo(ds).phase === "base" &&
-      !weekLoad(ds).deload &&
-      !rampOn(ds) &&
-      !koLock(ds) &&
-      !ramadanOn(ds) &&
-      weekMood(ds) !== "hard" &&
-      formOn(ds) === 2 &&
-      !(type === "S" && S.profile.work === "phys");
-    return { v: 1, ...cycle, signature, step, reason, eligible };
+    const eligible = progressionEligible(ds, type, run),
+      plannedDates = progressionPlannedDates(cycle, type, ds);
+    return { v: 1, ...cycle, signature, step, reason, eligible, data, plannedDates };
   }
   function strengthTarget(sess, b, it) {
     const pr = sess.progression,
@@ -10267,7 +10403,12 @@
       kind = `${pr.signature}:${sess.loc}:${sess.eq.slice().sort().join(",")}:${lo}-${hi}:${n}:${timed ? "s" : "r"}`,
       history = S.log
         .filter(
-          (e) => e.date < sess.date && e.date <= iso(today()) && e.progression?.eligible && validEffort(e),
+          (e) =>
+            e.date < sess.date &&
+            e.date >= iso(addDays(parse(sess.date), -84)) &&
+            e.date <= iso(today()) &&
+            e.progression?.eligible &&
+            validEffort(e),
         )
         .sort((a, b) => b.date.localeCompare(a.date)),
       matches = [];
@@ -10288,12 +10429,27 @@
         timed,
         reason: old ? "repeat" : "initial",
       };
+    const exerciseEvidence = matches.filter(
+        (x) =>
+          x.e.progression.end < sess.date &&
+          x.e.progression.end < iso(today()) &&
+          progressionRecordComplete(x.e),
+      ),
+      exerciseReady =
+        new Set(exerciseEvidence.map((x) => x.e.date)).size >= 4 &&
+        new Set(exerciseEvidence.map((x) => iso(monday(parse(x.e.date))))).size >= 3;
     const waveTarget = () => ({
       ...target,
       baseR: target.r,
       r: Math.max(
         lo,
-        Math.min(hi, target.r + (pr.block ? 0 : [-1, 0, 1, 2, 0][pr.week - 1] * (timed ? 5 : 1))),
+        Math.min(
+          hi,
+          target.r +
+            (pr.block || !exerciseReady || pr.data?.level === "collecting"
+              ? 0
+              : [-1, 0, 1, 2, 0][pr.week - 1] * (timed ? 5 : 1)),
+        ),
       ),
     });
     if (!last) return waveTarget();
@@ -10307,7 +10463,11 @@
         (x) =>
           x.perf.target.cycle === old.cycle &&
           (x.perf.target.baseR ?? x.perf.target.r) === (old.baseR ?? old.r) &&
-          x.perf.target.kg === old.kg,
+          (x.perf.target.kg === old.kg ||
+            (x.perf.target.kg == null &&
+              old.kg != null &&
+              x.perf.sets.length >= n &&
+              x.perf.sets.slice(0, n).every((r) => r.kg === old.kg))),
       ),
       entries = [...new Map(same.map((x) => [x.e.date, x])).values()],
       met = (x) =>
@@ -10331,7 +10491,8 @@
       target.reason = "down";
     } else if (
       ["up", "cap"].includes(pr.reason) &&
-      entries.length >= 2 &&
+      exerciseReady &&
+      entries.length >= 4 &&
       entries.filter(met).length / entries.length >= 0.8
     ) {
       if (target.r < hi) target.r = Math.min(hi, target.r + (timed ? 5 : 1));
@@ -10353,11 +10514,13 @@
     if (!["T", "C", "K", "S"].includes(sess.type) || sess.run || young()) return sess;
     sess.notes.push(pr.eligible ? `${txt.cycle(pr.week, pr.weeks, pr.step)} ${txt[pr.reason]}` : txt.protected);
     if (!pr.eligible) return sess;
+    sess.notes.push(txt.data(pr.data.level, pr.data.count, pr.data.weeks));
+    if (pr.data.reason) sess.notes.push(txt.dataWhy[pr.data.reason]);
     // Increase density alone, never contact intensity or the official competition format.
     // Changing pauses, with fewer rounds if needed, keeps the existing time budget intact.
     if (["T", "C", "K"].includes(sess.type)) {
       const b = roundBlock(sess),
-        wave = pr.block ? 1 : [0.9, 0.95, 1, 1.05, 1][pr.week - 1];
+        wave = pr.block ? 1 : pr.data.level === "collecting" ? 0.9 : [0.9, 0.95, 1, 1.05, 1][pr.week - 1];
       if (b && b.w && b.b) {
         const old = b.b,
           factor = (1 + pr.step * 0.05) * wave;
@@ -10609,6 +10772,7 @@
 ${setupFields(setup, ty)}
  <div class="field"><button class="btn${sess ? " sec" : ""}" type="button" id="buildSess">${sess ? t("recreate") : t("create")}</button><div class="minirow" style="justify-content:space-between">${recent && !doneOn(ds) ? `<button type="button" class="btn ghost" data-move="${ds}">${t("move")}</button>` : ""}${ow.t && !ow.from && !doneOn(ds) ? `<button type="button" class="btn ghost" data-unplan="${ds}">${t("removeExtra")}</button>` : ""}${ow.from ? `<span class="sub">${t("movedFrom")(dayLbl(ow.from))}</span>` : ""}</div></div></div>`;
     if (!sess) return h;
+    h += progressionInfoHtml(true);
     const rbS = roundBlock(sess);
     h += `<div class="tags"><span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<button type="button" class="tg tgbtn" data-guide="wrap">🩹 ${t("guide").wrapLink} ›</button>` : ""}${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
     if (sess.notes && sess.notes.length) h += `<div class="note warn">${sess.notes.map(esc).join("<br>")}</div>`;
@@ -11127,6 +11291,7 @@ ${setupFields(setup, ty)}
     h += `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair(step === 1 || step === 3 ? "box" : "kick")}</svg>`;
     if (step === 0) {
       h += `<h1>${t("onbQ1")}</h1><div class="sub">${t("onbQ1s")}</div><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => (k === "fc" || k === "k1" ? `<button type="button" class="locked" data-lock="disc" aria-disabled="true"><svg class="lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>${t("disc")[k]}</button>` : `<button type="button" data-od="${k}" aria-pressed="${o.disc === k}">${t("disc")[k]}</button>`)).join("")}</div>`;
+      h += progressionInfoHtml();
     } else if (step === 1) {
       h += `<h1>${t("onbClubQ")}</h1><div class="sub">${t("onbClubS")}</div><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip cday" data-ocday="${i}" aria-pressed="${o.clubDays.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div>${o.clubDays.length ? `<span class="lab">${t("onbClubMin")}</span><div class="seg">${[60, 75, 90, 120].map((m) => `<button type="button" data-ocmin="${m}" aria-pressed="${o.clubMin === m}">${m} ${t("min")}</button>`).join("")}</div>` : ""}`;
     } else if (step === 2) {
@@ -11163,6 +11328,7 @@ ${setupFields(setup, ty)}
     const o = ui.onb;
     ui.onb = null;
     if (!skip) {
+      S.profile.progressInfoSeen = true;
       S.profile = {
         ...S.profile,
         disc: o.disc,
@@ -17805,6 +17971,13 @@ ${setupFields(setup, ty)}
     const b = ev.target.closest("button");
     if (!b || b.disabled) return;
     const ds = b.dataset;
+    if (ds.progressInfoClose) {
+      S.profile.progressInfoSeen = true;
+      if (draft) draft.progressInfoSeen = true;
+      store.save();
+      b.closest("[data-progress-info]")?.remove();
+      return;
+    }
     // ----- bottom sheet
     if (ds.sx) return sheetAction(ds.sx);
     if (ds.exinfo) return openSheet({ kind: "ex", id: +ds.exinfo });
