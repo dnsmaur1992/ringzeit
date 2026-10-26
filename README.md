@@ -102,6 +102,8 @@
 ### 📈 Leistungsabhängige Progression
 - Fünf-Wochen-Wellen im Grundlagentraining mit vier Aufbauwochen und anschließender Entlastung; Schwerpunkt-Blöcke behalten ihre sechs Wochen
 - Vollständig absolvierte, vergleichbare Einheiten und die eingetragene Anstrengung entscheiden über Steigerung, Wiederholung oder Reduktion im nächsten Zyklus
+- **Datengrundlage statt bloßer Eintragszahl:** Anzahl, Regelmäßigkeit, Vollständigkeit und Abdeckung des geplanten Trainings werden je Trainingsbereich ausgewertet; wenige oder lückenhafte Daten verhindern eine Steigerung
+- **Lernhinweis beim Einstieg:** in der Einrichtung und bei übersprungener Einrichtung einmalig ausblendbar in der ersten Einheit; der aktuelle Stand der Datengrundlage steht in neu erstellten Einheiten
 - Bei Technik und Kondition wird die **Pausendichte** in kleinen Schritten angepasst, innerhalb der eingeplanten Trainingszeit
 - Bei geeigneten Kraftübungen entstehen **individuelle Wiederholungs-, Haltezeit- oder Gewichtsziele** aus tatsächlich protokollierten Sätzen; Ziele sind Vorschläge und füllen keine Leistungswerte automatisch aus
 - Wettkampfvorbereitung, Entlastung, Wiedereinstieg und eingeschränkte Tagesform haben Vorrang
