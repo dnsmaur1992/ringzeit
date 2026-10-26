@@ -74,6 +74,10 @@
 
 ### ⏱️ Rundentimer
 - **Vollbild-Timer** mit Ringglocke, 10 Sekunden Vorbereitungszeit und Ansage der Übung
+- **Bewusster Trainingsstart:** zuerst die Einheitenübersicht mit Aufwärmen; der Hauptteil-Timer bleibt direkt erreichbar
+- **Gemeinsame Timersteuerung:** beim Wechsel wird der andere Timer pausiert, beim endgültigen Einheitsabschluss werden Timer und ausstehende Ansagen beendet
+- **Weniger Hintergrundarbeit:** sekundengenau geplante Timeraufrufe während des Trainings, keine dauernde Abfrage im Leerlauf; verdeckte Anzeigen werden nicht laufend neu geschrieben
+- **Bildschirm und Animationen bleiben erhalten:** Die Restzeit ist während laufender Runden und Pausen sichtbar. Die Audiowachhaltung bleibt auf Apple-Mobilgeräten erhalten; andere Audiokontexte können zwischen Signalen ruhen
 - Eigener **Rundentimer** mit Vorlagen (WAKO, K1, Sparring, Pratzen, HIIT)
 - Leuchtring mit Fortschritt, pulsierende letzte 10 Sekunden und ein Blitz zum Rundenende
 - **Automatischer Rundenwechsel im geführten Training:** Nach der Pause läuft die nächste Runde direkt weiter; die 10 Sekunden Vorlauf gibt es nur beim manuellen Start
@@ -98,6 +102,9 @@
 - Haken und Satzwerte bleiben pro Einheit gespeichert, auch nach Neuladen und in Sicherungen
 - **Abschließen bleibt immer möglich:** Sind Übungen offen, erscheint eine Rückfrage; die tatsächliche Dauer und Anstrengung zählen trotzdem für Belastung und Verlauf
 - Sind alle Übungen erledigt, wird **„Einheit abschließen“** grün hervorgehoben
+- **Kompakte Einheitenansicht:** Einstellungen unter „Einheit anpassen“, Erklärungen unter „Warum diese Einheit?“, wichtige Kontakt-/Einschränkungshinweise separat
+- **Sichtbarer Fortschritt** und Sprung zur nächsten offenen Übung; Hakenflächen und Timer-Symbolschalter tragen eindeutige zugängliche Namen
+- **Bewusste Abschlussangaben:** Anstrengung von 1–10 auswählen und die tatsächliche Dauer bestätigen oder neu eintragen. Alte, unbestätigte Vorgaben werden nicht als sichere Progressionsdaten behandelt
 
 ### 📈 Leistungsabhängige Progression
 - Fünf-Wochen-Wellen im Grundlagentraining mit vier Aufbauwochen und anschließender Entlastung; Schwerpunkt-Blöcke behalten ihre sechs Wochen
@@ -105,6 +112,8 @@
 - **Datengrundlage statt bloßer Eintragszahl:** Anzahl, Regelmäßigkeit, Vollständigkeit und Abdeckung des geplanten Trainings werden je Trainingsbereich ausgewertet; wenige oder lückenhafte Daten verhindern eine Steigerung
 - **Lernhinweis beim Einstieg:** in der Einrichtung und bei übersprungener Einrichtung einmalig ausblendbar in der ersten Einheit; der aktuelle Stand der Datengrundlage steht in neu erstellten Einheiten
 - Bei Technik und Kondition wird die **Pausendichte** in kleinen Schritten angepasst, innerhalb der eingeplanten Trainingszeit
+- Wiederkehrende **Grundübungen** schaffen vergleichbare Kraftprotokolle; zusätzliches, für die Übung irrelevantes Equipment unterbricht den Vergleich nicht
+- Freiwillige Rückmeldung **„Leicht / Passend / Zu schwer“** je Kraftübung; wiederholtes „Zu schwer“ wird bei der nächsten Zielanpassung berücksichtigt
 - Bei geeigneten Kraftübungen entstehen **individuelle Wiederholungs-, Haltezeit- oder Gewichtsziele** aus tatsächlich protokollierten Sätzen; Ziele sind Vorschläge und füllen keine Leistungswerte automatisch aus
 - Wettkampfvorbereitung, Entlastung, Wiedereinstieg und eingeschränkte Tagesform haben Vorrang
 - Alte Einträge bleiben erhalten; ohne ausreichende Leistungsdaten wird keine Steigerung daraus abgeleitet
