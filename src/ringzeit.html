@@ -3814,6 +3814,30 @@
     border-radius: 50%;
     background: var(--ice);
   }
+  .legal-entry {
+    width: 100%;
+    min-height: 76px;
+    border: 0;
+    background: none;
+    color: inherit;
+    text-align: left;
+  }
+  .legal-entry-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .legal-entry-text b {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .legal-entry-text .sub {
+    display: block;
+    margin-top: 2px;
+  }
+  .legal-entry .chev {
+    flex-shrink: 0;
+  }
   .legal p {
     margin: 0 0 10px;
     line-height: 1.45;
@@ -4630,7 +4654,7 @@
         steps: {
           profile: ["Geburtsjahr und Ringzeit-Tage festlegen", "Damit passen Rundenzeiten und Plan zu dir"],
           club: ["Vereinstage eintragen", "Ringzeit plant deine eigenen Einheiten drumherum"],
-          session: ["Erste Einheit absolvieren", "Starten, trainieren, Anstrengung eintragen"],
+          session: ["Erste Einheit absolvieren", "Plan sichten → Training beginnen → geführt trainieren"],
           timer: ["Rundentimer ausprobieren", "Eine Runde mit Glocke, ganz ohne Plan"],
           test: ["Fitnesstest ablegen", "Dein Ausgangswert und der Weg zum nächsten Level"],
           combo: ["Eine eigene Kombi anlegen", "Kombis aus dem Verein in deine Einheiten bringen"],
@@ -4784,10 +4808,10 @@
         ],
         setup: [
           "Einheit einstellen",
-          "Vor jeder Einheit wählst du Art, Dauer, Ort und Ausrüstung. Gefragt wird nur, was für diese Einheit wichtig ist. Danach erstellt Ringzeit dein Programm.",
+          "Dein Tagesplan ist bereits vorbereitet. Unter „Einheit anpassen“ kannst du bei Bedarf Art, Dauer, Ort und Ausrüstung ändern und den Plan neu erstellen. Die Vorschau ist noch kein laufendes Training.",
         ],
         timer: [
-          "Timer der Einheit",
+          "Training beginnen",
           "Sichte zuerst deinen Tagesplan. Ganz unten öffnet „Training beginnen“ die Vollbildführung. Die Runden laufen mit ihren Pausen automatisch weiter; auch Zeitübungen haben eigene Timer.",
         ],
         exinfo: [
@@ -4796,7 +4820,7 @@
         ],
         finish: [
           "Abschließen",
-          "Nach dem Training speicherst du Dauer und Anstrengung (RPE). Daraus erkennt Ringzeit, wann du mehr Erholung brauchst.",
+          "Die Führung endet nach dem Cool-down mit tatsächlicher Dauer und Anstrengung (RPE). Vorzeitig abschließen bleibt möglich; offene Übungen werden dabei nicht abgehakt. Zurück zur Planübersicht pausiert laufende Trainings-Timer.",
         ],
         ftimer: [
           "Rundentimer",
@@ -5836,10 +5860,10 @@
         ],
         setup: [
           "Set up a session",
-          "Before each session you pick type, duration, place and equipment. You're only asked what matters for that session. Then Ringzeit builds your programme.",
+          "Your daily plan is already prepared. Under Adjust session you can change type, duration, place and equipment, then rebuild the plan. The preview is not an active workout yet.",
         ],
         timer: [
-          "Session timer",
+          "Begin training",
           "Review your plan first. At the bottom, Begin training opens the full-screen guide. Rounds and rests advance automatically; timed exercises have their own timers too.",
         ],
         exinfo: [
@@ -5848,7 +5872,7 @@
         ],
         finish: [
           "Finish",
-          "After training you save duration and effort (RPE). That's how Ringzeit spots when you need more recovery.",
+          "After the cool-down, record actual duration and effort (RPE). You can finish early; open exercises stay open. Returning to the plan preview pauses active workout timers.",
         ],
         ftimer: [
           "Round timer",
@@ -11521,6 +11545,7 @@ ${setupFields(setup, ty)}
   const workoutText = () =>
     S.profile.lang === "de"
       ? {
+          intro: "Heute → Tagesplan prüfen und Ausrüstung bereitlegen → ganz unten Training beginnen. Erst dann erscheinen Haken, Eingaben und Timer. Die Führung begleitet dich vom Aufwärmen bis zum Abschluss.",
           start: "Training beginnen",
           resume: "Training fortsetzen",
           preview:
@@ -11549,6 +11574,7 @@ ${setupFields(setup, ty)}
           saved: "Deine Eingaben werden gespeichert. Schließen pausiert laufende Timer.",
         }
       : {
+          intro: "Today → review the daily plan and prepare your equipment → Begin training at the bottom. Checks, inputs and timers appear only after starting. The guide takes you from warm-up to finish.",
           start: "Begin training",
           resume: "Resume training",
           preview:
@@ -12421,7 +12447,7 @@ ${setupFields(setup, ty)}
         .join("")}</div><span class="sub">${t("music").hint}</span></div></div>`;
     app = mycHtml() + app;
     app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div><div class="field"><span class="lab">${t("resetLbl")}</span><span class="sub">${t("resetHint")}</span><button type="button" class="btn ghost danger" data-reset-all="1">${t("resetBtn")}</button></div></div>`;
-    app += `<div class="panel"><button type="button" class="row" data-legal="1" style="width:100%;background:none;border:0;text-align:left;padding:0"><span style="flex:1">${t("legal").row}<div class="sub">${t("legal").sub}</div></span><span class="sub" aria-hidden="true">›</span></button></div>`;
+    app += `<div class="panel"><button type="button" class="row legal-entry" data-legal="1"><span class="legal-entry-text"><b>${t("legal").row}</b><span class="sub">${t("legal").sub}</span></span><span class="chev" aria-hidden="true">›</span></button></div>`;
     app += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
     h += { train, goals, life, guide: guidePanelHtml(), app }[sec] || "";
     return h;
@@ -12506,6 +12532,7 @@ ${setupFields(setup, ty)}
     } else {
       h += `<h1>${t("onbQ3")}</h1><div class="sub">${t("onbQ3s")}</div><input id="oBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${o.birthYear || ""}"><span class="lab">${t("sex")}</span><div class="seg g3">${["m", "f", "d"].map((k) => `<button type="button" data-osex="${k}" aria-pressed="${o.sex === k}">${t("sexes")[k]}</button>`).join("")}</div><span class="sub">${t("sexHint")}</span><label class="lab" for="oComp">${t("onbComp")}</label><input id="oComp" type="date" min="${iso(today())}" value="${o.comp || ""}">`;
     }
+    if (step === 4) h += `<div class="note"><b>${workoutText().start}</b><div>${esc(workoutText().intro)}</div></div>`;
     if (step === 4)
       h += `<div class="acts"><button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button><button type="button" class="btn" data-onb="test">${t("blk").onbTest}</button></div><button type="button" class="btn ghost later" data-onb="done">${t("blk").onbLater}</button>`;
     else
@@ -12938,7 +12965,7 @@ ${setupFields(setup, ty)}
     { k: "setup", tab: "session", sel: "[data-session-settings]" },
     { k: "timer", tab: "session", sel: "[data-workout=start]" },
     { k: "exinfo", tab: "session", sel: "[data-exinfo]", up: ".ex" },
-    { k: "finish", tab: "session", sel: "[data-workout=start]", up: ".panel" },
+    { k: "finish", tab: "session" },
     { k: "ftimer", tab: "week", sel: "#tabs .tabft" },
     { k: "test", tab: "test", sel: "#tabs [data-tab=test]" },
     { k: "log", tab: "log", sel: "#tabs [data-tab=log]" },
