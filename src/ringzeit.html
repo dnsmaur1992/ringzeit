@@ -3995,6 +3995,21 @@
   .ex .excheck { background: transparent; border: 0; border-radius: 6px; padding: 3px 0; align-self: flex-start; min-height: 36px; }
   .ex .excheck:focus-visible { outline: 2px solid var(--ice); }
   .btn.all-done { background: var(--done); color: var(--ink); box-shadow: 0 0 0 2px #8ec9a444; }
+  .session-settings>summary,.note>summary {cursor:pointer;font-weight:600;padding:12px;}
+  .session-settings>div {padding:0 12px 12px;}
+  .note>div {margin-top:8px;}
+  .session-progress .minirow {margin-block:6px;}
+  .effort-options {display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+  .effort-options button {min-height:44px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--frost);}
+  .effort-options button[aria-pressed=true] {border-color:var(--ice);background:var(--ice-dim);}
+  .confirm-duration {display:flex;gap:10px;align-items:flex-start;font-size:14px;}
+  .confirm-duration input {width:22px;height:22px;flex:none;accent-color:var(--ice);}
+  .ex .excheck {min-width:44px;min-height:44px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .ex .excheck .check-icon {font-size:24px;line-height:1;}
+  .ex .excheck small {font-size:10px;}
+  .ex.past .excheck:after {content:none;}
+  .exercise-effort {margin-top:12px;}
+  .exercise-effort .chip {min-height:44px;}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -9001,15 +9016,14 @@
         blocks.push({
           key: "str",
           min: main - pm,
-          items: pickEx("str", p.level === 0 ? 3 : 4, loc, eq, used, machines),
+          items: strengthBasics(p.level === 0 ? 3 : 4, loc, eq, used, machines),
           sets: light ? "3× 8–10" : "3× 4–6 · " + B.heavy,
         });
       } else
         blocks.push({
           key: "str",
           min: main,
-          items: pickEx(
-            "str",
+          items: strengthBasics(
             (taper ? 3 : p.level === 0 ? 4 : 5) - (work === "phys" ? 1 : 0),
             loc,
             eq,
@@ -10153,7 +10167,7 @@
   function checkButton(sess, bi, ni, label) {
     const done = itemDone(sess, bi, ni),
       txt = trainingText();
-    return `<button type="button" class="num excheck${sess.blocks[bi].rounds ? " r" : ""}" data-check="${bi}.${ni}" aria-pressed="${done}" aria-label="${done ? txt.uncheck : txt.check}">${label}</button>`;
+    return `<button type="button" class="num excheck${sess.blocks[bi].rounds ? " r" : ""}" data-check="${bi}.${ni}" aria-pressed="${done}" aria-label="${esc((done ? txt.uncheck : txt.check) + ": " + itemTitle(sess, bi, ni))}"><span class="check-icon" aria-hidden="true">${done ? "✓" : "○"}</span><small>${label}</small></button>`;
   }
   function updateCompletionUI() {
     const sess = S.sessions[ui.sel];
@@ -10165,9 +10179,27 @@
       const btn = el.querySelector("[data-check]");
       if (btn) {
         btn.setAttribute("aria-pressed", String(done));
-        btn.setAttribute("aria-label", done ? trainingText().uncheck : trainingText().check);
+        btn.setAttribute(
+          "aria-label",
+          (done ? trainingText().uncheck : trainingText().check) + ": " + itemTitle(sess, bi, ni),
+        );
+        const icon = btn.querySelector(".check-icon");
+        if (icon) icon.textContent = done ? "✓" : "○";
       }
     });
+    const summary = document.getElementById("sessionProgress"),
+      progress = sessionCompletion(sess);
+    if (summary) {
+      const text = flowText().progress(progress.done, progress.total);
+      if (summary.textContent !== text) summary.textContent = text;
+    }
+    const jump = document.querySelector("[data-next-open]"),
+      warm = sess.blocks.findIndex((b) => b.key === "warm");
+    if (jump)
+      jump.textContent =
+        warm >= 0 && sess.blocks[warm].items.some((it, ni) => !itemDone(sess, warm, ni))
+          ? flowText().warm
+          : flowText().jump;
     const btn = document.getElementById("fSave");
     if (btn) {
       const done = sessionCompletion(sess).complete;
@@ -10231,6 +10263,7 @@
   }
   function progressionRecordComplete(e) {
     if (
+      e.inputConfirmed !== true ||
       !validEffort(e) ||
       typeof e.completed !== "boolean" ||
       !Number.isFinite(e.minutes) ||
@@ -10400,7 +10433,7 @@
     if (!range || isCirc(b) || EX[it.id]?.cat !== "str" || (DOSE_FIX[EX[it.id].de] && !timed)) return null;
     const n = blockSets(b),
       [lo, hi] = range,
-      kind = `${pr.signature}:${sess.loc}:${sess.eq.slice().sort().join(",")}:${lo}-${hi}:${n}:${timed ? "s" : "r"}`,
+      kind = `${pr.signature}:${sess.loc}:${relevantEquipment(it.id, sess.eq)}:${lo}-${hi}:${n}:${timed ? "s" : "r"}`,
       history = S.log
         .filter(
           (e) =>
@@ -10413,7 +10446,7 @@
         .sort((a, b) => b.date.localeCompare(a.date)),
       matches = [];
     for (const e of history) {
-      const perf = e.perf?.find((x) => x.id === it.id && x.target?.kind === kind);
+      const perf = e.perf?.find((x) => x.id === it.id && normalizeExerciseKind(x.target?.kind, it.id) === kind);
       if (perf) matches.push({ e, perf });
     }
     const last = matches[0],
@@ -10472,6 +10505,7 @@
       entries = [...new Map(same.map((x) => [x.e.date, x])).values()],
       met = (x) =>
         x.e.completed === true &&
+        x.perf.effort !== "hard" &&
         x.e.rpe <= x.e.tHi &&
         x.perf.sets.length >= n &&
         x.perf.sets
@@ -10485,7 +10519,10 @@
     // At most one adjustment per closed cycle, and only when that cycle supports the decision.
     if (old.cycle === pr.id || last.e.progression.end >= sess.date || last.e.progression.end >= iso(today()))
       return waveTarget();
-    if (pr.reason === "down" && entries.filter((x) => x.e.rpe >= x.e.tHi + 2).length >= 2) {
+    if (
+      entries.filter((x) => x.perf.effort === "hard").length >= 2 ||
+      (pr.reason === "down" && entries.filter((x) => x.e.rpe >= x.e.tHi + 2).length >= 2)
+    ) {
       if (target.kg != null) target.kg = Math.round(target.kg * 0.95 * 10) / 10;
       else target.r = Math.max(lo, target.r - (timed ? 5 : 1));
       target.reason = "down";
@@ -10511,6 +10548,7 @@
     const pr = progressionState(sess.date, sess.type, sess.run),
       txt = trainingText();
     sess.progression = { ...pr, plannedMin: sess.min };
+    if (sess.blocks.some((b) => b.items.some((it) => it.basic))) sess.notes.push(flowText().anchors);
     if (!["T", "C", "K", "S"].includes(sess.type) || sess.run || young()) return sess;
     sess.notes.push(pr.eligible ? `${txt.cycle(pr.week, pr.weeks, pr.step)} ${txt[pr.reason]}` : txt.protected);
     if (!pr.eligible) return sess;
@@ -10539,15 +10577,205 @@
     });
     return sess;
   }
+
+  /* ============ Training flow: explicit input, compact navigation and shared timer ownership ============ */
+  const flowText = () =>
+    S.profile.lang === "de"
+      ? {
+          adjust: "Einheit anpassen",
+          why: "Warum diese Einheit?",
+          next: "Als Nächstes",
+          warm: "Mit dem Aufwärmen beginnen",
+          main: "Hauptteil-Timer",
+          mainHint:
+            "Dieser Timer begleitet die Runden im Hauptteil. Aufwärmen, Zusatzübungen und Cool-down hakst du separat ab.",
+          progress: (n, total) => `${n} von ${total} Übungen erledigt`,
+          jump: "Zur nächsten offenen Übung",
+          check: "Hakenfläche antippen zum Abhaken · i öffnet die Übungserklärung.",
+          chooseEffort: "Wie anstrengend war die Einheit?",
+          effortHelp: "1–3 leicht · 4–6 mittel · 7–8 schwer · 9–10 sehr schwer",
+          durationConfirm: "Die eingetragene Dauer entspricht meiner tatsächlichen Trainingszeit.",
+          missingEffort: "Bitte wähle deine tatsächliche Anstrengung von 1 bis 10.",
+          missingDuration: "Bitte bestätige die tatsächliche Dauer oder trage sie neu ein (1–300 Minuten).",
+          pausedSession: "Trainings-Timer pausiert. Du kannst ihn später fortsetzen.",
+          pausedFree: "Freier Rundentimer pausiert.",
+          overview: "Zur Trainingsübersicht",
+          previous: "Vorherige Runde",
+          nextRound: "Nächste Runde auswählen",
+          start: "Runde starten",
+          resume: "Fortsetzen",
+          pause: "Timer pausieren",
+          exerciseEffort: "Wie schwer war diese Übung? (freiwillig)",
+          effort: { easy: "Leicht", right: "Passend", hard: "Zu schwer" },
+          anchors: "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
+        }
+      : {
+          adjust: "Adjust session",
+          why: "Why this session?",
+          next: "Up next",
+          warm: "Begin with the warm-up",
+          main: "Main-part timer",
+          mainHint:
+            "This timer covers the rounds in the main part. Check off warm-up, extra exercises and cool-down separately.",
+          progress: (n, total) => `${n} of ${total} exercises completed`,
+          jump: "Go to next open exercise",
+          check: "Tap the check control to mark complete · i opens exercise details.",
+          chooseEffort: "How hard was the session?",
+          effortHelp: "1–3 easy · 4–6 moderate · 7–8 hard · 9–10 very hard",
+          durationConfirm: "The entered duration is my actual training time.",
+          missingEffort: "Please choose your actual effort from 1 to 10.",
+          missingDuration: "Please confirm the actual duration or enter it again (1–300 minutes).",
+          pausedSession: "Session timer paused. You can resume it later.",
+          pausedFree: "Free round timer paused.",
+          overview: "Back to session overview",
+          previous: "Previous round",
+          nextRound: "Select next round",
+          start: "Start round",
+          resume: "Resume",
+          pause: "Pause timer",
+          exerciseEffort: "How hard was this exercise? (optional)",
+          effort: { easy: "Easy", right: "About right", hard: "Too hard" },
+          anchors: "These basic exercises recur in your plan so strength performances stay comparable.",
+        };
+  function finishDraft() {
+    if (!ui.finishDraft || ui.finishDraft.ds !== ui.sel)
+      ui.finishDraft = {
+        ds: ui.sel,
+        minutes: S.sessions[ui.sel]?.min || S.profile.minutes,
+        minutesConfirmed: false,
+        rpe: null,
+        note: "",
+      };
+    return ui.finishDraft;
+  }
+  function readFinishDraft() {
+    const draft = finishDraft(),
+      min = document.getElementById("fMin"),
+      effort = document.getElementById("fRpe"),
+      confirm = document.getElementById("fDurationConfirmed"),
+      note = document.getElementById("fNote");
+    if (min) draft.minutes = Number(min.value);
+    if (effort) draft.rpe = effort.value === "" ? null : Number(effort.value);
+    if (confirm) draft.minutesConfirmed = confirm.checked === true;
+    if (note) draft.note = note.value.slice(0, 300);
+    return draft;
+  }
+  function validateFinish() {
+    const draft = readFinishDraft(),
+      txt = flowText(),
+      errors = [];
+    if (!Number.isInteger(draft.rpe) || draft.rpe < 1 || draft.rpe > 10) errors.push(txt.missingEffort);
+    if (!draft.minutesConfirmed || !Number.isInteger(draft.minutes) || draft.minutes < 1 || draft.minutes > 300)
+      errors.push(txt.missingDuration);
+    const el = document.getElementById("finishError");
+    if (el) {
+      el.textContent = errors.join(" ");
+      el.hidden = !errors.length;
+    }
+    return errors.length === 0;
+  }
+  function finishFormHtml(sess) {
+    const draft = finishDraft(),
+      txt = flowText(),
+      completed = sessionCompletion(sess).complete;
+    return `<div id="sessionFinish"><h2>${t("finish")}</h2><div class="panel"><div class="field"><label class="lab" for="fMin">${t("duration")}</label><input id="fMin" type="number" inputmode="numeric" min="1" max="300" value="${Number.isFinite(draft.minutes) ? draft.minutes : ""}"><label class="confirm-duration"><input id="fDurationConfirmed" type="checkbox" ${draft.minutesConfirmed ? "checked" : ""}>${txt.durationConfirm}</label></div>
+        <div class="field"><span class="lab" id="effortLabel">${txt.chooseEffort}</span><div class="effort-options" role="group" aria-labelledby="effortLabel">${Array.from(
+          { length: 10 },
+          (_, i) => i + 1,
+        )
+          .map(
+            (n) =>
+              `<button type="button" data-effort="${n}" aria-pressed="${draft.rpe === n}" aria-label="${n} / 10">${n}</button>`,
+          )
+          .join(
+            "",
+          )}</div><span class="sub">${txt.effortHelp}</span><input id="fRpe" type="hidden" value="${draft.rpe ?? ""}"></div>
+        <div class="field"><label class="lab" for="fNote">${t("note")}</label><textarea id="fNote" placeholder="${esc(t("notePh"))}">${esc(draft.note)}</textarea></div><div class="field"><div id="finishError" role="alert" class="note warn" hidden></div><button type="button" class="btn${completed ? " all-done" : ""}" id="fSave">${completed ? trainingText().ready : trainingText().complete}</button></div></div></div>`;
+  }
+  function itemTitle(sess, bi, ni) {
+    const it = sess.blocks[bi].items[ni];
+    if (it.kind === "hard") return (HARD.find((x) => x.id === it.id) || HARD[0])[S.profile.lang][0];
+    if (it.kind === "run") return t("run");
+    if (EX[it.id]) return exText(it.id).name;
+    if (it.kind === "round") return roundInfo(it).title;
+    return `${t("main")} ${ni + 1}`;
+  }
+  function sessionNavigationHtml(sess) {
+    const txt = flowText(),
+      progress = sessionCompletion(sess),
+      warm = sess.blocks.findIndex((b) => b.key === "warm"),
+      needsWarm = warm >= 0 && sess.blocks[warm].items.some((it, ni) => !itemDone(sess, warm, ni));
+    return `<div class="note session-progress"><b id="sessionProgress" aria-live="polite">${txt.progress(progress.done, progress.total)}</b><div class="minirow"><button type="button" class="btn ghost" data-next-open="1">${needsWarm ? txt.warm : txt.jump}</button>${roundBlock(sess) ? `<button type="button" class="btn ghost" data-fx="open">${txt.main}</button>` : ""}</div><div class="sub">${txt.check}</div>${roundBlock(sess) ? `<div class="sub">${txt.mainHint}</div>` : ""}</div>`;
+  }
+  function nextOpenExercise() {
+    const sess = S.sessions[ui.sel];
+    if (!sess) return;
+    for (let bi = 0; bi < sess.blocks.length; bi++)
+      for (let ni = 0; ni < sess.blocks[bi].items.length; ni++)
+        if (!itemDone(sess, bi, ni)) {
+          document
+            .querySelector(`[data-item="${bi}.${ni}"]`)
+            ?.scrollIntoView({
+              block: "center",
+              behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+            });
+          return;
+        }
+    document.getElementById("sessionFinish")?.scrollIntoView({ block: "center" });
+  }
+  function exerciseFeedbackHtml(sess, key) {
+    const txt = flowText(),
+      effort = sess.exerciseEffort?.[key];
+    return `<div class="exercise-effort"><span class="sub">${txt.exerciseEffort}</span><div class="chips">${["easy", "right", "hard"].map((value) => `<button type="button" class="chip" data-exercise-effort="${key}" data-value="${value}" aria-pressed="${effort === value}">${txt.effort[value]}</button>`).join("")}</div></div>`;
+  }
+  function relevantEquipment(id, eq) {
+    const alternatives = (EX[id]?.eq || "").split("|").filter(Boolean);
+    return eq
+      .filter((x) => alternatives.includes(x))
+      .sort()
+      .join(",");
+  }
+  function normalizeExerciseKind(kind, id) {
+    const parts = String(kind || "").split(":");
+    if (parts.length >= 9) parts[parts.length - 4] = relevantEquipment(id, parts[parts.length - 4].split(","));
+    return parts.join(":");
+  }
+  // Repeated basic movements provide comparable logs; remaining slots retain the existing exercise variety.
+  function strengthBasics(n, loc, eq, used, prefer) {
+    const groups = [
+        ["Kniebeugen mit Langhantel", "Goblet Squats", "Beinpresse", "Kniebeugen", "Ausfallschritte"],
+        ["Bankdrücken", "Kurzhantel-Drücken", "Liegestütze"],
+        [
+          "Rudern am Kabelzug",
+          "Einarmiges Rudern",
+          "Band-Rudern",
+          "Klimmzüge",
+          "Negative Klimmzüge",
+          "Unterarmstütz",
+          "Dead Bugs",
+        ],
+      ],
+      selected = [];
+    for (const group of groups) {
+      const candidates = EX.filter(
+        (e) => e.cat === "str" && group.includes(e.de) && okEx(e, loc, eq) && !used.has(e.id),
+      ).sort((a, b) => (prefer ? prefer(b) - prefer(a) : 0) || group.indexOf(a.de) - group.indexOf(b.de));
+      if (candidates[0] && selected.length < n) {
+        selected.push({ kind: "ex", id: candidates[0].id, basic: true });
+        used.add(candidates[0].id);
+      }
+    }
+    return selected.concat(pickEx("str", Math.max(0, n - selected.length), loc, eq, used, prefer));
+  }
+
   function saveTrainingSession() {
     const sess = S.sessions[ui.sel],
       ty = sess ? sess.type : planOn(ui.sel);
-    if (doneOn(ui.sel)) return;
+    if (doneOn(ui.sel) || !validateFinish()) return;
+    const actual = readFinishDraft();
+    stopAllTimers();
     const completion = sessionCompletion(sess),
-      minutes = Math.max(
-        1,
-        Math.min(300, parseInt(document.getElementById("fMin").value) || S.profile.minutes),
-      );
+      minutes = actual.minutes;
     S.log.push({
       id: "e" + Date.now().toString(36),
       date: ui.sel,
@@ -10563,9 +10791,10 @@
       completed: completion.complete,
       openExercises: completion.open,
       progression: sess?.progression,
-      rpe: +document.getElementById("fRpe").value,
+      rpe: actual.rpe,
+      inputConfirmed: true,
       tHi: sess ? sess.tHi : rpeRange(ty, ui.sel).hi,
-      note: document.getElementById("fNote").value.slice(0, 300),
+      note: actual.note,
     });
     store.save();
     ui.win = true;
@@ -10617,7 +10846,7 @@
     const last = lastPerf(id, sess.date);
     return (
       h +
-      `</div><div class="setfoot"><span class="last">${last ? `${t("lastTime")}: ${esc(fmtSets(last, id))}` : ""}</span><button type="button" class="btn ghost" data-addset="${key}">${t("addSet")}</button></div>`
+      `</div><div class="setfoot"><span class="last">${last ? `${t("lastTime")}: ${esc(fmtSets(last, id))}` : ""}</span><button type="button" class="btn ghost" data-addset="${key}">${t("addSet")}</button></div>${exerciseFeedbackHtml(sess,key)}`
     );
   }
   /* Lead/rear side for hooks, uppercuts and kicks: hands alternate; a kick comes from the side opposite the last strike */
@@ -10760,8 +10989,9 @@
           : { ds, loc: "gym", eq: ["bag", "rope"], type: planned, run: false, min: sessMin(planned) };
     ui.setup = setup;
     const ty = setup.type;
-    h += formHtml(ds, sess);
     h += `<h2>${t("weekday")[i]} · ${t("types")[ty]} · ${setup.min} ${t("min")}</h2>`;
+    h += `<details class="panel session-settings" data-session-settings="${ds}" ${!sess || ui.sessionSettings?.[ds]?"open":""}><summary>${flowText().adjust}</summary><div>`;
+    h += formHtml(ds, sess);
     // duration options: 30/45/60 and the usual length; mobility never longer than 45 minutes
     const durs = [...new Set(lowTime() ? [20, 30] : [30, 45, 60, S.profile.minutes])]
       .filter((m) => (ty !== "M" || m <= 45) && (kidAge() == null || m <= (kidAge() <= 9 ? 30 : 45)))
@@ -10771,21 +11001,32 @@
  <div class="field"><span class="lab">${t("where")}</span><div class="seg ${ty === "S" || ty === "K" ? "g2" : ""}">${(ty === "S" || ty === "K" ? ["gym", "studio", "home", "out"] : ["gym", "home", "out"]).map((l) => `<button type="button" data-loc="${l}" aria-pressed="${setup.loc === l}">${t("locs")[l]}</button>`).join("")}</div></div>
 ${setupFields(setup, ty)}
  <div class="field"><button class="btn${sess ? " sec" : ""}" type="button" id="buildSess">${sess ? t("recreate") : t("create")}</button><div class="minirow" style="justify-content:space-between">${recent && !doneOn(ds) ? `<button type="button" class="btn ghost" data-move="${ds}">${t("move")}</button>` : ""}${ow.t && !ow.from && !doneOn(ds) ? `<button type="button" class="btn ghost" data-unplan="${ds}">${t("removeExtra")}</button>` : ""}${ow.from ? `<span class="sub">${t("movedFrom")(dayLbl(ow.from))}</span>` : ""}</div></div></div>`;
+    h += `</div></details>`;
     if (!sess) return h;
+    h += sessionNavigationHtml(sess);
     h += progressionInfoHtml(true);
     const rbS = roundBlock(sess);
     h += `<div class="tags"><span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<button type="button" class="tg tgbtn" data-guide="wrap">🩹 ${t("guide").wrapLink} ›</button>` : ""}${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
-    if (sess.notes && sess.notes.length) h += `<div class="note warn">${sess.notes.map(esc).join("<br>")}</div>`;
+    if(sess.progression?.data) {
+      const data=sess.progression.data,de=S.profile.lang==="de",labels=de?{collecting:"im Aufbau",sufficient:"ausreichend",reliable:"gut belegt"}:{collecting:"building up",sufficient:"sufficient",reliable:"well supported"};
+      h+=`<div class="sub">${de?"Datengrundlage":"Training data"}: ${labels[data.level]||labels.collecting}</div>`;
+    }
+    if (sess.notes && sess.notes.length) {
+      const safety=["koNote","gearNote","wrNote","knNote"].flatMap(key=>[L.de[key],L.en[key]]).filter(x=>typeof x==="string");
+      const critical=sess.notes.filter(n=>safety.includes(n));
+      if(critical.length) h+=`<div class="note warn">${critical.map(esc).join("<br>")}</div>`;
+      h += `<details class="note"><summary>${flowText().why}</summary><div>${sess.notes.map(esc).join("<br>")}</div></details>`;
+    }
     const rb = sess.blocks.find((b) => b.rounds);
     if (rb) {
-      if (!ui.timer || ui.timer.ds !== ds) ui.timer = newTimer(ds);
+      selectSessionTimer(ds);
       const st = ui.timer,
         total = st.total;
       h += `<div class="timer ${st.phase === "rest" || st.phase === "ready" ? "rest" : ""}" id="timer"><div class="bar"><span id="tbar"></span></div><div class="info"><span class="ph" id="tph">${st.phase === "rest" ? t("pause") : st.phase === "done" ? t("finished") : st.phase === "ready" ? t("timer") : t("work")}</span><div class="clock" id="tclock">${fmt(st.left)}</div><span class="tr" id="tround">${t("round")} ${Math.min(st.round, total)}/${total} · ${fmt(st.work)} / ${fmt(st.rest)}</span>${canSpeak() ? `<button type="button" class="vchip" data-voice="1" aria-pressed="${voiceOn()}">${voiceOn() ? "🔊 " + t("voiceOn") : "🔈 " + t("voiceOff")}</button>` : ""}</div>
   <div class="tb"><button type="button" id="tgo">${tlabel(st)}</button><button type="button" class="fs" data-fx="open">${t("focusOpen")}</button><button type="button" id="treset">${t("reset")}</button></div></div>`;
     }
     sess.blocks.forEach((b, bi) => {
-      h += `<div class="block">${blockHead(b)}`;
+      h += `<div class="block" data-block="${bi}">${blockHead(b)}`;
       if (b.items.some((it) => it.combo)) h += `<div class="legend">${t("legend")}</div>`;
       b.items.forEach((it, n) => {
         const checked = itemDone(sess, bi, n), itemAttr = `data-item="${bi}.${n}"`;
@@ -10823,11 +11064,7 @@ ${setupFields(setup, ty)}
     });
     const done = S.log.find((e) => e.date === ds && own(e));
     if (done) h += `<div class="note ok">✓ ${t("already")} RPE ${done.rpe} · ${done.minutes} ${t("min")}</div>`;
-    else
-      h += `<div><h2>${t("finish")}</h2><div class="panel"><div class="field"><label class="lab" for="fMin">${t("duration")}</label><input id="fMin" type="number" inputmode="numeric" min="5" max="300" value="${sess.min || setup.min}"></div>
-  <div class="field"><label class="lab" for="fRpe">${t("rpe")}: <span id="fRpeV">7</span></label><input id="fRpe" type="range" min="1" max="10" value="7"></div>
-  <div class="field"><label class="lab" for="fNote">${t("note")}</label><textarea id="fNote" placeholder="${esc(t("notePh"))}"></textarea></div>
-  <div class="field"><button type="button" class="btn${sessionCompletion(sess).complete ? " all-done" : ""}" id="fSave">${sessionCompletion(sess).complete ? trainingText().ready : trainingText().complete}</button></div></div></div>`;
+    else h += finishFormHtml(sess);
     return h;
   }
   function radar(cur, prev) {
@@ -15411,7 +15648,7 @@ ${setupFields(setup, ty)}
     }
     ui.sel = to;
     ui.setup = null;
-    ui.timer = null;
+    clearSessionTimer();
     store.save();
     render();
   }
@@ -15562,7 +15799,7 @@ ${setupFields(setup, ty)}
           S = hydrate(o.data);
           ui.sel = null;
           ui.setup = null;
-          ui.timer = null;
+          clearSessionTimer();
           draft = null;
           store.save(true);
           toast(t("impDone"));
@@ -15856,15 +16093,19 @@ ${setupFields(setup, ty)}
     { passive: false },
   );
   /* Boxing ring bell, synthesised: inharmonic partials with a metallic strike and a long ring-out.
-     n = number of strikes (1 = round start, 3 = round end) */
+       n = number of strikes (1 = round start, 3 = round end) */
   /* iOS puts web audio into "interrupted" (or "suspended") after speech or a pause; wake it before playing */
   function withAudio(play) {
     try {
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-      if (actx.state === "running") return play();
+      const run = () => {
+        play();
+        scheduleAudioSleep();
+      };
+      if (actx.state === "running") return run();
       const p = actx.resume();
-      if (p && p.then) p.then(play, play);
-      else play();
+      if (p && p.then) p.then(run, run);
+      else run();
     } catch (e) {}
   }
   /* While a timer runs, an inaudible tone keeps the audio output awake, so the first bell isn't swallowed */
@@ -15881,15 +16122,18 @@ ${setupFields(setup, ty)}
         o.connect(g);
         g.connect(actx.destination);
         o.start();
+        o._keepGain = g;
         keepTone = o;
       } else if (!on && keepTone) {
         keepTone.stop();
+        keepTone.disconnect();
+        keepTone._keepGain?.disconnect();
         keepTone = null;
       }
     } catch (e) {}
   }
   /* The bell is rendered once into a WAV file and played with an audio element: on iOS that survives speech
-     and audio interruptions better than live synthesis. Web audio stays as the fallback. */
+       and audio interruptions better than live synthesis. Web audio stays as the fallback. */
   let bellEls = null;
   function bellWav(n) {
     const sr = 44100,
@@ -15916,7 +16160,8 @@ ${setupFields(setup, ty)}
             dec = Math.log(0.0001 / amp) / M,
             w = (2 * Math.PI * f0 * r * det) / sr,
             att = 0.004 * sr;
-          for (let m = 0; m < M; m++) y[k0 + m] += Math.sin(w * m) * amp * Math.exp(dec * m) * Math.min(1, m / att);
+          for (let m = 0; m < M; m++)
+            y[k0 + m] += Math.sin(w * m) * amp * Math.exp(dec * m) * Math.min(1, m / att);
         }),
       );
       let prev = 0;
@@ -15943,7 +16188,8 @@ ${setupFields(setup, ty)}
     dv.setUint16(34, 16, true);
     str(36, "data");
     dv.setUint32(40, N * 2, true);
-    for (let k = 0; k < N; k++) dv.setInt16(44 + k * 2, Math.max(-1, Math.min(1, (y[k] / peak) * 0.9)) * 32767, true);
+    for (let k = 0; k < N; k++)
+      dv.setInt16(44 + k * 2, Math.max(-1, Math.min(1, (y[k] / peak) * 0.9)) * 32767, true);
     return URL.createObjectURL(new Blob([buf], { type: "audio/wav" }));
   }
   /* audio elements may only play later if they were started once from a tap: start them muted and stop at once */
@@ -16033,38 +16279,204 @@ ${setupFields(setup, ty)}
     } catch (e) {}
   }
   /* Screen stays on while any round timer runs (session timer, full screen, free round timer).
-     The system drops the lock when the app is hidden or the screen locks – it is requested again on return. */
-  let wantWake = false;
-  async function getWake() {
-    wantWake = true;
-    applyAudioMode();
-    audioKeep(true);
-    unlockBells();
-    if (wake) return;
+       The system drops the lock when the app is hidden or the screen locks – it is requested again on return. */
+
+  /* A single deadline-aligned clock owns both timer types. No idle polling. */
+  let timerClock = null,
+    timerSpeechEpoch = 0,
+    timerSpeechJobs = new Set(),
+    audioIdle = null;
+  const timerVisible = () => document.visibilityState !== "hidden";
+  const freeRunning = () => !!ui.ft && !ui.ft.paused && ["prep", "work", "rest"].includes(ui.ft.phase);
+  const timerRunning = () => !!ui.timer?.running || freeRunning();
+  function scheduleTimers() {
+    clearTimeout(timerClock);
+    timerClock = null;
+    const delays = [],
+      now = Date.now();
+    if (ui.timer?.running) delays.push(Math.max(1, lastTick + 1000 - now));
+    if (freeRunning()) {
+      const remaining = ui.ft.endAt - now;
+      delays.push(remaining <= 0 ? 1 : remaining % 1000 || 1000);
+    }
+    if (!delays.length) return;
+    timerClock = setTimeout(
+      () => {
+        timerClock = null;
+        tick();
+        ftTick();
+        scheduleTimers();
+      },
+      Math.min(...delays),
+    );
+  }
+  function cancelTimerSpeech() {
+    timerSpeechEpoch++;
+    timerSpeechJobs.forEach((job) => clearTimeout(job));
+    timerSpeechJobs.clear();
     try {
-      wake = (await navigator.wakeLock?.request("screen")) || null;
-      if (wake)
-        wake.addEventListener("release", () => {
-          wake = null;
-          if (wantWake && document.visibilityState === "visible") getWake();
-        });
-    } catch (e) {
-      wake = null;
+      if (canSpeak()) speechSynthesis.cancel();
+    } catch (e) {}
+  }
+  function queueTimerSpeech(text, delay, valid, rate = 0.95) {
+    const epoch = timerSpeechEpoch;
+    const job = setTimeout(() => {
+      timerSpeechJobs.delete(job);
+      if (epoch === timerSpeechEpoch && valid()) say(text, rate);
+    }, delay);
+    timerSpeechJobs.add(job);
+  }
+  function scheduleAudioSleep(force = false) {
+    if (!force && needsAudioKeep()) return;
+    clearTimeout(audioIdle);
+    audioIdle = setTimeout(() => {
+      audioIdle = null;
+      if ((!timerRunning() || !needsAudioKeep()) && actx?.state === "running") {
+        try {
+          actx.suspend()?.catch(() => {});
+        } catch (e) {}
+      }
+    }, 5000);
+  }
+  function syncTimers() {
+    if (timerRunning()) getWake();
+    else releaseWake();
+    scheduleTimers();
+  }
+  function clearSessionTimer() {
+    if (ui.timer?.running) ui.timer.running = false;
+    ui.timer = null;
+    cancelTimerSpeech();
+    syncTimers();
+  }
+  function stopAllTimers() {
+    // Account for elapsed full rounds before stopping, never mark the current unfinished round complete.
+    tick();
+    ftTick();
+    if (ui.timer) {
+      ui.timer.running = false;
+      ui.timer.called = null;
+    }
+    if (ui.ft) {
+      ui.ft.paused = true;
+      ui.ft = null;
+    }
+    clearTimeout(timerClock);
+    timerClock = null;
+    cancelTimerSpeech();
+    try {
+      Object.values(bellEls || {}).forEach((el) => {
+        el.pause();
+        el.currentTime = 0;
+      });
+    } catch (e) {}
+    releaseWake();
+    const free = document.getElementById("ftimer");
+    if (free) {
+      free.hidden = true;
+      free.innerHTML = "";
     }
   }
+  function pauseOtherTimer(kind) {
+    if (kind === "free" && ui.timer?.running) {
+      tick();
+      if (ui.timer) {
+        ui.timer.carryMs = Math.max(0, Date.now() - lastTick);
+        ui.timer.running = false;
+        ui.timer.called = null;
+      }
+      cancelTimerSpeech();
+      if (timerVisible()) toast(flowText().pausedSession);
+    }
+    if (kind === "session" && freeRunning()) {
+      ftTick();
+      if (ui.ft) {
+        ui.ft.remainingMs = Math.max(0, ui.ft.endAt - Date.now());
+        ui.ft.paused = true;
+      }
+      cancelTimerSpeech();
+      if (timerVisible()) toast(flowText().pausedFree);
+    }
+    syncTimers();
+  }
+  function selectSessionTimer(ds) {
+    if (ui.timer && ui.timer.ds !== ds) clearSessionTimer();
+    if (!ui.timer) ui.timer = newTimer(ds);
+  }
+  // Preserve the compatibility tone on Apple mobile audio; other engines can sleep between signals.
+  const needsAudioKeep = () =>
+    audioSessionOk() ||
+    /iPhone|iPad|iPod/.test(navigator.userAgent || "") ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  let wantWake = false,
+    wakeRequest = null,
+    wakeEpoch = 0,
+    wakeRetry = null;
+  async function getWake() {
+    if (!timerRunning()) return;
+    wantWake = true;
+    clearTimeout(audioIdle);
+    audioIdle = null;
+    applyAudioMode();
+    audioKeep(needsAudioKeep());
+    unlockBells();
+    scheduleAudioSleep();
+    if (wake || wakeRequest || !timerVisible()) return wakeRequest;
+    const epoch = wakeEpoch;
+    wakeRequest = Promise.resolve()
+      .then(() => navigator.wakeLock?.request("screen"))
+      .then((lock) => {
+        if (!lock) return;
+        if (!wantWake || epoch !== wakeEpoch || !timerRunning() || !timerVisible()) {
+          return Promise.resolve(lock.release()).catch(() => {});
+        }
+        wake = lock;
+        lock.addEventListener("release", () => {
+          if (wake !== lock) return;
+          wake = null;
+          clearTimeout(wakeRetry);
+          if (wantWake && timerRunning() && timerVisible()) wakeRetry = setTimeout(() => getWake(), 1000);
+        });
+      })
+      .catch(() => {
+        wake = null;
+      })
+      .finally(() => {
+        wakeRequest = null;
+        if (epoch !== wakeEpoch && timerRunning() && timerVisible()) getWake();
+      });
+    return wakeRequest;
+  }
   function releaseWake() {
+    if (timerRunning()) return;
     wantWake = false;
+    wakeEpoch++;
+    clearTimeout(wakeRetry);
+    wakeRetry = null;
     audioKeep(false);
-    try {
-      wake && wake.release();
-    } catch (e) {}
+    const lock = wake;
     wake = null;
+    try {
+      if (lock) Promise.resolve(lock.release()).catch(() => {});
+    } catch (e) {}
+    // Let final bells finish; then suspend the audio graph instead of leaving it running idle.
+    scheduleAudioSleep(true);
   }
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible" && wantWake && !wake) getWake();
+    if (timerVisible()) {
+      tick();
+      ftTick();
+      if (ui.tab === "session") {
+        markRounds(false);
+        ui.focus ? renderFocus() : updTimer();
+      }
+      if (wantWake && timerRunning() && !wake) getWake();
+    }
+    scheduleTimers();
   });
   /* Music while training (iPhone): "pause" = bell and voice interrupt the music (default, works on silent mode);
-     "mix" = music keeps playing and the bell sounds on top (needs the ring/silent switch on ring) */
+       "mix" = music keeps playing and the bell sounds on top (needs the ring/silent switch on ring) */
   const audioSessionOk = () => typeof navigator !== "undefined" && "audioSession" in navigator;
   function applyAudioMode() {
     try {
@@ -16135,7 +16547,9 @@ ${setupFields(setup, ty)}
     },
   };
   const canSpeak = () =>
-    typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+    typeof window !== "undefined" &&
+    "speechSynthesis" in window &&
+    typeof SpeechSynthesisUtterance !== "undefined";
   const voiceOn = () => canSpeak() && S.profile.voice !== false;
   function comboWords(c) {
     const lg = S.profile.lang,
@@ -16164,7 +16578,8 @@ ${setupFields(setup, ty)}
   /* Announces the round once at its start, slowly and clearly: round number, exercise and (if any) the combo */
   function callTick(tm) {
     const round = tm.phase === "rest" ? tm.round + 1 : tm.round;
-    if (!voiceOn() || !["work", "prep", "rest"].includes(tm.phase) || tm.called === round || round > tm.total) return;
+    if (!voiceOn() || !["work", "prep", "rest"].includes(tm.phase) || tm.called === round || round > tm.total)
+      return;
     const sess = S.sessions[tm.ds],
       rb = roundBlock(sess),
       it = rb && rb.items[round - 1];
@@ -16173,11 +16588,16 @@ ${setupFields(setup, ty)}
     const info = roundInfo(it),
       de = S.profile.lang === "de",
       text = `${de ? "Runde" : "Round"} ${round}. ${info.title}.${it.combo ? " " + comboWords(it.combo) + "." : ""}`;
-    // Announce during prep / the end of rest; cancel stale scheduled calls after pause, skip or navigation.
-    setTimeout(() => {
-      if (ui.timer === tm && tm.running && tm.called === round &&
-          ((tm.phase === "rest" && tm.round + 1 === round) || (tm.phase !== "rest" && tm.round === round))) say(text, 0.88);
-    }, 300);
+    queueTimerSpeech(
+      text,
+      300,
+      () =>
+        ui.timer === tm &&
+        tm.running &&
+        tm.called === round &&
+        ((tm.phase === "rest" && tm.round + 1 === round) || (tm.phase !== "rest" && tm.round === round)),
+      0.88,
+    );
   }
 
   /* ============ Badges (in the spirit of Apple Fitness awards): earned from the data, kept with their date ============ */
@@ -16193,7 +16613,8 @@ ${setupFields(setup, ty)}
     comp: "M8 4.5h8v4.8a4 4 0 0 1-8 0z M8 6.2H5.4a2.8 2.8 0 0 0 2.8 3.6 M16 6.2h2.6a2.8 2.8 0 0 1-2.8 3.6 M12 13.3v3.9 M9 19.5h6",
     win: "M13.2 3.5L6.5 13h5l-1 7.5 7-10h-5z",
     podium: "M4 20v-6h5.3v6 M9.3 20V9.5h5.4V20 M14.7 20v-8h5.3v8",
-    theory: "M4.5 5.5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2h-6z M19.5 5.5h-5a2 2 0 0 0-2 2 M19.5 5.5v12h-5a2 2 0 0 0-2 2",
+    theory:
+      "M4.5 5.5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2h-6z M19.5 5.5h-5a2 2 0 0 0-2 2 M19.5 5.5v12h-5a2 2 0 0 0-2 2",
     variety: "M4.5 7.5h3.8l7.4 9h3.8 M4.5 16.5h3.8l2.4-2.9 M13.3 10.4l2.4-2.9h3.8",
   };
   const TIER = [
@@ -16214,7 +16635,15 @@ ${setupFields(setup, ty)}
       ["Erster Schritt", "Deine erste eigene Einheit"],
       ["First step", "Your first own session"],
     ],
-    ["s10", "sess", 1, 10, "own", ["Dranbleiber", "10 eigene Einheiten"], ["Sticking with it", "10 own sessions"]],
+    [
+      "s10",
+      "sess",
+      1,
+      10,
+      "own",
+      ["Dranbleiber", "10 eigene Einheiten"],
+      ["Sticking with it", "10 own sessions"],
+    ],
     ["s25", "sess", 2, 25, "own", ["Routine", "25 eigene Einheiten"], ["Routine", "25 own sessions"]],
     ["s50", "sess", 3, 50, "own", ["Ausdauernd", "50 eigene Einheiten"], ["Relentless", "50 own sessions"]],
     ["s100", "sess", 4, 100, "own", ["Hundert", "100 eigene Einheiten"], ["Century", "100 own sessions"]],
@@ -16380,7 +16809,15 @@ ${setupFields(setup, ty)}
       ["Ab in den Ring", "Dein erstes Turnier"],
       ["Into the ring", "Your first tournament"],
     ],
-    ["k2", "win", 3, 1, "wins", ["Erster Sieg", "Einen Turnierkampf gewonnen"], ["First win", "Won a tournament bout"]],
+    [
+      "k2",
+      "win",
+      3,
+      1,
+      "wins",
+      ["Erster Sieg", "Einen Turnierkampf gewonnen"],
+      ["First win", "Won a tournament bout"],
+    ],
     [
       "k3",
       "podium",
@@ -16429,10 +16866,10 @@ ${setupFields(setup, ty)}
       g = `mg${id}${cls ? "x" : ""}`,
       big = n >= 10 && ["sess", "rounds", "club", "streak"].includes(icon);
     return `<svg class="medal ${earned ? "on" : "off"} ${cls}" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${earned ? T.a : "#3a3d44"}"/><stop offset="1" stop-color="${earned ? T.b : "#1f2227"}"/></linearGradient><radialGradient id="${g}i" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="${earned ? "#262a31" : "#1c1f24"}"/><stop offset="1" stop-color="#0d0f12"/></radialGradient></defs>
-      <circle cx="50" cy="50" r="47" fill="url(#${g})"/><circle cx="50" cy="50" r="38.5" fill="url(#${g}i)" stroke="${earned ? T.b : "#15171b"}" stroke-width="1.5"/>
-      ${earned ? `<path d="M18 34 A36 36 0 0 1 60 14" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/>` : ""}
-      <g transform="translate(${big ? 32 : 29} ${big ? 22 : 29}) scale(${big ? 1.5 : 1.75})" fill="none" stroke="${earned ? T.ink : "#4a4e56"}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${ICON_P[icon]}"/></g>
-      ${big ? `<text x="50" y="78" text-anchor="middle" font-size="15" font-weight="800" fill="${earned ? T.ink : "#4a4e56"}" font-family="ui-rounded,-apple-system,system-ui,sans-serif">${n}</text>` : ""}</svg>`;
+        <circle cx="50" cy="50" r="47" fill="url(#${g})"/><circle cx="50" cy="50" r="38.5" fill="url(#${g}i)" stroke="${earned ? T.b : "#15171b"}" stroke-width="1.5"/>
+        ${earned ? `<path d="M18 34 A36 36 0 0 1 60 14" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/>` : ""}
+        <g transform="translate(${big ? 32 : 29} ${big ? 22 : 29}) scale(${big ? 1.5 : 1.75})" fill="none" stroke="${earned ? T.ink : "#4a4e56"}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${ICON_P[icon]}"/></g>
+        ${big ? `<text x="50" y="78" text-anchor="middle" font-size="15" font-weight="800" fill="${earned ? T.ink : "#4a4e56"}" font-family="ui-rounded,-apple-system,system-ui,sans-serif">${n}</text>` : ""}</svg>`;
   }
   /* new badges are stored with their date; the very first check (existing data) stores silently */
   function checkBadges() {
@@ -16464,8 +16901,8 @@ ${setupFields(setup, ty)}
       v = Math.min(st[b[4]], b[3]),
       [nm, tx] = bName(b);
     return `<div class="bdgbig">${medalSvg(b, !!got, o.fresh ? "pop" : "")}</div>${o.fresh ? `<div class="bdgnew">${t("bdgNew")}</div>` : ""}<h3 style="text-align:center">${esc(nm)}</h3><p class="sub" style="text-align:center;margin:0">${esc(tx)}</p>
-      ${got ? `<p class="sub" style="text-align:center;margin:0">${t("bdgGot")(fmtDate(got))}</p>` : `<div class="pbar"><span style="width:${Math.round((100 * v) / b[3])}%"></span></div><p class="sub" style="text-align:center;margin:0">${v} / ${b[3]}</p>`}
-      <div class="acts2"><button type="button" class="btn" data-sx="${o.fresh ? "bdgnext" : "close"}">${o.fresh ? t("bdgCont") : t("close")}</button></div>`;
+        ${got ? `<p class="sub" style="text-align:center;margin:0">${t("bdgGot")(fmtDate(got))}</p>` : `<div class="pbar"><span style="width:${Math.round((100 * v) / b[3])}%"></span></div><p class="sub" style="text-align:center;margin:0">${v} / ${b[3]}</p>`}
+        <div class="acts2"><button type="button" class="btn" data-sx="${o.fresh ? "bdgnext" : "close"}">${o.fresh ? t("bdgCont") : t("close")}</button></div>`;
   }
   function badgeOrder() {
     const have = S.profile.badges || {},
@@ -16498,13 +16935,15 @@ ${setupFields(setup, ty)}
   const ftCfg = () => ({ r: 3, w: 120, b: 60, prep: true, warn: true, coach: false, ...(S.profile.ft || {}) });
   const fmtS = (s) => `${Math.floor(s / 60)}:${pad(s % 60)}`;
   function openFt() {
-    ui.ft = { phase: "setup", cfg: ftCfg() };
+    pauseOtherTimer("free");
+    if (!ui.ft) ui.ft = { phase: "setup", cfg: ftCfg() };
     renderFt();
   }
   function closeFt() {
-    clearInterval(ui.ftI);
-    releaseWake();
+    if (freeRunning()) ftTick();
     ui.ft = null;
+    cancelTimerSpeech();
+    syncTimers();
     renderFt();
   }
   function renderFt() {
@@ -16524,13 +16963,13 @@ ${setupFields(setup, ty)}
           `<div class="ftstep"><span>${lbl}</span><div><button type="button" data-fts="${k}:-1" aria-label="−">−</button><b>${v}</b><button type="button" data-fts="${k}:1" aria-label="+">+</button></div></div>`;
       el.className = "ftimer setup";
       el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div>
-        <div class="ftpre">${FT_PRESETS.map((p) => `<button type="button" data-ftp="${p.id}" aria-pressed="${p.r === c.r && p.w === c.w && p.b === c.b}"><b>${L.pre[p.id]}</b><small>${p.r} × ${fmtS(p.w)} · ${fmtS(p.b)}</small></button>`).join("")}</div>
-        <div class="ftcard">${step("r", c.r, L.rounds)}${step("w", fmtS(c.w), L.work)}${step("b", fmtS(c.b), L.rest)}
-          <button type="button" class="setrow2" data-ftt="prep"><span>${L.prep}</span><span class="tog ${c.prep ? "on" : ""}"></span></button>
-          <button type="button" class="setrow2" data-ftt="warn"><span>${L.warn}</span><span class="tog ${c.warn ? "on" : ""}"></span></button>
-          <button type="button" class="setrow2" data-ftt="coach"><span>${t("coach").lbl}<small>${t("coach").hint}</small></span><span class="tog ${c.coach ? "on" : ""}"></span></button></div>
-        <div class="fttotal">${L.total(Math.round(total / 60))}</div>
-        <button type="button" class="ftgo" data-ftx="start">${PLAY}<span>${L.start}</span></button>`;
+          <div class="ftpre">${FT_PRESETS.map((p) => `<button type="button" data-ftp="${p.id}" aria-pressed="${p.r === c.r && p.w === c.w && p.b === c.b}"><b>${L.pre[p.id]}</b><small>${p.r} × ${fmtS(p.w)} · ${fmtS(p.b)}</small></button>`).join("")}</div>
+          <div class="ftcard">${step("r", c.r, L.rounds)}${step("w", fmtS(c.w), L.work)}${step("b", fmtS(c.b), L.rest)}
+            <button type="button" class="setrow2" data-ftt="prep"><span>${L.prep}</span><span class="tog ${c.prep ? "on" : ""}"></span></button>
+            <button type="button" class="setrow2" data-ftt="warn"><span>${L.warn}</span><span class="tog ${c.warn ? "on" : ""}"></span></button>
+            <button type="button" class="setrow2" data-ftt="coach"><span>${t("coach").lbl}<small>${t("coach").hint}</small></span><span class="tog ${c.coach ? "on" : ""}"></span></button></div>
+          <div class="fttotal">${L.total(Math.round(total / 60))}</div>
+          <button type="button" class="ftgo" data-ftx="start">${PLAY}<span>${L.start}</span></button>`;
       return;
     }
     const len = f.phase === "work" ? c.w : f.phase === "rest" ? c.b : f.phase === "prep" ? 10 : 1,
@@ -16538,134 +16977,171 @@ ${setupFields(setup, ty)}
       frac = f.phase === "done" ? 1 : 1 - f.left / len;
     el.className = `ftimer run ${f.phase}${f.paused ? " paused" : ""}${f.phase === "work" && c.warn && f.left <= 10 ? " last" : ""}`;
     if (f.phase === "done") {
-      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div><div class="ftdone">${CHECK_SVG}<b>${L.done}</b><span>${L.doneT(c.r, Math.round((c.r * c.w) / 60))}</span><button type="button" class="btn" data-ftx="again">${L.again}</button><button type="button" class="btn sec" data-ftx="close">${t("close")}</button></div>`;
+      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div><div class="ftdone">${CHECK_SVG}<b>${L.done}</b><span>${L.doneT(f.completed || 0, Math.round(((f.completed || 0) * c.w) / 60))}</span><button type="button" class="btn" data-ftx="again">${L.again}</button><button type="button" class="btn sec" data-ftx="close">${t("close")}</button></div>`;
       return;
     }
     el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div>
-      <div class="ftph">${f.phase === "prep" ? L.ready : f.phase === "rest" ? L.restL : f.round === c.r && c.r > 1 ? L.lastR : L.round(f.round, c.r)}</div>
-      <div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/><circle id="ftarc" cx="140" cy="140" r="130" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - frac)).toFixed(1)}"/><g class="fknob" id="ftknob" style="transform:rotate(${(frac * 360).toFixed(1)}deg)"><circle cx="270" cy="140" r="10" fill="#fff"/></g></svg><div class="mid"><span class="clk" id="ftclk">${fmtS(f.left)}</span>${f.phase === "rest" && f.round < c.r ? `<span class="sub">${L.next(f.round + 1, c.r)}</span>` : ""}</div></div>
-      ${c.coach && f.phase === "work" ? `<div class="ftcall" id="ftcall">${f.callTxt ? esc(f.callTxt) : ""}</div>` : ""}
-      <div class="ftdots">${[...Array(c.r)].map((_, i) => `<i class="${i + 1 < f.round || (i + 1 === f.round && f.phase === "rest") ? "d" : i + 1 === f.round && f.phase === "work" ? "c" : ""}"></i>`).join("")}</div>
-      <div class="fctl"><button type="button" class="s" data-ftx="reset" aria-label="${L.reset}">${ICO.prev}</button><button type="button" class="m" data-ftx="pause">${f.paused ? PLAY : ICO.pause}</button><button type="button" class="s" data-ftx="skip" aria-label="${L.skip}">${ICO.next}</button></div>`;
+        <div class="ftph">${f.phase === "prep" ? L.ready : f.phase === "rest" ? L.restL : f.round === c.r && c.r > 1 ? L.lastR : L.round(f.round, c.r)}</div>
+        <div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/><circle id="ftarc" cx="140" cy="140" r="130" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - frac)).toFixed(1)}"/><g class="fknob" id="ftknob" style="transform:rotate(${(frac * 360).toFixed(1)}deg)"><circle cx="270" cy="140" r="10" fill="#fff"/></g></svg><div class="mid"><span class="clk" id="ftclk">${fmtS(f.left)}</span>${f.phase === "rest" && f.round < c.r ? `<span class="sub">${L.next(f.round + 1, c.r)}</span>` : ""}</div></div>
+        ${c.coach && f.phase === "work" ? `<div class="ftcall" id="ftcall">${f.callTxt ? esc(f.callTxt) : ""}</div>` : ""}
+        <div class="ftdots">${[...Array(c.r)].map((_, i) => `<i class="${i + 1 < f.round || (i + 1 === f.round && f.phase === "rest") ? "d" : i + 1 === f.round && f.phase === "work" ? "c" : ""}"></i>`).join("")}</div>
+        <div class="fctl"><button type="button" class="s" data-ftx="reset" aria-label="${L.reset}">${ICO.prev}</button><button type="button" class="m" data-ftx="pause" aria-label="${f.paused ? flowText().resume : flowText().pause}">${f.paused ? PLAY : ICO.pause}</button><button type="button" class="s" data-ftx="skip" aria-label="${L.skip}">${ICO.next}</button></div>`;
   }
-  function ftPhase(ph) {
+  function ftPhase(ph, quiet = false, startAt = Date.now()) {
     const f = ui.ft,
       c = f.cfg,
       L = t("ft");
+    cancelTimerSpeech();
     f.phase = ph;
     f.lastCall = 0;
     f.callTxt = "";
     const len = ph === "work" ? c.w : ph === "rest" ? c.b : 10;
     f.left = len;
-    f.endAt = Date.now() + len * 1000;
-    if (ph === "work") {
+    f.endAt = startAt + len * 1000;
+    if (!quiet && ph === "work") {
       bell(1);
-      timerFx("go", f.round === c.r && c.r > 1 ? t("win").last : t("win").go);
-      const txt = f.round === c.r && c.r > 1 ? L.sayLast : L.sayRound(f.round);
-      setTimeout(() => say(txt, 0.95), 1300);
-    } else if (ph === "rest") {
+      if (timerVisible()) timerFx("go", f.round === c.r && c.r > 1 ? t("win").last : t("win").go);
+      queueTimerSpeech(
+        f.round === c.r && c.r > 1 ? L.sayLast : L.sayRound(f.round),
+        1300,
+        () => ui.ft === f && !f.paused && f.phase === "work",
+      );
+    } else if (!quiet && ph === "rest") {
       bell(3);
-      timerFx("end", t("win").end(f.round));
-      setTimeout(() => say(L.restL, 0.95), 1500);
+      if (timerVisible()) timerFx("end", t("win").end(f.round));
+      queueTimerSpeech(L.restL, 1500, () => ui.ft === f && !f.paused && f.phase === "rest");
     }
-    renderFt();
+    if (!quiet && timerVisible()) renderFt();
   }
   function ftStart() {
+    pauseOtherTimer("free");
     const f = ui.ft;
-    S.profile.ft = { r: f.cfg.r, w: f.cfg.w, b: f.cfg.b, prep: f.cfg.prep, warn: f.cfg.warn, coach: f.cfg.coach };
+    if (!f) return;
+    S.profile.ft = {
+      r: f.cfg.r,
+      w: f.cfg.w,
+      b: f.cfg.b,
+      prep: f.cfg.prep,
+      warn: f.cfg.warn,
+      coach: f.cfg.coach,
+    };
     store.save();
     f.round = 1;
+    f.completed = 0;
     f.paused = false;
-    getWake();
-    if (f.cfg.prep) ftPhase("prep");
-    else ftPhase("work");
-    clearInterval(ui.ftI);
-    ui.ftI = setInterval(ftTick, 200);
+    ftPhase(f.cfg.prep ? "prep" : "work");
+    syncTimers();
   }
-  function ftEnd() {
-    const f = ui.ft,
-      c = f.cfg;
-    if (f.phase === "prep") return ftPhase("work");
+  function ftEnd(quiet = false, startAt = Date.now(), manual = false) {
+    const f = ui.ft;
+    if (!f) return;
+    const c = f.cfg;
+    if (f.phase === "prep") return ftPhase("work", quiet, startAt);
     if (f.phase === "work") {
-      S.profile.ftRounds = (S.profile.ftRounds || 0) + 1;
-      store.save();
+      if (!manual) {
+        f.completed = (f.completed || 0) + 1;
+        S.profile.ftRounds = (S.profile.ftRounds || 0) + 1;
+        store.save();
+      }
       if (f.round >= c.r) {
+        cancelTimerSpeech();
         f.phase = "done";
-        clearInterval(ui.ftI);
-        releaseWake();
-        bell(3);
-        setTimeout(() => say(t("ft").sayDone, 0.95), 1500);
-        timerFx("done", t("win").fin);
-        renderFt();
+        f.left = 0;
+        f.endAt = null;
+        if (!quiet) {
+          bell(3);
+          queueTimerSpeech(t("ft").sayDone, 1500, () => ui.ft === f && f.phase === "done");
+          if (timerVisible()) timerFx("done", t("win").fin);
+        }
+        syncTimers();
+        if (timerVisible()) renderFt();
         checkBadges();
         return;
       }
-      if (c.b > 0) return ftPhase("rest");
-      f.round++;
-      return ftPhase("work");
+      if (c.b > 0) return ftPhase("rest", quiet, startAt);
     }
     f.round++;
-    ftPhase("work");
+    ftPhase("work", quiet, startAt);
   }
   function ftTick() {
     const f = ui.ft;
-    if (!f || f.paused || !f.endAt || f.phase === "done" || f.phase === "setup") return;
-    const left = Math.max(0, Math.ceil((f.endAt - Date.now()) / 1000));
-    if (left === f.left) return;
-    f.left = left;
-    if (left <= 0) return ftEnd();
-    if (f.phase === "work" && f.cfg.warn && left === 10) beep(660, 0.1, 2);
-    // coach calls: a combo from the user's level every few seconds (not in the first 3 or last 4 seconds)
-    if (f.phase === "work" && f.cfg.coach && left > 4 && f.cfg.w - left >= 3) {
+    if (!freeRunning() || !f.endAt) return;
+    const now = Date.now(),
+      old = f.left;
+    let changed = false;
+    for (let n = 0; n < f.cfg.r * 2 + 2 && freeRunning() && f.endAt <= now; n++) {
+      const boundary = f.endAt;
+      ftEnd(now - boundary > 1100, boundary);
+      changed = true;
+    }
+    if (f.phase === "done") return;
+    f.left = Math.max(0, Math.ceil((f.endAt - now) / 1000));
+    if (!changed && old === f.left) return;
+    if (!changed && f.phase === "work" && f.cfg.warn && f.left === 10) beep(660, 0.1, 2);
+    if (f.phase === "work" && f.cfg.coach && f.left > 4 && f.cfg.w - f.left >= 3) {
       const gap = [8, 6, 5][S.profile.level] || 6;
-      if (!f.lastCall || f.lastCall - left >= gap) {
-        f.lastCall = left;
+      if (!f.lastCall || f.lastCall - f.left >= gap) {
+        f.lastCall = f.left;
         const c = combo(Math.random() < 0.5 ? "shadow" : "bag", null);
         f.callTxt = c.map((x) => TECH[x][S.profile.lang === "de" ? 0 : 1]).join(" · ");
-        say(comboWords(c), 1.05);
-        const el = document.getElementById("ftcall");
-        if (el) {
-          el.textContent = f.callTxt;
-          el.classList.remove("pop");
-          void el.offsetWidth;
-          el.classList.add("pop");
-        }
+        if (!changed) say(comboWords(c), 1.05);
       }
     }
-    if ((f.phase === "prep" || f.phase === "rest") && left <= 3) beep(740, 0.08, 1);
+    if (!changed && ["prep", "rest"].includes(f.phase) && f.left <= 3 && f.left > 0) beep(740, 0.08, 1);
+    if (!timerVisible()) return;
+    if (changed) return renderFt();
     const clk = document.getElementById("ftclk"),
       arc = document.getElementById("ftarc");
-    if (!clk) return;
-    clk.textContent = fmtS(left);
+    if (!clk || !arc) return;
+    clk.textContent = fmtS(f.left);
     const len = f.phase === "work" ? f.cfg.w : f.phase === "rest" ? f.cfg.b : 10,
       C = 2 * Math.PI * 130;
-    arc.setAttribute("stroke-dashoffset", (C * (left / len)).toFixed(1));
+    arc.setAttribute("stroke-dashoffset", ((C * f.left) / len).toFixed(1));
     const kn = document.getElementById("ftknob");
-    if (kn) kn.style.transform = `rotate(${((1 - left / len) * 360).toFixed(1)}deg)`;
-    document.getElementById("ftimer").classList.toggle("last", f.phase === "work" && f.cfg.warn && left <= 10);
+    if (kn) kn.style.transform = `rotate(${((1 - f.left / len) * 360).toFixed(1)}deg)`;
+    document
+      .getElementById("ftimer")
+      .classList.toggle("last", f.phase === "work" && f.cfg.warn && f.left <= 10);
+    const call = document.getElementById("ftcall");
+    if (call && f.callTxt && call.textContent !== f.callTxt) {
+      call.textContent = f.callTxt;
+      call.classList.remove("pop");
+      void call.offsetWidth;
+      call.classList.add("pop");
+    }
   }
   function ftAction(a) {
     const f = ui.ft;
+    if (!f) return;
     if (a === "close") return closeFt();
     if (a === "start") return ftStart();
-    if (a === "again") return (f.phase = "setup"), renderFt();
-    if (a === "pause") {
-      if (f.paused) {
-        f.endAt = Date.now() + f.left * 1000;
-        f.paused = false;
-        getWake();
-      } else {
-        f.paused = true;
-        releaseWake();
-      }
+    if (a === "again" || a === "reset") {
+      cancelTimerSpeech();
+      f.phase = "setup";
+      f.endAt = null;
+      f.paused = false;
+      syncTimers();
       return renderFt();
     }
-    if (a === "skip") return ftEnd();
-    if (a === "reset") {
-      clearInterval(ui.ftI);
-      releaseWake();
-      f.phase = "setup";
+    if (a === "pause") {
+      if (f.paused) {
+        pauseOtherTimer("free");
+        f.endAt = Date.now() + (f.remainingMs ?? f.left * 1000);
+        f.paused = false;
+      } else {
+        ftTick();
+        if (f.phase === "done") return;
+        f.remainingMs = Math.max(0, f.endAt - Date.now());
+        f.paused = true;
+        cancelTimerSpeech();
+      }
+      syncTimers();
       return renderFt();
+    }
+    if (a === "skip") {
+      ftEnd(false, Date.now(), true);
+      syncTimers();
+      return;
     }
   }
   function ftStepper(k, d) {
@@ -16729,18 +17205,18 @@ ${setupFields(setup, ty)}
       myc: 1,
       title: cb.id ? L.edit : L.new,
       html: `<div class="cprev">${cb.c.length ? comboHtml(cb.c) : `<span class="sub">${L.tap}</span>`}</div>
-        <div class="acts2"><button type="button" class="btn sec" data-cact="undo" ${cb.c.length ? "" : "disabled"}>⌫ ${L.undo}</button><button type="button" class="btn sec" data-cact="clear" ${cb.c.length ? "" : "disabled"}>${L.clear}</button></div>
-        ${Object.entries(MYC_GROUPS)
-          .map(
-            ([g, xs]) =>
-              `<div class="lab">${L.groups[g]}</div><div class="ctiles">${xs
-                .filter((x) => discOk(x))
-                .map(tile)
-                .join("")}</div>`,
-          )
-          .join("")}
-        <label class="lab" for="cName">${L.name}</label><input id="cName" type="text" maxlength="40" value="${esc(cb.name || "")}" placeholder="${L.namePh}">
-        <div class="acts2">${cb.id ? `<button type="button" class="btn sec" data-cact="del">${t("del")}</button>` : ""}<button type="button" class="btn" data-cact="save" ${cb.c.length >= 2 ? "" : "disabled"}>${t("save")}</button></div>`,
+          <div class="acts2"><button type="button" class="btn sec" data-cact="undo" ${cb.c.length ? "" : "disabled"}>⌫ ${L.undo}</button><button type="button" class="btn sec" data-cact="clear" ${cb.c.length ? "" : "disabled"}>${L.clear}</button></div>
+          ${Object.entries(MYC_GROUPS)
+            .map(
+              ([g, xs]) =>
+                `<div class="lab">${L.groups[g]}</div><div class="ctiles">${xs
+                  .filter((x) => discOk(x))
+                  .map(tile)
+                  .join("")}</div>`,
+            )
+            .join("")}
+          <label class="lab" for="cName">${L.name}</label><input id="cName" type="text" maxlength="40" value="${esc(cb.name || "")}" placeholder="${L.namePh}">
+          <div class="acts2">${cb.id ? `<button type="button" class="btn sec" data-cact="del">${t("del")}</button>` : ""}<button type="button" class="btn" data-cact="save" ${cb.c.length >= 2 ? "" : "disabled"}>${t("save")}</button></div>`,
     };
     if (ui.sheet && ui.sheet.myc) {
       Object.assign(ui.sheet, o);
@@ -16751,13 +17227,13 @@ ${setupFields(setup, ty)}
     const L = t("myc"),
       list = S.profile.myc || [];
     return `<div class="panel"><div class="field"><span class="lab">${L.title}</span><span class="sub">${L.hint}</span>
-      ${list
-        .map(
-          (m) =>
-            `<div class="mycrow"><button type="button" class="mycbody" data-cedit="${m.id}">${m.name ? `<b>${esc(m.name)}</b>` : ""}${comboHtml(m.c)}</button><button type="button" class="tog ${m.on ? "on" : ""}" data-con="${m.id}" aria-label="${L.active}" aria-pressed="${!!m.on}"></button></div>`,
-        )
-        .join("")}
-      <button type="button" class="btn sec" data-cact="new">＋ ${L.new}</button></div></div>`;
+        ${list
+          .map(
+            (m) =>
+              `<div class="mycrow"><button type="button" class="mycbody" data-cedit="${m.id}">${m.name ? `<b>${esc(m.name)}</b>` : ""}${comboHtml(m.c)}</button><button type="button" class="tog ${m.on ? "on" : ""}" data-con="${m.id}" aria-label="${L.active}" aria-pressed="${!!m.on}"></button></div>`,
+          )
+          .join("")}
+        <button type="button" class="btn sec" data-cact="new">＋ ${L.new}</button></div></div>`;
   }
 
   /* ============ First steps: a small checklist on Today that ticks itself off (like onboarding lists in Duolingo or Notion) ============ */
@@ -16786,13 +17262,13 @@ ${setupFields(setup, ty)}
       L = t("starter");
     if (ok === st.length) return "";
     return `<div class="starter"><div class="sthead"><div><b>${L.title}</b><span class="sub">${L.count(ok, st.length)}</span></div><button type="button" class="btn ghost" data-act2="starterhide">${L.hide}</button></div>
-      <div class="pbar"><span style="width:${Math.round((100 * ok) / st.length)}%"></span></div>
-      ${st
-        .map(
-          (x, i) =>
-            `<button type="button" class="strow${x.done ? " done" : ""}" data-start="${i}" ${x.done ? "disabled" : ""}><i>${x.done ? "✓" : ""}</i><span><b>${L.steps[x.k][0]}</b><small>${L.steps[x.k][1]}</small></span>${x.done ? "" : '<span class="chev">›</span>'}</button>`,
-        )
-        .join("")}</div>`;
+        <div class="pbar"><span style="width:${Math.round((100 * ok) / st.length)}%"></span></div>
+        ${st
+          .map(
+            (x, i) =>
+              `<button type="button" class="strow${x.done ? " done" : ""}" data-start="${i}" ${x.done ? "disabled" : ""}><i>${x.done ? "✓" : ""}</i><span><b>${L.steps[x.k][0]}</b><small>${L.steps[x.k][1]}</small></span>${x.done ? "" : '<span class="chev">›</span>'}</button>`,
+          )
+          .join("")}</div>`;
   }
   function starterGo(i) {
     const x = starterSteps()[i];
@@ -16839,8 +17315,21 @@ ${setupFields(setup, ty)}
   const BLK_END = ["Schatten-Sprints", "Sack-Sprints", "Kick-Intervalle", "Seil-Intervalle", "Speed-Runden"];
   /* mobility per stage: hips & adductors → dynamic kick mobility → active range */
   const BLK_MOB = [
-    ["Hüftkreise im Vierfüßler", "90/90 Hüftwechsel", "Cossack Squats", "Froschdehnung", "Taube", "Tiefe Hocke halten"],
-    ["Beinpendel kontrolliert", "Zeitlupen-Kicks", "World's Greatest Stretch", "Cossack Squats", "90/90 Hüftwechsel"],
+    [
+      "Hüftkreise im Vierfüßler",
+      "90/90 Hüftwechsel",
+      "Cossack Squats",
+      "Froschdehnung",
+      "Taube",
+      "Tiefe Hocke halten",
+    ],
+    [
+      "Beinpendel kontrolliert",
+      "Zeitlupen-Kicks",
+      "World's Greatest Stretch",
+      "Cossack Squats",
+      "90/90 Hüftwechsel",
+    ],
     ["Kick-Halten", "Aktive Beinheber", "Zeitlupen-Kicks", "Cossack Squats", "Beinpendel kontrolliert"],
   ];
   /* block week on a date (1–6) regardless of tournaments; null outside the block or while paused */
@@ -16915,7 +17404,8 @@ ${setupFields(setup, ty)}
     }
   }
   /* round cue: fight-pace intervals or the block's pace hint */
-  const paceTxt = (it) => (it.cue ? t("blk").cue[it.cue] || "" : it.pace ? t("paceIv") : it.ease ? t("easeRound") : "");
+  const paceTxt = (it) =>
+    it.cue ? t("blk").cue[it.cue] || "" : it.pace ? t("paceIv") : it.ease ? t("easeRound") : "";
   /* weakest physical area of the latest test (technique doesn't pick a block) */
   function blockSuggest() {
     const tt = S.tests[S.tests.length - 1];
@@ -17173,7 +17663,9 @@ ${setupFields(setup, ty)}
     const I = t("inst"),
       ios = isIOS();
     if (!ios && !installEvt && !/android/i.test(navigator.userAgent)) return "";
-    const txt = ios ? I.ios.replace("Teilen", "Teilen " + SHARE_ICO).replace("Share", "Share " + SHARE_ICO) : I.and;
+    const txt = ios
+      ? I.ios.replace("Teilen", "Teilen " + SHARE_ICO).replace("Share", "Share " + SHARE_ICO)
+      : I.and;
     return `<div class="insth"><b>${I.title}</b><p class="sub">${txt}${onb ? " " + I.first : ""}</p>${
       onb
         ? installEvt
@@ -17266,9 +17758,11 @@ ${setupFields(setup, ty)}
       sess = S.sessions[e.date],
       rb = own(e) && sess && roundBlock(sess),
       nEx = own(e) && sess ? sess.blocks.reduce((a, b) => a + b.items.length, 0) : 0,
-      stats = [[e.minutes, W.min], rb ? [e.completedRounds ?? rb.items.length, W.rounds] : nEx ? [nEx, W.ex] : null, [e.rpe, "RPE"]].filter(
-        Boolean,
-      ),
+      stats = [
+        [e.minutes, W.min],
+        rb ? [e.completedRounds ?? rb.items.length, W.rounds] : nEx ? [nEx, W.ex] : null,
+        [e.rpe, "RPE"],
+      ].filter(Boolean),
       ownN = S.log.filter(own).length,
       hours = Math.round(S.log.reduce((a, x) => a + (x.minutes || 0), 0) / 60),
       bi = own(e) ? blockRaw(e.date) : null,
@@ -17281,17 +17775,17 @@ ${setupFields(setup, ty)}
     el.setAttribute("aria-modal", "true");
     el.style.setProperty("--tc", own(e) ? `var(--c-${e.type})` : "var(--c-V)");
     el.innerHTML = `${CHECK_SVG}<h2>${esc(title)}</h2><p class="sub">${esc(sub)}</p>
-      <div class="wstats">${stats.map((x) => `<div><b data-to="${x[0]}">${reduced ? x[0] : 0}</b><small>${x[1]}</small></div>`).join("")}</div>
-      <div class="wweek${full ? " full" : ""}"><div class="wring"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="7"/><circle class="arc" cx="38" cy="38" r="32" fill="none" stroke="${full ? "var(--ice)" : "var(--tc)"}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - (reduced ? wp.done : before) / goal)).toFixed(1)}" data-off="${(C * (1 - Math.min(1, wp.done / goal))).toFixed(1)}"/></svg><span>${wp.done}/${goal}</span></div>
-        <div><b>${full ? W.full : mon.getTime() === monday(today()).getTime() ? W.week : `${W.weekOf} ${fmtDate(iso(mon))}`}</b>${
-          full && streak
-            ? `<span class="wflame">${FLAME_SVG}${esc(W.streak(streak))}</span>`
-            : `<span class="sub">${esc(wp.planned > wp.done ? W.left(wp.planned - wp.done) : W.streak0)}</span>`
-        }${bi ? `<span class="wblk">${t("blk").names[bi.k]} · ${t("blk").week(bi.wk)}</span>` : ""}</div></div>
-      ${own(e) && sess && sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<div class="wcare">🧤 ${esc(t("guide").winCare)}</div>` : ""}
-      ${fresh.length ? `<div class="wbdg">${fresh.map((b) => `<div><div class="wmed">${medalSvg(b, true, "pop")}</div><small>${W.newB}</small><b>${esc(bName(b)[0])}</b></div>`).join("")}</div>` : ""}
-      <div class="wtot">${esc(W.total(ownN, hours))}</div>
-      <button type="button" class="btn">${W.cont}</button>`;
+        <div class="wstats">${stats.map((x) => `<div><b data-to="${x[0]}">${reduced ? x[0] : 0}</b><small>${x[1]}</small></div>`).join("")}</div>
+        <div class="wweek${full ? " full" : ""}"><div class="wring"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="7"/><circle class="arc" cx="38" cy="38" r="32" fill="none" stroke="${full ? "var(--ice)" : "var(--tc)"}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - (reduced ? wp.done : before) / goal)).toFixed(1)}" data-off="${(C * (1 - Math.min(1, wp.done / goal))).toFixed(1)}"/></svg><span>${wp.done}/${goal}</span></div>
+          <div><b>${full ? W.full : mon.getTime() === monday(today()).getTime() ? W.week : `${W.weekOf} ${fmtDate(iso(mon))}`}</b>${
+            full && streak
+              ? `<span class="wflame">${FLAME_SVG}${esc(W.streak(streak))}</span>`
+              : `<span class="sub">${esc(wp.planned > wp.done ? W.left(wp.planned - wp.done) : W.streak0)}</span>`
+          }${bi ? `<span class="wblk">${t("blk").names[bi.k]} · ${t("blk").week(bi.wk)}</span>` : ""}</div></div>
+        ${own(e) && sess && sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<div class="wcare">🧤 ${esc(t("guide").winCare)}</div>` : ""}
+        ${fresh.length ? `<div class="wbdg">${fresh.map((b) => `<div><div class="wmed">${medalSvg(b, true, "pop")}</div><small>${W.newB}</small><b>${esc(bName(b)[0])}</b></div>`).join("")}</div>` : ""}
+        <div class="wtot">${esc(W.total(ownN, hours))}</div>
+        <button type="button" class="btn">${W.cont}</button>`;
     document.body.appendChild(el);
     const close = () => {
       el.classList.add("out");
@@ -17305,7 +17799,8 @@ ${setupFields(setup, ty)}
         el.classList.add("in");
         const arc = el.querySelector(".wring .arc");
         arc.setAttribute("stroke-dashoffset", arc.dataset.off);
-        if (!reduced) el.querySelectorAll("[data-to]").forEach((b) => setTimeout(() => countUp(b, +b.dataset.to), 350));
+        if (!reduced)
+          el.querySelectorAll("[data-to]").forEach((b) => setTimeout(() => countUp(b, +b.dataset.to), 350));
         setTimeout(() => celebrate(innerWidth / 2, 120, 22, 90), 700);
         if (full) setTimeout(() => celebrate(innerWidth / 2, innerHeight / 2, 18, 80), 1500);
       }),
@@ -17421,14 +17916,17 @@ ${setupFields(setup, ty)}
       const mins = Math.max(2, Math.round(b.min / Math.max(1, b.items.length)));
       return `${fix || (de ? "60–90 s halten" : "hold 60–90 s")} · ${de ? "insgesamt ca." : "about"} ${mins} ${de ? "Min." : "min in total"}`;
     }
-    if (b.key === "cool" || e.cat === "cool" || e.cat === "mob") return fix || (de ? "45–60 s halten" : "hold 45–60 s");
+    if (b.key === "cool" || e.cat === "cool" || e.cat === "mob")
+      return fix || (de ? "45–60 s halten" : "hold 45–60 s");
     if (e.cat === "cond") {
       if (fix) return fix;
       if (e.de === "Burpees") return ["6", "10", "15"][L] + reps;
       const W = [30, 40, 45][L],
         R = [30, 20, 15][L];
       if (e.de === "Bear Crawl")
-        return de ? `${W} s (ca. 10 m hin und zurück), ${R} s Pause` : `${W} s (about 10 m out and back), ${R} s rest`;
+        return de
+          ? `${W} s (ca. 10 m hin und zurück), ${R} s Pause`
+          : `${W} s (about 10 m out and back), ${R} s rest`;
       return de ? `${W} s Belastung, ${R} s Pause` : `${W} s work, ${R} s rest`;
     }
     // strength, core and power
@@ -17436,7 +17934,9 @@ ${setupFields(setup, ty)}
       const one = (de ? "5 Wdh." : "5 reps") + side;
       if (circ) return one;
       if (/^Kontrast|^Contrast/.test(b.sets || ""))
-        return de ? `3 × 5 Wdh.${side} direkt nach dem Kraftsatz` : `3 × 5 reps${side} right after the strength set`;
+        return de
+          ? `3 × 5 Wdh.${side} direkt nach dem Kraftsatz`
+          : `3 × 5 reps${side} right after the strength set`;
       return `${n} × ${one} · ${de ? "1–2 Min. Pause" : "1–2 min rest"}`;
     }
     let one;
@@ -17464,7 +17964,8 @@ ${setupFields(setup, ty)}
         r = b.b || 60;
       info = `${b.items.length} × ${fmt(w)} / ${fmt(r)} ${de ? "Pause" : "rest"}`;
     }
-    const straight = !b.rounds && !isCirc(b) && (b.key === "str" || b.key === "pow") && /^\d+×/.test(b.sets || ""),
+    const straight =
+        !b.rounds && !isCirc(b) && (b.key === "str" || b.key === "pow") && /^\d+×/.test(b.sets || ""),
       note =
         isCirc(b) && !b.rounds
           ? de
@@ -17481,10 +17982,10 @@ ${setupFields(setup, ty)}
   /* ============ Guide: hand wraps (animated), gear care, care & first aid ============ */
   /* back of a left hand, thumb on the right; each wrapping step adds bandage strokes */
   const WRAP_HAND = `<g fill="#F2EEE7" stroke="#111318" stroke-width="3" stroke-linejoin="round">
-    <rect x="98" y="196" width="64" height="62" rx="10"/>
-    <rect x="76" y="58" width="22" height="58" rx="11"/><rect x="99" y="38" width="23" height="72" rx="11.5"/><rect x="123" y="32" width="23" height="78" rx="11.5"/><rect x="147" y="44" width="22" height="68" rx="11"/>
-    <path d="M168 150 Q196 132 204 108 Q208 96 197 92 Q186 90 180 104 L166 128 Z"/>
-    <path d="M78 104 Q74 160 92 196 L168 196 Q176 150 170 104 Z"/></g>`;
+      <rect x="98" y="196" width="64" height="62" rx="10"/>
+      <rect x="76" y="58" width="22" height="58" rx="11"/><rect x="99" y="38" width="23" height="72" rx="11.5"/><rect x="123" y="32" width="23" height="78" rx="11.5"/><rect x="147" y="44" width="22" height="68" rx="11"/>
+      <path d="M168 150 Q196 132 204 108 Q208 96 197 92 Q186 90 180 104 L166 128 Z"/>
+      <path d="M78 104 Q74 160 92 196 L168 196 Q176 150 170 104 Z"/></g>`;
   const WRAP_STEPS = [
     ["M190 102 Q206 112 196 126 Q186 138 172 132 M172 132 L106 206"],
     ["M94 206 Q130 214 166 206", "M94 218 Q130 226 166 218", "M94 230 Q130 238 166 230"],
@@ -17508,7 +18009,8 @@ ${setupFields(setup, ty)}
   }
   function guideSheetHtml(o) {
     const G = t("guide"),
-      secs = (list) => list.map(([a, b]) => `<div class="gsec"><b>${esc(a)}</b><p>${esc(b)}</p></div>`).join("");
+      secs = (list) =>
+        list.map(([a, b]) => `<div class="gsec"><b>${esc(a)}</b><p>${esc(b)}</p></div>`).join("");
     if (o.id === "wrap") {
       const n = WRAP_STEPS.length,
         st = Math.max(0, Math.min(n - 1, o.step || 0));
@@ -17621,9 +18123,9 @@ ${setupFields(setup, ty)}
       low = lowTime(),
       work = S.profile.work || "";
     return `<div class="panel"><div class="field"><span class="lab">${L.title}</span><span class="sub">${L.hint}</span></div>
-      <div class="field"><span class="lab">${L.weekLbl}</span><div class="seg">${["easy", "normal", "hard"].map((k) => `<button type="button" data-mood="${k}" aria-pressed="${mood === k}">${L.moods[k]}</button>`).join("")}</div></div>
-      <div class="field"><span class="lab">${L.lowLbl}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-low="${i ? "off" : "on"}" aria-pressed="${low === !i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${L.lowHint}</span></div>
-      <div class="field"><span class="lab">${L.workLbl}</span><div class="seg">${["", "sit", "phys"].map((k) => `<button type="button" data-work="${k || "none"}" aria-pressed="${work === k}">${L.works[k]}</button>`).join("")}</div><span class="sub">${L.workHint}</span></div></div>`;
+        <div class="field"><span class="lab">${L.weekLbl}</span><div class="seg">${["easy", "normal", "hard"].map((k) => `<button type="button" data-mood="${k}" aria-pressed="${mood === k}">${L.moods[k]}</button>`).join("")}</div></div>
+        <div class="field"><span class="lab">${L.lowLbl}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-low="${i ? "off" : "on"}" aria-pressed="${low === !i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${L.lowHint}</span></div>
+        <div class="field"><span class="lab">${L.workLbl}</span><div class="seg">${["", "sit", "phys"].map((k) => `<button type="button" data-work="${k || "none"}" aria-pressed="${work === k}">${L.works[k]}</button>`).join("")}</div><span class="sub">${L.workHint}</span></div></div>`;
   }
   function lifeAction(ds) {
     const L = t("life");
@@ -17659,11 +18161,14 @@ ${setupFields(setup, ty)}
       // today's session follows the new form, unless sets were already logged or the timer is running
       const sess = S.sessions[d],
         logged =
-          sess && sess.perf && Object.values(sess.perf).some((rows) => rows.some((r) => r.r != null || r.kg != null)),
-        busy = logged || (ui.timer && ui.timer.ds === d && ui.timer.phase !== "ready" && ui.timer.phase !== "done");
+          sess &&
+          sess.perf &&
+          Object.values(sess.perf).some((rows) => rows.some((r) => r.r != null || r.kg != null)),
+        busy =
+          logged || (ui.timer && ui.timer.ds === d && ui.timer.phase !== "ready" && ui.timer.phase !== "done");
       if (sess && !busy) {
         S.sessions[d] = buildSession(d, sess.type, sess.loc, sess.eq, { min: sess.min, run: sess.run });
-        ui.timer = null;
+        clearSessionTimer();
       }
       if (draft) draft.form = S.profile.form;
       store.save();
@@ -17707,7 +18212,7 @@ ${setupFields(setup, ty)}
       el.hidden = true;
       return;
     }
-    if (!ui.timer || ui.timer.ds !== ui.sel) ui.timer = newTimer(ui.sel);
+    selectSessionTimer(ui.sel);
     const tm = ui.timer,
       items = rb.items,
       cur = items[Math.min(tm.round, tm.total) - 1],
@@ -17724,17 +18229,17 @@ ${setupFields(setup, ty)}
       tm.phase === "rest" ? "var(--done)" : tm.phase === "prep" ? "var(--ice)" : `var(--c-${sess.type})`,
     );
     el.className = "focus" + (tm.phase === "rest" ? " rest" : "");
-    let h = `<div class="fbar"><button type="button" class="x" data-fx="close" aria-label="×">✕</button><span>${t("types")[sess.type]}</span>${canSpeak() ? `<button type="button" class="x vo" data-voice="1" aria-pressed="${voiceOn()}" aria-label="${t("voice")}">${voiceOn() ? "🔊" : "🔈"}</button>` : `<span style="width:40px"></span>`}</div>`;
+    let h = `<div class="fbar"><button type="button" class="x" data-fx="close" aria-label="${flowText().overview}">✕</button><span>${t("types")[sess.type]}</span>${canSpeak() ? `<button type="button" class="x vo" data-voice="1" aria-pressed="${voiceOn()}" aria-label="${t("voice")}">${voiceOn() ? "🔊" : "🔈"}</button>` : `<span style="width:40px"></span>`}</div>`;
     if (tm.phase === "done") {
       h += `<div class="fdone">${CHECK_SVG}<b>${t("finishedT")}</b><div class="sub">${t("roundOf")(tm.total, tm.total)}</div><button type="button" class="btn" data-fx="finish">${t("finishNow")}</button></div>`;
     } else {
       const C = 2 * Math.PI * 130;
       h += `<div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="farc" class="arc" cx="140" cy="140" r="130" fill="none" stroke="var(--tc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/><g class="fknob" id="fknob"><circle cx="270" cy="140" r="9" fill="var(--tc)" stroke="#0a0b0d" stroke-width="4"/></g></svg>
- <div class="mid"><span class="ph" id="fph"></span><span class="clk" id="fclock">${fmt(tm.left)}</span><span class="sub">${t("roundOf")(Math.min(tm.round, tm.total), tm.total)}</span></div></div>`;
+   <div class="mid"><span class="ph" id="fph"></span><span class="clk" id="fclock">${fmt(tm.left)}</span><span class="sub">${t("roundOf")(Math.min(tm.round, tm.total), tm.total)}</span></div></div>`;
       const lbl = rest ? t("nextLbl") : info.label || t("roundOf")(Math.min(tm.round, tm.total), tm.total);
       h += `<div class="fcur${sk ? (big ? " skb" : " sks") : ""}">${sk && big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}<div class="fct"><small>${esc(lbl)}</small><b>${esc(info.title)}</b><p>${esc(info.desc)}</p>${info.combo ? `<div id="fcall">${comboHtml(info.combo)}</div>` : ""}</div>${sk && !big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}</div>`;
       h += `<div class="fnext">${nxt ? `${t(rest ? "afterLbl" : "nextLbl")}: <b>${esc(roundInfo(nxt).title)}</b>` : t("lastRound")}</div>`;
-      h += `<div class="fctl"><button type="button" class="s" data-fx="prev" aria-label="←" ${tm.round <= 1 ? "disabled" : ""}>${ICO.prev}</button><button type="button" class="m" data-fx="go" id="fgo"></button><button type="button" class="s" data-fx="next" aria-label="→" ${tm.round >= tm.total ? "disabled" : ""}>${ICO.next}</button></div>`;
+      h += `<div class="fctl"><button type="button" class="s" data-fx="prev" aria-label="${flowText().previous}" ${tm.round <= 1 ? "disabled" : ""}>${ICO.prev}</button><button type="button" class="m" data-fx="go" id="fgo"></button><button type="button" class="s" data-fx="next" aria-label="${flowText().nextRound}" ${tm.round >= tm.total ? "disabled" : ""}>${ICO.next}</button></div>`;
     }
     el.innerHTML = h;
     el.hidden = false;
@@ -17763,40 +18268,60 @@ ${setupFields(setup, ty)}
     document.getElementById("farc").setAttribute("stroke-dashoffset", (C * (1 - frac)).toFixed(1));
     const kn = document.getElementById("fknob");
     if (kn) kn.style.transform = `rotate(${(frac * 360).toFixed(1)}deg)`;
-    document.getElementById("fgo").innerHTML = tm.phase === "ready" ? PLAY : tm.running ? ICO.pause : PLAY;
+    const go = document.getElementById("fgo");
+    const state = tm.phase === "ready" ? "ready" : tm.running ? "running" : "paused";
+    if (go.dataset.state !== state) {
+      go.innerHTML = tm.phase === "ready" ? PLAY : tm.running ? ICO.pause : PLAY;
+      go.setAttribute(
+        "aria-label",
+        tm.phase === "ready" ? flowText().start : tm.running ? flowText().pause : flowText().resume,
+      );
+      go.dataset.state = state;
+    }
   }
   /* Start / pause / resume – shared by the inline timer and the training mode */
   function timerGo() {
-    if (!ui.timer || ui.timer.ds !== ui.sel) ui.timer = newTimer(ui.sel);
+    pauseOtherTimer("session");
+    selectSessionTimer(ui.sel);
     const tm = ui.timer;
     if (tm.phase === "done") {
       ui.timer = newTimer(ui.sel);
+      syncTimers();
+      return;
+    }
+    if (tm.running) {
+      tick();
+      if (tm.phase === "done") return;
+      tm.carryMs = Math.max(0, Date.now() - lastTick);
+      tm.running = false;
+      tm.called = null;
+      cancelTimerSpeech();
+      syncTimers();
       return;
     }
     if (tm.phase === "ready") {
-      // 10 seconds to get into position; the round (and the bell) starts after that
       tm.phase = "prep";
       tm.left = 10;
-      tm.running = true;
-      lastTick = Date.now();
-      getWake();
-      callTick(tm);
-      return;
+      tm.carryMs = 0;
     }
-    tm.running = !tm.running;
-    if (tm.running) { lastTick = Date.now(); getWake(); callTick(tm); }
-    else { tm.called = null; releaseWake(); }
+    tm.running = true;
+    lastTick = Date.now() - (tm.carryMs || 0);
+    callTick(tm);
+    syncTimers();
   }
   function timerJump(d) {
     const tm = ui.timer;
     if (!tm) return;
+    tick();
     tm.round = Math.max(1, Math.min(tm.total, tm.round + d));
     tm.call = null;
     tm.called = null;
     tm.phase = "ready";
     tm.left = tm.work;
     tm.running = false;
-    releaseWake();
+    tm.carryMs = 0;
+    cancelTimerSpeech();
+    syncTimers();
   }
   function markRounds(scroll) {
     const tm = ui.timer && ui.timer.ds === ui.sel ? ui.timer : null,
@@ -17823,7 +18348,9 @@ ${setupFields(setup, ty)}
     const sess = S.sessions[tm.ds];
     if (!sess) return;
     // Snapshot legacy rdone before moving the resume cursor, including explicit false values for skipped rounds.
-    sess.roundChecks = Object.fromEntries(Array.from({ length: tm.total }, (_, i) => [i + 1, roundDone(sess, i + 1)]));
+    sess.roundChecks = Object.fromEntries(
+      Array.from({ length: tm.total }, (_, i) => [i + 1, roundDone(sess, i + 1)]),
+    );
     sess.roundChecks[tm.round] = true;
     sess.rdone = Math.max(sess.rdone || 0, tm.round);
     store.save();
@@ -17874,7 +18401,8 @@ ${setupFields(setup, ty)}
   /* Runs every second; counts the real time that passed, so a locked screen doesn't stop the clock */
   let lastTick = Date.now();
   function tick() {
-    const now = Date.now(), gap = Math.floor((now - lastTick) / 1000);
+    const now = Date.now(),
+      gap = Math.floor((now - lastTick) / 1000);
     if (gap < 1) return;
     lastTick += gap * 1000;
     const tm = ui.timer;
@@ -17882,11 +18410,13 @@ ${setupFields(setup, ty)}
     let changed = false;
     const max = Math.min(gap, tm.total * (tm.work + tm.rest) + 10);
     for (let i = 0; i < max && tm.running; i++) changed = timerStep(tm, i < gap - 1) || changed;
-    updTimer();
+    if (!timerVisible() || ui.tab !== "session" || ui.sel !== tm.ds) return;
     if (changed) {
       markRounds(false);
       if (ui.focus) renderFocus();
-    } else updFocus();
+    }
+    if (ui.focus) updFocus();
+    else updTimer();
   }
   function updTimer() {
     const tm = ui.timer,
@@ -17913,10 +18443,11 @@ ${setupFields(setup, ty)}
     document.getElementById("tgo").textContent = tlabel(tm);
     const len = tm.phase === "rest" ? tm.rest : tm.phase === "prep" ? 10 : tm.work,
       bar = document.getElementById("tbar");
-    if (bar) bar.style.width = (tm.phase === "ready" ? 0 : tm.phase === "done" ? 100 : (1 - tm.left / len) * 100) + "%";
+    if (bar)
+      bar.style.width =
+        (tm.phase === "ready" ? 0 : tm.phase === "done" ? 100 : (1 - tm.left / len) * 100) + "%";
   }
-  /* One global 1-second clock; tick() returns immediately unless a round is running */
-  setInterval(tick, 1000);
+  /* scheduleTimers() runs only while a timer is active, aligned to the next displayed second. */
 
   /* ============ Events ============ */
   function readTestInputs() {
@@ -17933,12 +18464,15 @@ ${setupFields(setup, ty)}
     d.endS = num("tEndS");
   }
   document.addEventListener("click", async (ev) => {
-    const check = ev.target.closest("[data-check]"), row = ev.target.closest("[data-item]"),
+    const check = ev.target.closest("[data-check]"),
+      row = ev.target.closest("[data-item]"),
       manualRow = row && !ev.target.closest("button,input,textarea,a") && row.querySelector("[data-check]");
     if (check || manualRow) {
-      const sess = S.sessions[ui.sel], key = (check || manualRow).dataset.check;
+      const sess = S.sessions[ui.sel],
+        key = (check || manualRow).dataset.check;
       if (!sess) return;
-      const [bi, ni] = key.split(".").map(Number), done = itemDone(sess, bi, ni);
+      const [bi, ni] = key.split(".").map(Number),
+        done = itemDone(sess, bi, ni);
       if (sess.blocks[bi].rounds) {
         sess.roundChecks = sess.roundChecks || {};
         sess.roundChecks[ni + 1] = !done;
@@ -17971,6 +18505,30 @@ ${setupFields(setup, ty)}
     const b = ev.target.closest("button");
     if (!b || b.disabled) return;
     const ds = b.dataset;
+    if (ds.nextOpen) return nextOpenExercise();
+    if (ds.effort) {
+      const draft = finishDraft();
+      draft.rpe = +ds.effort;
+      const hidden = document.getElementById("fRpe");
+      if (hidden) hidden.value = String(draft.rpe);
+      document
+        .querySelectorAll("[data-effort]")
+        .forEach((el) => el.setAttribute("aria-pressed", String(+el.dataset.effort === draft.rpe)));
+      return;
+    }
+    if (ds.exerciseEffort) {
+      const sess = S.sessions[ui.sel];
+      if (!sess) return;
+      sess.exerciseEffort = sess.exerciseEffort || {};
+      sess.exerciseEffort[ds.exerciseEffort] =
+        sess.exerciseEffort[ds.exerciseEffort] === ds.value ? null : ds.value;
+      document.querySelectorAll("[data-exercise-effort]").forEach((el) => {
+        if (el.dataset.exerciseEffort === ds.exerciseEffort)
+          el.setAttribute("aria-pressed", String(el.dataset.value === sess.exerciseEffort[ds.exerciseEffort]));
+      });
+      store.save();
+      return;
+    }
     if (ds.progressInfoClose) {
       S.profile.progressInfoSeen = true;
       if (draft) draft.progressInfoSeen = true;
@@ -17993,9 +18551,11 @@ ${setupFields(setup, ty)}
       });
     }
     if (ds.lock) return toast(t(ds.lock === "age" ? "discAgeT" : "discLockT"));
-    if (ds.resetAll) return openSheet({ kind: "confirm", title: t("resetLbl"), lines: [t("resetAsk")], run: resetAll });
+    if (ds.resetAll)
+      return openSheet({ kind: "confirm", title: t("resetLbl"), lines: [t("resetAsk")], run: resetAll });
     if (ds.mood || ds.low || ds.work || ds.form) return lifeAction(ds);
-    if (ds.guide || ds.wstep != null || ds.packOpen || ds.pack || ds.packAdd || ds.packReset) return guideAction(ds);
+    if (ds.guide || ds.wstep != null || ds.packOpen || ds.pack || ds.packAdd || ds.packReset)
+      return guideAction(ds);
     if (ds.fast) {
       const hj = hijri(today());
       if (!hj) return;
@@ -18196,7 +18756,8 @@ ${setupFields(setup, ty)}
           store.save();
           render();
         };
-      if (clubOn(d)) openSheet({ kind: "confirm", title: t("addTraining"), lines: [t("clubSameDay")], run: go });
+      if (clubOn(d))
+        openSheet({ kind: "confirm", title: t("addTraining"), lines: [t("clubSameDay")], run: go });
       else go();
       return;
     }
@@ -18363,7 +18924,9 @@ ${setupFields(setup, ty)}
     }
     /* partner and heavy bag are mutually exclusive: one, the other, or neither */
     if (ds.pb) {
-      ui.setup.eq = ui.setup.eq.filter((x) => x !== "partner" && x !== "bag" && (ds.pb === "partner" || x !== "pads"));
+      ui.setup.eq = ui.setup.eq.filter(
+        (x) => x !== "partner" && x !== "bag" && (ds.pb === "partner" || x !== "pads"),
+      );
       if (ds.pb !== "none") ui.setup.eq.push(ds.pb);
       render();
       return;
@@ -18389,7 +18952,7 @@ ${setupFields(setup, ty)}
             run: ui.setup.run,
             min: ui.setup.min,
           });
-          ui.timer = null;
+          clearSessionTimer();
           store.save();
           render();
         };
@@ -18449,7 +19012,7 @@ ${setupFields(setup, ty)}
             for (let d = 0; d < 7; d++) {
               if (busy.has(d)) continue;
               const sc = busy.has((d + 6) % 7) + busy.has((d + 1) % 7);
-              if (sc < bs) (bs = sc), (best = d);
+              if (sc < bs) ((bs = sc), (best = d));
             }
             if (best < 0) break;
             pick.push(best);
@@ -18523,7 +19086,7 @@ ${setupFields(setup, ty)}
       ui.sel = ds.go;
       ui.setup = null;
       ui.tab = "session";
-      ui.focus = !!(S.sessions[ds.go] && roundBlock(S.sessions[ds.go]));
+      ui.focus = false;
       render(true);
       window.scrollTo(0, 0);
       return;
@@ -18550,18 +19113,23 @@ ${setupFields(setup, ty)}
         delete S.sessions[ui.sel].rdone;
         delete S.sessions[ui.sel].roundChecks;
       }
+      clearSessionTimer();
       ui.timer = newTimer(ui.sel);
       store.save();
-      releaseWake();
+      syncTimers();
       render();
       return;
     }
     if (b.id === "fSave") {
+      if (!validateFinish()) return;
       const completion = sessionCompletion(S.sessions[ui.sel]);
-      if (completion.open) return openSheet({
-        kind: "confirm", title: trainingText().complete,
-        lines: [trainingText().open(completion.open), trainingText().partial], run: saveTrainingSession,
-      });
+      if (completion.open)
+        return openSheet({
+          kind: "confirm",
+          title: trainingText().complete,
+          lines: [trainingText().open(completion.open), trainingText().partial],
+          run: saveTrainingSession,
+        });
       saveTrainingSession();
       return;
     }
@@ -18687,7 +19255,18 @@ ${setupFields(setup, ty)}
     }
   });
   /* Profile changes take effect at once: the plan settings are copied over and planned sessions from today on are rebuilt */
-  const PLAN_KEYS = ["level", "disc", "focus", "birthYear", "sex", "days", "minutes", "club", "comps", "limits"];
+  const PLAN_KEYS = [
+    "level",
+    "disc",
+    "focus",
+    "birthYear",
+    "sex",
+    "days",
+    "minutes",
+    "club",
+    "comps",
+    "limits",
+  ];
   function applyPlan() {
     if (!draft) return;
     if (!draft.days.length) return toast(t("needDay"));
@@ -18724,7 +19303,13 @@ ${setupFields(setup, ty)}
         it = sess.blocks[bi] && sess.blocks[bi].items[n];
       if (!it) continue;
       const sets = rows.filter((r) => r.r != null || r.kg != null);
-      if (sets.length) out.push({ id: it.id, sets, ...(it.target ? { target: it.target } : {}) });
+      if (sets.length)
+        out.push({
+          id: it.id,
+          sets,
+          ...(it.target ? { target: it.target } : {}),
+          ...(sess.exerciseEffort?.[key] ? { effort: sess.exerciseEffort[key] } : {}),
+        });
     }
     return out.length ? out : undefined;
   }
@@ -18753,13 +19338,31 @@ ${setupFields(setup, ty)}
       updateCompletionUI();
       return;
     }
-    if (el.id === "fRpe") document.getElementById("fRpeV").textContent = el.value;
+    if (["fMin", "fNote"].includes(el.id)) {
+      if (el.id === "fMin") {
+        const confirm = document.getElementById("fDurationConfirmed");
+        if (confirm) confirm.checked = Number.isInteger(Number(el.value)) && +el.value >= 1 && +el.value <= 300;
+      }
+      readFinishDraft();
+    }
     if (el.id === "pMin") {
       draft.minutes = +el.value;
       document.getElementById("pMinV").textContent = el.value;
     }
   });
+  document.addEventListener(
+    "toggle",
+    (ev) => {
+      const ds = ev.target.dataset?.sessionSettings;
+      if (ds) {
+        ui.sessionSettings = ui.sessionSettings || {};
+        ui.sessionSettings[ds] = ev.target.open;
+      }
+    },
+    true,
+  );
   document.addEventListener("change", (ev) => {
+    if (ev.target.id === "fDurationConfirmed") readFinishDraft();
     if (ev.target.id === "impFile" && ev.target.files && ev.target.files[0]) {
       importFile(ev.target.files[0]);
       ev.target.value = "";
