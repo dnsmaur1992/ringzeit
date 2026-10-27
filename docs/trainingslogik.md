@@ -24,12 +24,16 @@ Nach „Training beginnen“ zeigt ein Vollbild immer nur den aktuellen Schritt.
 
 - **Zeitübung** (Aufwärmen, Dehnen, Intervalle, Abhärtung, Zeit-Kraftübungen ohne Satzprotokoll): 10 Sekunden „Bereit machen“ mit Ansage von Übung und Dosierung, dann der Timer mit Gong bei jedem Phasenwechsel und am Ende. Danach startet der nächste Schritt von selbst; ist er wieder eine Zeitübung, beginnt erneut die Vorbereitung. Zehn Sekunden vor dem Ende wird ein folgender Schritt ohne Timer angesagt.
 - **Übung ohne feste Zeit** (Wiederholungen, Strecken, Gelenkkreise): großer ✓-Knopf. Es wird keine Zeit erfunden.
-- **Kraftübung mit Satzprotokoll**: Karte mit Ziel und darunter die Satz-Tabelle auf demselben Bildschirm. Werte werden von Hand eingetragen; ✓ ohne Eintrag fordert zur Eingabe auf, nach einem eingetragenen Satz startet ✓ die Satzpause (60 s, Gong), nach dem letzten Satz geht es weiter. Zeitbasierte Kraftsätze haben zusätzlich einen Satz-Timer.
+- **Kraftübung mit Satzprotokoll**: Karte mit Ziel und darunter die Satz-Tabelle auf demselben Bildschirm. Werte werden von Hand eingetragen; ✓ ohne Eintrag fordert zur Eingabe auf, nach einem eingetragenen Satz startet ✓ die Satzpause (60 s, Gong), nach dem letzten Satz geht es weiter. Unter dem Pausenring lässt sich die Satzpause anhalten und fortsetzen. Alle anderen Timer (Zeitübungen, Halteübungen, Zirkelpausen, Runden) halten und starten über den großen Mittelknopf. Zeitbasierte Kraftübungen (z. B. Unterarmstütz) laufen wie Runden: ▶ startet 10 Sekunden Vorbereitung, dann Halten → 60 s Pause → nächster Satz, jeweils mit Gong; nach dem letzten Satz geht es von selbst weiter. Jeder vollständig gehaltene Satz trägt seine Sekunden ein, vorhandene Einträge bleiben unverändert und lassen sich ändern.
 - **Zirkel**: Durchgang für Durchgang; die Karte listet alle Übungen des Durchgangs, die aktuelle hervorgehoben. Zwischen den Durchgängen läuft eine Pause von 90 Sekunden. Bei Kraftübungen im Zirkel wird nur der Satz dieses Durchgangs eingetragen.
 - **Runden**: der bestehende Rundentimer im Vollbild; nach der letzten Runde führt „Weiter“ zum nächsten Schritt.
 - **Abschluss**: Dauer, Anstrengung und Notiz wie bisher.
 
-Zurück, Weiter und „Vorzeitig abschließen“ sind immer erreichbar; Überspringen setzt keinen Haken. Die bisherige Abschnittsübersicht mit allen Übungen liegt unter ☰. Erledigt ist ein Schritt, wenn sein Timer vollständig abgelaufen ist, ✓ getippt wurde oder alle Sätze eingetragen sind.
+**10-Sekunden-Hinweis:** In jeder Arbeits- oder Pausenphase ab 20 Sekunden (auch in der Satzpause nach ✓) gibt es 10 Sekunden vor dem Ende einen kurzen Ton und eine Ansage – in der Arbeit „Noch 10 Sekunden“, in der Pause zusätzlich, was als Nächstes kommt. Vor jedem Start sagt die 10-Sekunden-Vorbereitung die Übung an.
+
+**Ton am iPhone:** Gong und Ansagen sind stumm, solange der Schalter an der Seite auf lautlos steht (bei neueren Modellen: Stummmodus im Kontrollzentrum). Auf Android ist die Medienlautstärke getrennt vom Klingelton und oft niedrig. Auf beiden Systemen weisen ein Hinweis zu Beginn der Trainingsführung (bis „Ton ist an“ getippt wird) und eine Zeile in der Planvorschau darauf hin.
+
+Zurück, Weiter und „Vorzeitig abschließen“ sind immer erreichbar; Überspringen setzt keinen Haken. Die bisherige Abschnittsübersicht mit allen Übungen liegt unter ☰; der Wechsel zur Übersicht und zurück lässt laufende Timer weiterlaufen. Erledigt ist ein Schritt, wenn sein Timer vollständig abgelaufen ist, ✓ getippt wurde oder alle Sätze eingetragen sind.
 
 ## Automatischer Timer
 
@@ -95,9 +99,9 @@ Der Bildschirm bleibt während laufender Arbeits- und Pausenphasen bewusst an. I
 
 Auf erkannten Apple-Mobilgeräten beziehungsweise mit entsprechender Audio-Session-Unterstützung bleibt die bisherige nahezu unhörbare Audiowachhaltung während aktiver Timer erhalten. Andere Audiokontexte dürfen nach fünf Sekunden ohne neue Ausgabe ruhen; vor einer nächsten Web-Audio-Ausgabe werden sie wieder aktiviert. Nach dem Stoppen werden der Dauerton und seine Verbindungen beendet; eine letzte Glocke kann ausklingen. Auf dem Gerät müssen Glocke, Ansagen, Musik und Unterbrechungen zusätzlich praktisch geprüft werden.
 
-## Akkuvergleich auf dem Handy – noch offen
+## Akkuverbrauch auf dem Handy – geprüft
 
-Der Code vermeidet unnötige Dauerabfragen und räumt Ressourcen auf. Eine gemessene Akkuersparnis liegt nicht vor. Vergleich auf demselben Handy mit gleicher Helligkeit, Lautstärke, Musik, Netzwerkverbindung und gleich langem Rundenprogramm durchführen. Bildschirm-Wachhaltung und Animationen bleiben in beiden Durchläufen aktiv. Akku vor und nach ausreichend langen Läufen notieren und jeden Vergleich wiederholen. Zusätzlich Glockenbeginn, Ansagen, Timerwechsel, Sperren/Entsperren und Abschluss prüfen. Keine Einsparung in Prozent aus den reinen Programmtests ableiten.
+Praxiswert vom 27.10.2026: 1 Stunde Training auf dem iPhone, Bildschirm dauerhaft an, parallel Spotify-Musik und eine zweite App → 10 % Akku. Den größten Teil davon verbrauchen Bildschirm und Musik; der Anteil von Ringzeit ist gering. Der Code vermeidet weiterhin unnötige Dauerabfragen und räumt Ressourcen auf. Offen bleibt nur die Tonprüfung (Gong, Ansagen, Musik) auf weiteren Geräten, vor allem Android.
 
 ## Prüfen
 
@@ -112,3 +116,5 @@ Die ergänzenden Tests prüfen außerdem die reine Vorschau, Abschnittsfortsetzu
 - Zielvorgaben bei Kraftübungen sind kurz („Ziel: 3 × 8“). Ein Grund steht nur dabei, wenn das Ziel gestiegen oder gesunken ist; „Gewicht selbst wählen“ nur bei Übungen mit Gewicht.
 - Im Profil-Bereich „Training“ stehen oben die Vereins- und Ringzeit-Tage; Level, Disziplin, Technik-Schwerpunkt, Alter, Geschlecht und Einschränkungen sind unter „Mehr“ eingeklappt.
 - „Was ist neu“ (aktuell Stand 2: Trainingsführung Schritt für Schritt) erscheint nach größeren Updates einmal für alle, die die App schon genutzt haben (nicht nach einer frischen Einrichtung). Gesteuert wird das über `NEWS_V`; die Entscheidung `newsSeen` bleibt in Sicherungen erhalten. Unter Profil → App & Daten ist der Hinweis jederzeit erneut lesbar.
+- Einbeinige Übungen (Ausfallschritte, Bulgarian Split Squats, Step-ups, Wadenheben einbeinig, Einbeinstand mit Kick-Hold, Skater-Sprünge) zeigen „pro Bein“ in Dosierung, Ziel und Timer („Bein 1/2“); beidseitige Rumpfübungen behalten „je Seite“.
+- Bei einbeinigen Kraftübungen hat jeder Satz zwei Felder, **Links** und **Rechts** – für Wiederholungen wie für Sekunden. Der Satz gilt als erledigt, wenn beide Beine eingetragen sind; für Ziele, Fortschritt und „Letztes Mal“ zählt das schwächere Bein. Einbeinige Halteübungen laufen im Satz-Ablauf je Satz als Links → Wechsel → Rechts, beide Zeiten werden eingetragen. Ältere Einträge mit nur einem Wert bleiben gültig.

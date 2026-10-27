@@ -1,6 +1,6 @@
 # Ringzeit – To-do-Liste: Bedienung und Akku
 
-Stand: 26.10.2026. Offene Aufgaben aus der Prüfung des aktuellen Quellcodes und dem Durchgehen der veröffentlichten Anwendung im Browser. Die Bildschirmansichten wurden am Desktop geprüft; ein Energieverbrauch auf einem echten Handy wurde nicht gemessen. Die umgesetzten Punkte sind unten abgehakt. Der tatsächliche Energievergleich und die abschließende Tonprüfung auf echten Handys bleiben offen.
+Stand: 26.10.2026. Offene Aufgaben aus der Prüfung des aktuellen Quellcodes und dem Durchgehen der veröffentlichten Anwendung im Browser. Die Bildschirmansichten wurden am Desktop geprüft; ein Energieverbrauch auf einem echten Handy wurde nicht gemessen. Die umgesetzten Punkte sind unten abgehakt. Der Stromverbrauch wurde am 27.10.2026 im echten Training geprüft und ist abgehakt; die abschließende Tonprüfung auf weiteren Handys (v. a. Android) bleibt offen.
 
 ## Zuerst: Ablauf und verlässliche Eingaben
 
@@ -25,7 +25,7 @@ Stand: 26.10.2026. Offene Aufgaben aus der Prüfung des aktuellen Quellcodes und
 
 - [x] **P2 – Audiowachhaltung gezielt prüfen.** Im Code läuft während des Timers ein nahezu unhörbarer Dauerton, damit Signale zuverlässig beginnen. Prüfen, wo er nötig ist und wo Audio zwischen Signalen ruhen kann. Nach Pause oder Ende Ressourcen freigeben. Änderungen mit Glocke, Ansagen und eigener Musik auf iPhone und Android gegenprüfen.
 - [x] **P3 – Timerprüfungen und verdeckte Anzeigeaktualisierungen reduzieren.** Der freie Timer prüft alle 200 ms, obwohl er nur bei geänderter Restsekunde die Anzeige aktualisiert. Prüfung und Anzeige an tatsächliche Zeitgrenzen koppeln; untätige Timer nicht dauerhaft abfragen. Nur die sichtbare Ansicht aktualisieren. Vergangene Zeit weiterhin aus realen Zeitpunkten berechnen, statt Genauigkeit von der Aufrufhäufigkeit abhängig zu machen.
-- [ ] **P1 – Energievergleich auf dem Handy durchführen.** Gleich lange Trainingsläufe bei gleicher Helligkeit, Lautstärke und Ausgangslage vergleichen: normaler Modus, reduzierte Animationen, optimierte Hintergrund- und Audiosteuerung bei weiterhin eingeschaltetem Bildschirm. Neben dem Akku auch Signale, Rundenwechsel und Verhalten nach Appwechsel oder Sperren prüfen. Einsparungen erst nach Messung beziffern.
+- [x] **P1 – Energievergleich auf dem Handy durchführen.** *Erledigt am 27.10.2026: 1 Stunde Training auf dem iPhone mit Bildschirm dauerhaft an, parallel Spotify-Musik und eine zweite App aktiv → 10 % Akku. Der Anteil von Ringzeit ist damit gering; kein weiterer Handlungsbedarf.* Ursprüngliche Aufgabe: Gleich lange Trainingsläufe bei gleicher Helligkeit, Lautstärke und Ausgangslage vergleichen: normaler Modus, reduzierte Animationen, optimierte Hintergrund- und Audiosteuerung bei weiterhin eingeschaltetem Bildschirm. Neben dem Akku auch Signale, Rundenwechsel und Verhalten nach Appwechsel oder Sperren prüfen. Einsparungen erst nach Messung beziffern.
 
 ## Weitere bereits bekannte Aufgaben der Trainingssteuerung
 
@@ -35,7 +35,7 @@ Stand: 26.10.2026. Offene Aufgaben aus der Prüfung des aktuellen Quellcodes und
 
 ## Verifikation
 
-Automatisierte Prüfungen umfassen die Trainingszyklen über 20 und 40 Wochen, bestätigte Abschlussangaben, Pausieren und Timerwechsel, Nachholen verstrichener Phasen, späte Wake-Lock-Antworten, schlafende Audiokontexte und kompatible alte Sicherungen. Eine ergänzende DOM-Prüfung kontrolliert die Einheitenansicht einschließlich Haken, aufklappbarer Optionen und Abschlussrückfrage. Eine abschließende Bild-/Ton- und Akkuprüfung auf dem echten Handy steht noch aus.
+Automatisierte Prüfungen umfassen die Trainingszyklen über 20 und 40 Wochen, bestätigte Abschlussangaben, Pausieren und Timerwechsel, Nachholen verstrichener Phasen, späte Wake-Lock-Antworten, schlafende Audiokontexte und kompatible alte Sicherungen. Eine ergänzende DOM-Prüfung kontrolliert die Einheitenansicht einschließlich Haken, aufklappbarer Optionen und Abschlussrückfrage. Der Akkuverbrauch wurde auf dem echten Handy geprüft (siehe oben). Eine abschließende Tonprüfung auf weiteren Geräten steht noch aus.
 
 ## Abnahmekriterien
 
