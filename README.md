@@ -144,6 +144,7 @@
 - **Bandagieren** als animierte Schritt-für-Schritt-Anleitung, dazu ein Video
 - **Materialpflege** für Handschuhe, Bandagen, Schoner und Mundschutz – mit Erinnerung nach dem Training
 - **Pflege & Erste Hilfe:** PECH-Regel, Thai-Boxing-Öl, Nasenbluten und wann man zum Arzt sollte
+- **Zum Lesen:** zehn kurze Themen mit Quellenangabe – Mythen-Check, was in einer Runde im Körper passiert, warum Schienbeine härter werden, wie Punktrichter werten, die WAKO-Disziplinen im Vergleich, der Turniertag von innen, die häufigsten Anfängerfehler, Kopf und Nerven, Schlaf und Erholung, Handschuhe erklärt. „Nächstes Thema“ blättert weiter. Bewusst ohne Anleitungen zum Gewichtmachen
 
 ### ✨ Liebe zum Detail
 - Lebendige Startseite, die sich der **Tages- und Jahreszeit** anpasst – mit Mütze im Winter und Badehose im Sommer
