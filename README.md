@@ -81,6 +81,10 @@
   - **Zeitübungen** starten mit 10 Sekunden „Bereit machen“ und Ansage, laufen mit Gong und gehen danach von selbst zur nächsten Übung
   - **Übungen ohne feste Zeit** (Wiederholungen, Strecke, Gelenkkreise) schließt du mit ✓ ab – Zeiten werden nicht erfunden
   - **Kraft:** Satz-Tabelle auf demselben Bildschirm, Wiederholungen von Hand eintragen, ✓ startet die Satzpause mit Gong
+  - **Halteübungen** wie Unterarmstütz laufen wie Runden: Halten → Pause → nächster Satz, die Sekunden werden eingetragen
+  - **Einbeinige Übungen** mit eigenem Feld für links und rechts, egal ob Wiederholungen oder Sekunden
+  - **10 Sekunden vor Ende** jeder Phase ein Ton und eine Ansage („Noch 10 Sekunden“, in Pausen: was als Nächstes kommt)
+  - **Ton-Hinweis:** iPhone – Schalter an der Seite auf Ton; Android – Medienlautstärke hochdrehen
   - **Zirkel** Durchgang für Durchgang, alle Übungen des Durchgangs sichtbar, mit Pause zwischen den Durchgängen
   - **Runden** über den bekannten Rundentimer; danach geht es direkt weiter
   - Zurück, Weiter, Pause und „Vorzeitig abschließen“ jederzeit; die Abschnittsübersicht liegt unter ☰. Die Position wird pro Einheit gespeichert
