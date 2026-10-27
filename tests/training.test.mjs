@@ -1333,3 +1333,115 @@ test("heavy rep schemes apply to weighted exercises; bodyweight exercises get a 
   );
   assert.ok(normal.every((t) => !t || !t.slow));
 });
+
+test("player: opening the overview and going back to the flow keeps a running set rest", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'S','gym',['weights'],{min:60});startWorkout();const i=playerSteps(S.sessions[ui.sel]).findIndex(s=>s.kind==='sets'&&s.lap==null);playerGo(i);const cur=playerStep();exerciseTimerAction('rest',{key:cur.bi+'.'+cur.ni});`,
+  );
+  a.advance(5000);
+  const left = a.run("ui.exerciseTimer.remainingMs");
+  await a.click({ dataset: { player: "list" } });
+  await a.click({ dataset: { player: "flow" } });
+  assert.equal(a.run("ui.exerciseTimer.running"), true);
+  assert.equal(a.run("ui.exerciseTimer.restOnly"), true);
+  assert.ok(a.run("ui.exerciseTimer.remainingMs") <= left);
+  assert.ok(a.run("ui.exerciseTimer.remainingMs") > 50000);
+});
+
+test("player: timed strength runs set → rest → set with gong like rounds, fills each set and moves on", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';const id=EX.findIndex(e=>e.de==='Unterarmstütz');S.sessions.x={date:'2026-11-02',type:'S',min:30,eq:[],blocks:[{key:'str',min:10,sets:'3× 8–12',items:[{id}]},{key:'cool',min:4,items:[{id:EX.findIndex(e=>e.de==='Atmung')}]}]};startWorkout();`,
+  );
+  assert.equal(a.run("playerStep().kind"), "sets");
+  await a.click({ dataset: { player: "toggle" } });
+  const tm = JSON.parse(a.run("JSON.stringify(ui.exerciseTimer.phases.map(p=>[p.seconds,p.set??null,!!p.prep]))"));
+  const hold = tm[1][0];
+  // get ready, then 3 sets with 2 rests in between
+  assert.deepEqual(
+    tm.map((p) => (p[2] ? "prep" : p[1] != null ? "set" : "rest")),
+    ["prep", "set", "rest", "set", "rest", "set"],
+  );
+  a.advance(10000 + hold * 1000 + 50);
+  assert.equal(a.run("S.sessions.x.perf['0.0'][0].r"), hold);
+  assert.equal(a.run("S.sessions.x.perf['0.0'][1].r"), null);
+  a.advance(60000 + hold * 1000 + 60000 + hold * 1000 + 50);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), true);
+  a.advance(1500);
+  assert.equal(a.run("playerStep().kind"), "timed");
+});
+
+test("player: 10 seconds before a hold ends and before the next set starts there is a beep and a call", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';const id=EX.findIndex(e=>e.de==='Unterarmstütz');S.sessions.x={date:'2026-11-02',type:'S',min:30,eq:[],blocks:[{key:'str',min:10,sets:'3× 8–12',items:[{id}]}]};startWorkout();globalThis.said=[];say=(x)=>said.push(x);`,
+  );
+  await a.click({ dataset: { player: "toggle" } });
+  const hold = a.run("ui.exerciseTimer.phases[1].seconds");
+  a.advance(10000 + (hold - 9) * 1000);
+  assert.match(a.run("said.join('|')"), /Noch 10 Sekunden/);
+  a.advance(9000 + 51000);
+  assert.match(a.run("said[said.length-1]"), /Noch 10 Sekunden\. Als Nächstes: Satz 2/);
+});
+
+test("one-legged exercises say 'pro Bein' in dose, target and timer; two-sided ones keep 'je Seite'", () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'S','gym',[],{min:60});globalThis.blk={key:'str',min:20,sets:'3× 8–12',items:[]};`,
+  );
+  const lunge = a.run("EX.findIndex(e=>e.de==='Ausfallschritte')"),
+    twist = a.run("EX.findIndex(e=>e.de==='Russian Twists')"),
+    hold = a.run("EX.findIndex(e=>e.de==='Einbeinstand mit Kick-Hold')");
+  assert.match(a.run(`doseTxt(${lunge},blk)`), /pro Bein/);
+  assert.match(a.run(`doseTxt(${twist},blk)`), /je Seite/);
+  assert.match(a.run(`targetText({n:3,r:8,kg:null,timed:false,reason:'initial'},${lunge})`), /Ziel: 3 × 8 pro Bein/);
+  a.run(`S.sessions.y={date:'2026-11-02',type:'S',min:30,eq:[],blocks:[{key:'str',min:10,sets:'3× 8–12',items:[{id:${hold}}]}]};`);
+  const labels = a.run("JSON.stringify((exerciseTiming(S.sessions.y,0,0)||{phases:[]}).phases.map(p=>p.label))");
+  if (labels !== "[]") assert.match(labels, /Bein/);
+});
+
+test("player: the set rest can be paused and resumed (e.g. a toilet break)", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'S','gym',[],{min:60});startWorkout();const i=playerSteps(S.sessions[ui.sel]).findIndex(s=>s.kind==='sets'&&s.lap==null);playerGo(i);const cur=playerStep();S.sessions[ui.sel].perf||={};perfRows(S.sessions[ui.sel],cur.bi+'.'+cur.ni,S.sessions[ui.sel].blocks[cur.bi])[0].r=10;`,
+  );
+  await a.click({ dataset: { player: "setdone" } });
+  assert.match(a.run("workoutHtml()"), /data-exercise-timer="toggle"/);
+  a.advance(10000);
+  await a.click({ dataset: { exerciseTimer: "toggle" } });
+  const left = a.run("ui.exerciseTimer.remainingMs");
+  assert.equal(a.run("ui.exerciseTimer.running"), false);
+  a.advance(120000);
+  assert.equal(a.run("ui.exerciseTimer.remainingMs"), left);
+  await a.click({ dataset: { exerciseTimer: "toggle" } });
+  assert.equal(a.run("ui.exerciseTimer.running"), true);
+});
+
+test("one-legged exercises are entered per leg; the set counts once both legs are in (weaker leg)", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';const id=EX.findIndex(e=>e.de==='Ausfallschritte');S.sessions.x={date:'2026-11-02',type:'S',min:30,eq:[],blocks:[{key:'str',min:10,sets:'3× 8–12',items:[{id}]}]};startWorkout();`,
+  );
+  const html = a.run("workoutHtml()");
+  assert.match(html, /data-f="rL"/);
+  assert.match(html, /data-f="rR"/);
+  assert.match(html, /Links/);
+  const left = a.node("legL");
+  Object.assign(left, { value: "10", dataset: { k: "0.0", i: "0", f: "rL" }, classList: { contains: (c) => c === "si", toggle() {} } });
+  await a.emit("input", left);
+  assert.equal(a.run("S.sessions.x.perf['0.0'][0].r"), null);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  const right = a.node("legR");
+  Object.assign(right, { value: "9", dataset: { k: "0.0", i: "0", f: "rR" }, classList: { contains: (c) => c === "si", toggle() {} } });
+  await a.emit("input", right);
+  assert.equal(a.run("S.sessions.x.perf['0.0'][0].r"), 9);
+  // timed one-legged hold: the chain has one phase per leg and fills both
+  a.run(
+    `const hid=EX.findIndex(e=>e.de==='Einbeinstand mit Kick-Hold');S.sessions.y={date:'2026-11-02',type:'S',min:30,eq:[],blocks:[{key:'str',min:10,sets:'2× 8–12',items:[{id:hid}]}]};ui.sel='y';ui.workout=null;startWorkout();playerStartSets();`,
+  );
+  const legs = JSON.parse(a.run("JSON.stringify(ui.exerciseTimer.phases.filter(p=>p.leg).map(p=>p.leg))"));
+  assert.deepEqual(legs, ["rL", "rR", "rL", "rR"]);
+  a.advance(10000 + a.run("ui.exerciseTimer.phases[1].seconds") * 2000 + 5000 + 50);
+  assert.ok(a.run("S.sessions.y.perf['0.0'][0].r") > 0);
+});
