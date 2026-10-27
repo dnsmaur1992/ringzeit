@@ -98,6 +98,8 @@
 - **Automatischer Rundenwechsel im geführten Training:** Nach der Pause läuft die nächste Runde direkt weiter; die 10 Sekunden Vorlauf gibt es nur beim manuellen Start
 - **Musik bei den Rundentimern** im Profil wählen; der Bildschirm bleibt mit unterstütztem Wake Lock während des Timers an
 - **Coach-Modus:** ruft während der Runde Kombis aus deinem Level aus – wie der Trainer am Ring
+  - Im freien Rundentimer schaltet der Knopf oben rechts (🔊/🔈) die Ansagen an und aus; wer die Coach-Ansagen einschaltet, schaltet die Sprache automatisch mit ein
+  - Auf dem iPhone wird die Sprachausgabe beim ersten Tipp nach jedem App-Start automatisch freigeschaltet – ohne Umschalten
 
 ### 🏆 Ziele und Motivation
 - **Turniervorbereitung** im Wettkampf-Format der WAKO, Formkurve bis zum Wettkampftag
