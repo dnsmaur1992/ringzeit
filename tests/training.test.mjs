@@ -1009,7 +1009,10 @@ test("the day plan is a read-only preview; starting opens the saved section with
   assert.equal(a.run("Object.values(S.sessions[ui.sel].perf||{}).length"), 0);
   await a.click({ dataset: { workout: "start" } });
   assert.equal(a.run("ui.workout.block"), 0);
-  assert.match(a.run("workoutHtml()"), /data-check=|data-exercise-timer=/);
+  // the player shows one step at a time; the section list stays reachable
+  assert.match(a.run("workoutHtml()"), /data-player=/);
+  assert.match(a.run("ui.workout.list=true,workoutHtml()"), /data-check=|data-exercise-timer=|class="si/);
+  a.run("ui.workout.list=false");
   assert.equal(a.run("sessionCompletion(S.sessions[ui.sel]).done"), 0);
   a.run("moveWorkout(1)");
   assert.equal(a.run("S.sessions[ui.sel].flow.block"), 1);
@@ -1208,4 +1211,100 @@ test("what's new appears once for existing users, not for new ones, and stays re
   );
   await b.run("finishOnb(false,false)");
   assert.equal(b.run("needNews()"), false);
+});
+
+test("player: one step per exercise, rounds as one step, circuits lap by lap, finish last", () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag','rope'],{min:75});`,
+  );
+  const steps = JSON.parse(a.run("JSON.stringify(playerSteps(S.sessions[ui.sel]))"));
+  const sess = JSON.parse(a.run("JSON.stringify(S.sessions[ui.sel])"));
+  assert.equal(steps[steps.length - 1].kind, "finish");
+  assert.equal(steps.filter((s) => s.kind === "rounds").length, sess.blocks.filter((b) => b.rounds).length);
+  // every non-round item appears (circuits once per lap)
+  const expected = sess.blocks.reduce(
+    (n, b, bi) => n + (b.rounds ? 0 : b.items.length * (a.run(`playerCirc(S.sessions[ui.sel].blocks[${bi}])`) ? a.run(`blockSets(S.sessions[ui.sel].blocks[${bi}])`) : 1)),
+    0,
+  );
+  assert.equal(steps.filter((s) => !["rounds", "finish", "rest"].includes(s.kind)).length, expected);
+  assert.ok(steps.every((s) => ["timed", "manual", "sets", "rounds", "rest", "finish"].includes(s.kind)));
+  // a circuit with n laps has n-1 rests between them
+  sess.blocks.forEach((b, bi) => {
+    if (!a.run(`playerCirc(S.sessions[ui.sel].blocks[${bi}])`)) return;
+    assert.equal(steps.filter((s) => s.kind === "rest" && s.bi === bi).length, a.run(`blockSets(S.sessions[ui.sel].blocks[${bi}])`) - 1);
+  });
+});
+
+test("player: a timed step starts with 10 s get-ready, rings, completes and moves on by itself", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';const id=EX.findIndex(e=>e.de==='Einlaufen');S.sessions.x={date:'2026-11-02',type:'T',min:30,eq:[],blocks:[{key:'warm',min:4,items:[{id},{id}]}]};startWorkout();`,
+  );
+  assert.equal(a.run("ui.workout.player"), true);
+  assert.equal(a.run("playerStep().kind"), "timed");
+  await a.click({ dataset: { player: "toggle" } });
+  assert.equal(a.run("ui.exerciseTimer.phases[0].prep"), true);
+  assert.equal(a.run("ui.exerciseTimer.phases[0].seconds"), 10);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  a.advance(10000 + 120000 + 50);
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), true);
+  a.advance(1500);
+  assert.equal(a.run("ui.workout.step"), 1);
+  // the next timed step starts on its own (auto mode), again with get-ready
+  assert.equal(a.run("ui.exerciseTimer.player"), 1);
+  assert.equal(a.run("ui.exerciseTimer.index"), 0);
+});
+
+test("player: steps without a fixed time are finished with Done; skipping leaves them open", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='x';ui.tab='session';S.sessions.x={date:'2026-11-02',type:'T',min:30,eq:[],blocks:[{key:'cond',min:6,sets:'',items:[]}]};const b=S.sessions.x.blocks[0];const id=EX.findIndex((e,i)=>e.cat==='cond'&&(b.items=[{id:i},{id:i}],!exerciseTiming(S.sessions.x,0,0)));b.items=[{id},{id}];startWorkout();`,
+  );
+  assert.equal(a.run("playerStep().kind"), "manual");
+  await a.click({ dataset: { player: "next" } });
+  assert.equal(a.run("itemDone(S.sessions.x,0,0)"), false);
+  assert.equal(a.run("ui.workout.step"), 1);
+  await a.click({ dataset: { player: "done" } });
+  assert.equal(a.run("itemDone(S.sessions.x,0,1)"), true);
+  assert.equal(a.run("playerStep().kind"), "finish");
+});
+
+test("player: strength steps show the set table; a circuit lap shows only its own set", () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'S','gym',['weights'],{min:60});startWorkout();`,
+  );
+  const idx = a.run("playerSteps(S.sessions[ui.sel]).findIndex(s=>s.kind==='sets'&&s.lap==null)");
+  assert.ok(idx >= 0);
+  a.run(`playerGo(${idx})`);
+  const html = a.run("workoutHtml()");
+  assert.match(html, /class="si/);
+  assert.match(html, /data-exercise-timer="rest"/);
+  const lapIdx = a.run("playerSteps(S.sessions[ui.sel]).findIndex(s=>s.kind==='sets'&&s.lap===1)");
+  if (lapIdx >= 0) {
+    a.run(`playerGo(${lapIdx})`);
+    const lap = a.run("workoutHtml()");
+    assert.equal((lap.match(/data-f="r"/g) || []).length, 1);
+    assert.match(lap, /data-i="1"/);
+  }
+});
+
+test("player: set done asks for a value, starts the set rest, and moves on after the last set", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'S','gym',['weights'],{min:60});startWorkout();const i=playerSteps(S.sessions[ui.sel]).findIndex(s=>s.kind==='sets'&&s.lap==null);playerGo(i);`,
+  );
+  const step = a.run("ui.workout.step"),
+    key = a.run("(s=>s.bi+'.'+s.ni)(playerStep())");
+  await a.click({ dataset: { player: "setdone" } });
+  assert.equal(a.run("ui.workout.step"), step);
+  assert.ok(!a.run("ui.exerciseTimer&&ui.exerciseTimer.restOnly"));
+  a.run(`perfRows(S.sessions[ui.sel],'${key}',S.sessions[ui.sel].blocks[playerStep().bi])[0].r=8`);
+  await a.click({ dataset: { player: "setdone" } });
+  assert.equal(a.run("ui.exerciseTimer.restOnly"), true);
+  assert.equal(a.run("ui.workout.step"), step);
+  a.run(`S.sessions[ui.sel].perf['${key}'].forEach(r=>r.r=8)`);
+  await a.click({ dataset: { player: "setdone" } });
+  assert.equal(a.run("ui.workout.step"), step + 1);
 });
