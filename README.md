@@ -18,7 +18,7 @@
 
 > **Neu hier?** Öffne die [Installationsanleitung](https://dnsmaur1992.github.io/ringzeit/installieren.html) auf deinem Handy – mit QR-Code und Schritt-für-Schritt-Hilfe für iPhone und Android.
 
-**Dein erster Trainingsstart:** Heute → Tagesplan sichten und Ausrüstung bereitlegen → **Training beginnen** (oben oder unter dem Plan). Abhaken, Kraft-Eingaben und Timer erscheinen erst in der Vollbildführung. Sie folgt den geplanten Abschnitten bis zum Cool-down und Abschluss. Zurück zur Planübersicht pausiert die laufenden Trainings-Timer. Die Tour hat nur sechs Schritte; Einrichtung und Tour können übersprungen werden; die Tour ist unter **Profil → App & Daten** erneut erreichbar.
+**Dein erster Trainingsstart:** Heute → Tagesplan sichten und Ausrüstung bereitlegen → **Training beginnen** (oben oder unter dem Plan). Danach führt dich Ringzeit **Übung für Übung im Vollbild** durch die Einheit – mit 10 Sekunden Vorbereitung, Gong und Ansage, bei Kraft mit Satz-Tabelle – bis zum Abschluss. ✕ führt zurück zur Planübersicht und pausiert die Timer. Die Tour hat nur sechs Schritte; Einrichtung und Tour können übersprungen werden; die Tour ist unter **Profil → App & Daten** erneut erreichbar.
 
 ---
 
@@ -76,8 +76,14 @@
 
 ### ⏱️ Rundentimer
 - **Vollbild-Timer** mit Ringglocke, 10 Sekunden Vorbereitungszeit und Ansage der Übung
-- **Planvorschau vor dem Training:** „Heute“ öffnet den Tagesplan zum Sichten und Bereitlegen der Ausrüstung. Erst „Training beginnen“ – oben in der Einheit oder unter dem Plan – öffnet die Vollbildführung mit Abhaken, Kraft-Eingaben und Timern.
-- **Geführte Durchführung:** Aufwärmen, Hauptteil, Ergänzungen und Cool-down folgen dem tatsächlichen Plan. Zurückgehen, Abschnitte überspringen, pausieren und vorzeitig abschließen bleiben möglich; offene Übungen werden dabei nicht automatisch erledigt. Der Abschnitt wird pro Einheit gespeichert.
+- **Planvorschau vor dem Training:** „Einheit“ zeigt den Tagesplan zum Ansehen und Bereitlegen der Ausrüstung; „Training beginnen“ steht oben und unter dem Plan
+- **Ein Bildschirm, eine Übung:** Nach „Training beginnen“ läuft die Einheit Schritt für Schritt im Vollbild – Aufwärmen, Hauptteil, Zusatzteil, Abhärtung, Cool-down, Abschluss
+  - **Zeitübungen** starten mit 10 Sekunden „Bereit machen“ und Ansage, laufen mit Gong und gehen danach von selbst zur nächsten Übung
+  - **Übungen ohne feste Zeit** (Wiederholungen, Strecke, Gelenkkreise) schließt du mit ✓ ab – Zeiten werden nicht erfunden
+  - **Kraft:** Satz-Tabelle auf demselben Bildschirm, Wiederholungen von Hand eintragen, ✓ startet die Satzpause mit Gong
+  - **Zirkel** Durchgang für Durchgang, alle Übungen des Durchgangs sichtbar, mit Pause zwischen den Durchgängen
+  - **Runden** über den bekannten Rundentimer; danach geht es direkt weiter
+  - Zurück, Weiter, Pause und „Vorzeitig abschließen“ jederzeit; die Abschnittsübersicht liegt unter ☰. Die Position wird pro Einheit gespeichert
 - **Übungstimer:** Zeitvorgaben im Aufwärmen und Cool-down, beidseitige Dehnungen mit Seitenwechsel, Conditioning-Intervalle sowie einzelne zeitbasierte Kraftsätze. Bei Zeitspannen kann die Dauer gewählt werden; Wiederholungsübungen bleiben ohne erfundene Zeitvorgabe.
 - **Gemeinsame Timersteuerung:** Runden-, Übungs- und freier Timer teilen sich eine Uhr; beim Wechsel wird der andere Timer pausiert, beim endgültigen Einheitsabschluss werden Timer und ausstehende Ansagen beendet
 - **Weniger Hintergrundarbeit:** sekundengenau geplante Timeraufrufe während des Trainings, keine dauernde Abfrage im Leerlauf; verdeckte Anzeigen werden nicht laufend neu geschrieben
