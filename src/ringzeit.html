@@ -4395,9 +4395,9 @@
         sub: "Die Neuerungen des letzten großen Updates",
         h: "Was ist neu",
         pts: [
-          "<b>Ein Bildschirm, eine Übung:</b> „Training beginnen“ führt dich Übung für Übung durch die Einheit. Du schaust nur noch auf das, was gerade dran ist.",
-          "<b>Gong und Ansage:</b> Zeitübungen laufen mit 10 Sekunden Vorbereitung, Gong und Ansage der nächsten Übung von selbst weiter. Ohne feste Zeit tippst du auf ✓.",
-          "<b>Kraft:</b> Wiederholungen direkt in der Satz-Tabelle eintragen, ✓ tippen – die Satzpause läuft. Zirkel gehen Durchgang für Durchgang. Die Übersicht findest du oben rechts unter ☰.",
+          "<b>Coach-Ansagen im freien Rundentimer:</b> Die Kombis werden jetzt laut angesagt. Oben rechts schaltest du die Sprache mit 🔊 an und aus. iPhone: Schalter an der Seite auf Ton stellen. Android: Medienlautstärke hochdrehen.",
+          "<b>10 Sekunden vorher:</b> Vor dem Ende und vor dem Start jeder Phase kommen ein Ton und eine kurze Ansage – auch bei Haltezeiten wie dem Unterarmstütz.",
+          "<b>Kraft:</b> Einbeinige Übungen trägst du für links und rechts getrennt ein. Haltezeiten gehen direkt in die Satzpause über, und die Pause lässt sich anhalten.",
         ],
         ok: "Verstanden",
       },
@@ -4844,6 +4844,7 @@
         again: "Noch einmal",
         sayRound: (r) => `Runde ${r}`,
         sayLast: "Letzte Runde",
+        sayPrep: "Bereit machen",
         sayDone: "Geschafft",
       },
       myc: {
@@ -5482,9 +5483,9 @@
         sub: "The changes of the last big update",
         h: "What's new",
         pts: [
-          "<b>One screen, one exercise:</b> Begin training guides you through the session exercise by exercise. You only look at what's on right now.",
-          "<b>Gong and calls:</b> timed exercises run on their own with 10 seconds to get ready, a gong and the next exercise called out. Without a fixed time, tap ✓.",
-          "<b>Strength:</b> enter reps right in the set table, tap ✓ – the set rest runs. Circuits go lap by lap. The overview is top right under ☰.",
+          "<b>Coach calls in the free round timer:</b> combos are now called out loud. Turn the voice on and off with 🔊 top right. iPhone: set the side switch to ring. Android: turn up the media volume.",
+          "<b>10 seconds ahead:</b> before each phase ends or starts you get a tone and a short call – also for holds like the plank.",
+          "<b>Strength:</b> one-legged exercises are entered for left and right separately. Holds go straight into the set rest, and the rest can be paused.",
         ],
         ok: "Got it",
       },
@@ -5920,6 +5921,7 @@
         again: "Again",
         sayRound: (r) => `Round ${r}`,
         sayLast: "Last round",
+        sayPrep: "Get ready",
         sayDone: "Done",
       },
       myc: {
@@ -13334,7 +13336,7 @@ ${setupFields(setup, ty)}
   }
   /* "What's new": shown once per big update to people who already used the app.
      Raise NEWS_V (and update the texts under "news") only for updates worth telling about. */
-  const NEWS_V = 2;
+  const NEWS_V = 3;
   const needNews = () => !S.profile.example && !!S.profile.toured && (S.profile.newsSeen || 0) < NEWS_V;
   const showNews = () => openSheet({ kind: "news" });
   async function finishOnb(skip, test) {
@@ -18170,7 +18172,8 @@ ${setupFields(setup, ty)}
      A muted dot is spoken on taps until the synth confirms it started; after a restart or a
      return to the app this repeats, so timer calls work without toggling the voice button. */
   let speechPrimed = false,
-    primeAt = 0;
+    primeAt = 0,
+    primeU = null;
   function primeSpeech() {
     try {
       if (speechPrimed || !voiceOn() || Date.now() - primeAt < 1500) return;
@@ -18180,7 +18183,15 @@ ${setupFields(setup, ty)}
       u.volume = 0;
       u.rate = 2;
       u.lang = S.profile.lang === "de" ? "de-DE" : "en-GB";
-      u.onstart = u.onend = () => (speechPrimed = true);
+      // only a real start counts: a cancelled or failed dot is retried on the next tap
+      u.onstart = () => (speechPrimed = true);
+      u.onend = u.onerror = () => {
+        if (primeU === u) primeU = null;
+      };
+      primeU = u;
+      setTimeout(() => {
+        if (primeU === u) primeU = null;
+      }, 3000);
       if (speechSynthesis.paused) speechSynthesis.resume();
       speechSynthesis.speak(u);
     } catch (e) {}
@@ -18431,7 +18442,7 @@ ${setupFields(setup, ty)}
     timerSpeechJobs.forEach((job) => clearTimeout(job));
     timerSpeechJobs.clear();
     try {
-      if (canSpeak()) speechSynthesis.cancel();
+      if (canSpeak() && !primeU) speechSynthesis.cancel();
     } catch (e) {}
   }
   function queueTimerSpeech(text, delay, valid, rate = 0.95) {
@@ -18695,7 +18706,7 @@ ${setupFields(setup, ty)}
       u.lang = S.profile.lang === "de" ? "de-DE" : "en-GB";
       u.rate = rate;
       // iOS Safari drops an utterance spoken right after cancel() and sometimes leaves the synth paused
-      const busy = speechSynthesis.speaking || speechSynthesis.pending;
+      const busy = (speechSynthesis.speaking || speechSynthesis.pending) && !primeU;
       if (busy) speechSynthesis.cancel();
       if (speechSynthesis.paused) speechSynthesis.resume();
       if (busy) setTimeout(() => speechSynthesis.speak(u), 80);
@@ -19149,6 +19160,7 @@ ${setupFields(setup, ty)}
     f.completed = 0;
     f.paused = false;
     ftPhase(f.cfg.prep ? "prep" : "work");
+    if (f.cfg.prep) say(t("ft").sayPrep);
     syncTimers();
   }
   function ftEnd(quiet = false, startAt = Date.now(), manual = false) {
