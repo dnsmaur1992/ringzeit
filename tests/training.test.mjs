@@ -1559,3 +1559,20 @@ test("weight class: weekly weigh-in with quick entry, trend, a neutral coach not
   setup("today().getFullYear()-14", []);
   assert.doesNotMatch(a.run("promptsHtml()"), /wQuick|Gewichtsklasse/);
 });
+
+test("guide: ten articles in German and English, each opens and leads to the next", async () => {
+  const a = app();
+  const info = JSON.parse(a.run("JSON.stringify(READS.map(r=>[r.k,r.de.secs.length,r.en.secs.length,!!r.de.src&&!!r.en.src,!!r.de.sub&&!!r.en.sub]))"));
+  assert.equal(info.length, 10);
+  for (const [k, d, e, src, sub] of info) {
+    assert.equal(d, e, `${k}: same sections in both languages`);
+    assert.ok(src && sub, `${k}: source and teaser`);
+  }
+  assert.match(a.run("guidePanelHtml()"), /Zum Lesen/);
+  await a.click({ dataset: { guide: "myths" } });
+  assert.match(a.run("guideSheetHtml(ui.sheet)"), /Mythen-Check[\s\S]*data-guide="round"/);
+  await a.click({ dataset: { guide: "gloves" } });
+  assert.match(a.run("guideSheetHtml(ui.sheet)"), /Handschuhe erklärt[\s\S]*data-guide="myths"/);
+  a.run("S.profile.lang='en'");
+  assert.match(a.run("guideSheetHtml(ui.sheet)"), /Gloves explained/);
+});
