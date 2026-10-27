@@ -103,6 +103,7 @@
 
 ### 🏆 Ziele und Motivation
 - **Turniervorbereitung** im Wettkampf-Format der WAKO, Formkurve bis zum Wettkampftag
+  - **Gewichtsklasse:** In den 8 Wochen vor dem Turnier erinnert „Heute“ einmal pro Woche ans Wiegen, mit Eingabefeld direkt im Hinweis. Verglichen wird der Schnitt der letzten zwei Wochen. Es gibt nur sachliche Hinweise, keine Tipps zum Gewichtmachen; unter 15 Jahren keine Erinnerungen
 - **Gürtelprüfung** nach der Prüfungsordnung, mit Theorie-Quiz und Selbstverteidigung
 - **Schwerpunkt-Blöcke** über 6 Wochen: Kampfausdauer, Schnellkraft oder Beweglichkeit
 - **Fitnesstest** mit Netzdiagramm und Vorher-nachher-Vergleich
@@ -147,7 +148,7 @@
 ### ✨ Liebe zum Detail
 - Lebendige Startseite, die sich der **Tages- und Jahreszeit** anpasst – mit Mütze im Winter und Badehose im Sommer
 - **Feiertage** verschiedener Kulturen: Weihnachten, Silvester, Ostern, Karneval, Ramadan, Zuckerfest, Opferfest, Chanukka, Nouruz, Diwali und mehr
-- **Fun Facts und Technik-Tipps** beim Laden
+- **Fun Facts und Technik-Tipps** beim Laden – „Weiter“ blättert weiter, nach spätestens 10 Sekunden öffnet sich die App von selbst
 - **Sicherheitshinweis beim Start**, dazu Hinweise und Datenschutz im Profil
 - **„Was ist neu“:** nach größeren Updates einmal ein kurzer Hinweis mit den wichtigsten Neuerungen; jederzeit nachlesbar unter Profil → App & Daten
 - **Freiwillige Geschlechtsangabe** zur Einordnung des Fitnesstests
