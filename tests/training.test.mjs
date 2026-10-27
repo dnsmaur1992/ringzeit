@@ -1522,3 +1522,40 @@ test("start with changed settings: 'yes, rebuild' builds the new session first, 
   assert.equal(a.run("setupDirty(ui.sel)"), false);
   assert.equal(a.run("!!ui.workout"), true);
 });
+
+test("start screen: 'next' keeps paging, but the app opens at the latest 10 s after the screen appeared", () => {
+  const a = app();
+  a.run("loading('loadingPlan')");
+  for (let i = 0; i < 4; i++) {
+    a.advance(2000);
+    a.run("document.getElementById('factNext').onclick({stopPropagation(){}})");
+  }
+  assert.equal(a.run("document.getElementById('loader').hidden"), false, "still open at 8 s");
+  a.advance(2100);
+  assert.equal(a.run("document.getElementById('loader').hidden"), true, "closed by 10 s");
+});
+
+test("weight class: weekly weigh-in with quick entry, trend, a neutral coach note for a big gap, nothing under 15", async () => {
+  const a = app();
+  const setup = (by, weights, inDays = 30) =>
+    a.run(`S.profile.birthYear=${by};S.profile.comps=[{id:'c1',date:iso(addDays(today(),${inDays})),wc:70}];S.weights=${JSON.stringify(weights)}.map(([d,kg])=>({date:iso(addDays(today(),-d)),kg}));`);
+  setup(1995, []);
+  assert.match(a.run("promptsHtml()"), /id="wQuick"/);
+  a.run("document.getElementById('wQuick').value='71,4'");
+  await a.click({ id: "wQuickAdd" });
+  assert.equal(a.run("S.weights[S.weights.length-1].kg"), 71.4);
+  setup(1995, [[6, 69]]);
+  assert.doesNotMatch(a.run("promptsHtml()"), /wQuick/, "weighed within the week: no reminder");
+  setup(1995, [[7, 69]]);
+  assert.match(a.run("promptsHtml()"), /wQuick/, "a week ago: remind");
+  // trend of two weeks decides, not the single day
+  setup(1995, [[10, 72], [2, 70.4]]);
+  assert.equal(a.run("weightTrend()"), 71.2);
+  assert.match(a.run("promptsHtml()"), /1,2 kg/);
+  // big gap close to the tournament: neutral note, no plan
+  setup(1995, [[5, 75], [1, 75]], 14);
+  assert.match(a.run("promptsHtml()"), /Trainer, ob die Klasse passt/);
+  // under 15: no reminder and no note
+  setup("today().getFullYear()-14", []);
+  assert.doesNotMatch(a.run("promptsHtml()"), /wQuick|Gewichtsklasse/);
+});
