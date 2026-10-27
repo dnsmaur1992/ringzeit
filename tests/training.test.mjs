@@ -1456,3 +1456,27 @@ test("free timer: switching coach calls on also switches the voice on; the timer
   assert.equal(a.run("voiceOn()"), true);
   assert.match(a.node("ftimer").innerHTML, /data-voice="1"/);
 });
+
+test("speech is primed with a muted utterance on taps until it started, and again after returning to the app", async () => {
+  const a = app();
+  a.run("globalThis.spoken=[];globalThis.speechSynthesis={speak(u){spoken.push(u)},cancel(){},resume(){},speaking:false,pending:false,paused:false};window.speechSynthesis=speechSynthesis;globalThis.SpeechSynthesisUtterance=function(t){this.text=t};S.profile.voice=true");
+  await a.emit("pointerdown");
+  assert.equal(a.run("spoken.length"), 1);
+  assert.equal(a.run("spoken[0].volume"), 0);
+  assert.ok(a.run("spoken[0].text.length") > 0);
+  a.elapse(2000);
+  await a.emit("pointerdown");
+  assert.equal(a.run("spoken.length"), 2, "not confirmed yet: tries again");
+  a.run("spoken[1].onstart()");
+  a.elapse(2000);
+  await a.emit("pointerdown");
+  assert.equal(a.run("spoken.length"), 2, "confirmed: no more priming");
+  await a.emit("visibilitychange");
+  a.elapse(2000);
+  await a.emit("pointerdown");
+  assert.equal(a.run("spoken.length"), 3, "back in the app: primed again");
+  a.run("S.profile.voice=false;speechPrimed=false");
+  a.elapse(2000);
+  await a.emit("pointerdown");
+  assert.equal(a.run("spoken.length"), 3, "voice off: silent");
+});
