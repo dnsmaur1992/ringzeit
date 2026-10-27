@@ -681,12 +681,12 @@ test("historical plan snapshots survive later changes to profile days and backup
   assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0);
 });
 
-test("learning explanation appears in onboarding and can be dismissed permanently in the first session", async () => {
+test("learning explanation is shown once in the first session (not in onboarding) and can be dismissed permanently", async () => {
   const a = app();
   a.run(
     `ui.onb={step:0,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90}; installHtml=()=>''; renderOnb();`,
   );
-  assert.match(a.node("onb").innerHTML, /So lernt Ringzeit/);
+  assert.doesNotMatch(a.node("onb").innerHTML, /So lernt Ringzeit/);
   assert.match(a.run("progressionInfoHtml(true)"), /data-progress-info-close/);
   await a.click({ dataset: { progressInfoClose: "1" } });
   assert.equal(a.run("progressionInfoHtml(true)"), "");
@@ -694,7 +694,7 @@ test("learning explanation appears in onboarding and can be dismissed permanentl
   assert.equal(a.run("S.profile.progressInfoSeen"), true);
 });
 
-test("skipping setup keeps the first-session explanation pending; finishing setup records it as seen", async () => {
+test("the first-session explanation stays pending after setup, whether skipped or finished", async () => {
   const a = app();
   a.run(
     `S.profile.ackSafe='2026-11-02';S.profile.toured=true;ui.onb={step:0,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90}; loading=async()=>{};`,
@@ -708,11 +708,11 @@ test("skipping setup keeps the first-session explanation pending; finishing setu
     `ui.onb={step:4,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90};`,
   );
   await a.run("finishOnb(false,false)");
-  assert.equal(a.run("S.profile.progressInfoSeen"), true);
-  assert.equal(a.run("progressionInfoHtml(true)"), "");
+  assert.notEqual(a.run("S.profile.progressInfoSeen"), true);
+  assert.match(a.run("progressionInfoHtml(true)"), /Ringzeit passt dein Training/);
 });
 
-test("finishing requires deliberate effort and duration; no default values manufacture records", async () => {
+test("finishing requires a deliberate effort and a valid duration; the suggested duration needs no extra tick", async () => {
   const a = app();
   a.run(
     `ui.sel='2026-11-02';S.sessions[ui.sel]={date:ui.sel,type:'T',min:60,tHi:7,blocks:[{key:'warm',items:[{}]}]};`,
@@ -723,10 +723,12 @@ test("finishing requires deliberate effort and duration; no default values manuf
   assert.equal(a.run("S.log.length"), 0);
   assert.match(a.node("finishError").textContent, /Anstrengung/);
   await a.click({ dataset: { effort: "6" } });
+  // the suggested duration counts unless changed; an invalid duration still blocks saving
+  a.node("fMin").value = "0";
   await a.click({ id: "fSave" });
   assert.equal(a.run("S.log.length"), 0);
   assert.match(a.node("finishError").textContent, /Dauer/);
-  a.node("fDurationConfirmed").checked = true;
+  a.node("fMin").value = "60";
   a.run(`S.sessions[ui.sel].checked={'0.0':true}`);
   await a.click({ id: "fSave" });
   assert.equal(a.run("S.log[0].inputConfirmed"), true);
@@ -998,6 +1000,8 @@ test("the day plan is a read-only preview; starting opens the saved section with
   assert.ok(
     html.lastIndexOf('data-workout="start"') > html.lastIndexOf("data-block="),
   );
+  // also available above the plan, so nobody has to scroll through the whole plan first
+  assert.ok(html.indexOf('data-workout="start"') < html.indexOf("data-block="));
   assert.doesNotMatch(
     html,
     /data-check=|class="si|data-addset=|data-rmset=|id="fSave"|data-rd=|id="tgo"|data-exercise-timer=/,
@@ -1132,4 +1136,76 @@ test("completed rounds lead to the following planned section instead of skipping
  assert.equal(a.run('ui.focus'),false);
  assert.equal(a.run('S.log.length'),0);
  assert.equal(a.run('sessionCompletion(S.sessions[ui.sel]).done'),0);
+});
+
+test("empty set fields show the target as a hint, and single timed exercises are labelled as running", () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';ui.tab='session';S.ov[ui.sel]={t:'S'};S.sessions[ui.sel]=buildSession(ui.sel,'S','gym',['weights'],{min:60});`,
+  );
+  const sets = a.run(
+    "(()=>{const s=S.sessions[ui.sel];for(let bi=0;bi<s.blocks.length;bi++){const b=s.blocks[bi];for(let n=0;n<b.items.length;n++){const it=b.items[n];if(it.id!=null&&tracksSets(it.id)&&!['warm','cool'].includes(b.key))return setsHtml(s,bi,n,b,it.id,false)}}return ''})()",
+  );
+  assert.match(sets, /placeholder="Ziel \d+"/);
+  assert.doesNotMatch(sets, /value="\d+"/);
+  a.run(
+    `ui.sel='x';const id=EX.findIndex(e=>e.de==='Einlaufen');S.sessions.x={date:'2026-11-02',type:'T',min:30,eq:[],blocks:[{key:'warm',min:4,items:[{id},{id}]}]};`,
+  );
+  assert.equal(a.run("exerciseTiming(S.sessions.x,0,0).phases[0].label"), "Läuft");
+});
+
+test("an early finish with the untouched planned duration asks about the duration in the question", async () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';S.sessions[ui.sel]={date:ui.sel,type:'T',min:60,tHi:7,blocks:[{key:'warm',items:[{},{}]}]};`,
+  );
+  a.node("fMin").value = "60";
+  await a.click({ dataset: { effort: "5" } });
+  await a.click({ id: "fSave" });
+  assert.equal(a.run("S.log.length"), 0);
+  assert.match(a.run("JSON.stringify(ui.sheet.lines)"), /60 Minuten/);
+  a.run("ui.sheet=null");
+  a.node("fMin").value = "40";
+  await a.emit("input", a.node("fMin"));
+  await a.click({ id: "fSave" });
+  assert.doesNotMatch(a.run("JSON.stringify(ui.sheet.lines)"), /Minuten sind|Eingetragen sind/);
+});
+
+test("simplified start: six-step tour, compact first steps, folded profile details", async () => {
+  const a = app();
+  assert.equal(a.run("TOUR.length"), 6);
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(TOUR.map(x=>x.k))")), ["intro", "today", "timer", "ftimer", "prof", "end"]);
+  assert.ok(a.run("TOUR.every(x=>Array.isArray(L.de.tour[x.k])&&Array.isArray(L.en.tour[x.k]))"));
+  a.run("S.profile.starterHide=false");
+  const compact = a.run("starterHtml()");
+  assert.equal((compact.match(/data-start=/g) || []).length, 1);
+  assert.match(compact, /data-act2="starterall"/);
+  a.run("ui.starterAll=true");
+  assert.ok((a.run("starterHtml()").match(/data-start=/g) || []).length > 1);
+  a.run("ui.tab='profile';ui.profSec='train';draft=JSON.parse(JSON.stringify(S.profile))");
+  const prof = a.run("renderProfile()");
+  assert.match(prof, /<details class="pmore" data-pmore="1" >/);
+  assert.ok(prof.indexOf("data-cday=") < prof.indexOf('data-pmore="1"'));
+  assert.ok(prof.indexOf('data-p="level"') > prof.indexOf('data-pmore="1"'));
+});
+
+test("what's new appears once for existing users, not for new ones, and stays readable in the profile", async () => {
+  const a = app();
+  a.run("globalThis.requestAnimationFrame=()=>0");
+  a.run("S.profile.example=false;S.profile.toured=true;delete S.profile.newsSeen");
+  assert.equal(a.run("needNews()"), true);
+  a.run("showNews()");
+  assert.equal(a.run("ui.sheet.kind"), "news");
+  assert.match(a.node("sheet").innerHTML, /data-news-ok/);
+  await a.click({ dataset: { newsOk: "1" } });
+  assert.equal(a.run("needNews()"), false);
+  a.run(`S=hydrate(JSON.parse(localStorage.getItem(LS)));`);
+  assert.equal(a.run("S.profile.newsSeen"), a.run("NEWS_V"));
+  assert.match(a.run("ui.tab='profile';ui.profSec='app';renderProfile()"), /data-news="1"/);
+  const b = app();
+  b.run(
+    `S.profile.ackSafe='2026-11-02';S.profile.toured=true;delete S.profile.newsSeen;ui.onb={step:4,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90}; loading=async()=>{};`,
+  );
+  await b.run("finishOnb(false,false)");
+  assert.equal(b.run("needNews()"), false);
 });
