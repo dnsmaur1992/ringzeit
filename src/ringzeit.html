@@ -3975,6 +3975,10 @@
   .sets.lap.leg.nokg {
     grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
   }
+  /* free round timer has a coloured background: no dark band behind the controls */
+  .ftimer .fctl {
+    background: none;
+  }
   /* app tour */
   .tour {
     touch-action: none;
@@ -18669,8 +18673,12 @@ ${setupFields(setup, ty)}
       const u = new SpeechSynthesisUtterance(text);
       u.lang = S.profile.lang === "de" ? "de-DE" : "en-GB";
       u.rate = rate;
-      speechSynthesis.cancel();
-      speechSynthesis.speak(u);
+      // iOS Safari drops an utterance spoken right after cancel() and sometimes leaves the synth paused
+      const busy = speechSynthesis.speaking || speechSynthesis.pending;
+      if (busy) speechSynthesis.cancel();
+      if (speechSynthesis.paused) speechSynthesis.resume();
+      if (busy) setTimeout(() => speechSynthesis.speak(u), 80);
+      else speechSynthesis.speak(u);
     } catch (e) {}
   }
   /* Announces the round once at its start, slowly and clearly: round number, exercise and (if any) the combo */
@@ -19052,7 +19060,7 @@ ${setupFields(setup, ty)}
         step = (k, v, lbl) =>
           `<div class="ftstep"><span>${lbl}</span><div><button type="button" data-fts="${k}:-1" aria-label="−">−</button><b>${v}</b><button type="button" data-fts="${k}:1" aria-label="+">+</button></div></div>`;
       el.className = "ftimer setup";
-      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div>
+      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span>${canSpeak() ? `<button type="button" class="x vo" data-voice="1" aria-pressed="${voiceOn()}" aria-label="${t("voice")}">${voiceOn() ? "🔊" : "🔈"}</button>` : `<span style="width:40px"></span>`}</div>
           <div class="ftpre">${FT_PRESETS.map((p) => `<button type="button" data-ftp="${p.id}" aria-pressed="${p.r === c.r && p.w === c.w && p.b === c.b}"><b>${L.pre[p.id]}</b><small>${p.r} × ${fmtS(p.w)} · ${fmtS(p.b)}</small></button>`).join("")}</div>
           <div class="ftcard">${step("r", c.r, L.rounds)}${step("w", fmtS(c.w), L.work)}${step("b", fmtS(c.b), L.rest)}
             <button type="button" class="setrow2" data-ftt="prep"><span>${L.prep}</span><span class="tog ${c.prep ? "on" : ""}"></span></button>
@@ -19067,10 +19075,10 @@ ${setupFields(setup, ty)}
       frac = f.phase === "done" ? 1 : 1 - f.left / len;
     el.className = `ftimer run ${f.phase}${f.paused ? " paused" : ""}${f.phase === "work" && c.warn && f.left <= 10 ? " last" : ""}`;
     if (f.phase === "done") {
-      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div><div class="ftdone">${CHECK_SVG}<b>${L.done}</b><span>${L.doneT(f.completed || 0, Math.round(((f.completed || 0) * c.w) / 60))}</span><button type="button" class="btn" data-ftx="again">${L.again}</button><button type="button" class="btn sec" data-ftx="close">${t("close")}</button></div>`;
+      el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span>${canSpeak() ? `<button type="button" class="x vo" data-voice="1" aria-pressed="${voiceOn()}" aria-label="${t("voice")}">${voiceOn() ? "🔊" : "🔈"}</button>` : `<span style="width:40px"></span>`}</div><div class="ftdone">${CHECK_SVG}<b>${L.done}</b><span>${L.doneT(f.completed || 0, Math.round(((f.completed || 0) * c.w) / 60))}</span><button type="button" class="btn" data-ftx="again">${L.again}</button><button type="button" class="btn sec" data-ftx="close">${t("close")}</button></div>`;
       return;
     }
-    el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span><span style="width:40px"></span></div>
+    el.innerHTML = `<div class="fbar"><button type="button" class="x" data-ftx="close" aria-label="×">✕</button><span>${L.title}</span>${canSpeak() ? `<button type="button" class="x vo" data-voice="1" aria-pressed="${voiceOn()}" aria-label="${t("voice")}">${voiceOn() ? "🔊" : "🔈"}</button>` : `<span style="width:40px"></span>`}</div>
         <div class="ftph">${f.phase === "prep" ? L.ready : f.phase === "rest" ? L.restL : f.round === c.r && c.r > 1 ? L.lastR : L.round(f.round, c.r)}</div>
         <div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="12"/><circle id="ftarc" cx="140" cy="140" r="130" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C * (1 - frac)).toFixed(1)}"/><g class="fknob" id="ftknob" style="transform:rotate(${(frac * 360).toFixed(1)}deg)"><circle cx="270" cy="140" r="10" fill="#fff"/></g></svg><div class="mid"><span class="clk" id="ftclk">${fmtS(f.left)}</span>${f.phase === "rest" && f.round < c.r ? `<span class="sub">${L.next(f.round + 1, c.r)}</span>` : ""}</div></div>
         ${c.coach && f.phase === "work" ? `<div class="ftcall" id="ftcall">${f.callTxt ? esc(f.callTxt) : ""}</div>` : ""}
@@ -20784,6 +20792,13 @@ ${setupFields(setup, ty)}
     }
     if (ds.ftt) {
       ui.ft.cfg[ds.ftt] = !ui.ft.cfg[ds.ftt];
+      // coach calls are spoken: switching them on also switches the voice on
+      if (ds.ftt === "coach" && ui.ft.cfg.coach && !voiceOn() && canSpeak()) {
+        S.profile.voice = true;
+        if (draft) draft.voice = true;
+        store.save();
+        say(t("voiceTest"));
+      }
       return renderFt();
     }
     if (ds.ctech || ds.cact || ds.cedit || ds.con) {
@@ -20864,6 +20879,7 @@ ${setupFields(setup, ty)}
       store.save();
       if (S.profile.voice) say(t("voiceTest"));
       else if (canSpeak()) speechSynthesis.cancel();
+      if (ui.ft) return renderFt();
       if (ui.focus) renderFocus();
       else {
         const y = window.scrollY;
