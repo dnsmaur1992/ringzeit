@@ -3885,6 +3885,74 @@
   .pmore[open] > summary {
     margin-bottom: 22px;
   }
+  /* training player */
+  .workout.player .player-inner {
+    max-width: 620px;
+    margin: 0 auto;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .player-inner .pbar {
+    height: 4px;
+  }
+  .player-inner .fring {
+    width: min(240px, 62vw, 28vh);
+  }
+  .pcard {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 16px 18px;
+  }
+  .pcard small {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tc, var(--ice));
+  }
+  .pcard b {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 2px 0 6px;
+  }
+  .pcard p {
+    margin: 8px 0 0;
+    color: var(--mist);
+    font-size: 15px;
+  }
+  .pcard .fsk .sketch {
+    max-height: 18vh;
+  }
+  .pcard.done b {
+    color: var(--done);
+  }
+  .plap {
+    margin: 12px 0 0;
+    padding-left: 20px;
+    color: var(--mist);
+    font-size: 14px;
+  }
+  .plap li.on {
+    color: var(--frost);
+    font-weight: 700;
+  }
+  .player-tools {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .player-inner .fctl {
+    bottom: calc(-24px - env(safe-area-inset-bottom, 0px));
+  }
+  .fring.small {
+    width: 150px;
+  }
+  .fring.small .clk {
+    font-size: 40px;
+  }
+  .player-early {
+    align-self: center;
+  }
   /* app tour */
   .tour {
     touch-action: none;
@@ -4301,9 +4369,9 @@
         sub: "Die Neuerungen des letzten großen Updates",
         h: "Was ist neu",
         pts: [
-          "<b>Training beginnen:</b> Unter „Einheit“ siehst du zuerst deinen Plan. „Training beginnen“ führt dich dann im Vollbild Abschnitt für Abschnitt durch – mit eigenen Timern fürs Aufwärmen und Dehnen.",
-          "<b>Alles abhaken:</b> Übungen hakst du in der Führung ab, Runden hakt der Timer selbst ab. Am Ende tippst du nur noch an, wie anstrengend es war.",
-          "<b>Aufgeräumt:</b> kürzere Tour, „Erste Schritte“ zeigt nur den nächsten Schritt, im Profil stehen deine Trainingstage ganz oben.",
+          "<b>Ein Bildschirm, eine Übung:</b> „Training beginnen“ führt dich Übung für Übung durch die Einheit. Du schaust nur noch auf das, was gerade dran ist.",
+          "<b>Gong und Ansage:</b> Zeitübungen laufen mit 10 Sekunden Vorbereitung, Gong und Ansage der nächsten Übung von selbst weiter. Ohne feste Zeit tippst du auf ✓.",
+          "<b>Kraft:</b> Wiederholungen direkt in der Satz-Tabelle eintragen, ✓ tippen – die Satzpause läuft. Zirkel gehen Durchgang für Durchgang. Die Übersicht findest du oben rechts unter ☰.",
         ],
         ok: "Verstanden",
       },
@@ -4863,7 +4931,7 @@
         ],
         timer: [
           "Training beginnen",
-          "Unter „Einheit“ siehst du deinen Tagesplan. „Training beginnen“ – oben oder unter dem Plan – führt dich im Vollbild durch die Einheit: abhaken, Werte eintragen, Timer. Am Ende speicherst du, wie anstrengend es war.",
+          "Unter „Einheit“ siehst du deinen Tagesplan. „Training beginnen“ führt dich Übung für Übung im Vollbild durch: Zeitübungen mit Gong und Ansage, sonst ✓ tippen, bei Kraft Wiederholungen eintragen. Am Ende speicherst du, wie anstrengend es war.",
         ],
         exinfo: [
           "Übungen",
@@ -5388,9 +5456,9 @@
         sub: "The changes of the last big update",
         h: "What's new",
         pts: [
-          "<b>Begin training:</b> Session first shows your plan. Begin training then guides you through it section by section in full screen – with their own timers for warm-up and stretching.",
-          "<b>Tick everything:</b> tick exercises in the guide, the timer ticks rounds by itself. At the end you just tap how hard it was.",
-          "<b>Tidied up:</b> shorter tour, First steps shows only the next step, your training days are at the top of the profile.",
+          "<b>One screen, one exercise:</b> Begin training guides you through the session exercise by exercise. You only look at what's on right now.",
+          "<b>Gong and calls:</b> timed exercises run on their own with 10 seconds to get ready, a gong and the next exercise called out. Without a fixed time, tap ✓.",
+          "<b>Strength:</b> enter reps right in the set table, tap ✓ – the set rest runs. Circuits go lap by lap. The overview is top right under ☰.",
         ],
         ok: "Got it",
       },
@@ -5936,7 +6004,7 @@
         ],
         timer: [
           "Begin training",
-          "Session shows your daily plan. Begin training – at the top or below the plan – guides you through it in full screen: tick exercises, log values, timers. At the end you save how hard it was.",
+          "Session shows your daily plan. Begin training guides you exercise by exercise in full screen: timed exercises with gong and calls, otherwise tap ✓, for strength enter your reps. At the end you save how hard it was.",
         ],
         exinfo: [
           "Exercises",
@@ -11639,11 +11707,11 @@ ${setupFields(setup, ty)}
   const workoutText = () =>
     S.profile.lang === "de"
       ? {
-          intro: "Heute → Tagesplan prüfen und Ausrüstung bereitlegen → Training beginnen (oben oder unter dem Plan). Erst dann erscheinen Haken, Eingaben und Timer. Die Führung begleitet dich vom Aufwärmen bis zum Abschluss.",
+          intro: "Heute → Tagesplan ansehen und Ausrüstung bereitlegen → Training beginnen. Dann führt dich Ringzeit Übung für Übung im Vollbild – mit Gong, Ansage und Satz-Tabelle – vom Aufwärmen bis zum Abschluss.",
           start: "Training beginnen",
           resume: "Training fortsetzen",
           preview:
-            "Sieh dir den Plan an und lege deine Ausrüstung bereit. Abhaken, Eingaben und Timer stehen nach „Training beginnen“ zur Verfügung.",
+            "Sieh dir den Plan an und lege deine Ausrüstung bereit. „Training beginnen“ führt dich dann Übung für Übung durch – mit Gong, Ansage und Satz-Tabelle.",
           finish: "Abschluss",
           back: "Zurück",
           close: "Zur Planübersicht",
@@ -11669,11 +11737,11 @@ ${setupFields(setup, ty)}
           saved: "Deine Eingaben werden gespeichert. Schließen pausiert laufende Timer.",
         }
       : {
-          intro: "Today → review the daily plan and prepare your equipment → Begin training (at the top or below the plan). Checks, inputs and timers appear only after starting. The guide takes you from warm-up to finish.",
+          intro: "Today → look at the daily plan and prepare your equipment → Begin training. Ringzeit then guides you exercise by exercise in full screen – with gong, calls and set table – from warm-up to finish.",
           start: "Begin training",
           resume: "Resume training",
           preview:
-            "Review the plan and prepare your equipment. Checks, entries and timers become available after you begin training.",
+            "Review the plan and prepare your equipment. Begin training then guides you exercise by exercise – with gong, calls and set table.",
           finish: "Finish",
           back: "Back",
           close: "Back to plan",
@@ -11731,9 +11799,13 @@ ${setupFields(setup, ty)}
     const stored = sess.flow?.block;
     const firstOpen = sess.blocks.findIndex((b, bi) => b.items.some((it, ni) => !itemDone(sess, bi, ni)));
     const block = Number.isInteger(stored) ? Math.max(0, Math.min(sess.blocks.length, stored)) : firstOpen < 0 ? sess.blocks.length : firstOpen;
-    sess.flow = { block, startedAt: sess.flow?.startedAt || Date.now() };
-    ui.workout = { ds: ui.sel, block };
-    ui.focus = !!sess.blocks[block]?.rounds;
+    const steps = playerSteps(sess),
+      storedStep = sess.flow?.step,
+      firstStep = steps.findIndex((st) => st.kind === "finish" || !stepDone(sess, st)),
+      step = Number.isInteger(storedStep) ? Math.max(0, Math.min(steps.length - 1, storedStep)) : Math.max(0, firstStep);
+    sess.flow = { block: steps[step].bi, step, startedAt: sess.flow?.startedAt || Date.now() };
+    ui.workout = { ds: ui.sel, block: steps[step].bi, step, player: true };
+    ui.focus = steps[step].kind === "rounds";
     store.save();
     render();
     focusWorkout();
@@ -11766,6 +11838,9 @@ ${setupFields(setup, ty)}
     pauseWorkoutTimers();
     ui.workout.block = Math.max(0, Math.min(sess.blocks.length, ui.workout.block + delta));
     sess.flow.block = ui.workout.block;
+    // keep the player position in step with the section
+    const firstOfBlock = playerSteps(sess).findIndex((st) => st.bi === ui.workout.block);
+    if (firstOfBlock >= 0) ui.workout.step = sess.flow.step = firstOfBlock;
     ui.focus = !!sess.blocks[ui.workout.block]?.rounds;
     store.save();
     render();
@@ -11784,13 +11859,395 @@ ${setupFields(setup, ty)}
       moveWorkout(sess.blocks.length - ui.workout.block);
     }
   }
+  /* ============ Training player: one thing at a time, full screen ============
+     After "Begin training" the session runs step by step:
+       timed exercise  → 10 s get-ready (announces it), then the timer with gong, then the next step by itself
+       no fixed time   → big "Done" button (reps, distance, joint circles …)
+       strength        → set table on the same screen, set rest with gong
+       round block     → the round screen (rounds run on their own)
+       circuit         → lap by lap; the card lists the whole lap, the current exercise highlighted
+     The section overview (list) stays reachable via ☰. */
+  const PREP_S = 10;
+  const TICK =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const playerText = () =>
+    S.profile.lang === "de"
+      ? {
+          ready: "Bereit machen",
+          done: "Fertig",
+          next: "Als Nächstes",
+          nextSay: "Als Nächstes",
+          last: "Danach: Abschluss",
+          list: "Übersicht",
+          player: "Zurück zum Ablauf",
+          lap: (a, n) => `Durchgang ${a} von ${n}`,
+          circuit: "Zirkel – alle Übungen nacheinander, dann Pause",
+          setOf: (a, n) => `Satz ${a} von ${n}`,
+          setsDone: "Alle Sätze eingetragen",
+          enter: "Satz machen, Wiederholungen eintragen, ✓ tippen – dann läuft die Satzpause.",
+          enterTime: "Sekunden eintragen oder den Satz-Timer starten.",
+          rest: "Satzpause 1:00",
+          setTimer: (n) => `Satz ${n} mit Timer`,
+          rounds: "Runden",
+          roundsOpen: "Rundentimer öffnen",
+          roundsOf: (a, n) => `${a} von ${n} Runden erledigt`,
+          start: "Start",
+          step: (a, n) => `${a}/${n}`,
+          prev: "Vorherige Übung",
+          skip: "Nächste Übung",
+          finishEarly: "Vorzeitig abschließen",
+          choose: "Dauer",
+          setDone: "Satz fertig",
+          lapRest: "Pause",
+          lapRestHint: "Durchatmen, trinken – gleich kommt der nächste Durchgang.",
+          enterFirst: "Bitte erst die Wiederholungen eintragen.",
+        }
+      : {
+          ready: "Get ready",
+          done: "Done",
+          next: "Up next",
+          nextSay: "Up next",
+          last: "Then: finish",
+          list: "Overview",
+          player: "Back to the flow",
+          lap: (a, n) => `Lap ${a} of ${n}`,
+          circuit: "Circuit – all exercises in a row, then rest",
+          setOf: (a, n) => `Set ${a} of ${n}`,
+          setsDone: "All sets entered",
+          enter: "Do the set, enter your reps, tap ✓ – the set rest starts.",
+          enterTime: "Enter seconds or start the set timer.",
+          rest: "Set rest 1:00",
+          setTimer: (n) => `Set ${n} with timer`,
+          rounds: "Rounds",
+          roundsOpen: "Open round timer",
+          roundsOf: (a, n) => `${a} of ${n} rounds done`,
+          start: "Start",
+          step: (a, n) => `${a}/${n}`,
+          prev: "Previous exercise",
+          skip: "Next exercise",
+          finishEarly: "Finish early",
+          choose: "Duration",
+          setDone: "Set done",
+          lapRest: "Rest",
+          lapRestHint: "Breathe, drink – the next lap is coming.",
+          enterFirst: "Please enter your reps first.",
+        };
+  const strItem = (b, it) => EX[it.id]?.cat === "str" && !["warm", "cool"].includes(b.key);
+  /* circuits run lap by lap (warm-up and cool-down never are circuits) */
+  const playerCirc = (b) => isCirc(b) && !["warm", "cool"].includes(b.key) && !b.rounds;
+  function playerSteps(sess) {
+    const steps = [];
+    sess.blocks.forEach((b, bi) => {
+      if (b.rounds) return steps.push({ kind: "rounds", bi });
+      const circ = playerCirc(b),
+        laps = circ ? blockSets(b) : 1;
+      for (let lap = 0; lap < laps; lap++) {
+        b.items.forEach((it, ni) => {
+          const timing = exerciseTiming(sess, bi, ni, undefined, circ ? lap : 0);
+          steps.push({
+            bi,
+            ni,
+            lap: circ ? lap : null,
+            laps: circ ? laps : null,
+            kind: strItem(b, it) ? "sets" : timing ? "timed" : "manual",
+          });
+        });
+        // circuit: rest between laps
+        if (circ && lap < laps - 1) steps.push({ bi, lap, laps, kind: "rest" });
+      }
+    });
+    steps.push({ kind: "finish", bi: sess.blocks.length });
+    return steps;
+  }
+  const LAP_REST = 90;
+  function stepDone(sess, st) {
+    if (!st || st.kind === "finish") return false;
+    if (st.kind === "rest") return !!sess.flow?.rests?.[`${st.bi}.${st.lap}`];
+    const b = sess.blocks[st.bi];
+    if (st.kind === "rounds") return b.items.every((it, ni) => itemDone(sess, st.bi, ni));
+    const key = `${st.bi}.${st.ni}`;
+    if (st.lap == null) return itemDone(sess, st.bi, st.ni);
+    if (st.kind === "sets") {
+      const r = sess.perf?.[key]?.[st.lap];
+      return !!r && r.r != null && r.r !== "";
+    }
+    return itemDone(sess, st.bi, st.ni) || (sess.timedLaps?.[key] || 0) > st.lap;
+  }
+  const playerStep = () => {
+    const sess = S.sessions[ui.sel];
+    return sess && ui.workout?.player ? playerSteps(sess)[ui.workout.step] : null;
+  };
+  function stepTitle(sess, st) {
+    if (!st) return "";
+    if (st.kind === "rest") return playerText().lapRest;
+    if (st.kind === "finish") return workoutText().finish;
+    if (st.kind === "rounds") return t(sess.blocks[st.bi].key);
+    return itemTitle(sess, st.bi, st.ni);
+  }
+  /* dose line as in the plan (target for strength, otherwise the prescription) */
+  function stepDose(sess, st) {
+    const b = sess.blocks[st.bi],
+      it = b.items[st.ni];
+    if (!it || it.kind === "round") return "";
+    if (it.kind === "hard" || it.kind === "run" || it.kind === "exam") return "";
+    return it.target ? targetText(it.target, it.id) : doseTxt(it.id, b) || "";
+  }
+  function stepDesc(sess, st) {
+    const it = sess.blocks[st.bi].items[st.ni];
+    if (!it) return "";
+    if (it.kind === "hard") return (HARD.find((x) => x.id === it.id) || HARD[0])[S.profile.lang][1];
+    if (it.kind === "run") return it.zone === 3 ? t("z3d") : t("z2d");
+    if (EX[it.id]) return exText(it.id).desc;
+    return "";
+  }
+  function playerGo(i, opt = {}) {
+    const sess = S.sessions[ui.sel];
+    if (!sess || !ui.workout) return;
+    const steps = playerSteps(sess);
+    i = Math.max(0, Math.min(steps.length - 1, i));
+    if (!opt.keepTimers) pauseWorkoutTimers();
+    if (ui.exerciseTimer && !ui.exerciseTimer.running) ui.exerciseTimer = null;
+    readFinishDraft();
+    const st = steps[i];
+    ui.workout.step = i;
+    ui.workout.block = st.bi;
+    ui.workout.list = false;
+    sess.flow = { ...(sess.flow || {}), block: st.bi, step: i };
+    ui.focus = st.kind === "rounds";
+    store.save();
+    render();
+    const el = document.getElementById("workout");
+    if (el) el.scrollTop = 0;
+    if ((st.kind === "timed" || st.kind === "rest") && opt.auto) playerStartTimed();
+    else if (opt.auto && st.kind !== "finish" && st.kind !== "rounds")
+      say(`${playerText().nextSay}: ${stepTitle(sess, st)}`, 0.95);
+  }
+  function playerStartTimed(choice) {
+    const sess = S.sessions[ui.sel],
+      st = playerStep();
+    if (!sess || !st || (st.kind !== "timed" && st.kind !== "rest")) return;
+    if (st.kind === "rest") {
+      pauseOtherTimer("exercise");
+      if (ui.exerciseTimer?.running) pauseExerciseTimer();
+      ui.exerciseTimer = {
+        ds: ui.sel,
+        key: `${st.bi}.lap${st.lap}`,
+        bi: st.bi,
+        ni: -1,
+        phases: [{ seconds: LAP_REST, label: workoutText().rest }],
+        index: 0,
+        restOnly: true,
+        running: true,
+        done: false,
+        player: ui.workout.step,
+        remainingMs: LAP_REST * 1000,
+        endAt: Date.now() + LAP_REST * 1000,
+      };
+      (sess.flow.rests ||= {})[`${st.bi}.${st.lap}`] = true;
+      ui.workout.auto = true;
+      store.save();
+      syncTimers();
+      renderWorkout();
+      return;
+    }
+    const plan = exerciseTiming(sess, st.bi, st.ni, choice, st.lap || 0);
+    if (!plan) return;
+    pauseOtherTimer("exercise");
+    if (ui.exerciseTimer?.running) pauseExerciseTimer();
+    const P = playerText(),
+      phases = [{ seconds: PREP_S, label: P.ready, prep: true }, ...plan.phases];
+    ui.exerciseTimer = {
+      ds: ui.sel,
+      key: `${st.bi}.${st.ni}`,
+      bi: st.bi,
+      ni: st.ni,
+      phases,
+      index: 0,
+      seconds: plan.seconds,
+      setIndex: plan.setIndex,
+      tracked: plan.tracked,
+      restOnly: false,
+      running: true,
+      done: false,
+      player: ui.workout.step,
+      remainingMs: PREP_S * 1000,
+      endAt: Date.now() + PREP_S * 1000,
+    };
+    ui.workout.auto = true;
+    // announce what comes, while there are 10 seconds to get into position
+    const dose = stepDose(sess, st);
+    say(`${stepTitle(sess, st)}${dose ? ". " + dose.replace(/ · /g, ", ") : ""}`, 0.95);
+    syncTimers();
+    renderWorkout();
+  }
+  /* called by the exercise clock: announce the next step 10 s before the end, move on after the gong */
+  function playerTimerTick(tm, finished) {
+    if (tm.player == null || !ui.workout?.player || ui.workout.step !== tm.player) return;
+    const sess = S.sessions[tm.ds];
+    if (!sess) return;
+    const steps = playerSteps(sess),
+      nx = steps[tm.player + 1];
+    if (!finished && !tm.nextSaid && tm.index === tm.phases.length - 1 && tm.remainingMs <= 10000 && nx) {
+      tm.nextSaid = true;
+      if (nx.kind !== "timed") say(`${playerText().nextSay}: ${stepTitle(sess, nx)}`, 0.95);
+    }
+    if (finished) setTimeout(() => ui.workout?.step === tm.player && playerGo(tm.player + 1, { auto: true }), 1200);
+  }
+  function playerDone() {
+    const sess = S.sessions[ui.sel],
+      st = playerStep();
+    if (!sess || !st) return;
+    const key = `${st.bi}.${st.ni}`;
+    if (st.kind === "manual" || st.kind === "timed") {
+      if (st.lap != null) {
+        sess.timedLaps ||= {};
+        sess.timedLaps[key] = Math.max(sess.timedLaps[key] || 0, st.lap + 1);
+        if (sess.timedLaps[key] >= st.laps) (sess.checked ||= {})[key] = true;
+      } else (sess.checked ||= {})[key] = true;
+      store.save();
+    }
+    playerGo(ui.workout.step + 1, { auto: true });
+  }
+  function playerAction(a, ds = {}) {
+    if (!ui.workout) return;
+    const st = playerStep();
+    if (a === "list") {
+      ui.workout.list = true;
+      ui.focus = false;
+      return render();
+    }
+    if (a === "flow") return playerGo(ui.workout.step);
+    if (a === "prev") return playerGo(ui.workout.step - 1);
+    if (a === "next") return playerGo(ui.workout.step + 1, { auto: st?.kind === "sets" && stepDone(S.sessions[ui.sel], st) });
+    if (a === "done") return playerDone();
+    if (a === "setdone") {
+      const sess = S.sessions[ui.sel],
+        key = `${st.bi}.${st.ni}`,
+        rows = perfRows(sess, key, sess.blocks[st.bi]),
+        filled = (r) => r && r.r != null && r.r !== "",
+        ask = (k) => {
+          document.querySelector(`[data-k="${key}"][data-i="${k}"][data-f="r"]`)?.focus();
+          toast(playerText().enterFirst);
+        };
+      // values are entered by hand; an empty set is never filled in automatically
+      if (st.lap != null) return filled(rows[st.lap]) ? playerGo(ui.workout.step + 1, { auto: true }) : ask(st.lap);
+      if (!rows.some(filled)) return ask(0);
+      const open = rows.findIndex((r) => !filled(r));
+      if (open < 0) return playerGo(ui.workout.step + 1, { auto: true });
+      // a set is done and more are open: set rest with gong, the next field is ready
+      exerciseTimerAction("rest", { key });
+      document.querySelector(`[data-k="${key}"][data-i="${open}"][data-f="r"]`)?.focus({ preventScroll: true });
+      return;
+    }
+    if (a === "early") return playerGo(playerSteps(S.sessions[ui.sel]).length - 1);
+    if (a === "toggle") {
+      const tm = ui.exerciseTimer;
+      if (!tm || tm.player !== ui.workout.step || tm.done) return playerStartTimed(+ds.seconds || undefined);
+      return exerciseTimerAction("toggle");
+    }
+  }
+  function playerRing(tm, st, small) {
+    const C = 2 * Math.PI * 130,
+      active = tm && tm.player === ui.workout.step && !(st && st.kind !== "rest" && tm.ni === -1),
+      restHere = tm && tm.restOnly && st && tm.key === `${st.bi}.${st.ni}`,
+      setHere = tm && tm.tracked && st && tm.key === `${st.bi}.${st.ni}`,
+      show = active || restHere || setHere;
+    const label = show ? (tm.done ? workoutText().done : tm.phases[tm.index]?.label || "") : "",
+      secs = show ? Math.ceil((tm.remainingMs || 0) / 1000) : 0;
+    return `<div class="fring${small ? " small" : ""}"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="parc" class="arc" cx="140" cy="140" r="130" fill="none" stroke="var(--tc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/></svg><div class="mid"><span class="ph" id="exercisePhase">${esc(label)}</span><span class="clk" id="exerciseClock">${fmt(secs)}</span></div></div>`;
+  }
+  function playerSetsHtml(sess, st) {
+    const b = sess.blocks[st.bi],
+      it = b.items[st.ni],
+      key = `${st.bi}.${st.ni}`,
+      P = playerText(),
+      timed = TIMED.has(it.id),
+      kg = hasKg(it.id);
+    let h = `<p class="sub">${timed ? P.enterTime : P.enter}</p>`;
+    if (st.lap == null) h += setsHtml(sess, st.bi, st.ni, b, it.id, false);
+    else {
+      // circuit: only this lap's set
+      const rows = perfRows(sess, key, b),
+        r = rows[st.lap] || {},
+        ph = it.target ? it.target.r : ((b.sets || "").match(/(\d+)[–-](\d+)/) || [, "10"])[1];
+      h += `<div class="sets ${kg ? "" : "nokg"}"><span></span><span class="hd">${timed ? t("secs") : t("reps")}</span>${kg ? `<span class="hd">${t("kg")}</span>` : ""}<span class="sl${r.r != null ? " ok" : ""}" data-sl="${key}.${st.lap}">${t("setL")} ${st.lap + 1}</span><input class="si${r.r != null ? " ok" : ""}" type="text" inputmode="numeric" data-k="${key}" data-i="${st.lap}" data-f="r" value="${r.r ?? ""}" placeholder="${S.profile.lang === "de" ? "Ziel" : "Goal"} ${ph}" aria-label="${t("setL")} ${st.lap + 1}">${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${st.lap}" data-f="kg" value="${r.kg ?? ""}" placeholder="kg" aria-label="${t("setL")} ${st.lap + 1} kg">` : ""}</div>`;
+    }
+    const plan = exerciseTiming(sess, st.bi, st.ni, undefined, st.lap || 0);
+    h += `<div class="minirow player-tools">`;
+    if (plan && plan.tracked) {
+      const rows = perfRows(sess, key, b),
+        nextSet = st.lap != null ? st.lap : Math.max(0, rows.findIndex((r) => r.r == null));
+      h += `<button type="button" class="btn sec" data-exercise-timer="start" data-key="${key}" data-set-index="${nextSet}">${P.setTimer(nextSet + 1)}</button>`;
+    }
+    if (st.lap == null) h += `<button type="button" class="btn ghost" data-exercise-timer="rest" data-key="${key}">${P.rest}</button>`;
+    return h + `</div>`;
+  }
+  function playerHtml() {
+    const sess = S.sessions[ui.sel],
+      steps = playerSteps(sess),
+      i = Math.max(0, Math.min(steps.length - 1, ui.workout.step || 0)),
+      st = steps[i],
+      P = playerText(),
+      W = workoutText(),
+      tm = ui.exerciseTimer,
+      nx = steps[i + 1];
+    const doneN = steps.filter((s) => stepDone(sess, s)).length,
+      head = `<div class="fbar"><button type="button" class="x" data-workout="close" aria-label="${W.close}">✕</button><span>${esc(st.kind === "finish" ? W.finish : t(sess.blocks[st.bi].key))} · ${P.step(i + 1, steps.length)}</span><button type="button" class="x" data-player="list" aria-label="${P.list}">☰</button></div><div class="pbar"><span style="width:${Math.round((100 * doneN) / Math.max(1, steps.length - 1))}%"></span></div>`;
+    if (st.kind === "finish")
+      return `<div class="player-inner">${head}${finishFormHtml(sess)}<button type="button" class="btn sec" data-player="prev">${W.back}</button></div>`;
+    const b = sess.blocks[st.bi],
+      done = stepDone(sess, st);
+    let h = head;
+    if (st.kind === "rest") {
+      h += playerRing(tm, st);
+      h += `<div class="pcard"><small>${esc(P.lap(st.lap + 1, st.laps))}</small><b>${P.lapRest}</b><p>${P.lapRestHint}</p></div>`;
+    } else if (st.kind === "rounds") {
+      const n = b.items.filter((it, ni) => itemDone(sess, st.bi, ni)).length;
+      h += `<div class="pcard"><small>${P.rounds}</small><b>${esc(t(b.key))}</b><p>${P.roundsOf(n, b.items.length)}</p></div><button type="button" class="btn" data-fx="open">${P.roundsOpen}</button>`;
+    } else {
+      const it = b.items[st.ni],
+        dose = stepDose(sess, st),
+        desc = stepDesc(sess, st),
+        sk = it && EX[it.id] && hasSketch(it.id) && st.kind !== "sets";
+      const timerHere = tm && !tm.done && tm.key === `${st.bi}.${st.ni}` && (tm.restOnly || tm.tracked);
+      if (st.kind === "timed") h += playerRing(tm, st);
+      else if (st.kind === "sets" && timerHere) h += playerRing(tm, st, true);
+      let small = st.lap != null ? P.lap(st.lap + 1, st.laps) : "";
+      h += `<div class="pcard${done ? " done" : ""}">${sk ? `<div class="fsk">${sketchSvg(EX[it.id].de, true)}</div>` : ""}${small ? `<small>${esc(small)}</small>` : ""}<b>${esc(stepTitle(sess, st))}${done ? " ✓" : ""}</b>${dose ? `<span class="dose">${esc(dose)}</span>` : ""}${desc ? `<p>${esc(desc)}</p>` : ""}`;
+      if (st.lap != null)
+        h += `<ol class="plap">${b.items.map((x, k) => `<li class="${k === st.ni ? "on" : ""}">${esc(itemTitle(sess, st.bi, k))}</li>`).join("")}</ol>`;
+      h += `</div>`;
+      if (st.kind === "timed") {
+        const plan = exerciseTiming(sess, st.bi, st.ni, undefined, st.lap || 0),
+          running = tm && tm.player === i && !tm.done;
+        if (plan && plan.choices.length > 1 && !running)
+          h += `<div class="minirow player-tools"><span class="sub">${P.choose}:</span>${plan.choices.map((n) => `<button type="button" class="btn ghost" data-player="toggle" data-seconds="${n}">${n} s</button>`).join("")}</div>`;
+      }
+      if (st.kind === "sets") h += playerSetsHtml(sess, st);
+    }
+    h += `<div class="fnext">${nx ? (nx.kind === "finish" ? P.last : `${P.next}: <b>${esc(stepTitle(sess, nx))}</b>`) : ""}</div>`;
+    // controls: previous · main · next
+    let main;
+    if (st.kind === "timed" || st.kind === "rest") {
+      const running = tm && tm.player === i && tm.running;
+      main = `<button type="button" class="m" data-player="toggle" id="pgo" aria-label="${running ? W.pause : P.start}">${running ? ICO.pause : PLAY}</button>`;
+    } else if (st.kind === "manual")
+      main = `<button type="button" class="m" data-player="done" aria-label="${P.done}">${TICK}</button>`;
+    else if (st.kind === "sets")
+      main = `<button type="button" class="m" data-player="setdone" aria-label="${P.setDone}">${TICK}</button>`;
+    else main = `<button type="button" class="m" data-player="next" aria-label="${P.skip}">${ICO.next}</button>`;
+    h += `<div class="fctl"><button type="button" class="s" data-player="prev" aria-label="${P.prev}" ${i ? "" : "disabled"}>${ICO.prev}</button>${main}<button type="button" class="s" data-player="next" aria-label="${P.skip}">${ICO.next}</button></div>`;
+    h += `<button type="button" class="btn ghost player-early" data-player="early">${P.finishEarly}</button>`;
+    return `<div class="player-inner">${h}</div>`;
+  }
   function workoutHtml() {
     if (!ui.workout) return "";
+    if (ui.workout.player && !ui.workout.list) return playerHtml();
     const sess = S.sessions[ui.sel],
       bi = ui.workout.block,
       b = sess.blocks[bi],
       W = workoutText();
-    let h = `<div class="workout-inner"><div class="fbar"><button type="button" class="x" data-workout="close" aria-label="${W.close}">✕</button><span>${esc(t("types")[sess.type])}</span><span>${bi + 1}/${sess.blocks.length + 1}</span></div><h1 id="workoutTitle" tabindex="-1">${b ? t(b.key) : W.finish}</h1>`;
+    let h = `<div class="workout-inner"><div class="fbar"><button type="button" class="x" data-workout="close" aria-label="${W.close}">✕</button><span>${esc(t("types")[sess.type])}</span><span>${bi + 1}/${sess.blocks.length + 1}</span></div>${ui.workout.player ? `<button type="button" class="btn" data-player="flow">${playerText().player}</button>` : ""}<h1 id="workoutTitle" tabindex="-1">${b ? t(b.key) : W.finish}</h1>`;
     h += `<ol class="workout-steps" aria-label="${S.profile.lang === "de" ? "Trainingsabschnitte" : "Training sections"}">${sess.blocks.map((block, i) => `<li ${i === bi ? 'aria-current="step"' : ""}>${esc(t(block.key))}</li>`).join("")}<li ${!b ? 'aria-current="step"' : ""}>${W.finish}</li></ol>`;
     if (b) {
       h += `<p id="workoutProgress" class="sub" aria-live="polite"></p>`;
@@ -11813,6 +12270,11 @@ ${setupFields(setup, ty)}
       return;
     }
     el.innerHTML = workoutHtml();
+    el.classList.toggle("player", !!(ui.workout.player && !ui.workout.list));
+    if (ui.workout.player) {
+      const sess = S.sessions[ui.sel];
+      el.style.setProperty("--tc", `var(--c-${sess?.type || "T"})`);
+    }
     updateWorkoutProgress();
     updateExerciseTimerUI();
     updateWorkoutRoundStatus();
@@ -12117,7 +12579,9 @@ ${setupFields(setup, ty)}
       }
     }
     if (tm.running) tm.remainingMs = Math.max(0, tm.endAt - now);
+    playerTimerTick(tm, changed && tm.done);
     if (!timerVisible()) return;
+    if (changed && ui.workout?.player && !ui.workout.list) renderWorkout();
     if (changed && ui.workout?.ds === tm.ds) {
       if (tm.done && tm.tracked) {
         const input = document.querySelector(`[data-k="${tm.key}"][data-i="${tm.setIndex}"][data-f="r"]`);
@@ -12154,6 +12618,26 @@ ${setupFields(setup, ty)}
     if (toggle) {
       toggle.textContent = tm.running ? workoutText().pause : workoutText().continue;
       toggle.disabled = tm.done;
+    }
+    // player ring and colour: brass while getting ready, green in rests
+    const arc = document.getElementById("parc");
+    if (arc) {
+      const ph = tm.phases[tm.index],
+        len = (ph?.seconds || 1) * 1000,
+        frac = tm.done ? 1 : 1 - (tm.remainingMs || 0) / len,
+        C = 2 * Math.PI * 130;
+      arc.setAttribute("stroke-dashoffset", (C * (1 - Math.max(0, Math.min(1, frac)))).toFixed(1));
+      const w = document.getElementById("workout"),
+        rest = ph && (ph.prep || /Pause|Rest|Wechsel|Change/.test(ph.label || ""));
+      if (w) w.style.setProperty("--tc", ph?.prep ? "var(--ice)" : rest ? "var(--done)" : `var(--c-${S.sessions[tm.ds]?.type || "T"})`);
+      const go = document.getElementById("pgo");
+      if (go && tm.player === ui.workout?.step) {
+        const st = tm.running ? "run" : "stop";
+        if (go.dataset.state !== st) {
+          go.innerHTML = tm.running ? ICO.pause : PLAY;
+          go.dataset.state = st;
+        }
+      }
     }
   }
   function radar(cur, prev) {
@@ -12650,7 +13134,7 @@ ${setupFields(setup, ty)}
   }
   /* "What's new": shown once per big update to people who already used the app.
      Raise NEWS_V (and update the texts under "news") only for updates worth telling about. */
-  const NEWS_V = 1;
+  const NEWS_V = 2;
   const needNews = () => !S.profile.example && !!S.profile.toured && (S.profile.newsSeen || 0) < NEWS_V;
   const showNews = () => openSheet({ kind: "news" });
   async function finishOnb(skip, test) {
@@ -19963,6 +20447,7 @@ ${setupFields(setup, ty)}
     if (!b || b.disabled) return;
     const ds = b.dataset;
     if (ds.workout) return workoutAction(ds.workout);
+    if (ds.player) return playerAction(ds.player, ds);
     if (ds.exerciseTimer) return exerciseTimerAction(ds.exerciseTimer, ds);
     if (ds.nextOpen) return nextOpenExercise();
     if (ds.effort) {
@@ -20562,6 +21047,7 @@ ${setupFields(setup, ty)}
       else if (ds.fx === "next") timerJump(1);
       else if (ds.fx === "prev") timerJump(-1);
       else if (ds.fx === "finish") {
+        if (ui.workout?.player) return playerGo(ui.workout.step + 1, { auto: true });
         if (ui.workout) return moveWorkout(1);
         ui.focus = false;
         render();
