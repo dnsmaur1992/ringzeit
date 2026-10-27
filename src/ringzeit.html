@@ -11002,6 +11002,17 @@
       plannedDates,
     };
   }
+  /* Heavy rep schemes (4–6, 5–8 …) only make sense with added weight. Bodyweight exercises in such a block
+     get a bodyweight range by level instead, done slowly – otherwise "4 × 4 push-ups" would be far too easy. */
+  const BW_RANGE = [
+    [8, 10],
+    [10, 12],
+    [12, 15],
+  ];
+  const bwHeavy = (b, id) => {
+    const m = (b.sets || "").match(/^\d+×\s*(\d+)[–-](\d+)/);
+    return !!m && +m[2] <= 8 && !hasKg(id) && !TIMED.has(id);
+  };
   function strengthTarget(sess, b, it) {
     const pr = sess.progression,
       timed = TIMED.has(it.id),
@@ -11012,7 +11023,9 @@
             [30, 45],
             [45, 60],
           ][S.profile.level]
-        : match && [+match[1], +match[2]];
+        : bwHeavy(b, it.id)
+          ? BW_RANGE[S.profile.level] || BW_RANGE[1]
+          : match && [+match[1], +match[2]];
     // Circuits, explosive lifts, AMRAP/special prescriptions and changed equipment keep their own dosing.
     if (!range || isCirc(b) || EX[it.id]?.cat !== "str" || (DOSE_FIX[EX[it.id].de] && !timed)) return null;
     const n = blockSets(b),
@@ -11044,6 +11057,7 @@
         r: old?.baseR ?? old?.r ?? lo,
         kg: old?.kg ?? null,
         timed,
+        slow: bwHeavy(b, it.id) || undefined,
         reason: old ? "repeat" : "initial",
       };
     const exerciseEvidence = matches.filter(
@@ -11130,7 +11144,8 @@
     const T = trainingText(),
       why = target.reason === "up" || target.reason === "down" ? ` · ${T.targetWhy[target.reason]}` : "",
       kgHint = target.kg == null && id != null && hasKg(id) ? ` · ${T.ownWeight}` : "";
-    return `${T.target}: ${target.n} × ${target.r}${target.timed ? " s" : ""}${target.kg != null ? ` × ${numF(target.kg)} kg` : ""}${why}${kgHint}`;
+    const slow = target.slow ? (S.profile.lang === "de" ? ", langsam (3 s ab)" : ", slow (3 s down)") : "";
+    return `${T.target}: ${target.n} × ${target.r}${target.timed ? " s" : ""}${target.kg != null ? ` × ${numF(target.kg)} kg` : ""}${slow}${why}${kgHint}`;
   }
   function progressSession(sess) {
     const pr = progressionState(sess.date, sess.type, sess.run),
@@ -19866,8 +19881,9 @@ ${setupFields(setup, ty)}
       ][L] || [30, 45];
       one = `${h[0]}–${h[1]} s${side} ${de ? "halten" : "hold"}`;
     } else {
-      const r = m && m[2] ? m[2] : hasKg(id) ? "8–12" : ["8–10", "10–12", "12–15"][L];
-      one = r + reps + side;
+      const heavyBw = bwHeavy(b, id),
+        r = heavyBw ? ["8–10", "10–12", "12–15"][L] : m && m[2] ? m[2] : hasKg(id) ? "8–12" : ["8–10", "10–12", "12–15"][L];
+      one = r + reps + side + (heavyBw ? (de ? ", langsam (3 s ab)" : ", slow (3 s down)") : "");
     }
     return circ ? one : `${n} × ${one}`;
   }
@@ -19889,9 +19905,14 @@ ${setupFields(setup, ty)}
             ? "Zirkel: alle Übungen nacheinander, dann 1–2 Min. Pause. Das ist ein Durchgang."
             : "Circuit: all exercises one after another, then 1–2 min rest. That is one lap."
           : straight
-            ? de
-              ? "Erst alle Sätze einer Übung, dazwischen 60–90 s Pause – dann die nächste Übung."
-              : "All sets of one exercise first, 60–90 s rest in between – then the next exercise."
+            ? (de
+                ? "Erst alle Sätze einer Übung, dazwischen 60–90 s Pause – dann die nächste Übung."
+                : "All sets of one exercise first, 60–90 s rest in between – then the next exercise.") +
+              (b.items.some((it) => EX[it.id] && bwHeavy(b, it.id))
+                ? de
+                  ? " Die schweren Wiederholungszahlen gelten für Übungen mit Gewicht; ohne Gewicht machst du mehr Wiederholungen, dafür langsam."
+                  : " The heavy rep numbers are for weighted exercises; without weight you do more reps, but slowly."
+                : "")
             : "";
     return `<div class="bhead"><b>${t(b.key)}</b><span>${b.min} ${t("min")}${info ? ` · ${esc(info)}` : ""}</span></div>${note ? `<div class="bnote">${note}</div>` : ""}`;
   }
