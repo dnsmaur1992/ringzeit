@@ -3979,6 +3979,12 @@
   .ftimer .fctl {
     background: none;
   }
+  .setup-dirty {
+    display: block;
+    color: var(--ice);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
   /* app tour */
   .tour {
     touch-action: none;
@@ -5238,6 +5244,10 @@
       z3set: (r, on, off) => `${r}× ${on} min Zone 3, dazwischen je ${off} min Zone 2`,
       create: "Einheit erstellen",
       recreate: "Neu erstellen",
+      setupChanged: "Änderungen übernehmen – tippe auf „Neu erstellen“",
+      startChangedQ: "Du hast Einstellungen geändert – Einheit vorher neu erstellen?",
+      startRebuild: "Ja, neu erstellen",
+      startAsIs: "Nein, so starten",
       warm: "Aufwärmen",
       main: "Hauptteil",
       cond: "Kondition",
@@ -6304,6 +6314,10 @@
       z3set: (r, on, off) => `${r}× ${on} min zone 3, with ${off} min zone 2 in between`,
       create: "Build session",
       recreate: "Rebuild",
+      setupChanged: "Apply changes – tap Rebuild",
+      startChangedQ: "You changed the settings – rebuild the session first?",
+      startRebuild: "Yes, rebuild",
+      startAsIs: "No, start as is",
       warm: "Warm-up",
       main: "Main part",
       cond: "Conditioning",
@@ -11569,6 +11583,31 @@
     return `<div class="combo">${c.map((x, i) => `<span class="${KICKS.has(x) ? "k" : ""}">${esc(TECH[x][lg])}${sd[i] ? `<i>${sideLbl(sd[i])}</i>` : ""}</span>`).join("")}</div>`;
   }
   const fmt = (s) => `${Math.floor(s / 60)}:${pad(s % 60)}`;
+  /* Settings form of an existing session; "dirty" = the form was changed but the session not rebuilt yet */
+  const setupOf = (sess, ds) => ({
+    ds,
+    loc: sess.loc,
+    eq: sess.eq.filter((x) => !(x === "bag" && sess.eq.includes("partner"))),
+    type: sess.type,
+    run: !!sess.run,
+    min: sess.min || sessMin(sess.type),
+  });
+  function setupDirty(ds) {
+    const sess = S.sessions[ds],
+      su = ui.setup;
+    if (!sess || !su || su.ds !== ds) return false;
+    const base = setupOf(sess, ds),
+      // only equipment the session type can use counts; the fitness gym brings its own
+      eqKey = (e, ty, loc) =>
+        loc === "studio" ? "studio" : [...new Set(e.filter((x) => (EQ_FOR[ty] || []).includes(x)))].sort().join();
+    return (
+      su.type !== base.type ||
+      su.loc !== base.loc ||
+      su.min !== base.min ||
+      !!su.run !== base.run ||
+      eqKey(su.eq, su.type, su.loc) !== eqKey(base.eq, base.type, base.loc)
+    );
+  }
   /* The setup form only asks what matters for the chosen session type */
   function setupFields(setup, ty) {
     const has = (k) => setup.eq.includes(k),
@@ -11647,14 +11686,7 @@
       ui.setup && ui.setup.ds === ds
         ? ui.setup
         : sess
-          ? {
-              ds,
-              loc: sess.loc,
-              eq: sess.eq.filter((x) => !(x === "bag" && sess.eq.includes("partner"))),
-              type: sess.type,
-              run: !!sess.run,
-              min: sess.min || sessMin(sess.type),
-            }
+          ? setupOf(sess, ds)
           : {
               ds,
               loc: "gym",
@@ -11676,7 +11708,7 @@
  <div class="field"><span class="lab">${t("dur")}</span><div class="seg">${durs.map((m) => `<button type="button" data-dur="${m}" aria-pressed="${setup.min === m}">${m}</button>`).join("")}</div></div>
  <div class="field"><span class="lab">${t("where")}</span><div class="seg ${ty === "S" || ty === "K" ? "g2" : ""}">${(ty === "S" || ty === "K" ? ["gym", "studio", "home", "out"] : ["gym", "home", "out"]).map((l) => `<button type="button" data-loc="${l}" aria-pressed="${setup.loc === l}">${t("locs")[l]}</button>`).join("")}</div></div>
 ${setupFields(setup, ty)}
- <div class="field"><button class="btn${sess ? " sec" : ""}" type="button" id="buildSess">${sess ? t("recreate") : t("create")}</button><div class="minirow" style="justify-content:space-between">${recent && !doneOn(ds) ? `<button type="button" class="btn ghost" data-move="${ds}">${t("move")}</button>` : ""}${ow.t && !ow.from && !doneOn(ds) ? `<button type="button" class="btn ghost" data-unplan="${ds}">${t("removeExtra")}</button>` : ""}${ow.from ? `<span class="sub">${t("movedFrom")(dayLbl(ow.from))}</span>` : ""}</div></div></div>`;
+ <div class="field">${sess && setupDirty(ds) ? `<span class="sub setup-dirty">● ${t("setupChanged")}</span>` : ""}<button class="btn${sess && !setupDirty(ds) ? " sec" : ""}" type="button" id="buildSess">${sess ? t("recreate") : t("create")}</button><div class="minirow" style="justify-content:space-between">${recent && !doneOn(ds) ? `<button type="button" class="btn ghost" data-move="${ds}">${t("move")}</button>` : ""}${ow.t && !ow.from && !doneOn(ds) ? `<button type="button" class="btn ghost" data-unplan="${ds}">${t("removeExtra")}</button>` : ""}${ow.from ? `<span class="sub">${t("movedFrom")(dayLbl(ow.from))}</span>` : ""}</div></div></div>`;
     h += `</div></details>`;
     if (!sess) return h;
     {
@@ -11913,8 +11945,43 @@ ${setupFields(setup, ty)}
     if (el) el.scrollTop = 0;
     focusWorkout();
   }
+  /* Builds the session of day d from the settings form */
+  async function rebuildFromSetup(d) {
+    const ty = ui.setup.type;
+    await loading("loadingSess");
+    S.sessions[d] = buildSession(d, ty, ui.setup.loc, ui.setup.eq.slice(), {
+      run: ui.setup.run,
+      min: ui.setup.min,
+    });
+    // the form now shows what the new session really uses
+    ui.setup = setupOf(S.sessions[d], d);
+    clearSessionTimer();
+    store.save();
+    render();
+  }
   function workoutAction(action) {
-    if (action === "start") return startWorkout();
+    if (action === "start") {
+      // settings changed but not rebuilt (e.g. no heavy bag any more): ask once before starting
+      const d = ui.sel,
+        sess = S.sessions[d];
+      if (sess && !sess.flow && setupDirty(d))
+        return openSheet({
+          kind: "confirm",
+          title: workoutText().start,
+          lines: [t("startChangedQ")],
+          okL: t("startRebuild"),
+          noL: t("startAsIs"),
+          run: async () => {
+            await rebuildFromSetup(d);
+            startWorkout();
+          },
+          no: () => {
+            ui.setup = null;
+            startWorkout();
+          },
+        });
+      return startWorkout();
+    }
     if (!ui.workout) return;
     if (action === "close") return closeWorkout();
     if (action === "next") return moveWorkout(1);
@@ -17538,7 +17605,7 @@ ${setupFields(setup, ty)}
     } else if (o.kind === "blk") {
       h += blockSheetHtml(o);
     } else if (o.kind === "confirm") {
-      h += `<h3>${esc(o.title)}</h3>${o.lines.map((x) => `<div class="note warn">${esc(x)}</div>`).join("")}<div class="acts2">${cancel}<button type="button" class="btn" data-sx="confirm">${t("sure")}</button></div>`;
+      h += `<h3>${esc(o.title)}</h3>${o.lines.map((x) => `<div class="note warn">${esc(x)}</div>`).join("")}<div class="acts2">${o.no ? `<button type="button" class="btn sec" data-sx="confirmNo">${esc(o.noL || t("cancel"))}</button>` : cancel}<button type="button" class="btn" data-sx="confirm">${esc(o.okL || t("sure"))}</button></div>`;
     } else if (o.kind === "result") {
       const c = (S.profile.comps || []).find((x) => x.id === o.id) || {},
         r = o.r;
@@ -17631,8 +17698,8 @@ ${setupFields(setup, ty)}
       window.scrollTo(0, 0);
       return toast(t("blk").started);
     }
-    if (a === "confirm") {
-      const run = o.run;
+    if (a === "confirm" || a === "confirmNo") {
+      const run = a === "confirm" ? o.run : o.no;
       closeSheet();
       if (run) run();
       return;
@@ -21182,17 +21249,7 @@ ${setupFields(setup, ty)}
     }
     if (b.id === "buildSess") {
       const d = ui.sel,
-        go = async () => {
-          const ty = ui.setup.type;
-          await loading("loadingSess");
-          S.sessions[d] = buildSession(d, ty, ui.setup.loc, ui.setup.eq.slice(), {
-            run: ui.setup.run,
-            min: ui.setup.min,
-          });
-          clearSessionTimer();
-          store.save();
-          render();
-        };
+        go = () => rebuildFromSetup(d);
       // an own session on a club day needs a confirmation (once per day)
       if (clubOn(d) && !S.sessions[d] && !(ui.okClub || {})[d])
         return openSheet({
