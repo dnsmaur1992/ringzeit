@@ -1976,6 +1976,10 @@
   .note.act .minirow .btn.ghost {
     padding: 4px 8px;
   }
+  .note.wq input {
+    width: 92px;
+    padding: 6px 10px;
+  }
   .sheetbg {
     position: fixed;
     inset: 0;
@@ -5057,6 +5061,11 @@
       wcLog: (d) =>
         `Für das Turnier am ${d} ist eine Gewichtsklasse hinterlegt – trag dein aktuelles Gewicht im Verlauf ein.`,
       wcLine: (kg) => `Klasse −${kg} kg`,
+      wcWeekly: (d) => `Turnier am ${d} mit Gewichtsklasse: Trag einmal pro Woche dein Gewicht ein.`,
+      wTip: "Immer gleich wiegen: morgens, nach dem Toilettengang, vor dem Frühstück.",
+      wTrend: (kg) => `Schnitt der letzten 2 Wochen: ${kg} kg`,
+      wcBig: (diff, wc, n) =>
+        `Du liegst ${diff} kg über deiner Gewichtsklasse (−${wc} kg), das Turnier ist in ${n} Tagen. Sprich mit deinem Trainer, ob die Klasse passt.`,
       resAsk: (d) => `Wie lief das Turnier am ${d}?`,
       resAskG: (d) => `Wie lief die Prüfung am ${d}?`,
       resBouts: "Kämpfe",
@@ -6130,6 +6139,11 @@
         `You are ${diff} kg above your weight class (−${wc} kg) for the tournament on ${d}. Plan this early with your coach.`,
       wcLog: (d) => `The tournament on ${d} has a weight class – log your current weight in History.`,
       wcLine: (kg) => `Class −${kg} kg`,
+      wcWeekly: (d) => `Tournament on ${d} with a weight class: log your weight once a week.`,
+      wTip: "Always weigh the same way: in the morning, after the toilet, before breakfast.",
+      wTrend: (kg) => `Average of the last 2 weeks: ${kg} kg`,
+      wcBig: (diff, wc, n) =>
+        `You are ${diff} kg above your weight class (−${wc} kg) and the tournament is in ${n} days. Talk to your coach about whether the class fits.`,
       resAsk: (d) => `How did the tournament on ${d} go?`,
       resAskG: (d) => `How did the grading on ${d} go?`,
       resBouts: "Bouts",
@@ -6732,6 +6746,46 @@
       de: "Die Kraft eines Schlags kommt aus der ganzen Kette: Fuß, Bein, Hüfte, Rumpf, Schulter, Arm – nicht aus dem Arm allein.",
       en: "The power of a punch comes from the whole chain: foot, leg, hip, trunk, shoulder, arm – not from the arm alone.",
       s: "Biomechanik",
+    },
+    {
+      de: "Bei den World Games 2022 in Birmingham (USA) war Kickboxen erstmals offizielle Sportart – gekämpft wurde nach K1-Regeln. 2017 war es dort noch Einladungssportart.",
+      en: "At the 2022 World Games in Birmingham (USA) kickboxing was an official sport for the first time – fought under K1 rules. In 2017 it had been an invitational sport.",
+      s: "Wikipedia: Kickboxing at the 2022 World Games",
+    },
+    {
+      de: "2023 war Kickboxen zum ersten Mal Teil der European Games: 16 Wettbewerbe in Point Fighting, Light Contact und Full Contact, ausgetragen in Myślenice (Polen).",
+      en: "In 2023 kickboxing was part of the European Games for the first time: 16 events in point fighting, light contact and full contact, held in Myślenice (Poland).",
+      s: "Wikipedia: Kickboxing at the 2023 European Games",
+    },
+    {
+      de: "Ernesto Hoost hieß „Mr. Perfect“ – wegen seiner fast maschinenhaft präzisen Kombinationen. Er gewann den K-1 World Grand Prix 1997, 1999, 2000 und 2002.",
+      en: "Ernesto Hoost was called “Mr. Perfect” for his almost machine-like precise combinations. He won the K-1 World Grand Prix in 1997, 1999, 2000 and 2002.",
+      s: "Wikipedia: Ernesto Hoost",
+    },
+    {
+      de: "Semmy Schilt ist 2,12 m groß und gewann den K-1 World Grand Prix viermal – 2005, 2006, 2007 und 2009.",
+      en: "Semmy Schilt is 2.12 m tall and won the K-1 World Grand Prix four times – 2005, 2006, 2007 and 2009.",
+      s: "Wikipedia: Semmy Schilt",
+    },
+    {
+      de: "Peter Aerts, „The Dutch Lumberjack“, gewann den K-1 World Grand Prix 1994, 1995 und 1998 – und gilt vielen als „Mr. K-1“.",
+      en: "Peter Aerts, “The Dutch Lumberjack”, won the K-1 World Grand Prix in 1994, 1995 and 1998 – many call him “Mr. K-1”.",
+      s: "Wikipedia: Peter Aerts",
+    },
+    {
+      de: "Das Rajadamnern-Stadion in Bangkok wurde ab 1941 gebaut, der Krieg stoppte den Bau. Der erste Kampf fand am 23. Dezember 1945 statt.",
+      en: "Construction of Bangkok's Rajadamnern Stadium began in 1941 and was halted by the war. The first fight took place on 23 December 1945.",
+      s: "WMC: Rajadamnern Stadium History",
+    },
+    {
+      de: "Vor der ersten Runde zeigen Muay-Thai-Kämpfer den Wai Khru Ram Muay – ein Ritual, das Lehrer und Training ehrt. Gewertet wird er nicht.",
+      en: "Before the first round, Muay Thai fighters perform the Wai Khru Ram Muay – a ritual honouring their teachers and training. It isn't scored.",
+      s: "Muay Thai Records: Wai Kru Ram Muay",
+    },
+    {
+      de: "Wie schnell dein Puls in der ersten Minute Pause fällt, zeigt deine Ausdauer: Je schneller er sinkt, desto besser erholst du dich zwischen den Runden.",
+      en: "How fast your pulse drops in the first minute of rest shows your endurance: the faster it falls, the better you recover between rounds.",
+      s: "Sportmedizin",
     },
   ];
   const TIPS = [
@@ -8270,6 +8324,29 @@
     if (b.total >= 20 && b.min >= 3) return 2;
     if (b.total >= 15 && b.min >= 2) return 1;
     return 0;
+  }
+  /* under 15 (or a child without year of birth): no weight reminders */
+  const under15 = () => {
+    const a = ageAt();
+    return a != null ? a < 15 : ageGroup() === "kids";
+  };
+  /* average of the weigh-ins of the last 14 days (needs two), so single-day swings don't count */
+  function weightTrend() {
+    const cut = iso(addDays(today(), -14)),
+      w = S.weights.filter((x) => x.date >= cut);
+    return w.length >= 2 ? Math.round((w.reduce((a, x) => a + x.kg, 0) / w.length) * 10) / 10 : null;
+  }
+  function saveWeight(raw) {
+    const v = parseFloat(String(raw || "").replace(",", "."));
+    if (!(v >= 25 && v <= 200)) return false;
+    const d = iso(today());
+    S.weights = S.weights.filter((w) => w.date !== d);
+    S.weights.push({ date: d, kg: Math.round(v * 10) / 10 });
+    S.weights.sort((a, c) => a.date.localeCompare(c.date));
+    store.save();
+    toast(t("saved"));
+    render();
+    return true;
   }
   const nextComp = () =>
     (S.profile.comps || [])
@@ -10307,12 +10384,18 @@
     document.getElementById("factNext").textContent = t("nextFact");
   }
   let closeLoader = null,
-    loaderTimer = null;
+    loaderTimer = null,
+    loaderOpened = 0;
+  const LOADER_READ = 10000,
+    LOADER_MAX = 10000;
   document.getElementById("factNext").onclick = (ev) => {
     ev.stopPropagation();
     loadIdx++;
     showCard();
+    // each "next" gives time to read; 10 s after the screen appeared the app opens anyway
     clearTimeout(loaderTimer);
+    const left = Math.max(0, loaderOpened + LOADER_MAX - Date.now());
+    loaderTimer = setTimeout(() => closeLoader && closeLoader(), Math.min(LOADER_READ, left));
   };
   document.getElementById("loader").addEventListener("click", () => {
     if (closeLoader) closeLoader();
@@ -10327,6 +10410,7 @@
         closeLoader = null;
         res();
       };
+      loaderOpened = Date.now();
       loaderTimer = setTimeout(() => closeLoader && closeLoader(), ms);
     });
   }
@@ -10538,15 +10622,21 @@
           btn("later", c.id, t("later")) + btn("res", c.id, t("clubLog")),
         );
     });
-    // weight class of the next tournament: a factual note only, never weight-cutting advice
-    const nc = nextComp();
-    if (nc && nc.wc && daysBetween(today(), parse(nc.date)) <= 56) {
+    // weight class of the next tournament: weekly weigh-in and factual notes only, never weight-cutting advice;
+    // under 15 there are no reminders at all (logging stays possible in History)
+    const nc = nextComp(),
+      ncDays = nc ? daysBetween(today(), parse(nc.date)) : 99;
+    if (nc && nc.wc && ncDays <= 56 && !under15()) {
       const lw = S.weights[S.weights.length - 1];
-      if (!lw || daysBetween(parse(lw.date), today()) > 21)
-        h += `<div class="note">${esc(t("wcLog")(fmtDate(nc.date)))}</div>`;
-      else if (lw.kg > nc.wc) {
-        const diff = (lw.kg - nc.wc).toFixed(1);
-        h += `<div class="note warn">${esc(t("wcOver")(numF(diff), numF(nc.wc), fmtDate(nc.date)))}</div>`;
+      if (!lw || daysBetween(parse(lw.date), today()) >= 7)
+        h += `<div class="note act wq"><span>${esc(t("wcWeekly")(fmtDate(nc.date)))}<br><small class="sub">${esc(t("wTip"))}</small></span><span class="minirow"><input id="wQuick" type="text" inputmode="decimal" placeholder="${t("weightPh")}" aria-label="${t("weightAdd")}"><button type="button" class="btn ghost" id="wQuickAdd">${t("add")}</button></span></div>`;
+      else {
+        const ref = weightTrend() ?? lw.kg;
+        if (ref > nc.wc) {
+          const diff = Math.round((ref - nc.wc) * 10) / 10,
+            big = ncDays <= 21 && diff > ref * 0.03;
+          h += `<div class="note warn">${esc(big ? t("wcBig")(numF(diff), numF(nc.wc), ncDays) : t("wcOver")(numF(diff.toFixed(1)), numF(nc.wc), fmtDate(nc.date)))}</div>`;
+        }
       }
     }
     return h;
@@ -13125,7 +13215,7 @@ ${setupFields(setup, ty)}
       });
       h += `<div><h2>${t("chartWeeks")}</h2><div class="chart">${barChart(weeks, planned)}</div></div>`;
     }
-    h += `<div><h2>${t("chartWeight")}</h2><div class="panel"><div class="field"><label class="lab" for="wIn">${t("weightAdd")}</label><div class="inline"><input id="wIn" type="text" inputmode="decimal" placeholder="${t("weightPh")}"><button type="button" class="btn" id="wAdd">${t("add")}</button></div></div></div></div>`;
+    h += `<div><h2>${t("chartWeight")}</h2><div class="panel"><div class="field"><label class="lab" for="wIn">${t("weightAdd")}</label><div class="inline"><input id="wIn" type="text" inputmode="decimal" placeholder="${t("weightPh")}"><button type="button" class="btn" id="wAdd">${t("add")}</button></div><span class="sub">${t("wTip")}${weightTrend() != null ? ` · ${t("wTrend")(numF(weightTrend()))}` : ""}</span></div></div></div>`;
     const ncw = nextComp();
     if (S.weights.length >= 2)
       h += `<div class="chart">${lineChart(S.weights.slice(-20), ncw && ncw.wc ? ncw.wc : null)}</div>`;
@@ -13194,9 +13284,10 @@ ${setupFields(setup, ty)}
       s += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${pl - 6}" y="${y(v) + 4}" font-size="10" font-family="DM Mono,monospace" text-anchor="end" fill="var(--mist)">${v}</text>`;
     const pts = ws.map((w, i) => `${x(i)},${y(w.kg)}`).join(" "),
       last = ws.length - 1;
+    s += `<polygon points="${x(0)},${H - pb} ${pts} ${x(last)},${H - pb}" fill="var(--ice-dim)"/><polyline points="${pts}" fill="none" stroke="var(--ice)" stroke-width="2"/>`;
+    // class line on top of the filled area, otherwise it hides exactly when you are above it
     if (limit)
       s += `<line x1="${pl}" x2="${W - pr}" y1="${y(limit)}" y2="${y(limit)}" stroke="var(--ember)" stroke-width="1.4" stroke-dasharray="5 4"/><text x="${pl + 4}" y="${y(limit) - 5}" font-size="10.5" fill="var(--ember)">${t("wcLine")(numF(limit))}</text>`;
-    s += `<polygon points="${x(0)},${H - pb} ${pts} ${x(last)},${H - pb}" fill="var(--ice-dim)"/><polyline points="${pts}" fill="none" stroke="var(--ice)" stroke-width="2"/>`;
     s += `<circle cx="${x(last)}" cy="${y(ws[last].kg)}" r="4.5" fill="var(--ember)"/><text x="${x(last) - 6}" y="${y(ws[last].kg) - 9}" font-size="11" font-weight="700" text-anchor="end" fill="var(--frost)">${ws[last].kg.toFixed(1)}</text>`;
     return (
       s +
@@ -21446,16 +21537,8 @@ ${setupFields(setup, ty)}
       render();
       return;
     }
-    if (b.id === "wAdd") {
-      const v = parseFloat(document.getElementById("wIn").value.replace(",", "."));
-      if (!(v >= 25 && v <= 200)) return;
-      const d = iso(today());
-      S.weights = S.weights.filter((w) => w.date !== d);
-      S.weights.push({ date: d, kg: Math.round(v * 10) / 10 });
-      S.weights.sort((a, c) => a.date.localeCompare(c.date));
-      store.save();
-      toast(t("saved"));
-      render();
+    if (b.id === "wAdd" || b.id === "wQuickAdd") {
+      saveWeight(document.getElementById(b.id === "wAdd" ? "wIn" : "wQuick").value);
       return;
     }
     // test
