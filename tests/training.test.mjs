@@ -1308,3 +1308,28 @@ test("player: set done asks for a value, starts the set rest, and moves on after
   await a.click({ dataset: { player: "setdone" } });
   assert.equal(a.run("ui.workout.step"), step + 1);
 });
+
+test("heavy rep schemes apply to weighted exercises; bodyweight exercises get a bodyweight range, done slowly", () => {
+  const a = app();
+  a.run(
+    `ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'S','gym',[],{min:60});const b=S.sessions[ui.sel].blocks.find(b=>b.key==='str');b.sets='4× 4–6 · schwer';`,
+  );
+  const res = JSON.parse(
+    a.run(
+      "JSON.stringify((()=>{const s=S.sessions[ui.sel],b=s.blocks.find(b=>b.key==='str');return b.items.filter(it=>EX[it.id]&&!TIMED.has(it.id)).map(it=>({kg:hasKg(it.id),t:strengthTarget(s,b,it),d:doseTxt(it.id,b)}))})())",
+    ),
+  );
+  assert.ok(res.length > 0);
+  for (const x of res.filter((x) => !x.kg)) {
+    assert.ok(x.t.r >= 8, `bodyweight target ${x.t.r}`);
+    assert.equal(x.t.slow, true);
+    assert.match(x.d, /langsam/);
+  }
+  a.run("S.sessions[ui.sel].blocks.find(b=>b.key==='str').sets='3× 8–12'");
+  const normal = JSON.parse(
+    a.run(
+      "JSON.stringify((()=>{const s=S.sessions[ui.sel],b=s.blocks.find(b=>b.key==='str');return b.items.filter(it=>EX[it.id]&&!TIMED.has(it.id)).map(it=>strengthTarget(s,b,it))})())",
+    ),
+  );
+  assert.ok(normal.every((t) => !t || !t.slow));
+});
