@@ -3950,8 +3950,30 @@
   .fring.small .clk {
     font-size: 40px;
   }
+  .prest {
+    align-self: center;
+    margin-top: -6px;
+  }
   .player-early {
     align-self: center;
+  }
+  .psound {
+    border-left: 3px solid var(--ice);
+  }
+  .psound .btn {
+    margin-top: 8px;
+  }
+  .sets.leg {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+  .sets.leg.nokg {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+  .sets.lap.leg {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .sets.lap.leg.nokg {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
   }
   /* app tour */
   .tour {
@@ -11145,7 +11167,8 @@
       why = target.reason === "up" || target.reason === "down" ? ` · ${T.targetWhy[target.reason]}` : "",
       kgHint = target.kg == null && id != null && hasKg(id) ? ` · ${T.ownWeight}` : "";
     const slow = target.slow ? (S.profile.lang === "de" ? ", langsam (3 s ab)" : ", slow (3 s down)") : "";
-    return `${T.target}: ${target.n} × ${target.r}${target.timed ? " s" : ""}${target.kg != null ? ` × ${numF(target.kg)} kg` : ""}${slow}${why}${kgHint}`;
+    const per = id != null && EX[id] ? sideWord(EX[id].de) : "";
+    return `${T.target}: ${target.n} × ${target.r}${target.timed ? " s" : ""}${per}${target.kg != null ? ` × ${numF(target.kg)} kg` : ""}${slow}${why}${kgHint}`;
   }
   function progressSession(sess) {
     const pr = progressionState(sess.date, sess.type, sess.run),
@@ -11431,6 +11454,23 @@
     }
     return sess.perf[key];
   }
+  /* one-legged exercises: left and right are entered separately; the set counts (r) once both legs are in,
+     as the weaker leg – so progression, "last time" and completion keep working on one number */
+  const legLabels = () => (S.profile.lang === "de" ? ["Links", "Rechts"] : ["Left", "Right"]);
+  function legSync(row) {
+    const l = row.rL ?? row.r,
+      r = row.rR ?? row.r;
+    row.r = l != null && l !== "" && r != null && r !== "" ? Math.min(+l, +r) : null;
+  }
+  function legInputs(key, i, row, ph, timed) {
+    const LR = legLabels();
+    return ["rL", "rR"]
+      .map((f, k) => {
+        const v = row[f] ?? (row.rL == null && row.rR == null ? row.r : null);
+        return `<input class="si${v != null && v !== "" ? " ok" : ""}" type="text" inputmode="numeric" data-k="${key}" data-i="${i}" data-f="${f}" value="${v ?? ""}" placeholder="${ph}" aria-label="${t("setL")} ${i + 1} ${LR[k]} ${timed ? t("secs") : t("reps")}">`;
+      })
+      .join("");
+  }
   function setsHtml(sess, bi, n, b, id, rounds, preview = false) {
     if (preview) return "";
     const key = `${bi}.${n}`,
@@ -11449,10 +11489,14 @@
       ][S.profile.level] || [30, 45],
       ph = timed ? String(hold[0]) : ((b.sets || "").match(/(\d+)[–-](\d+)/) || [, "10"])[1];
     let h = timed ? `<div class="last" style="margin-top:6px">${t("holdTarget")(rows.length, hold)}</div>` : "";
-    h += `<div class="sets ${kg ? "" : "nokg"}"><span></span><span class="hd">${timed ? t("secs") : t("reps")}</span>${kg ? `<span class="hd">${t("kg")}</span>` : ""}<span></span>`;
+    const leg = DOSE_LEG.has(EX[id]?.de),
+      LR = legLabels();
+    h += leg
+      ? `<div class="sets leg ${kg ? "" : "nokg"}"><span></span><span class="hd">${LR[0]} · ${timed ? t("secs") : t("reps")}</span><span class="hd">${LR[1]}</span>${kg ? `<span class="hd">${t("kg")}</span>` : ""}<span></span>`
+      : `<div class="sets ${kg ? "" : "nokg"}"><span></span><span class="hd">${timed ? t("secs") : t("reps")}</span>${kg ? `<span class="hd">${t("kg")}</span>` : ""}<span></span>`;
     rows.forEach((r, i) => {
       const ok = r.r != null && r.r !== "" ? " ok" : "";
-      h += `<span class="sl${ok}" data-sl="${key}.${i}">${t("setL")} ${i + 1}</span><input class="si${ok}" type="text" inputmode="numeric" data-k="${key}" data-i="${i}" data-f="r" value="${r.r ?? ""}" placeholder="${S.profile.lang === "de" ? "Ziel" : "Goal"} ${target ? target.r : ph}" aria-label="${t("setL")} ${i + 1} ${timed ? t("secs") : t("reps")}">${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${i}" data-f="kg" value="${r.kg ?? ""}" placeholder="${target?.kg ?? "kg"}" aria-label="${t("setL")} ${i + 1} kg">` : ""}<button type="button" class="x" data-rmset="${key}" data-i="${i}" aria-label="−">−</button>`;
+      h += `<span class="sl${ok}" data-sl="${key}.${i}">${t("setL")} ${i + 1}</span>${leg ? legInputs(key, i, r, `${S.profile.lang === "de" ? "Ziel" : "Goal"} ${target ? target.r : ph}`, timed) : `<input class="si${ok}" type="text" inputmode="numeric" data-k="${key}" data-i="${i}" data-f="r" value="${r.r ?? ""}" placeholder="${S.profile.lang === "de" ? "Ziel" : "Goal"} ${target ? target.r : ph}" aria-label="${t("setL")} ${i + 1} ${timed ? t("secs") : t("reps")}">`}${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${i}" data-f="kg" value="${r.kg ?? ""}" placeholder="${target?.kg ?? "kg"}" aria-label="${t("setL")} ${i + 1} kg">` : ""}<button type="button" class="x" data-rmset="${key}" data-i="${i}" aria-label="−">−</button>`;
     });
     const last = lastPerf(id, sess.date);
     return (
@@ -11633,7 +11677,7 @@ ${setupFields(setup, ty)}
       const doneTop = S.log.find((e) => e.date === ds && own(e));
       h += doneTop
         ? `<div class="note">${workoutText().preview}</div>`
-        : `<div class="panel training-start top"><p class="sub">${workoutText().preview}</p><button type="button" class="btn" data-workout="start">${PLAY}<span>${sess.flow ? workoutText().resume : workoutText().start}</span></button></div>`;
+        : `<div class="panel training-start top"><p class="sub">${workoutText().preview}</p>${isIOS() ? `<p class="sub">🔔 ${S.profile.lang === "de" ? "iPhone: Schalter an der Seite auf Ton stellen, sonst bleiben Gong und Ansagen stumm." : "iPhone: set the side switch to ring, otherwise gong and calls stay silent."}</p>` : isAndroid() ? `<p class="sub">🔔 ${S.profile.lang === "de" ? "Android: Medienlautstärke hochdrehen (Lautstärketaste → Musiknote), sonst sind Gong und Ansagen leise." : "Android: turn up the media volume (volume key → music note), otherwise gong and calls are quiet."}</p>` : ""}<button type="button" class="btn" data-workout="start">${PLAY}<span>${sess.flow ? workoutText().resume : workoutText().start}</span></button></div>`;
     }
     h += progressionInfoHtml(true);
     const rbS = roundBlock(sess);
@@ -11900,7 +11944,7 @@ ${setupFields(setup, ty)}
           setOf: (a, n) => `Satz ${a} von ${n}`,
           setsDone: "Alle Sätze eingetragen",
           enter: "Satz machen, Wiederholungen eintragen, ✓ tippen – dann läuft die Satzpause.",
-          enterTime: "Sekunden eintragen oder den Satz-Timer starten.",
+          enterTime: "▶ startet alle Sätze: Halten, Pause, nächster Satz – mit Gong, wie bei den Runden. Die Sekunden werden eingetragen; du kannst sie ändern.",
           rest: "Satzpause 1:00",
           setTimer: (n) => `Satz ${n} mit Timer`,
           rounds: "Runden",
@@ -11913,6 +11957,12 @@ ${setupFields(setup, ty)}
           finishEarly: "Vorzeitig abschließen",
           choose: "Dauer",
           setDone: "Satz fertig",
+          soundT: "Ton an?",
+          sound: "Damit du Gong und Ansagen hörst: den Schalter an der linken Seite des iPhones auf Ton stellen (kein orangefarbener Streifen sichtbar) und die Lautstärke hochdrehen. Bei neueren iPhones ohne Schalter: Kontrollzentrum öffnen und den Stummmodus (Glocke) ausschalten.",
+          soundOk: "Ton ist an",
+          soundAndroid:
+            "Damit du Gong und Ansagen hörst: eine Lautstärketaste drücken und den Regler für Medien (Musiknote) hochziehen – der ist getrennt vom Klingelton. Bei „Bitte nicht stören“ bleiben Medien meist hörbar.",
+          tenLeft: "Noch 10 Sekunden",
           lapRest: "Pause",
           lapRestHint: "Durchatmen, trinken – gleich kommt der nächste Durchgang.",
           enterFirst: "Bitte erst die Wiederholungen eintragen.",
@@ -11930,7 +11980,7 @@ ${setupFields(setup, ty)}
           setOf: (a, n) => `Set ${a} of ${n}`,
           setsDone: "All sets entered",
           enter: "Do the set, enter your reps, tap ✓ – the set rest starts.",
-          enterTime: "Enter seconds or start the set timer.",
+          enterTime: "▶ runs all sets: hold, rest, next set – with gong, like rounds. The seconds are filled in; you can change them.",
           rest: "Set rest 1:00",
           setTimer: (n) => `Set ${n} with timer`,
           rounds: "Rounds",
@@ -11943,10 +11993,23 @@ ${setupFields(setup, ty)}
           finishEarly: "Finish early",
           choose: "Duration",
           setDone: "Set done",
+          soundT: "Sound on?",
+          sound: "To hear the gong and calls: set the switch on the left side of your iPhone to ring (no orange stripe visible) and turn the volume up. Newer iPhones without a switch: open Control Centre and turn off Silent Mode (bell).",
+          soundOk: "Sound is on",
+          soundAndroid:
+            "To hear the gong and calls: press a volume key and turn up the media slider (music note) – it is separate from the ringtone. Media usually stays audible in Do Not Disturb.",
+          tenLeft: "10 seconds left",
           lapRest: "Rest",
           lapRestHint: "Breathe, drink – the next lap is coming.",
           enterFirst: "Please enter your reps first.",
         };
+  /* iPhone/iPad: the side switch (or silent mode on newer models) mutes gong and calls */
+  /* Android: no mute switch, but media volume is separate from the ringer volume */
+  const isAndroid = () => typeof navigator !== "undefined" && /android/i.test(navigator.userAgent || "");
+  const soundHintHtml = (P) =>
+    (isIOS() || isAndroid()) && !S.profile.soundHintSeen
+      ? `<div class="note psound"><b>🔔 ${P.soundT}</b><div>${isIOS() ? P.sound : P.soundAndroid}</div><button type="button" class="btn ghost" data-player="soundok">${P.soundOk}</button></div>`
+      : "";
   const strItem = (b, it) => EX[it.id]?.cat === "str" && !["warm", "cool"].includes(b.key);
   /* circuits run lap by lap (warm-up and cool-down never are circuits) */
   const playerCirc = (b) => isCirc(b) && !["warm", "cool"].includes(b.key) && !b.rounds;
@@ -12020,8 +12083,11 @@ ${setupFields(setup, ty)}
     if (!sess || !ui.workout) return;
     const steps = playerSteps(sess);
     i = Math.max(0, Math.min(steps.length - 1, i));
-    if (!opt.keepTimers) pauseWorkoutTimers();
-    if (ui.exerciseTimer && !ui.exerciseTimer.running) ui.exerciseTimer = null;
+    // switching between overview and flow keeps running timers (set rest, exercise, rounds) untouched
+    if (!opt.keepTimers) {
+      pauseWorkoutTimers();
+      if (ui.exerciseTimer && !ui.exerciseTimer.running) ui.exerciseTimer = null;
+    }
     readFinishDraft();
     const st = steps[i];
     ui.workout.step = i;
@@ -12034,6 +12100,7 @@ ${setupFields(setup, ty)}
     const el = document.getElementById("workout");
     if (el) el.scrollTop = 0;
     if ((st.kind === "timed" || st.kind === "rest") && opt.auto) playerStartTimed();
+    else if (opt.auto && timedSets(st, sess)) playerStartSets();
     else if (opt.auto && st.kind !== "finish" && st.kind !== "rounds")
       say(`${playerText().nextSay}: ${stepTitle(sess, st)}`, 0.95);
   }
@@ -12095,18 +12162,85 @@ ${setupFields(setup, ty)}
     syncTimers();
     renderWorkout();
   }
+  /* timed strength (plank & co.): get ready → set → rest → set …, like rounds; values fill in set by set */
+  const SET_REST = 60;
+  const timedSets = (st, sess) => st?.kind === "sets" && TIMED.has(sess.blocks[st.bi].items[st.ni].id);
+  function playerStartSets() {
+    const sess = S.sessions[ui.sel],
+      st = playerStep();
+    if (!sess || !timedSets(st, sess)) return;
+    const b = sess.blocks[st.bi],
+      key = `${st.bi}.${st.ni}`,
+      plan = exerciseTiming(sess, st.bi, st.ni, undefined, st.lap || 0),
+      rows = perfRows(sess, key, b);
+    if (!plan) return;
+    const open = (i) => rows[i] && (rows[i].r == null || rows[i].r === ""),
+      todo = st.lap != null ? (open(st.lap) ? [st.lap] : []) : rows.map((r, i) => i).filter(open);
+    if (!todo.length) return playerGo(ui.workout.step + 1, { auto: true });
+    const P = playerText(),
+      W = workoutText(),
+      phases = [{ seconds: PREP_S, label: P.ready, prep: true }];
+    const leg = DOSE_LEG.has(EX[b.items[st.ni].id]?.de),
+      LR = legLabels();
+    todo.forEach((i, k) => {
+      if (leg) {
+        phases.push({ seconds: plan.seconds, label: `${W.set} ${i + 1}/${rows.length} · ${LR[0]}`, set: i, leg: "rL" });
+        phases.push({ seconds: 5, label: W.change });
+        phases.push({ seconds: plan.seconds, label: `${W.set} ${i + 1}/${rows.length} · ${LR[1]}`, set: i, leg: "rR" });
+      } else phases.push({ seconds: plan.seconds, label: `${W.set} ${i + 1}/${rows.length}`, set: i });
+      if (k < todo.length - 1) phases.push({ seconds: SET_REST, label: W.rest });
+    });
+    pauseOtherTimer("exercise");
+    if (ui.exerciseTimer?.running) pauseExerciseTimer();
+    ui.exerciseTimer = {
+      ds: ui.sel,
+      key,
+      bi: st.bi,
+      ni: st.ni,
+      phases,
+      index: 0,
+      seconds: plan.seconds,
+      chainSets: true,
+      tracked: false,
+      restOnly: false,
+      running: true,
+      done: false,
+      player: ui.workout.step,
+      remainingMs: PREP_S * 1000,
+      endAt: Date.now() + PREP_S * 1000,
+    };
+    ui.workout.auto = true;
+    say(`${stepTitle(sess, st)}. ${todo.length} × ${plan.seconds} ${S.profile.lang === "de" ? "Sekunden" : "seconds"}`, 0.95);
+    syncTimers();
+    renderWorkout();
+  }
   /* called by the exercise clock: announce the next step 10 s before the end, move on after the gong */
   function playerTimerTick(tm, finished) {
     if (tm.player == null || !ui.workout?.player || ui.workout.step !== tm.player) return;
     const sess = S.sessions[tm.ds];
     if (!sess) return;
-    const steps = playerSteps(sess),
-      nx = steps[tm.player + 1];
-    if (!finished && !tm.nextSaid && tm.index === tm.phases.length - 1 && tm.remainingMs <= 10000 && nx) {
-      tm.nextSaid = true;
-      if (nx.kind !== "timed") say(`${playerText().nextSay}: ${stepTitle(sess, nx)}`, 0.95);
+    if (finished) {
+      if (!tm.stay) setTimeout(() => ui.workout?.step === tm.player && playerGo(tm.player + 1, { auto: true }), 1200);
+      return;
     }
-    if (finished) setTimeout(() => ui.workout?.step === tm.player && playerGo(tm.player + 1, { auto: true }), 1200);
+    // 10 seconds before a phase ends: short beep and a call –
+    // in a rest/change: what comes next; in work: "10 seconds left" (and, at the very end, the next exercise)
+    const ph = tm.phases[tm.index];
+    if (!tm.running || !ph || ph.prep || tm.remainingMs > 10000 || tm.remainingMs <= 8000) return;
+    tm.warned ||= {};
+    if (tm.warned[tm.index]) return;
+    tm.warned[tm.index] = true;
+    const P = playerText(),
+      last = tm.index === tm.phases.length - 1,
+      nextPh = tm.phases[tm.index + 1],
+      nx = playerSteps(sess)[tm.player + 1],
+      isRest = /Pause|Rest|Wechsel|Change/.test(ph.label || ""),
+      nextName =
+        tm.nextLabel || (last ? (nx && nx.kind !== "finish" ? stepTitle(sess, nx) : "") : nextPh?.label || "");
+    if (ph.seconds < 20 && !last) return; // short intervals: the gong is enough
+    beep(660, 0.12, 1);
+    if (isRest) say(`${P.tenLeft}. ${P.nextSay}: ${nextName}`, 0.95);
+    else say(`${P.tenLeft}${last && nextName ? `. ${P.nextSay}: ${nextName}` : ""}`, 0.95);
   }
   function playerDone() {
     const sess = S.sessions[ui.sel],
@@ -12131,17 +12265,27 @@ ${setupFields(setup, ty)}
       ui.focus = false;
       return render();
     }
-    if (a === "flow") return playerGo(ui.workout.step);
+    if (a === "flow") return playerGo(ui.workout.step, { keepTimers: true });
     if (a === "prev") return playerGo(ui.workout.step - 1);
     if (a === "next") return playerGo(ui.workout.step + 1, { auto: st?.kind === "sets" && stepDone(S.sessions[ui.sel], st) });
     if (a === "done") return playerDone();
+    if (a === "soundok") {
+      S.profile.soundHintSeen = true;
+      store.save();
+      return renderWorkout();
+    }
     if (a === "setdone") {
       const sess = S.sessions[ui.sel],
         key = `${st.bi}.${st.ni}`,
         rows = perfRows(sess, key, sess.blocks[st.bi]),
         filled = (r) => r && r.r != null && r.r !== "",
         ask = (k) => {
-          document.querySelector(`[data-k="${key}"][data-i="${k}"][data-f="r"]`)?.focus();
+          const row = rows[k] || {};
+          document
+            .querySelector(
+              `[data-k="${key}"][data-i="${k}"][data-f="r"], [data-k="${key}"][data-i="${k}"][data-f="${row.rL == null ? "rL" : "rR"}"]`,
+            )
+            ?.focus();
           toast(playerText().enterFirst);
         };
       // values are entered by hand; an empty set is never filled in automatically
@@ -12151,24 +12295,30 @@ ${setupFields(setup, ty)}
       if (open < 0) return playerGo(ui.workout.step + 1, { auto: true });
       // a set is done and more are open: set rest with gong, the next field is ready
       exerciseTimerAction("rest", { key });
-      document.querySelector(`[data-k="${key}"][data-i="${open}"][data-f="r"]`)?.focus({ preventScroll: true });
+      // the set rest also gets the 10-second call, but stays on this exercise when it ends
+      if (ui.exerciseTimer?.restOnly)
+        Object.assign(ui.exerciseTimer, { player: ui.workout.step, stay: true, nextLabel: `${workoutText().set} ${open + 1}` });
+      document
+        .querySelector(`[data-k="${key}"][data-i="${open}"][data-f="r"], [data-k="${key}"][data-i="${open}"][data-f="rL"]`)
+        ?.focus({ preventScroll: true });
       return;
     }
     if (a === "early") return playerGo(playerSteps(S.sessions[ui.sel]).length - 1);
     if (a === "toggle") {
       const tm = ui.exerciseTimer;
-      if (!tm || tm.player !== ui.workout.step || tm.done) return playerStartTimed(+ds.seconds || undefined);
+      if (!tm || tm.player !== ui.workout.step || tm.done)
+        return timedSets(st, S.sessions[ui.sel]) ? playerStartSets() : playerStartTimed(+ds.seconds || undefined);
       return exerciseTimerAction("toggle");
     }
   }
-  function playerRing(tm, st, small) {
+  function playerRing(tm, st, small, idle = 0) {
     const C = 2 * Math.PI * 130,
       active = tm && tm.player === ui.workout.step && !(st && st.kind !== "rest" && tm.ni === -1),
       restHere = tm && tm.restOnly && st && tm.key === `${st.bi}.${st.ni}`,
       setHere = tm && tm.tracked && st && tm.key === `${st.bi}.${st.ni}`,
       show = active || restHere || setHere;
     const label = show ? (tm.done ? workoutText().done : tm.phases[tm.index]?.label || "") : "",
-      secs = show ? Math.ceil((tm.remainingMs || 0) / 1000) : 0;
+      secs = show ? Math.ceil((tm.remainingMs || 0) / 1000) : idle;
     return `<div class="fring${small ? " small" : ""}"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="parc" class="arc" cx="140" cy="140" r="130" fill="none" stroke="var(--tc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/></svg><div class="mid"><span class="ph" id="exercisePhase">${esc(label)}</span><span class="clk" id="exerciseClock">${fmt(secs)}</span></div></div>`;
   }
   function playerSetsHtml(sess, st) {
@@ -12185,8 +12335,12 @@ ${setupFields(setup, ty)}
       const rows = perfRows(sess, key, b),
         r = rows[st.lap] || {},
         ph = it.target ? it.target.r : ((b.sets || "").match(/(\d+)[–-](\d+)/) || [, "10"])[1];
-      h += `<div class="sets ${kg ? "" : "nokg"}"><span></span><span class="hd">${timed ? t("secs") : t("reps")}</span>${kg ? `<span class="hd">${t("kg")}</span>` : ""}<span class="sl${r.r != null ? " ok" : ""}" data-sl="${key}.${st.lap}">${t("setL")} ${st.lap + 1}</span><input class="si${r.r != null ? " ok" : ""}" type="text" inputmode="numeric" data-k="${key}" data-i="${st.lap}" data-f="r" value="${r.r ?? ""}" placeholder="${S.profile.lang === "de" ? "Ziel" : "Goal"} ${ph}" aria-label="${t("setL")} ${st.lap + 1}">${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${st.lap}" data-f="kg" value="${r.kg ?? ""}" placeholder="kg" aria-label="${t("setL")} ${st.lap + 1} kg">` : ""}</div>`;
+      const leg = DOSE_LEG.has(EX[it.id]?.de),
+        LR = legLabels(),
+        goal = `${S.profile.lang === "de" ? "Ziel" : "Goal"} ${ph}`;
+      h += `<div class="sets lap${leg ? " leg" : ""} ${kg ? "" : "nokg"}"><span></span><span class="hd">${leg ? LR[0] + " · " : ""}${timed ? t("secs") : t("reps")}</span>${leg ? `<span class="hd">${LR[1]}</span>` : ""}${kg ? `<span class="hd">${t("kg")}</span>` : ""}<span class="sl${r.r != null ? " ok" : ""}" data-sl="${key}.${st.lap}">${t("setL")} ${st.lap + 1}</span>${leg ? legInputs(key, st.lap, r, goal, timed) : `<input class="si${r.r != null ? " ok" : ""}" type="text" inputmode="numeric" data-k="${key}" data-i="${st.lap}" data-f="r" value="${r.r ?? ""}" placeholder="${goal}" aria-label="${t("setL")} ${st.lap + 1}">`}${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${st.lap}" data-f="kg" value="${r.kg ?? ""}" placeholder="kg" aria-label="${t("setL")} ${st.lap + 1} kg">` : ""}</div>`;
     }
+    if (timed) return h;
     const plan = exerciseTiming(sess, st.bi, st.ni, undefined, st.lap || 0);
     h += `<div class="minirow player-tools">`;
     if (plan && plan.tracked) {
@@ -12212,9 +12366,9 @@ ${setupFields(setup, ty)}
       return `<div class="player-inner">${head}${finishFormHtml(sess)}<button type="button" class="btn sec" data-player="prev">${W.back}</button></div>`;
     const b = sess.blocks[st.bi],
       done = stepDone(sess, st);
-    let h = head;
+    let h = head + soundHintHtml(P);
     if (st.kind === "rest") {
-      h += playerRing(tm, st);
+      h += playerRing(tm, st, false, LAP_REST);
       h += `<div class="pcard"><small>${esc(P.lap(st.lap + 1, st.laps))}</small><b>${P.lapRest}</b><p>${P.lapRestHint}</p></div>`;
     } else if (st.kind === "rounds") {
       const n = b.items.filter((it, ni) => itemDone(sess, st.bi, ni)).length;
@@ -12225,8 +12379,15 @@ ${setupFields(setup, ty)}
         desc = stepDesc(sess, st),
         sk = it && EX[it.id] && hasSketch(it.id) && st.kind !== "sets";
       const timerHere = tm && !tm.done && tm.key === `${st.bi}.${st.ni}` && (tm.restOnly || tm.tracked);
-      if (st.kind === "timed") h += playerRing(tm, st);
-      else if (st.kind === "sets" && timerHere) h += playerRing(tm, st, true);
+      // idle ring shows the time of the first work phase instead of 0:00
+      const idlePlan = st.kind === "timed" || timedSets(st, sess) ? exerciseTiming(sess, st.bi, st.ni, undefined, st.lap || 0) : null,
+        idle = idlePlan ? (timedSets(st, sess) ? idlePlan.seconds : idlePlan.phases[0].seconds) || 0 : 0;
+      if (st.kind === "timed" || timedSets(st, sess)) h += playerRing(tm, st, false, idle);
+      else if (st.kind === "sets" && timerHere)
+        // set rest: its own pause/resume button (the big button is ✓ for the next set)
+        h +=
+          playerRing(tm, st, true) +
+          `<button type="button" class="btn ghost prest" data-exercise-timer="toggle" id="exerciseToggle">${tm.running ? workoutText().pause : workoutText().continue}</button>`;
       let small = st.lap != null ? P.lap(st.lap + 1, st.laps) : "";
       h += `<div class="pcard${done ? " done" : ""}">${sk ? `<div class="fsk">${sketchSvg(EX[it.id].de, true)}</div>` : ""}${small ? `<small>${esc(small)}</small>` : ""}<b>${esc(stepTitle(sess, st))}${done ? " ✓" : ""}</b>${dose ? `<span class="dose">${esc(dose)}</span>` : ""}${desc ? `<p>${esc(desc)}</p>` : ""}`;
       if (st.lap != null)
@@ -12243,7 +12404,7 @@ ${setupFields(setup, ty)}
     h += `<div class="fnext">${nx ? (nx.kind === "finish" ? P.last : `${P.next}: <b>${esc(stepTitle(sess, nx))}</b>`) : ""}</div>`;
     // controls: previous · main · next
     let main;
-    if (st.kind === "timed" || st.kind === "rest") {
+    if (st.kind === "timed" || st.kind === "rest" || timedSets(st, sess)) {
       const running = tm && tm.player === i && tm.running;
       main = `<button type="button" class="m" data-player="toggle" id="pgo" aria-label="${running ? W.pause : P.start}">${running ? ICO.pause : PLAY}</button>`;
     } else if (st.kind === "manual")
@@ -12302,6 +12463,7 @@ ${setupFields(setup, ty)}
       name = EX[it.id]?.de,
       W = workoutText();
     if (b.rounds) return null;
+    if (DOSE_LEG.has(name)) W.side = S.profile.lang === "de" ? "Bein" : "Leg";
     const phase = (seconds, label = W.run) => ({ seconds, label }),
       interval = (n, on, off) =>
         Array.from({ length: n }, (_, i) => [
@@ -12556,13 +12718,18 @@ ${setupFields(setup, ty)}
     document.querySelector(`[data-timing="${ds.key}"]`)?.scrollIntoView({ block: "center", behavior: "auto" });
   }
   function completeExerciseTimer(tm) {
+    if (tm.chainSets) return; // timed sets are written phase by phase (exerciseTick)
     const sess = S.sessions[tm.ds];
     if (!sess || tm.restOnly) return;
     const b = sess.blocks[tm.bi];
     if (!b?.items[tm.ni]) return;
     if (tm.tracked) {
       const rows = perfRows(sess, tm.key, b);
-      if (rows[tm.setIndex] && rows[tm.setIndex].r == null) rows[tm.setIndex].r = tm.seconds;
+      if (rows[tm.setIndex] && rows[tm.setIndex].r == null) {
+        rows[tm.setIndex].r = tm.seconds;
+        // the single-set timer already covers both legs (side 1 / side 2)
+        if (DOSE_LEG.has(EX[b.items[tm.ni].id]?.de)) rows[tm.setIndex].rL = rows[tm.setIndex].rR = tm.seconds;
+      }
     } else {
       sess.timedLaps ||= {};
       const laps = isCirc(b) ? circN(b) : 1;
@@ -12579,8 +12746,22 @@ ${setupFields(setup, ty)}
     const now = Date.now();
     let changed = false;
     while (tm.running && now >= tm.endAt) {
+      const ended = tm.phases[tm.index];
       tm.index++;
       changed = true;
+      if (tm.chainSets && ended && ended.set != null) {
+        const sess = S.sessions[tm.ds],
+          rows = sess?.perf?.[tm.key];
+        const row = rows?.[ended.set];
+        if (row && ended.leg) {
+          if (row[ended.leg] == null || row[ended.leg] === "") row[ended.leg] = ended.seconds;
+          legSync(row);
+          store.save();
+        } else if (row && (row.r == null || row.r === "")) {
+          row.r = ended.seconds;
+          store.save();
+        }
+      }
       if (tm.index >= tm.phases.length) {
         tm.done = true;
         tm.running = false;
@@ -19775,7 +19956,7 @@ ${setupFields(setup, ty)}
     Klimmzüge: ["so viele saubere wie möglich", "as many clean reps as possible"],
     "Negative Klimmzüge": ["3–5 Wdh.", "3–5 reps"],
     Nackenstärkung: ["je Richtung 10 s", "10 s each direction"],
-    "Einbeinstand mit Kick-Hold": ["je Seite 2 × 10 s", "2 × 10 s per side"],
+    "Einbeinstand mit Kick-Hold": ["pro Bein 2 × 10 s", "2 × 10 s per leg"],
     // conditioning with their own pattern (one block per circuit lap)
     "Seil-Intervalle": ["2 Min. im Wechsel", "2 min alternating"],
     Sprints: ["4 Läufe à 20 m", "4 runs of 20 m"],
@@ -19790,7 +19971,7 @@ ${setupFields(setup, ty)}
     "Speed-Runden": ["4 × (10 s / 20 s locker)", "4 × (10 s / 20 s easy)"],
     "Steppen und leichte Beinarbeit": ["3 Min.", "3 min"],
     "Kettlebell-Swings": ["15 Wdh.", "15 reps"],
-    "Skater-Sprünge": ["je Seite 10", "10 per side"],
+    "Skater-Sprünge": ["pro Bein 10", "10 per leg"],
   };
   /* minutes one circuit lap of these takes (everything else ≈ 1 min) */
   const DOSE_MIN = {
@@ -19818,6 +19999,17 @@ ${setupFields(setup, ty)}
     "Russian Twists",
     "Seitliche Sprünge",
   ]);
+  /* one-legged exercises: the dose is per leg ("pro Bein") instead of "je Seite" */
+  const DOSE_LEG = new Set([
+    "Ausfallschritte",
+    "Bulgarian Split Squats",
+    "Step-ups",
+    "Wadenheben einbeinig",
+    "Einbeinstand mit Kick-Hold",
+    "Skater-Sprünge",
+  ]);
+  const sideWord = (name, de = S.profile.lang === "de") =>
+    DOSE_LEG.has(name) ? (de ? " pro Bein" : " per leg") : DOSE_SIDE.has(name) ? (de ? " je Seite" : " per side") : "";
   /* a circuit: "3×" without reps – all exercises one after another, then a lap break */
   const isCirc = (b) => /^\d+\s*×$/.test((b.sets || "").trim());
   const circLap = (b) =>
@@ -19834,7 +20026,7 @@ ${setupFields(setup, ty)}
     const de = S.profile.lang === "de",
       L = S.profile.level,
       fix = DOSE_FIX[e.de] ? DOSE_FIX[e.de][de ? 0 : 1] : "",
-      side = DOSE_SIDE.has(e.de) ? (de ? " je Seite" : " per side") : "",
+      side = sideWord(e.de, de),
       reps = de ? " Wdh." : " reps",
       circ = isCirc(b),
       m = (b.sets || "").match(/^(\d+)×\s*(\d+(?:[–-]\d+)?)?/),
@@ -21342,6 +21534,13 @@ ${setupFields(setup, ty)}
       if (!rows) return;
       const v = parseFloat(el.value.replace(",", "."));
       rows[+el.dataset.i][el.dataset.f] = isNaN(v) || v < 0 ? null : Math.round(v * 10) / 10;
+      if (el.dataset.f === "rL" || el.dataset.f === "rR") {
+        legSync(rows[+el.dataset.i]);
+        el.classList.toggle("ok", rows[+el.dataset.i][el.dataset.f] != null);
+        document
+          .querySelector(`[data-sl="${el.dataset.k}.${el.dataset.i}"]`)
+          ?.classList.toggle("ok", rows[+el.dataset.i].r != null);
+      }
       if (el.dataset.f === "r") {
         const done = rows[+el.dataset.i].r != null,
           sl = document.querySelector(`[data-sl="${el.dataset.k}.${el.dataset.i}"]`);
