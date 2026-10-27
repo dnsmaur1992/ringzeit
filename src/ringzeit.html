@@ -800,7 +800,12 @@
   .sets input {
     padding: 7px 10px;
     font-variant-numeric: tabular-nums;
-    font-size: 15px;
+    font-size: 16px; /* below 16px iOS zooms in on focus */
+  }
+  .sets input::placeholder {
+    color: var(--mist);
+    opacity: 0.55;
+    font-style: italic;
   }
   .sets .x {
     border: 1px solid var(--line);
@@ -1637,7 +1642,7 @@
   }
   .fring {
     position: relative;
-    width: min(280px, 72vw);
+    width: min(280px, 72vw, 32vh);
     aspect-ratio: 1;
     max-width: 100%;
     margin: 0 auto;
@@ -1735,6 +1740,13 @@
     justify-content: center;
     gap: 26px;
     margin-top: auto;
+    /* controls stay on screen even when the exercise text is long */
+    position: sticky;
+    bottom: calc(-24px - env(safe-area-inset-bottom, 0px));
+    padding: 12px 0 calc(24px + env(safe-area-inset-bottom, 0px));
+    margin-bottom: calc(-24px - env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to top, #0a0b0d 70%, transparent);
+    z-index: 2;
   }
   .fctl .s {
     width: 54px;
@@ -3845,6 +3857,34 @@
   .legal h4 {
     margin: 14px 0 8px;
   }
+  .starter .stall {
+    width: 100%;
+    margin-top: 4px;
+  }
+  .pmore > .panel + .panel {
+    margin-top: 22px;
+  }
+  .pmore > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 14px 18px;
+    border-radius: var(--r);
+    background: var(--panel);
+    color: var(--ice);
+    font-weight: 600;
+  }
+  .pmore > summary::-webkit-details-marker {
+    display: none;
+  }
+  .pmore > summary::before {
+    content: "▸ ";
+  }
+  .pmore[open] > summary::before {
+    content: "▾ ";
+  }
+  .pmore[open] > summary {
+    margin-bottom: 22px;
+  }
   /* app tour */
   .tour {
     touch-action: none;
@@ -4073,18 +4113,6 @@
     border-color: var(--ice);
     background: var(--ice-dim);
   }
-  .confirm-duration {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    font-size: 14px;
-  }
-  .confirm-duration input {
-    width: 22px;
-    height: 22px;
-    flex: none;
-    accent-color: var(--ice);
-  }
   .ex .excheck {
     min-width: 44px;
     min-height: 44px;
@@ -4112,6 +4140,15 @@
 
   body.training-open {
     overflow: hidden;
+  }
+  .training-start {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .training-start p {
+    margin: 0;
   }
   .training-start .btn {
     display: flex;
@@ -4259,6 +4296,18 @@
       sure: "Ja, trotzdem",
       cancel: "Abbrechen",
       close: "Schließen",
+      news: {
+        row: "Was ist neu",
+        sub: "Die Neuerungen des letzten großen Updates",
+        h: "Was ist neu",
+        pts: [
+          "<b>Training beginnen:</b> Unter „Einheit“ siehst du zuerst deinen Plan. „Training beginnen“ führt dich dann im Vollbild Abschnitt für Abschnitt durch – mit eigenen Timern fürs Aufwärmen und Dehnen.",
+          "<b>Alles abhaken:</b> Übungen hakst du in der Führung ab, Runden hakt der Timer selbst ab. Am Ende tippst du nur noch an, wie anstrengend es war.",
+          "<b>Aufgeräumt:</b> kürzere Tour, „Erste Schritte“ zeigt nur den nächsten Schritt, im Profil stehen deine Trainingstage ganz oben.",
+        ],
+        ok: "Verstanden",
+      },
+      profMore: "Mehr: Level, Disziplin, Alter, Einschränkungen",
       ack: {
         h: "Kurz zur Sicherheit",
         pts: [
@@ -4650,6 +4699,8 @@
         title: "Erste Schritte",
         count: (a, n) => `${a} von ${n} erledigt`,
         hide: "Ausblenden",
+        all: (n) => `Alle ${n} Schritte anzeigen`,
+        less: "Weniger anzeigen",
         hidden: "Ausgeblendet – die App-Tour im Profil zeigt dir jederzeit alles noch einmal.",
         steps: {
           profile: ["Geburtsjahr und Ringzeit-Tage festlegen", "Damit passen Rundenzeiten und Plan zu dir"],
@@ -4799,7 +4850,7 @@
         ],
         today: [
           "Heute",
-          "Hier steht, was heute ansteht: eigene Einheit, Vereinstraining oder Ruhetag. Ein Tipp öffnet die Einheit.",
+          "Hier steht, was heute ansteht: eigene Einheit, Vereinstraining oder Ruhetag. Darunter siehst du deine Woche – fällt etwas aus, kannst du es verschieben oder streichen.",
         ],
         strip: ["Deine Woche", "Jede Farbe steht für eine Art von Einheit. Tippe auf einen Tag, um ihn anzusehen."],
         plan: [
@@ -4812,7 +4863,7 @@
         ],
         timer: [
           "Training beginnen",
-          "Sichte zuerst deinen Tagesplan. Ganz unten öffnet „Training beginnen“ die Vollbildführung. Die Runden laufen mit ihren Pausen automatisch weiter; auch Zeitübungen haben eigene Timer.",
+          "Unter „Einheit“ siehst du deinen Tagesplan. „Training beginnen“ – oben oder unter dem Plan – führt dich im Vollbild durch die Einheit: abhaken, Werte eintragen, Timer. Am Ende speicherst du, wie anstrengend es war.",
         ],
         exinfo: [
           "Übungen",
@@ -4846,6 +4897,10 @@
         life: [
           "Alltag & Ratgeber",
           "Das Profil ist in fünf Bereiche gegliedert. Unter „Alltag & Pausen“ passt du Ringzeit an stressige Wochen, wenig Zeit oder einen körperlichen Job an. Unter „Ratgeber“ findest du Bandagieren, Materialpflege und Erste Hilfe.",
+        ],
+        prof: [
+          "Profil",
+          "Hier stellst du alles ein: Vereins- und Ringzeit-Tage, Turniere und Prüfungen, Pausen und Alltag – dazu Ratgeber, Sicherung und diese Tour. Änderungen gelten sofort. Fitnesstest und Verlauf findest du unten in der Leiste.",
         ],
         end: [
           "Bereit",
@@ -5328,6 +5383,18 @@
       sure: "Yes, do it",
       cancel: "Cancel",
       close: "Close",
+      news: {
+        row: "What's new",
+        sub: "The changes of the last big update",
+        h: "What's new",
+        pts: [
+          "<b>Begin training:</b> Session first shows your plan. Begin training then guides you through it section by section in full screen – with their own timers for warm-up and stretching.",
+          "<b>Tick everything:</b> tick exercises in the guide, the timer ticks rounds by itself. At the end you just tap how hard it was.",
+          "<b>Tidied up:</b> shorter tour, First steps shows only the next step, your training days are at the top of the profile.",
+        ],
+        ok: "Got it",
+      },
+      profMore: "More: level, discipline, age, limitations",
       ack: {
         h: "Quick safety note",
         pts: [
@@ -5708,6 +5775,8 @@
         title: "First steps",
         count: (a, n) => `${a} of ${n} done`,
         hide: "Hide",
+        all: (n) => `Show all ${n} steps`,
+        less: "Show less",
         hidden: "Hidden – the app tour in the profile shows everything again any time.",
         steps: {
           profile: ["Set birth year and Ringzeit days", "So round times and the plan fit you"],
@@ -5852,7 +5921,10 @@
           "Welcome to Ringzeit",
           "Ringzeit complements your club training: it plans your own sessions under WAKO rules, logs everything and adjusts the load. This short tour shows you where to find what.",
         ],
-        today: ["Today", "What's on today: your own session, club training or a rest day. Tap to open the session."],
+        today: [
+          "Today",
+          "What's on today: your own session, club training or a rest day. Below is your week – if something falls through, you can move or skip it.",
+        ],
         strip: ["Your week", "Each colour stands for a type of session. Tap a day to look at it."],
         plan: [
           "Week plan",
@@ -5864,7 +5936,7 @@
         ],
         timer: [
           "Begin training",
-          "Review your plan first. At the bottom, Begin training opens the full-screen guide. Rounds and rests advance automatically; timed exercises have their own timers too.",
+          "Session shows your daily plan. Begin training – at the top or below the plan – guides you through it in full screen: tick exercises, log values, timers. At the end you save how hard it was.",
         ],
         exinfo: [
           "Exercises",
@@ -5898,6 +5970,10 @@
         life: [
           "Everyday life & guide",
           "Your profile has five sections. Under “Everyday life & breaks” you adapt Ringzeit to stressful weeks, little time or a physical job. Under “Guide” you'll find hand wrapping, gear care and first aid.",
+        ],
+        prof: [
+          "Profile",
+          "Set everything up here: club and Ringzeit days, tournaments and gradings, breaks and everyday life – plus guide, backup and this tour. Changes apply at once. Fitness test and history are in the bar at the bottom.",
         ],
         end: ["Ready", "That's it. You can find the tour any time in the profile under “App tour”. Enjoy training!"],
       },
@@ -10480,7 +10556,8 @@
           open: (n) => `Noch ${n} ${n === 1 ? "Übung" : "Übungen"} offen – trotzdem abschließen?`,
           partial:
             "Die Einheit zählt weiterhin für Belastung und Verlauf. Offene Übungen gelten nicht als geschafft.",
-          target: "Dein Ziel",
+          target: "Ziel",
+          ownWeight: "Gewicht selbst wählen",
           learningTitle: "So lernt Ringzeit dein Training kennen",
           learning:
             "Ringzeit passt dein Training anhand deiner Einträge an. Je regelmäßiger du absolvierte Einheiten, Wiederholungen, Gewichte und deine empfundene Anstrengung erfasst, desto gezielter kann die App die Belastung anpassen. Zu Beginn bleibt die Planung vorsichtig.",
@@ -10520,7 +10597,8 @@
           open: (n) => `${n} ${n === 1 ? "exercise" : "exercises"} still open – finish anyway?`,
           partial:
             "The session still counts towards load and history. Open exercises do not count as completed.",
-          target: "Your target",
+          target: "Target",
+          ownWeight: "choose your weight",
           learningTitle: "How Ringzeit learns about your training",
           learning:
             "Ringzeit adapts training using your entries. Regularly recording completed sessions, reps, weights and perceived effort helps the app tailor the load. Planning stays cautious at first.",
@@ -10979,8 +11057,12 @@
     }
     return waveTarget();
   }
-  function targetText(target) {
-    return `${trainingText().target}: ${target.n} × ${target.r}${target.timed ? " s" : ""}${target.kg != null ? ` × ${numF(target.kg)} kg` : ""} · ${trainingText().targetWhy[target.reason]}`;
+  /* short target line; the reason only when the target actually changed, the weight hint only for weighted exercises */
+  function targetText(target, id) {
+    const T = trainingText(),
+      why = target.reason === "up" || target.reason === "down" ? ` · ${T.targetWhy[target.reason]}` : "",
+      kgHint = target.kg == null && id != null && hasKg(id) ? ` · ${T.ownWeight}` : "";
+    return `${T.target}: ${target.n} × ${target.r}${target.timed ? " s" : ""}${target.kg != null ? ` × ${numF(target.kg)} kg` : ""}${why}${kgHint}`;
   }
   function progressSession(sess) {
     const pr = progressionState(sess.date, sess.type, sess.run),
@@ -11032,9 +11114,11 @@
           check: "Hakenfläche antippen zum Abhaken · i öffnet die Übungserklärung.",
           chooseEffort: "Wie anstrengend war die Einheit?",
           effortHelp: "1–3 leicht · 4–6 mittel · 7–8 schwer · 9–10 sehr schwer",
-          durationConfirm: "Die eingetragene Dauer entspricht meiner tatsächlichen Trainingszeit.",
+          durationHint: "Vorgeschlagen ist die geplante Dauer – ändere sie, wenn du kürzer oder länger trainiert hast.",
+          durationEarly: (m) =>
+            `Eingetragen sind ${m} Minuten. Wenn du früher aufgehört hast: Abbrechen tippen und die Dauer anpassen.`,
           missingEffort: "Bitte wähle deine tatsächliche Anstrengung von 1 bis 10.",
-          missingDuration: "Bitte bestätige die tatsächliche Dauer oder trage sie neu ein (1–300 Minuten).",
+          missingDuration: "Bitte trage eine Dauer von 1 bis 300 Minuten ein.",
           pausedSession: "Trainings-Timer pausiert. Du kannst ihn später fortsetzen.",
           pausedFree: "Freier Rundentimer pausiert.",
           overview: "Zur Trainingsübersicht",
@@ -11060,9 +11144,10 @@
           check: "Tap the check control to mark complete · i opens exercise details.",
           chooseEffort: "How hard was the session?",
           effortHelp: "1–3 easy · 4–6 moderate · 7–8 hard · 9–10 very hard",
-          durationConfirm: "The entered duration is my actual training time.",
+          durationHint: "The planned duration is suggested – change it if you trained shorter or longer.",
+          durationEarly: (m) => `${m} minutes are entered. If you stopped early, tap Cancel and adjust the duration.`,
           missingEffort: "Please choose your actual effort from 1 to 10.",
-          missingDuration: "Please confirm the actual duration or enter it again (1–300 minutes).",
+          missingDuration: "Please enter a duration from 1 to 300 minutes.",
           pausedSession: "Session timer paused. You can resume it later.",
           pausedFree: "Free round timer paused.",
           overview: "Back to session overview",
@@ -11080,7 +11165,9 @@
       ui.finishDraft = {
         ds: ui.sel,
         minutes: S.sessions[ui.sel]?.min || S.profile.minutes,
-        minutesConfirmed: false,
+        // the suggested duration counts as actual unless changed; an early finish asks about it (see fSave)
+        minutesConfirmed: true,
+        minutesTouched: false,
         rpe: null,
         note: "",
       };
@@ -11090,11 +11177,10 @@
     const draft = finishDraft(),
       min = document.getElementById("fMin"),
       effort = document.getElementById("fRpe"),
-      confirm = document.getElementById("fDurationConfirmed"),
       note = document.getElementById("fNote");
     if (min) draft.minutes = Number(min.value);
     if (effort) draft.rpe = effort.value === "" ? null : Number(effort.value);
-    if (confirm) draft.minutesConfirmed = confirm.checked === true;
+    if (min && Number(min.value) !== (S.sessions[ui.sel]?.min || S.profile.minutes)) draft.minutesTouched = true;
     if (note) draft.note = note.value.slice(0, 300);
     return draft;
   }
@@ -11103,7 +11189,7 @@
       txt = flowText(),
       errors = [];
     if (!Number.isInteger(draft.rpe) || draft.rpe < 1 || draft.rpe > 10) errors.push(txt.missingEffort);
-    if (!draft.minutesConfirmed || !Number.isInteger(draft.minutes) || draft.minutes < 1 || draft.minutes > 300)
+    if (!Number.isInteger(draft.minutes) || draft.minutes < 1 || draft.minutes > 300)
       errors.push(txt.missingDuration);
     const el = document.getElementById("finishError");
     if (el) {
@@ -11116,7 +11202,7 @@
     const draft = finishDraft(),
       txt = flowText(),
       completed = sessionCompletion(sess).complete;
-    return `<div id="sessionFinish"><h2>${t("finish")}</h2><div class="panel"><div class="field"><label class="lab" for="fMin">${t("duration")}</label><input id="fMin" type="number" inputmode="numeric" min="1" max="300" value="${Number.isFinite(draft.minutes) ? draft.minutes : ""}"><label class="confirm-duration"><input id="fDurationConfirmed" type="checkbox" ${draft.minutesConfirmed ? "checked" : ""}>${txt.durationConfirm}</label></div>
+    return `<div id="sessionFinish"><h2>${t("finish")}</h2><div class="panel"><div class="field"><label class="lab" for="fMin">${t("duration")}</label><input id="fMin" type="number" inputmode="numeric" min="1" max="300" value="${Number.isFinite(draft.minutes) ? draft.minutes : ""}"><span class="sub">${txt.durationHint}</span></div>
         <div class="field"><span class="lab" id="effortLabel">${txt.chooseEffort}</span><div class="effort-options" role="group" aria-labelledby="effortLabel">${Array.from(
           { length: 10 },
           (_, i) => i + 1,
@@ -11283,7 +11369,7 @@
     h += `<div class="sets ${kg ? "" : "nokg"}"><span></span><span class="hd">${timed ? t("secs") : t("reps")}</span>${kg ? `<span class="hd">${t("kg")}</span>` : ""}<span></span>`;
     rows.forEach((r, i) => {
       const ok = r.r != null && r.r !== "" ? " ok" : "";
-      h += `<span class="sl${ok}" data-sl="${key}.${i}">${t("setL")} ${i + 1}</span><input class="si${ok}" type="text" inputmode="numeric" data-k="${key}" data-i="${i}" data-f="r" value="${r.r ?? ""}" placeholder="${target ? target.r : ph}" aria-label="${t("setL")} ${i + 1} ${timed ? t("secs") : t("reps")}">${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${i}" data-f="kg" value="${r.kg ?? ""}" placeholder="${target?.kg ?? "kg"}" aria-label="${t("setL")} ${i + 1} kg">` : ""}<button type="button" class="x" data-rmset="${key}" data-i="${i}" aria-label="−">−</button>`;
+      h += `<span class="sl${ok}" data-sl="${key}.${i}">${t("setL")} ${i + 1}</span><input class="si${ok}" type="text" inputmode="numeric" data-k="${key}" data-i="${i}" data-f="r" value="${r.r ?? ""}" placeholder="${S.profile.lang === "de" ? "Ziel" : "Goal"} ${target ? target.r : ph}" aria-label="${t("setL")} ${i + 1} ${timed ? t("secs") : t("reps")}">${kg ? `<input class="si" type="text" inputmode="decimal" data-k="${key}" data-i="${i}" data-f="kg" value="${r.kg ?? ""}" placeholder="${target?.kg ?? "kg"}" aria-label="${t("setL")} ${i + 1} kg">` : ""}<button type="button" class="x" data-rmset="${key}" data-i="${i}" aria-label="−">−</button>`;
     });
     const last = lastPerf(id, sess.date);
     return (
@@ -11460,10 +11546,16 @@ ${setupFields(setup, ty)}
  <div class="field"><button class="btn${sess ? " sec" : ""}" type="button" id="buildSess">${sess ? t("recreate") : t("create")}</button><div class="minirow" style="justify-content:space-between">${recent && !doneOn(ds) ? `<button type="button" class="btn ghost" data-move="${ds}">${t("move")}</button>` : ""}${ow.t && !ow.from && !doneOn(ds) ? `<button type="button" class="btn ghost" data-unplan="${ds}">${t("removeExtra")}</button>` : ""}${ow.from ? `<span class="sub">${t("movedFrom")(dayLbl(ow.from))}</span>` : ""}</div></div></div>`;
     h += `</div></details>`;
     if (!sess) return h;
-    h += `<div class="note">${workoutText().preview}</div>`;
+    {
+      const doneTop = S.log.find((e) => e.date === ds && own(e));
+      h += doneTop
+        ? `<div class="note">${workoutText().preview}</div>`
+        : `<div class="panel training-start top"><p class="sub">${workoutText().preview}</p><button type="button" class="btn" data-workout="start">${PLAY}<span>${sess.flow ? workoutText().resume : workoutText().start}</span></button></div>`;
+    }
     h += progressionInfoHtml(true);
     const rbS = roundBlock(sess);
     h += `<div class="tags"><span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<button type="button" class="tg tgbtn" data-guide="wrap">🩹 ${t("guide").wrapLink} ›</button>` : ""}${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
+    let dataLine = "";
     if (sess.progression?.data) {
       const data = sess.progression.data,
         de = S.profile.lang === "de",
@@ -11478,15 +11570,17 @@ ${setupFields(setup, ty)}
               sufficient: "sufficient",
               reliable: "well supported",
             };
-      h += `<div class="sub">${de ? "Datengrundlage" : "Training data"}: ${labels[data.level] || labels.collecting}</div>`;
+      // shown inside "Why this session?" instead of as its own line
+      dataLine = `${de ? "Datengrundlage" : "Training data"}: ${labels[data.level] || labels.collecting}`;
     }
-    if (sess.notes && sess.notes.length) {
+    if ((sess.notes && sess.notes.length) || dataLine) {
+      const notes = sess.notes || [];
       const safety = ["koNote", "gearNote", "wrNote", "knNote"]
         .flatMap((key) => [L.de[key], L.en[key]])
         .filter((x) => typeof x === "string");
-      const critical = sess.notes.filter((n) => safety.includes(n));
+      const critical = notes.filter((n) => safety.includes(n));
       if (critical.length) h += `<div class="note warn">${critical.map(esc).join("<br>")}</div>`;
-      h += `<details class="note"><summary>${flowText().why}</summary><div>${sess.notes.map(esc).join("<br>")}</div></details>`;
+      h += `<details class="note"><summary>${flowText().why}</summary><div>${[...notes, dataLine].filter(Boolean).map(esc).join("<br>")}</div></details>`;
     }
     sess.blocks.forEach((b, bi) => {
       h += sessionBlockHtml(sess, bi, true);
@@ -11533,7 +11627,7 @@ ${setupFields(setup, ty)}
       } else {
         const x = exText(it.id),
           tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
-        const dz = it.target ? targetText(it.target) : doseTxt(it.id, b);
+        const dz = it.target ? targetText(it.target, it.id) : doseTxt(it.id, b);
         h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${tr ? `<span class="num">${pad(n + 1)}</span>` : checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${exName(it.id, x.name)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${tr ? setsHtml(sess, bi, n, b, it.id, false, preview) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true, preview) : ""}</div></div>`;
       }
       if (!preview && !b.rounds) h += exerciseTimerHtml(sess, bi, n);
@@ -11545,7 +11639,7 @@ ${setupFields(setup, ty)}
   const workoutText = () =>
     S.profile.lang === "de"
       ? {
-          intro: "Heute → Tagesplan prüfen und Ausrüstung bereitlegen → ganz unten Training beginnen. Erst dann erscheinen Haken, Eingaben und Timer. Die Führung begleitet dich vom Aufwärmen bis zum Abschluss.",
+          intro: "Heute → Tagesplan prüfen und Ausrüstung bereitlegen → Training beginnen (oben oder unter dem Plan). Erst dann erscheinen Haken, Eingaben und Timer. Die Führung begleitet dich vom Aufwärmen bis zum Abschluss.",
           start: "Training beginnen",
           resume: "Training fortsetzen",
           preview:
@@ -11567,14 +11661,15 @@ ${setupFields(setup, ty)}
           set: "Satz",
           lap: "Durchgang",
           rest: "Pause",
-          work: "Belastung",
+          work: "Arbeit",
+          run: "Läuft",
           choose: "Dauer wählen",
           rounds: "Rundentimer öffnen",
           restStart: "Satzpause starten",
           saved: "Deine Eingaben werden gespeichert. Schließen pausiert laufende Timer.",
         }
       : {
-          intro: "Today → review the daily plan and prepare your equipment → Begin training at the bottom. Checks, inputs and timers appear only after starting. The guide takes you from warm-up to finish.",
+          intro: "Today → review the daily plan and prepare your equipment → Begin training (at the top or below the plan). Checks, inputs and timers appear only after starting. The guide takes you from warm-up to finish.",
           start: "Begin training",
           resume: "Resume training",
           preview:
@@ -11597,6 +11692,7 @@ ${setupFields(setup, ty)}
           lap: "Lap",
           rest: "Rest",
           work: "Work",
+          run: "In progress",
           choose: "Choose duration",
           rounds: "Open round timer",
           restStart: "Start set rest",
@@ -11729,7 +11825,7 @@ ${setupFields(setup, ty)}
       name = EX[it.id]?.de,
       W = workoutText();
     if (b.rounds) return null;
-    const phase = (seconds, label = W.work) => ({ seconds, label }),
+    const phase = (seconds, label = W.run) => ({ seconds, label }),
       interval = (n, on, off) =>
         Array.from({ length: n }, (_, i) => [
           phase(on, `${W.work} ${i + 1}/${n}`),
@@ -12364,10 +12460,11 @@ ${setupFields(setup, ty)}
     if (!sec) return profOverview(p);
     let h = header(PS[sec][0]) + `<button type="button" class="pback" data-psec="">‹ ${PS.back}</button>`;
     let train = "",
+      more = "",
       goals = "",
       life = "",
       app = "";
-    train += `<div class="panel"><div class="field"><span class="lab">${t("level")}</span><div class="seg">${[0, 1, 2].map((k) => `<button type="button" data-p="level" data-v="${k}" aria-pressed="${p.level === k}" ${k > ml ? "disabled" : ""}>${t("levels")[k]}</button>`).join("")}</div>${ml < 2 ? `<span class="sub">${t("levelLock")}</span>` : ""}</div>
+    more += `<div class="panel"><div class="field"><span class="lab">${t("level")}</span><div class="seg">${[0, 1, 2].map((k) => `<button type="button" data-p="level" data-v="${k}" aria-pressed="${p.level === k}" ${k > ml ? "disabled" : ""}>${t("levels")[k]}</button>`).join("")}</div>${ml < 2 ? `<span class="sub">${t("levelLock")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("discipline")}</span><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => ((p.level === 0 || (ageAt(today(), p) != null && ageAt(today(), p) < 15)) && (k === "fc" || k === "k1") ? `<button type="button" class="locked" data-lock="${p.level === 0 ? "disc" : "age"}" aria-disabled="true"><svg class="lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>${t("disc")[k]}</button>` : `<button type="button" data-p="disc" data-v="${k}" aria-pressed="${p.disc === k}">${t("disc")[k]}</button>`)).join("")}</div>${p.level === 0 ? `<span class="sub">${t("discLock")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("focus")}</span><div class="seg">${["box", "bal", "kick"].map((k) => `<button type="button" data-p="focus" data-v="${k}" aria-pressed="${(p.level === 0 ? "bal" : p.focus) === k}" ${p.level === 0 && k !== "bal" ? "disabled" : ""}>${t("focusOpt")[k]}</button>`).join("")}</div>${p.level === 0 ? `<span class="sub">${t("focusLock")}</span>` : ""}</div>
  <div class="field"><label class="lab" for="pBirth">${t("birth")}</label><input id="pBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${p.birthYear || ""}"><span class="sub">${t("birthHint")}${ageAt(today(), p) != null ? ` · ${ageAt(today(), p)} · ${t("ages")[ageGroup(p)]}` : ""}</span>${ageGroup(p) === "kids" ? `<span class="sub">${t("kidsNote")}</span>` : ""}</div>
@@ -12399,7 +12496,7 @@ ${setupFields(setup, ty)}
       .join(
         "",
       )}<div class="field"><div class="seg">${["comp", "grade"].map((k) => `<button type="button" data-ckind="${k}" aria-pressed="${(ui.ckind || "comp") === k}">${t("compKind")[k]}</button>`).join("")}</div><div class="inline"><input id="pCompNew" type="date" min="${iso(today())}"><button type="button" class="btn sec" id="pCompAdd">${t("compAdd")}</button></div><span class="sub">${t("compHint")}</span></div></div>`;
-    train += `<div class="panel"><div class="field"><span class="lab">${t("limits")}</span><div class="chips">${Object.keys(
+    more += `<div class="panel"><div class="field"><span class="lab">${t("limits")}</span><div class="chips">${Object.keys(
       AV,
     )
       .map(
@@ -12408,6 +12505,8 @@ ${setupFields(setup, ty)}
       )
       .join("")}</div><span class="sub">${t("limitsHint")}</span></div></div>`;
     const note = `<p class="sub" style="text-align:center;margin:-4px 0 0">${p.days.length ? t("autoSave") : t("needDay")}</p>`;
+    // days first; level, discipline, age and limitations folded away (changed rarely)
+    train += `<details class="pmore" data-pmore="1" ${ui.profMore ? "open" : ""}><summary>${t("profMore")}</summary>${more}</details>`;
     train += note;
     goals += note;
     // breaks and KO act on the stored data directly (they are not part of the plan settings above)
@@ -12447,6 +12546,7 @@ ${setupFields(setup, ty)}
         .join("")}</div><span class="sub">${t("music").hint}</span></div></div>`;
     app = mycHtml() + app;
     app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div><div class="field"><span class="lab">${t("resetLbl")}</span><span class="sub">${t("resetHint")}</span><button type="button" class="btn ghost danger" data-reset-all="1">${t("resetBtn")}</button></div></div>`;
+    app += `<div class="panel"><button type="button" class="row legal-entry" data-news="1"><span class="legal-entry-text"><b>${t("news").row}</b><span class="sub">${t("news").sub}</span></span><span class="chev" aria-hidden="true">›</span></button></div>`;
     app += `<div class="panel"><button type="button" class="row legal-entry" data-legal="1"><span class="legal-entry-text"><b>${t("legal").row}</b><span class="sub">${t("legal").sub}</span></span><span class="chev" aria-hidden="true">›</span></button></div>`;
     app += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
     h += { train, goals, life, guide: guidePanelHtml(), app }[sec] || "";
@@ -12521,7 +12621,6 @@ ${setupFields(setup, ty)}
     h += `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair(step === 1 || step === 3 ? "box" : "kick")}</svg>`;
     if (step === 0) {
       h += `<h1>${t("onbQ1")}</h1><div class="sub">${t("onbQ1s")}</div><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => (k === "fc" || k === "k1" ? `<button type="button" class="locked" data-lock="disc" aria-disabled="true"><svg class="lk" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>${t("disc")[k]}</button>` : `<button type="button" data-od="${k}" aria-pressed="${o.disc === k}">${t("disc")[k]}</button>`)).join("")}</div>`;
-      h += progressionInfoHtml();
     } else if (step === 1) {
       h += `<h1>${t("onbClubQ")}</h1><div class="sub">${t("onbClubS")}</div><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip cday" data-ocday="${i}" aria-pressed="${o.clubDays.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div>${o.clubDays.length ? `<span class="lab">${t("onbClubMin")}</span><div class="seg">${[60, 75, 90, 120].map((m) => `<button type="button" data-ocmin="${m}" aria-pressed="${o.clubMin === m}">${m} ${t("min")}</button>`).join("")}</div>` : ""}`;
     } else if (step === 2) {
@@ -12549,7 +12648,14 @@ ${setupFields(setup, ty)}
     }
     if (c) ui.onb.comp = c.value;
   }
+  /* "What's new": shown once per big update to people who already used the app.
+     Raise NEWS_V (and update the texts under "news") only for updates worth telling about. */
+  const NEWS_V = 1;
+  const needNews = () => !S.profile.example && !!S.profile.toured && (S.profile.newsSeen || 0) < NEWS_V;
+  const showNews = () => openSheet({ kind: "news" });
   async function finishOnb(skip, test) {
+    // new users get setup and tour instead
+    S.profile.newsSeen = NEWS_V;
     // the safety note is confirmed once before the app starts
     if (!S.profile.ackSafe) {
       ui.onb.ack = { skip, test };
@@ -12559,7 +12665,6 @@ ${setupFields(setup, ty)}
     const o = ui.onb;
     ui.onb = null;
     if (!skip) {
-      S.profile.progressInfoSeen = true;
       S.profile = {
         ...S.profile,
         disc: o.disc,
@@ -12960,31 +13065,9 @@ ${setupFields(setup, ty)}
   const TOUR = [
     { k: "intro" },
     { k: "today", tab: "week", sel: ".today" },
-    { k: "strip", tab: "week", sel: ".week" },
-    { k: "plan", tab: "week", sel: ".sess", up: ".panel" },
-    { k: "setup", tab: "session", sel: "[data-session-settings]" },
     { k: "timer", tab: "session", sel: "[data-workout=start]" },
-    { k: "exinfo", tab: "session", sel: "[data-exinfo]", up: ".ex" },
-    { k: "finish", tab: "session" },
     { k: "ftimer", tab: "week", sel: "#tabs .tabft" },
-    { k: "test", tab: "test", sel: "#tabs [data-tab=test]" },
-    { k: "log", tab: "log", sel: "#tabs [data-tab=log]" },
-    {
-      k: "club",
-      tab: "profile",
-      sec: "train",
-      sel: "[data-cday]",
-      up: ".field",
-    },
-    { k: "comp", tab: "profile", sec: "goals", sel: "#pCompNew", up: ".field" },
-    {
-      k: "pause",
-      tab: "profile",
-      sec: "life",
-      sel: "[data-pnew]",
-      up: ".field",
-    },
-    { k: "life", tab: "profile", sel: "[data-psec=life]" },
+    { k: "prof", tab: "week", sel: "#tabs [data-tab=profile]" },
     { k: "end" },
   ];
   // Block user scrolling without locking the document: scrollIntoView must
@@ -16807,6 +16890,9 @@ ${setupFields(setup, ty)}
       h += allBadgesHtml();
     } else if (o.kind === "raw") {
       h += `<h3>${esc(o.title)}</h3>${o.html}`;
+    } else if (o.kind === "news") {
+      const N = t("news");
+      h += `<h3>${N.h}</h3><ul class="ackl">${N.pts.map((x) => `<li>${x}</li>`).join("")}</ul><div class="acts2"><button type="button" class="btn" data-news-ok="1">${N.ok}</button></div>`;
     } else if (o.kind === "show") {
       h += `<h3>${esc(o.title)}</h3>${o.html}<div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
     }
@@ -18600,11 +18686,14 @@ ${setupFields(setup, ty)}
     return `<div class="starter"><div class="sthead"><div><b>${L.title}</b><span class="sub">${L.count(ok, st.length)}</span></div><button type="button" class="btn ghost" data-act2="starterhide">${L.hide}</button></div>
         <div class="pbar"><span style="width:${Math.round((100 * ok) / st.length)}%"></span></div>
         ${st
+          .map((x, i) => [x, i])
+          // compact: only the next open step; all steps after "show all"
+          .filter(([x], j, arr) => ui.starterAll || arr.findIndex(([y]) => !y.done) === j)
           .map(
-            (x, i) =>
+            ([x, i]) =>
               `<button type="button" class="strow${x.done ? " done" : ""}" data-start="${i}" ${x.done ? "disabled" : ""}><i>${x.done ? "✓" : ""}</i><span><b>${L.steps[x.k][0]}</b><small>${L.steps[x.k][1]}</small></span>${x.done ? "" : '<span class="chev">›</span>'}</button>`,
           )
-          .join("")}</div>`;
+          .join("")}<button type="button" class="btn ghost stall" data-act2="starterall">${ui.starterAll ? L.less : L.all(st.length)}</button></div>`;
   }
   function starterGo(i) {
     const x = starterSteps()[i];
@@ -18613,6 +18702,8 @@ ${setupFields(setup, ty)}
     if (x.tab === "session") ui.sel = nextTrainingDate();
     if (x.view) ui.testView = x.view;
     if (x.tab === "profile") ui.profSec = x.sec || null;
+    // the year of birth sits in the folded "more" part of the training section
+    if (x.sel === "#pBirth") ui.profMore = true;
     ui.tab = x.tab;
     if (x.tab !== "profile") draft = null;
     render(true);
@@ -19910,6 +20001,12 @@ ${setupFields(setup, ty)}
     // ----- focus blocks
     if (ds.blk) return blockAction(ds.blk);
     if (ds.inst) return installAction(ds.inst);
+    if (ds.newsOk) {
+      S.profile.newsSeen = NEWS_V;
+      store.save();
+      return closeSheet();
+    }
+    if (ds.news) return showNews();
     if (ds.legal) {
       const G = t("legal");
       return openSheet({
@@ -19966,6 +20063,10 @@ ${setupFields(setup, ty)}
     if (ds.bdg) return openSheet({ kind: "badge", id: ds.bdg });
     if (ds.act2 === "allbdg") return openSheet({ kind: "badges" });
     if (ds.start != null) return starterGo(+ds.start);
+    if (ds.act2 === "starterall") {
+      ui.starterAll = !ui.starterAll;
+      return render();
+    }
     if (ds.act2 === "starterhide") {
       S.profile.starterHide = true;
       if (draft) draft.starterHide = true;
@@ -20379,6 +20480,7 @@ ${setupFields(setup, ty)}
         ui.onb = null;
         store.save();
         renderOnb();
+        if (needNews()) return showNews();
         if (!S.profile.toured) startTour();
         return;
       }
@@ -20517,7 +20619,11 @@ ${setupFields(setup, ty)}
         return openSheet({
           kind: "confirm",
           title: trainingText().complete,
-          lines: [trainingText().open(completion.open), trainingText().partial],
+          lines: [
+            trainingText().open(completion.open),
+            trainingText().partial,
+            ...(readFinishDraft().minutesTouched ? [] : [flowText().durationEarly(readFinishDraft().minutes)]),
+          ],
           run: saveTrainingSession,
         });
       saveTrainingSession();
@@ -20712,6 +20818,13 @@ ${setupFields(setup, ty)}
       (a, p) => a + p.sets.reduce((b, x) => b + (x.r && x.kg && !TIMED.has(p.id) ? x.r * x.kg : 0), 0),
       0,
     );
+  document.addEventListener(
+    "toggle",
+    (ev) => {
+      if (ev.target && ev.target.dataset && ev.target.dataset.pmore) ui.profMore = ev.target.open;
+    },
+    true,
+  );
   document.addEventListener("input", (ev) => {
     const el = ev.target;
     if (el.id === "scRpe") document.getElementById("scRpeV").textContent = el.value;
@@ -20733,10 +20846,6 @@ ${setupFields(setup, ty)}
       return;
     }
     if (["fMin", "fNote"].includes(el.id)) {
-      if (el.id === "fMin") {
-        const confirm = document.getElementById("fDurationConfirmed");
-        if (confirm) confirm.checked = Number.isInteger(Number(el.value)) && +el.value >= 1 && +el.value <= 300;
-      }
       readFinishDraft();
     }
     if (el.id === "pMin") {
@@ -20756,7 +20865,6 @@ ${setupFields(setup, ty)}
     true,
   );
   document.addEventListener("change", (ev) => {
-    if (ev.target.id === "fDurationConfirmed") readFinishDraft();
     if (ev.target.id === "impFile" && ev.target.files && ev.target.files[0]) {
       importFile(ev.target.files[0]);
       ev.target.value = "";
@@ -20821,6 +20929,7 @@ ${setupFields(setup, ty)}
         renderOnb();
         return;
       }
+      if (!ui.onb && needNews()) return showNews();
       if (!ui.onb && !S.profile.toured) startTour();
     });
     store.init().then(async () => {
