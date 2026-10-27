@@ -1493,3 +1493,32 @@ test("free timer start tap: the priming dot is not cancelled by the timer and th
   a.advance(4000);
   assert.ok(!a.run("primeU"), "priming guard released after a moment");
 });
+
+test("session settings: changed but not rebuilt is flagged; a rebuild clears it for every type and place", async () => {
+  const a = app();
+  const bad = JSON.parse(a.run(`JSON.stringify((()=>{const out=[];const d=iso(today());ui.sel=d;for(const ty of ['T','C','P','S','K','M'])for(const loc of (ty==='S'||ty==='K'?['gym','studio','home','out']:['gym','home','out']))for(const eq of [[],['bag','rope'],['partner','pads'],['partner'],['kb','weights','bands','bar','bb','rope']])for(const min of (ty==='M'?[30,45]:[30,45,60])){ui.setup={ds:d,type:ty,loc,eq:eq.slice(),run:false,min};S.sessions[d]=buildSession(d,ty,loc,eq.slice(),{run:false,min});if(setupDirty(d))out.push([ty,loc,eq.join('+'),min,JSON.stringify(setupOf(S.sessions[d],d))]);}return out})())`));
+  assert.deepEqual(bad, []);
+  a.run(`const d=iso(today());ui.sel=d;S.sessions[d]=buildSession(d,'T','gym',['bag','rope'],{min:60});ui.setup=null;ui.tab='session';`);
+  a.run("ui.setup=setupOf(S.sessions[ui.sel],ui.sel)");
+  assert.equal(a.run("setupDirty(ui.sel)"), false);
+  await a.click({ dataset: { pb: "none" } });
+  assert.equal(a.run("setupDirty(ui.sel)"), true);
+  await a.click({ dataset: { workout: "start" } });
+  assert.equal(a.run("ui.sheet && ui.sheet.kind"), "confirm");
+  assert.equal(a.run("!!ui.workout"), false, "asks before starting");
+  await a.click({ dataset: { sx: "confirmNo" } });
+  assert.equal(a.run("!!ui.workout"), true, "starts as is");
+  assert.ok(a.run("S.sessions[ui.sel].eq.includes('bag')"), "session unchanged");
+});
+
+test("start with changed settings: 'yes, rebuild' builds the new session first, then starts", async () => {
+  const a = app();
+  a.run(`loading=async()=>{};const d=iso(today());ui.sel=d;ui.tab='session';S.sessions[d]=buildSession(d,'T','gym',['bag','rope'],{min:60});ui.setup=setupOf(S.sessions[d],d);`);
+  await a.click({ dataset: { pb: "none" } });
+  await a.click({ dataset: { workout: "start" } });
+  await a.click({ dataset: { sx: "confirm" } });
+  await new Promise((r) => setTimeout(r, 0));
+  assert.equal(a.run("S.sessions[ui.sel].eq.includes('bag')"), false, "rebuilt without heavy bag");
+  assert.equal(a.run("setupDirty(ui.sel)"), false);
+  assert.equal(a.run("!!ui.workout"), true);
+});
