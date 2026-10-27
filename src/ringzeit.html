@@ -18164,8 +18164,25 @@ ${setupFields(setup, ty)}
       src.connect(actx.destination);
       src.start(0);
     } catch (e) {}
+    primeSpeech();
+  }
+  /* iOS keeps speech silent until one real (non-empty) utterance was started from a tap.
+     A muted dot is spoken on taps until the synth confirms it started; after a restart or a
+     return to the app this repeats, so timer calls work without toggling the voice button. */
+  let speechPrimed = false,
+    primeAt = 0;
+  function primeSpeech() {
     try {
-      if (canSpeak()) speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+      if (speechPrimed || !voiceOn() || Date.now() - primeAt < 1500) return;
+      if (speechSynthesis.speaking || speechSynthesis.pending) return;
+      primeAt = Date.now();
+      const u = new SpeechSynthesisUtterance(".");
+      u.volume = 0;
+      u.rate = 2;
+      u.lang = S.profile.lang === "de" ? "de-DE" : "en-GB";
+      u.onstart = u.onend = () => (speechPrimed = true);
+      if (speechSynthesis.paused) speechSynthesis.resume();
+      speechSynthesis.speak(u);
     } catch (e) {}
   }
   const unlockOnce = () => {
@@ -18173,6 +18190,10 @@ ${setupFields(setup, ty)}
     ["pointerdown", "touchend", "click"].forEach((x) => document.removeEventListener(x, unlockOnce, true));
   };
   ["pointerdown", "touchend", "click"].forEach((x) => document.addEventListener(x, unlockOnce, true));
+  ["pointerdown", "touchend", "click"].forEach((x) => document.addEventListener(x, primeSpeech, true));
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") speechPrimed = false;
+  });
   /* no pinch zoom: iOS ignores the viewport setting, so its zoom gestures are stopped here */
   ["gesturestart", "gesturechange"].forEach((x) => document.addEventListener(x, (e) => e.preventDefault()));
   document.addEventListener(
