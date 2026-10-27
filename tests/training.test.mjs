@@ -1445,3 +1445,14 @@ test("one-legged exercises are entered per leg; the set counts once both legs ar
   a.advance(10000 + a.run("ui.exerciseTimer.phases[1].seconds") * 2000 + 5000 + 50);
   assert.ok(a.run("S.sessions.y.perf['0.0'][0].r") > 0);
 });
+
+test("free timer: switching coach calls on also switches the voice on; the timer has its own voice button", async () => {
+  const a = app();
+  a.run("globalThis.speechSynthesis={speak(){},cancel(){},resume(){},speaking:false,pending:false,paused:false};window.speechSynthesis=speechSynthesis;globalThis.SpeechSynthesisUtterance=function(t){this.text=t};S.profile.voice=false;openFt()");
+  assert.equal(a.run("canSpeak()"), true);
+  assert.equal(a.run("voiceOn()"), false);
+  await a.click({ dataset: { ftt: "coach" } });
+  assert.equal(a.run("ui.ft.cfg.coach"), true);
+  assert.equal(a.run("voiceOn()"), true);
+  assert.match(a.node("ftimer").innerHTML, /data-voice="1"/);
+});
