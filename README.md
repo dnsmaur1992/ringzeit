@@ -18,7 +18,7 @@
 
 > **Neu hier?** Öffne die [Installationsanleitung](https://dnsmaur1992.github.io/ringzeit/installieren.html) auf deinem Handy – mit QR-Code und Schritt-für-Schritt-Hilfe für iPhone und Android.
 
-**Dein erster Trainingsstart:** Heute → Tagesplan sichten und Ausrüstung bereitlegen → ganz unten **Training beginnen**. Abhaken, Kraft-Eingaben und Timer erscheinen erst in der Vollbildführung. Sie folgt den geplanten Abschnitten bis zum Cool-down und Abschluss. Zurück zur Planübersicht pausiert die laufenden Trainings-Timer. Einrichtung und Tour können übersprungen werden; die Tour ist unter **Profil → App & Daten** erneut erreichbar.
+**Dein erster Trainingsstart:** Heute → Tagesplan sichten und Ausrüstung bereitlegen → **Training beginnen** (oben oder unter dem Plan). Abhaken, Kraft-Eingaben und Timer erscheinen erst in der Vollbildführung. Sie folgt den geplanten Abschnitten bis zum Cool-down und Abschluss. Zurück zur Planübersicht pausiert die laufenden Trainings-Timer. Die Tour hat nur sechs Schritte; Einrichtung und Tour können übersprungen werden; die Tour ist unter **Profil → App & Daten** erneut erreichbar.
 
 ---
 
@@ -76,13 +76,14 @@
 
 ### ⏱️ Rundentimer
 - **Vollbild-Timer** mit Ringglocke, 10 Sekunden Vorbereitungszeit und Ansage der Übung
-- **Planvorschau vor dem Training:** „Heute“ öffnet den Tagesplan zum Sichten und Bereitlegen der Ausrüstung. Erst „Training beginnen“ ganz unten öffnet die Vollbildführung mit Abhaken, Kraft-Eingaben und Timern.
+- **Planvorschau vor dem Training:** „Heute“ öffnet den Tagesplan zum Sichten und Bereitlegen der Ausrüstung. Erst „Training beginnen“ – oben in der Einheit oder unter dem Plan – öffnet die Vollbildführung mit Abhaken, Kraft-Eingaben und Timern.
 - **Geführte Durchführung:** Aufwärmen, Hauptteil, Ergänzungen und Cool-down folgen dem tatsächlichen Plan. Zurückgehen, Abschnitte überspringen, pausieren und vorzeitig abschließen bleiben möglich; offene Übungen werden dabei nicht automatisch erledigt. Der Abschnitt wird pro Einheit gespeichert.
 - **Übungstimer:** Zeitvorgaben im Aufwärmen und Cool-down, beidseitige Dehnungen mit Seitenwechsel, Conditioning-Intervalle sowie einzelne zeitbasierte Kraftsätze. Bei Zeitspannen kann die Dauer gewählt werden; Wiederholungsübungen bleiben ohne erfundene Zeitvorgabe.
 - **Gemeinsame Timersteuerung:** Runden-, Übungs- und freier Timer teilen sich eine Uhr; beim Wechsel wird der andere Timer pausiert, beim endgültigen Einheitsabschluss werden Timer und ausstehende Ansagen beendet
 - **Weniger Hintergrundarbeit:** sekundengenau geplante Timeraufrufe während des Trainings, keine dauernde Abfrage im Leerlauf; verdeckte Anzeigen werden nicht laufend neu geschrieben
 - **Bildschirm und Animationen bleiben erhalten:** Die Restzeit ist während laufender Runden und Pausen sichtbar. Die Audiowachhaltung bleibt auf Apple-Mobilgeräten erhalten; andere Audiokontexte können zwischen Signalen ruhen
 - Eigener **Rundentimer** mit Vorlagen (WAKO, K1, Sparring, Pratzen, HIIT)
+- Im Vollbild bleiben **Start, Zurück und Weiter immer sichtbar**, auch bei langen Übungstexten und kleinen Handys
 - Leuchtring mit Fortschritt, pulsierende letzte 10 Sekunden und ein Blitz zum Rundenende
 - **Automatischer Rundenwechsel im geführten Training:** Nach der Pause läuft die nächste Runde direkt weiter; die 10 Sekunden Vorlauf gibt es nur beim manuellen Start
 - **Musik bei den Rundentimern** im Profil wählen; der Bildschirm bleibt mit unterstütztem Wake Lock während des Timers an
@@ -106,15 +107,17 @@
 - Haken und Satzwerte bleiben pro Einheit gespeichert, auch nach Neuladen und in Sicherungen
 - **Abschließen bleibt immer möglich:** Sind Übungen offen, erscheint eine Rückfrage; die tatsächliche Dauer und Anstrengung zählen trotzdem für Belastung und Verlauf
 - Sind alle Übungen erledigt, wird **„Einheit abschließen“** grün hervorgehoben
+- **Übersichtlicher Einstieg:** kurze Tour, „Erste Schritte“ zeigt nur den nächsten Schritt, im Profil stehen die Trainingstage oben und Seltenes unter „Mehr“
 - **Kompakte Einheitenansicht:** Einstellungen unter „Einheit anpassen“, Erklärungen unter „Warum diese Einheit?“, wichtige Kontakt-/Einschränkungshinweise separat
 - **Sichtbarer Fortschritt** und Sprung zur nächsten offenen Übung; Hakenflächen und Timer-Symbolschalter tragen eindeutige zugängliche Namen
-- **Bewusste Abschlussangaben:** Anstrengung von 1–10 auswählen und die tatsächliche Dauer bestätigen oder neu eintragen. Alte, unbestätigte Vorgaben werden nicht als sichere Progressionsdaten behandelt
+- **Ziele in leeren Satzfeldern** stehen blass und kursiv („Ziel 8“) – so sieht man sofort, was noch nicht eingetragen ist
+- **Schneller Abschluss:** Anstrengung von 1–10 antippen, fertig. Die geplante Dauer ist vorgeschlagen; wer früher aufhört, wird beim Abschließen daran erinnert, sie anzupassen
 
 ### 📈 Leistungsabhängige Progression
 - Fünf-Wochen-Wellen im Grundlagentraining mit vier Aufbauwochen und anschließender Entlastung; Schwerpunkt-Blöcke behalten ihre sechs Wochen
 - Vollständig absolvierte, vergleichbare Einheiten und die eingetragene Anstrengung entscheiden über Steigerung, Wiederholung oder Reduktion im nächsten Zyklus
 - **Datengrundlage statt bloßer Eintragszahl:** Anzahl, Regelmäßigkeit, Vollständigkeit und Abdeckung des geplanten Trainings werden je Trainingsbereich ausgewertet; wenige oder lückenhafte Daten verhindern eine Steigerung
-- **Lernhinweis beim Einstieg:** in der Einrichtung und bei übersprungener Einrichtung einmalig ausblendbar in der ersten Einheit; der aktuelle Stand der Datengrundlage steht in neu erstellten Einheiten
+- **Lernhinweis** einmalig in der ersten Einheit; der Stand der Datengrundlage steht unter „Warum diese Einheit?“
 - Bei Technik und Kondition wird die **Pausendichte** in kleinen Schritten angepasst, innerhalb der eingeplanten Trainingszeit
 - Wiederkehrende **Grundübungen** schaffen vergleichbare Kraftprotokolle; zusätzliches, für die Übung irrelevantes Equipment unterbricht den Vergleich nicht
 - Freiwillige Rückmeldung **„Leicht / Passend / Zu schwer“** je Kraftübung; wiederholtes „Zu schwer“ wird bei der nächsten Zielanpassung berücksichtigt
@@ -133,6 +136,7 @@
 - **Feiertage** verschiedener Kulturen: Weihnachten, Silvester, Ostern, Karneval, Ramadan, Zuckerfest, Opferfest, Chanukka, Nouruz, Diwali und mehr
 - **Fun Facts und Technik-Tipps** beim Laden
 - **Sicherheitshinweis beim Start**, dazu Hinweise und Datenschutz im Profil
+- **„Was ist neu“:** nach größeren Updates einmal ein kurzer Hinweis mit den wichtigsten Neuerungen; jederzeit nachlesbar unter Profil → App & Daten
 - **Freiwillige Geschlechtsangabe** zur Einordnung des Fitnesstests
 - **Deutsch und Englisch**, komplett offline nutzbar
 
@@ -182,6 +186,7 @@ Für den Betreiber des Repositorys:
 1. Die neuen Dateien `index.html` und `sw.js` hochladen (*Add file → Upload files*) und committen – dazu die neue `ringzeit.html` in den Ordner `src`.
 2. GitHub Pages veröffentlicht die neue Version nach ein bis zwei Minuten.
 3. Die App lädt das Update beim nächsten Öffnen im Hintergrund – nach einem Neustart der App ist es aktiv. Die Versionsnummer steht unten im Profil.
+4. **„Was ist neu“ nur bei größeren Updates:** In `src/ringzeit.html` die Zahl `NEWS_V` um eins erhöhen und die drei Punkte unter `news` (Deutsch und Englisch) neu schreiben. Alle, die die App schon nutzen, sehen den Hinweis dann einmal beim nächsten Öffnen. Bei kleinen Korrekturen `NEWS_V` einfach lassen.
 
 ---
 
