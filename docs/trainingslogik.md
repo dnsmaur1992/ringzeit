@@ -93,6 +93,10 @@ Keine zusätzliche Progression bei Kindern/Jugendlichen, Sparring, Mobility, Lä
 
 Alle neuen Felder liegen optional in den vorhandenen Einheiten und Protokollen. Der Speicherschlüssel bleibt unverändert. Export und Import behalten diese Felder mit bei; alte Sicherungen bleiben lesbar.
 
+## Einstellungen einer Einheit ändern
+
+Änderungen unter „Einheit anpassen“ (Trainingsart, Dauer, Ort, Partner/Sandsack, Equipment) bauen die Einheit nicht automatisch um, damit der Plan stabil bleibt. Weicht das Formular von der Einheit ab, ist „Neu erstellen“ hervorgehoben und darüber steht „Änderungen übernehmen“. Gezählt wird nur Equipment, das die Trainingsart nutzen kann; im Fitnessstudio zählt nur der Ort. Tippt man vorher auf „Training beginnen“, fragt die App einmal: „Ja, neu erstellen“ baut die Einheit und startet sie, „Nein, so starten“ verwirft die Änderungen im Formular. Bei einer schon begonnenen Einheit wird nicht gefragt.
+
 ## Bildschirm, Animationen und Audio
 
 Der Bildschirm bleibt während laufender Arbeits- und Pausenphasen bewusst an. Im Runden-Vollbild bleiben Start, Zurück und Weiter immer am unteren Rand sichtbar, auch bei langen Übungstexten oder kleinen Bildschirmen; der Ring wird auf niedrigen Bildschirmen kleiner. Die vorhandenen Animationen und Übungsskizzen sind unverändert. Verdeckte Anzeigen werden nicht sekündlich neu geschrieben. Eine verspätet bewilligte Bildschirm-Wachhaltung wird wieder freigegeben, falls der Timer inzwischen beendet wurde.
