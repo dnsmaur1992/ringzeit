@@ -1480,3 +1480,16 @@ test("speech is primed with a muted utterance on taps until it started, and agai
   await a.emit("pointerdown");
   assert.equal(a.run("spoken.length"), 3, "voice off: silent");
 });
+
+test("free timer start tap: the priming dot is not cancelled by the timer and the start speaks right away", async () => {
+  const a = app();
+  a.run("globalThis.log=[];globalThis.speechSynthesis={speak(u){log.push('speak:'+u.text)},cancel(){log.push('cancel')},resume(){},speaking:false,pending:false,paused:false};window.speechSynthesis=speechSynthesis;globalThis.SpeechSynthesisUtterance=function(t){this.text=t};S.profile.voice=true;openFt();ui.ft.cfg.coach=true;ui.ft.cfg.prep=true");
+  await a.emit("pointerdown");
+  await a.click({ dataset: { ftx: "start" } });
+  const log = JSON.parse(a.run("JSON.stringify(log)"));
+  assert.equal(log[0], "speak:.");
+  assert.ok(!log.includes("cancel"), "start must not cancel the priming dot");
+  assert.ok(log.includes("speak:Bereit machen"));
+  a.advance(4000);
+  assert.ok(!a.run("primeU"), "priming guard released after a moment");
+});
