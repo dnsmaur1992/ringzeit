@@ -100,6 +100,7 @@
 - **Coach-Modus:** ruft während der Runde Kombis aus deinem Level aus – wie der Trainer am Ring
   - Im freien Rundentimer schaltet der Knopf oben rechts (🔊/🔈) die Ansagen an und aus; wer die Coach-Ansagen einschaltet, schaltet die Sprache automatisch mit ein
   - Auf dem iPhone wird die Sprachausgabe beim ersten Tipp nach jedem App-Start automatisch freigeschaltet – ohne Umschalten
+  - Ringzeit nutzt automatisch die **beste installierte Stimme** (Premium vor Erweitert vor Standard, keine Spaß- oder reinen Online-Stimmen). Unter Profil → App & Daten steht, welche gerade läuft, wie man eine bessere lädt, und es gibt eine Hörprobe
 
 ### 🏆 Ziele und Motivation
 - **Turniervorbereitung** im Wettkampf-Format der WAKO, Formkurve bis zum Wettkampftag
@@ -149,6 +150,7 @@
 ### ✨ Liebe zum Detail
 - Lebendige Startseite, die sich der **Tages- und Jahreszeit** anpasst – mit Mütze im Winter und Badehose im Sommer
 - **Feiertage** verschiedener Kulturen: Weihnachten, Silvester, Ostern, Karneval, Ramadan, Zuckerfest, Opferfest, Chanukka, Nouruz, Diwali und mehr
+- **Feedback senden** unter Profil → App & Daten: öffnet ein Tally-Formular, mitgeschickt werden nur App-Version, Geräteart und Sprache – keine Trainingsdaten
 - **Fun Facts und Technik-Tipps** beim Laden – „Weiter“ blättert weiter, nach spätestens 10 Sekunden öffnet sich die App von selbst
 - **Sicherheitshinweis beim Start**, dazu Hinweise und Datenschutz im Profil
 - **„Was ist neu“:** nach größeren Updates einmal ein kurzer Hinweis mit den wichtigsten Neuerungen; jederzeit nachlesbar unter Profil → App & Daten
