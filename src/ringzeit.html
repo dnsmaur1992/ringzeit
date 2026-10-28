@@ -450,6 +450,13 @@
     color: var(--ink);
     width: 100%;
   }
+  a.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-sizing: border-box;
+  }
   .btn.sec {
     background: transparent;
     color: var(--frost);
@@ -4417,9 +4424,9 @@
         sub: "Die Neuerungen des letzten großen Updates",
         h: "Was ist neu",
         pts: [
-          "<b>Coach-Ansagen im freien Rundentimer:</b> Die Kombis werden jetzt laut angesagt. Oben rechts schaltest du die Sprache mit 🔊 an und aus. iPhone: Schalter an der Seite auf Ton stellen. Android: Medienlautstärke hochdrehen.",
-          "<b>10 Sekunden vorher:</b> Vor dem Ende und vor dem Start jeder Phase kommen ein Ton und eine kurze Ansage – auch bei Haltezeiten wie dem Unterarmstütz.",
-          "<b>Kraft:</b> Einbeinige Übungen trägst du für links und rechts getrennt ein. Haltezeiten gehen direkt in die Satzpause über, und die Pause lässt sich anhalten.",
+          "<b>Neu im Ratgeber:</b> 10 Themen zum Lesen – vom Mythen-Check über die WAKO-Disziplinen bis zum Turniertag. Du findest sie unter Profil → Ratgeber.",
+          "<b>Bessere Stimme:</b> Ringzeit nimmt jetzt automatisch die beste installierte Stimme. Wie du eine noch bessere lädst, steht unter Profil → App & Daten.",
+          "<b>Turnier und Einheit:</b> Vor einem Turnier mit Gewichtsklasse trägst du dein Gewicht einmal pro Woche direkt auf „Heute“ ein. Und geänderte Einstellungen einer Einheit markieren jetzt „Neu erstellen“.",
         ],
         ok: "Verstanden",
       },
@@ -4451,7 +4458,14 @@
           "Ringzeit hat kein Konto, keine Werbung und kein Tracking. Alles, was du einträgst, bleibt nur auf deinem Gerät.",
           "Ringzeit wird über GitHub Pages bereitgestellt. Beim Laden und bei Updates verarbeitet GitHub technisch übliche Zugriffsdaten wie die IP-Adresse.",
           "Sicherungen speicherst du selbst. Mit „Neu starten“ löschst du alle Daten auf diesem Gerät.",
+          "Feedback ist freiwillig und läuft über ein Formular bei Tally (Anbieter in der EU). Übertragen wird nur, was du dort selbst einträgst, dazu die App-Version und die Geräteart (z. B. „iPhone, installiert“) – keine Trainingsdaten.",
         ],
+      },
+      fb: {
+        lbl: "Feedback",
+        hint: "Was gefällt dir, was stört? Das Formular öffnet sich im Browser und braucht Internet. Trainingsdaten werden nicht mitgeschickt.",
+        btn: "Feedback senden",
+        offline: "Für das Feedback brauchst du Internet.",
       },
       resetLbl: "Neu starten",
       resetHint:
@@ -4464,8 +4478,8 @@
         train: ["Training", "Disziplin, Level, Tage, Verein, Einschränkungen"],
         goals: ["Ziele", "Turniere, Gürtelprüfungen, Schwerpunkt"],
         life: ["Alltag & Pausen", "Woche, Wenig-Zeit, Arbeit, Pausen, K.o."],
-        guide: ["Ratgeber", "Bandagieren, Materialpflege, Erste Hilfe"],
-        app: ["App & Daten", "Sicherung, Meine Kombis, Design, Tour"],
+        guide: ["Ratgeber", "Bandagieren, Erste Hilfe, 10 Themen zum Lesen"],
+        app: ["App & Daten", "Sicherung, Meine Kombis, Stimme, Design, Tour"],
         days: (n) => `${n} ${n === 1 ? "Tag" : "Tage"} Ringzeit`,
         club: (n) => `${n}× Verein`,
         noGoal: "Noch kein Ziel eingetragen",
@@ -4649,6 +4663,15 @@
       },
       easeRound: "Einstiegsrunde: 70 % Tempo, Kicks höchstens auf Körperhöhe.",
       seasonLbl: "Jahreszeiten-Design",
+      vsel: {
+        lbl: "Stimme der Ansagen",
+        now: (n) => `Ringzeit nutzt automatisch die beste installierte Stimme. Gerade: ${n}.`,
+        none: "Ringzeit nutzt die Standardstimme deines Geräts.",
+        ios: "Bessere Stimme: Einstellungen → Bedienungshilfen → Lesen & Sprechen → Stimmen → Deutsch, z. B. „Anna (Premium)“ laden (kostenlos, am besten im WLAN). Danach Ringzeit neu öffnen.",
+        android: "Bessere Stimme: In den Einstellungen nach „Text-in-Sprache“ suchen und die deutsche Stimme in hoher Qualität laden. Danach Ringzeit neu öffnen.",
+        other: "Bessere Stimmen lassen sich in den Sprach-Einstellungen deines Geräts laden.",
+        test: "Probe hören",
+      },
       music: {
         lbl: "Musik bei den Rundentimern",
         opts: ["Unterbrechen", "Weiterspielen"],
@@ -5517,9 +5540,9 @@
         sub: "The changes of the last big update",
         h: "What's new",
         pts: [
-          "<b>Coach calls in the free round timer:</b> combos are now called out loud. Turn the voice on and off with 🔊 top right. iPhone: set the side switch to ring. Android: turn up the media volume.",
-          "<b>10 seconds ahead:</b> before each phase ends or starts you get a tone and a short call – also for holds like the plank.",
-          "<b>Strength:</b> one-legged exercises are entered for left and right separately. Holds go straight into the set rest, and the rest can be paused.",
+          "<b>New in the guide:</b> 10 topics to read – from a myth check and the WAKO disciplines to tournament day. Find them under Profile → Guide.",
+          "<b>Better voice:</b> Ringzeit now automatically uses the best installed voice. How to download an even better one is under Profile → App & data.",
+          "<b>Tournament and session:</b> before a tournament with a weight class you log your weight once a week right on Today. And changed session settings now highlight Rebuild.",
         ],
         ok: "Got it",
       },
@@ -5551,7 +5574,14 @@
           "Ringzeit has no account, no ads and no tracking. Everything you enter stays on your device only.",
           "Ringzeit is served via GitHub Pages. When loading and updating, GitHub processes the usual technical access data such as the IP address.",
           "You save backups yourself. “Start over” deletes all data on this device.",
+          "Feedback is voluntary and goes through a form at Tally (an EU provider). Only what you enter there is sent, plus the app version and device type (e.g. “iPhone, installed”) – no training data.",
         ],
+      },
+      fb: {
+        lbl: "Feedback",
+        hint: "What do you like, what bugs you? The form opens in the browser and needs internet. No training data is sent.",
+        btn: "Send feedback",
+        offline: "You need internet to send feedback.",
       },
       resetLbl: "Start over",
       resetHint:
@@ -5563,8 +5593,8 @@
         train: ["Training", "Discipline, level, days, club, limitations"],
         goals: ["Goals", "Tournaments, belt gradings, focus"],
         life: ["Everyday life & breaks", "Week, short on time, work, breaks, KO"],
-        guide: ["Guide", "Hand wraps, gear care, first aid"],
-        app: ["App & data", "Backup, my combos, design, tour"],
+        guide: ["Guide", "Hand wraps, first aid, 10 topics to read"],
+        app: ["App & data", "Backup, my combos, voice, design, tour"],
         days: (n) => `${n} ${n === 1 ? "day" : "days"} Ringzeit`,
         club: (n) => `${n}× club`,
         noGoal: "No goal set yet",
@@ -5744,6 +5774,15 @@
       },
       easeRound: "Opening round: 70 % pace, kicks no higher than the body.",
       seasonLbl: "Seasonal design",
+      vsel: {
+        lbl: "Announcer voice",
+        now: (n) => `Ringzeit automatically uses the best installed voice. Right now: ${n}.`,
+        none: "Ringzeit uses your device's default voice.",
+        ios: "Better voice: Settings → Accessibility → Read & Speak → Voices → English, download e.g. an “Enhanced” or “Premium” voice (free, best on Wi-Fi). Then reopen Ringzeit.",
+        android: "Better voice: search your settings for “Text-to-speech” and download the high-quality English voice. Then reopen Ringzeit.",
+        other: "Better voices can be downloaded in your device's speech settings.",
+        test: "Play sample",
+      },
       music: {
         lbl: "Music during round timers",
         opts: ["Interrupt", "Keep playing"],
@@ -13397,6 +13436,11 @@ ${setupFields(setup, ty)}
     }
     life = lifePanelHtml() + life;
     app += `<div class="panel"><div class="field"><span class="lab">${t("seasonLbl")}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-season="${i ? "off" : "on"}" aria-pressed="${!!S.profile.seasonOff === !!i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${t("seasonHint")}</span></div></div>`;
+    if (canSpeak()) {
+      const V = t("vsel"),
+        bv = bestVoice();
+      app += `<div class="panel"><div class="field"><span class="lab">${V.lbl}</span><span class="sub">${bv ? esc(V.now(bv.name)) : V.none}</span><span class="sub">${isIOS() ? V.ios : isAndroid() ? V.android : V.other}</span><button type="button" class="btn sec" data-vtest="1">${V.test}</button></div></div>`;
+    }
     if (audioSessionOk())
       app += `<div class="panel"><div class="field"><span class="lab">${t("music").lbl}</span><div class="seg">${t(
         "music",
@@ -13407,7 +13451,7 @@ ${setupFields(setup, ty)}
         )
         .join("")}</div><span class="sub">${t("music").hint}</span></div></div>`;
     app = mycHtml() + app;
-    app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div><div class="field"><span class="lab">${t("resetLbl")}</span><span class="sub">${t("resetHint")}</span><button type="button" class="btn ghost danger" data-reset-all="1">${t("resetBtn")}</button></div></div>`;
+    app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("fb").lbl}</span><span class="sub">${t("fb").hint}</span><a class="btn sec" data-fb="1" href="${esc(feedbackUrl())}" target="_blank" rel="noopener">${t("fb").btn}</a></div><div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div><div class="field"><span class="lab">${t("resetLbl")}</span><span class="sub">${t("resetHint")}</span><button type="button" class="btn ghost danger" data-reset-all="1">${t("resetBtn")}</button></div></div>`;
     app += `<div class="panel"><button type="button" class="row legal-entry" data-news="1"><span class="legal-entry-text"><b>${t("news").row}</b><span class="sub">${t("news").sub}</span></span><span class="chev" aria-hidden="true">›</span></button></div>`;
     app += `<div class="panel"><button type="button" class="row legal-entry" data-legal="1"><span class="legal-entry-text"><b>${t("legal").row}</b><span class="sub">${t("legal").sub}</span></span><span class="chev" aria-hidden="true">›</span></button></div>`;
     app += `<div class="panel"><div class="row"><span style="flex:1">${t("storage")}</span><span class="sub">${store.mode === "cloud" ? t("cloud") : t("local")}</span></div></div>`;
@@ -13512,7 +13556,7 @@ ${setupFields(setup, ty)}
   }
   /* "What's new": shown once per big update to people who already used the app.
      Raise NEWS_V (and update the texts under "news") only for updates worth telling about. */
-  const NEWS_V = 3;
+  const NEWS_V = 4;
   const needNews = () => !S.profile.example && !!S.profile.toured && (S.profile.newsSeen || 0) < NEWS_V;
   const showNews = () => openSheet({ kind: "news" });
   async function finishOnb(skip, test) {
@@ -17979,6 +18023,13 @@ ${setupFields(setup, ty)}
 
   /* ============ Backup and trainer summary – everything stays on the device ============ */
   /* Offers a file through the viewer's save dialog; where that isn't available, shows it so it can be copied */
+  /* Feedback form (Tally): only the app version and a coarse device type are passed along, nothing from the training data */
+  const FEEDBACK_URL = "https://tally.so/r/OQQE5g";
+  function feedbackUrl() {
+    const dev = isIOS() ? "iPhone/iPad" : isAndroid() ? "Android" : "Computer",
+      mode = isStandalone() ? (S.profile.lang === "de" ? "installiert" : "installed") : "Browser";
+    return `${FEEDBACK_URL}?version=${encodeURIComponent(APP_VER)}&geraet=${encodeURIComponent(`${dev}, ${mode}`)}&sprache=${S.profile.lang}`;
+  }
   const isStandalone = () => {
     try {
       return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
@@ -18358,7 +18409,7 @@ ${setupFields(setup, ty)}
       const u = new SpeechSynthesisUtterance(".");
       u.volume = 0;
       u.rate = 2;
-      u.lang = S.profile.lang === "de" ? "de-DE" : "en-GB";
+      applyVoice(u);
       // only a real start counts: a cancelled or failed dot is retried on the next tap
       u.onstart = () => (speechPrimed = true);
       u.onend = u.onerror = () => {
@@ -18875,11 +18926,52 @@ ${setupFields(setup, ty)}
       })
       .join(", ");
   }
+  /* The best installed voice for the app language: premium/enhanced voices first, novelty and online-only voices last
+     (the app runs offline in the gym). No voice found: the device default is used. */
+  function bestVoice() {
+    try {
+      if (!canSpeak() || !speechSynthesis.getVoices) return null;
+      const lg = S.profile.lang === "de" ? "de" : "en",
+        want = lg === "de" ? "de-de" : "en-gb",
+        norm = (v) => String(v.lang || "").toLowerCase().replace("_", "-"),
+        vs = (speechSynthesis.getVoices() || []).filter((v) => norm(v).startsWith(lg));
+      if (!vs.length) return null;
+      const score = (v) => {
+        const id = `${v.name} ${v.voiceURI}`.toLowerCase();
+        let sc = 0;
+        if (/premium/.test(id)) sc += 30;
+        else if (/enhanced|erweitert|verbessert/.test(id)) sc += 20;
+        else if (/neural|natural/.test(id)) sc += 15;
+        if (/eloquence|novelty/.test(id)) sc -= 20;
+        if (v.localService === false) sc -= 12;
+        if (norm(v) === want) sc += 3;
+        if (v.default) sc += 1;
+        return sc;
+      };
+      return vs.slice().sort((a, b) => score(b) - score(a))[0];
+    } catch (e) {
+      return null;
+    }
+  }
+  try {
+    if (canSpeak() && speechSynthesis.addEventListener)
+      speechSynthesis.addEventListener("voiceschanged", () => {
+        if (ui.tab === "profile" && ui.profSec === "app") render();
+      });
+  } catch (e) {}
+  function applyVoice(u) {
+    u.lang = S.profile.lang === "de" ? "de-DE" : "en-GB";
+    const v = bestVoice();
+    if (v) {
+      u.voice = v;
+      u.lang = v.lang;
+    }
+  }
   function say(text, rate = 1) {
     if (!voiceOn()) return;
     try {
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = S.profile.lang === "de" ? "de-DE" : "en-GB";
+      applyVoice(u);
       u.rate = rate;
       // iOS Safari drops an utterance spoken right after cancel() and sometimes leaves the synth paused
       const busy = (speechSynthesis.speaking || speechSynthesis.pending) && !primeU;
@@ -21532,6 +21624,11 @@ ${setupFields(setup, ty)}
       return;
     }
     if (ev.target.id === "sheet") return closeSheet();
+    // feedback is a plain link to the form; offline it would only show an error page
+    if (ev.target.closest("[data-fb]") && navigator.onLine === false) {
+      ev.preventDefault();
+      return toast(t("fb").offline);
+    }
     const b = ev.target.closest("button");
     if (!b || b.disabled) return;
     const ds = b.dataset;
@@ -21739,6 +21836,15 @@ ${setupFields(setup, ty)}
       renderSheet();
       const sh = document.querySelector(".sheet");
       if (sh) sh.scrollTop = 0;
+      return;
+    }
+    if (ds.vtest) {
+      if (!voiceOn()) {
+        S.profile.voice = true;
+        if (draft) draft.voice = true;
+        store.save();
+      }
+      say(t("voiceTest"));
       return;
     }
     if (ds.voice) {
