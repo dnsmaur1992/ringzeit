@@ -1576,3 +1576,29 @@ test("guide: ten articles in German and English, each opens and leads to the nex
   a.run("S.profile.lang='en'");
   assert.match(a.run("guideSheetHtml(ui.sheet)"), /Gloves explained/);
 });
+
+test("voice: the best installed voice is used – premium before enhanced before default, no novelty or online-only voices", () => {
+  const a = app();
+  a.run(`globalThis.spoken=[];const V=(name,lang,uri,extra={})=>({name,lang,voiceURI:uri,localService:true,default:false,...extra});
+    globalThis.VOICES=[V('Eddy','de-DE','com.apple.eloquence.de-DE.Eddy'),V('Anna','de-DE','com.apple.voice.compact.de-DE.Anna',{default:true}),V('Katja Online (Natural)','de-DE','Microsoft Katja Online',{localService:false}),V('Helena (Erweitert)','de-DE','com.apple.voice.enhanced.de-DE.Helena'),V('Daniel','en-GB','com.apple.voice.compact.en-GB.Daniel')];
+    globalThis.speechSynthesis={getVoices:()=>VOICES,speak(u){spoken.push(u)},cancel(){},resume(){},speaking:false,pending:false,paused:false};window.speechSynthesis=speechSynthesis;globalThis.SpeechSynthesisUtterance=function(t){this.text=t};S.profile.voice=true;S.profile.lang='de';`);
+  assert.equal(a.run("bestVoice().name"), "Helena (Erweitert)");
+  a.run("VOICES.push({name:'Anna (Premium)',lang:'de-DE',voiceURI:'com.apple.voice.premium.de-DE.Anna',localService:true})");
+  a.run("say('Runde 1')");
+  assert.equal(a.run("spoken[spoken.length-1].voice.name"), "Anna (Premium)");
+  a.run("VOICES.splice(0,VOICES.length,{name:'Eddy',lang:'de-DE',voiceURI:'com.apple.eloquence.de-DE.Eddy',localService:true},{name:'Anna',lang:'de-DE',voiceURI:'com.apple.voice.compact.de-DE.Anna',localService:true})");
+  assert.equal(a.run("bestVoice().name"), "Anna", "novelty voice last");
+  a.run("S.profile.lang='en'");
+  a.run("VOICES.push({name:'Daniel',lang:'en_GB',voiceURI:'x',localService:true})");
+  assert.equal(a.run("bestVoice().name"), "Daniel");
+  a.run("VOICES.length=0");
+  assert.equal(a.run("bestVoice()"), null, "no voices: device default");
+});
+
+test("feedback: link to the form carries only version, device type and language", () => {
+  const a = app();
+  a.run("navigator.userAgent='Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)'");
+  const url = a.run("feedbackUrl()");
+  assert.match(url, /^https:\/\/tally\.so\/r\/OQQE5g\?version=[^&]+&geraet=iPhone%2FiPad%2C%20(Browser|installiert)&sprache=de$/);
+  assert.doesNotMatch(url, /kg|rpe|birth|weight/i);
+});
