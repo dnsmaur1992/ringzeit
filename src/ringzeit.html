@@ -4053,6 +4053,44 @@
   .sets.leg.nokg {
     grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto;
   }
+  /* fields of the open set: glow while empty */
+  #workout input.si.need:placeholder-shown {
+    border-color: var(--ice);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ice) 28%, transparent);
+    background: color-mix(in srgb, var(--ice) 8%, #0a0b0d);
+    animation: needGlow 1.4s ease-in-out 3;
+  }
+  @keyframes needGlow {
+    50% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--ice) 12%, transparent);
+    }
+  }
+  #workout input.si.shake {
+    animation: shake 0.4s ease-in-out;
+  }
+  @keyframes shake {
+    20%,
+    60% {
+      transform: translateX(-5px);
+    }
+    40%,
+    80% {
+      transform: translateX(5px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #workout input.si.need,
+    #workout input.si.shake {
+      animation: none;
+    }
+  }
+  /* circuit lap: one set, no tick column – label | reps (| kg) */
+  .sets.lap {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .sets.lap.nokg {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
   .sets.lap.leg {
     grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   }
@@ -12322,6 +12360,8 @@ ${setupFields(setup, ty)}
           lapRest: "Pause",
           lapRestHint: "Durchatmen, trinken – gleich kommt der nächste Durchgang.",
           enterFirst: "Bitte erst die Wiederholungen eintragen.",
+          enterSay: "Wiederholungen eintragen",
+          skippedOpen: "Übersprungen – der Satz bleibt offen.",
         }
       : {
           ready: "Get ready",
@@ -12358,6 +12398,8 @@ ${setupFields(setup, ty)}
           lapRest: "Rest",
           lapRestHint: "Breathe, drink – the next lap is coming.",
           enterFirst: "Please enter your reps first.",
+          enterSay: "enter your reps",
+          skippedOpen: "Skipped – the set stays open.",
         };
   /* iPhone/iPad: the side switch (or silent mode on newer models) mutes gong and calls */
   /* Android: no mute switch, but media volume is separate from the ringer volume */
@@ -12457,6 +12499,8 @@ ${setupFields(setup, ty)}
     if (el) el.scrollTop = 0;
     if ((st.kind === "timed" || st.kind === "rest") && opt.auto) playerStartTimed();
     else if (opt.auto && timedSets(st, sess)) playerStartSets();
+    else if (opt.auto && st.kind === "sets")
+      say(`${playerText().nextSay}: ${stepTitle(sess, st)}. ${playerText().enterSay}`, 0.95);
     else if (opt.auto && st.kind !== "finish" && st.kind !== "rounds")
       say(`${playerText().nextSay}: ${stepTitle(sess, st)}`, 0.95);
   }
@@ -12621,7 +12665,11 @@ ${setupFields(setup, ty)}
     }
     if (a === "flow") return playerGo(ui.workout.step, { keepTimers: true });
     if (a === "prev") return playerGo(ui.workout.step - 1);
-    if (a === "next") return playerGo(ui.workout.step + 1, { auto: st?.kind === "sets" && stepDone(S.sessions[ui.sel], st) });
+    if (a === "next") {
+      const sess = S.sessions[ui.sel];
+      if (st?.kind === "sets" && !stepDone(sess, st)) toast(playerText().skippedOpen);
+      return playerGo(ui.workout.step + 1, { auto: st?.kind === "sets" && stepDone(sess, st) });
+    }
     if (a === "done") return playerDone();
     if (a === "soundok") {
       S.profile.soundHintSeen = true;
@@ -12640,6 +12688,11 @@ ${setupFields(setup, ty)}
               `[data-k="${key}"][data-i="${k}"][data-f="r"], [data-k="${key}"][data-i="${k}"][data-f="${row.rL == null ? "rL" : "rR"}"]`,
             )
             ?.focus();
+          document.querySelectorAll(`#workout [data-k="${key}"][data-i="${k}"]`).forEach((el) => {
+            el.classList.remove("shake");
+            void el.offsetWidth;
+            el.classList.add("need", "shake");
+          });
           toast(playerText().enterFirst);
         };
       // values are entered by hand; an empty set is never filled in automatically
@@ -12808,6 +12861,25 @@ ${setupFields(setup, ty)}
     updateWorkoutProgress();
     updateExerciseTimerUI();
     updateWorkoutRoundStatus();
+    markNeedInputs();
+  }
+  /* In a set step the fields of the next open set glow until something is entered – after a timer it is
+     otherwise easy to miss that this exercise needs an entry */
+  function openSetIndex(sess, st) {
+    const rows = perfRows(sess, `${st.bi}.${st.ni}`, sess.blocks[st.bi]),
+      filled = (r) => r && r.r != null && r.r !== "";
+    return st.lap != null ? (filled(rows[st.lap]) ? -1 : st.lap) : rows.findIndex((r) => !filled(r));
+  }
+  function markNeedInputs() {
+    if (!ui.workout?.player || ui.workout.list) return;
+    const st = playerStep(),
+      sess = S.sessions[ui.sel];
+    if (!st || st.kind !== "sets" || !sess) return;
+    const i = openSetIndex(sess, st);
+    if (i < 0) return;
+    document
+      .querySelectorAll(`#workout [data-k="${st.bi}.${st.ni}"][data-i="${i}"]`)
+      .forEach((el) => el.classList.add("need"));
   }
   // Structured phase plans use the same prescription as the visible exercise dose.
   // Work and rests stay distinct; per-side holds include an explicit changeover.
