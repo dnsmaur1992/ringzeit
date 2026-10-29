@@ -200,7 +200,7 @@ Die Tests führen die echte Trainingslogik und Ereignisbehandlung in Node aus. T
 
 Für den Betreiber des Repositorys:
 
-1. Die neuen Dateien `index.html` und `sw.js` hochladen (*Add file → Upload files*) und committen – dazu die neue `ringzeit.html` in den Ordner `src`.
+1. Die neuen Dateien `index.html` und `sw.js` hochladen (*Add file → Upload files*) und committen – dazu die neue `ringzeit.html` in den Ordner `src`. Die Quelldatei `ringzeit.html` gehört **nur** nach `src`, nicht in den Hauptordner: Dort wäre sie öffentlich als zweite, veraltete App-Version erreichbar.
 2. GitHub Pages veröffentlicht die neue Version nach ein bis zwei Minuten.
 3. Die App lädt das Update beim nächsten Öffnen im Hintergrund – nach einem Neustart der App ist es aktiv. Die Versionsnummer steht unten im Profil.
 4. **„Was ist neu“ nur bei größeren Updates:** In `src/ringzeit.html` die Zahl `NEWS_V` um eins erhöhen und die drei Punkte unter `news` (Deutsch und Englisch) neu schreiben. Alle, die die App schon nutzen, sehen den Hinweis dann einmal beim nächsten Öffnen. Bei kleinen Korrekturen `NEWS_V` einfach lassen.
