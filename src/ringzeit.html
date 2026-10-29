@@ -261,6 +261,18 @@
   .day.train .k {
     color: var(--ice);
   }
+  .code.ico {
+    font-family: inherit;
+    font-size: 20px;
+    letter-spacing: 0;
+  }
+  .day .k.ico {
+    font-family: inherit;
+    font-size: 14px;
+    letter-spacing: 0;
+    height: 16px;
+    line-height: 16px;
+  }
   .day.done {
     border-color: #3c4a40;
   }
@@ -5305,7 +5317,7 @@
         C: "Technik & Kondition",
         P: "Sparring",
         S: "Kraft",
-        K: "Conditioning",
+        K: "Kondition",
         M: "Mobility",
         V: "Verein",
       },
@@ -8453,9 +8465,17 @@
           [8, "😣", "Hard"],
           [10, "🥵", "All-out"],
         ];
+  // logged effort as text: the face in the simple view, the number otherwise
+  const effortTxt = (rpe) => {
+    if (!simpleView()) return `RPE ${rpe}`;
+    const f = effortFaces().find(([n]) => n === faceOf(rpe));
+    return f ? `${f[1]} ${f[2]}` : `RPE ${rpe}`;
+  };
   const faceOf = (rpe) => (Number.isFinite(rpe) && rpe > 0 ? Math.min(10, Math.ceil(rpe / 2) * 2) : null);
   /* Simple view: only what's needed to train; statistics, test and history move into the profile */
   const simpleView = () => S.profile.simple === true;
+  // the simple view doesn't ask for extra equipment, so it plans without any (only the partner/bag answer counts)
+  const defaultEq = () => (simpleView() ? ["bag"] : ["bag", "rope"]);
   /* under 15 (or a child without year of birth): no weight reminders */
   const under15 = () => {
     const a = ageAt();
@@ -10613,7 +10633,10 @@
     const r = t("rules")[p.disc];
     return `<div class="tags"><span class="tg ok">${r[0]}</span>${r[1].map((x) => `<span class="tg no">${x}</span>`).join("")}${r[2].map((x) => `<span class="tg">${x}</span>`).join("")}</div>`;
   }
-  const codeOf = (ty) => (ty === "V" ? (S.profile.lang === "de" ? "VER" : "CLB") : CODE[ty]);
+  /* simple view: a picture per session type instead of the short English codes (TEC, STR …) */
+  const TYPE_ICO = { T: "🥊", C: "⚡", P: "🤼", S: "🏋️", K: "🏃", M: "🧘", V: "👥" };
+  const codeOf = (ty) =>
+    simpleView() ? TYPE_ICO[ty] || "" : ty === "V" ? (S.profile.lang === "de" ? "VER" : "CLB") : CODE[ty];
   const dayLbl = (ds) => `${t("weekday")[wd(ds)]}, ${parse(ds).getDate()}.${parse(ds).getMonth() + 1}.`;
   /* Week at a glance: progress ring (own + club sessions), week streak, next tournament */
   function pulseHtml() {
@@ -10655,7 +10678,7 @@
             ds === selDs ? "sel" : "",
           ].join(" ");
           const k = done ? "✓" : ty ? codeOf(ty) : cl ? codeOf("V") : pausedOn(ds) ? "–" : "·";
-          return `<button type="button" class="${cls}" ${attr}="${ds}"${tc ? ` style="--tc:var(--c-${tc})"` : ""} aria-label="${t("weekday")[i]}${ty ? " · " + t("types")[ty] : ""}${cl ? " · " + t("club") : ""}"><span class="d">${t("dayNames")[i]}</span><span class="n">${d.getDate()}</span><span class="k">${k}</span>${ty && cl ? `<i class="cl"></i>` : ""}</button>`;
+          return `<button type="button" class="${cls}" ${attr}="${ds}"${tc ? ` style="--tc:var(--c-${tc})"` : ""} aria-label="${t("weekday")[i]}${ty ? " · " + t("types")[ty] : ""}${cl ? " · " + t("club") : ""}"><span class="d">${t("dayNames")[i]}</span><span class="n">${d.getDate()}</span><span class="k${simpleView() && (ty || cl) && !done ? " ico" : ""}">${k}</span>${ty && cl ? `<i class="cl"></i>` : ""}</button>`;
         })
         .join("") +
       `</div>`
@@ -10689,7 +10712,7 @@
     } else if (tty && !doneOn(td)) {
       small = dateLbl;
       title = t("types")[tty];
-      meta = `${sessDur(td, tty)} ${t("min")} · RPE ${rpeRange(tty, td).txt}${cl ? ` · + ${t("club")}` : ""}`;
+      meta = `${sessDur(td, tty)} ${t("min")}${simpleView() ? "" : ` · RPE ${rpeRange(tty, td).txt}`}${cl ? ` · + ${t("club")}` : ""}`;
       btn = `<button type="button" class="go" data-go="${td}" aria-label="${t("startBtn")}">${PLAY}</button>`;
     } else if (cl && !clubDone(td)) {
       small = dateLbl;
@@ -10842,7 +10865,7 @@
         oty = ty || (lg && lg.type);
       if (oty)
         rows.push(
-          `<button type="button" class="sess" data-open="${ds}" style="--tc:var(--c-${oty})"><span class="code ${oty}" aria-hidden="true">${codeOf(oty)}</span><span class="lbl"><b>${t("weekday")[i]}</b><div class="sub">${t("types")[oty]} · ${sessDur(ds, oty)} ${t("min")}${lg ? "" : ` · RPE ${rpeRange(oty, ds).txt}`}${ow.from ? ` · ${t("movedFrom")(t("dayNames")[wd(ow.from)])}` : ""}</div></span>${lg ? `<span class="check">✓ ${t("doneTag")}</span>` : `<span class="chev">→</span>`}</button>`,
+          `<button type="button" class="sess" data-open="${ds}" style="--tc:var(--c-${oty})"><span class="code ${oty}${simpleView() ? " ico" : ""}" aria-hidden="true">${codeOf(oty)}</span><span class="lbl"><b>${t("weekday")[i]}</b><div class="sub">${t("types")[oty]} · ${sessDur(ds, oty)} ${t("min")}${lg || simpleView() ? "" : ` · RPE ${rpeRange(oty, ds).txt}`}${ow.from ? ` · ${t("movedFrom")(t("dayNames")[wd(ow.from)])}` : ""}</div></span>${lg ? `<span class="check">✓ ${t("doneTag")}</span>` : `<span class="chev">→</span>`}</button>`,
         );
       else if (ow.off === "moved")
         rows.push(
@@ -10850,7 +10873,7 @@
         );
       if (cl || cd)
         rows.push(
-          `<button type="button" class="sess" data-open="${ds}" style="--tc:var(--c-V)"><span class="code V" aria-hidden="true">${codeOf("V")}</span><span class="lbl"><b>${t("weekday")[i]}</b><div class="sub">${t("club")}${cd ? ` · ${t("clubKinds")[cd.ck] || ""} · ${cd.minutes} ${t("min")}` : ` · ${cl.min} ${t("min")}`}</div></span>${cd ? `<span class="check">✓ ${t("doneTag")}</span>` : `<span class="chev">→</span>`}</button>`,
+          `<button type="button" class="sess" data-open="${ds}" style="--tc:var(--c-V)"><span class="code V${simpleView() ? " ico" : ""}" aria-hidden="true">${codeOf("V")}</span><span class="lbl"><b>${t("weekday")[i]}</b><div class="sub">${t("club")}${cd ? ` · ${t("clubKinds")[cd.ck] || ""} · ${cd.minutes} ${t("min")}` : ` · ${cl.min} ${t("min")}`}</div></span>${cd ? `<span class="check">✓ ${t("doneTag")}</span>` : `<span class="chev">→</span>`}</button>`,
         );
     }
     h += rows.join("") || `<div class="row"><span class="sub">${t("noTraining")}</span></div>`;
@@ -11844,7 +11867,10 @@
   const setupOf = (sess, ds) => ({
     ds,
     loc: sess.loc,
-    eq: sess.eq.filter((x) => !(x === "bag" && sess.eq.includes("partner"))),
+    // the simple view only offers partner/bag – hidden extra equipment must not stick to a rebuilt session
+    eq: sess.eq.filter(
+      (x) => !(x === "bag" && sess.eq.includes("partner")) && (!simpleView() || ["partner", "bag", "pads"].includes(x)),
+    ),
     type: sess.type,
     run: !!sess.run,
     min: sess.min || sessMin(sess.type),
@@ -11878,7 +11904,7 @@
       studio = setup.loc === "studio" && (ty === "S" || ty === "K");
     if (studio) h += `<div class="field"><span class="sub">${t("studioNote")}</span></div>`;
     const chips =
-      ty === "P" || runOnly || studio
+      ty === "P" || runOnly || studio || simpleView()
         ? []
         : EQ_FOR[ty].filter((k) => t("equip")[k] && (k !== "pads" || has("partner")));
     if (chips.length)
@@ -11893,13 +11919,13 @@
       c = (S.cov || {})[ds] || {},
       past = ds <= iso(today());
     if (!cl && !cd && !c.off)
-      return past && !pausedOn(ds)
+      return past && !pausedOn(ds) && !(simpleView() && !(S.profile.club && S.profile.club.days.length))
         ? `<div class="minirow" style="justify-content:flex-end"><button type="button" class="btn ghost" data-clublog="${ds}">+ ${t("clubAdd")}</button></div>`
         : "";
     let body,
       acts = "";
     if (cd) {
-      body = `✓ ${t("clubKinds")[cd.ck] || ""} · ${cd.minutes} ${t("min")} · RPE ${cd.rpe}`;
+      body = `✓ ${t("clubKinds")[cd.ck] || ""} · ${cd.minutes} ${t("min")} · ${effortTxt(cd.rpe)}`;
       acts = `<button type="button" class="btn ghost" data-del="${cd.id}">${t("del")}</button>`;
     } else if (c.off) {
       body = c.off === "moved" ? t("movedTo")(dayLbl(c.to)) : c.off === "miss" ? t("clubMissed") : t("clubCancelled");
@@ -11910,7 +11936,7 @@
       if (ds >= iso(today()))
         acts += `<button type="button" class="btn ghost" data-cmove="${ds}">${t("move")}</button><button type="button" class="btn ghost" data-ccancel="${ds}">${t("clubCancel")}</button>`;
     }
-    return `<div class="panel clubbox" style="--tc:var(--c-V)"><div class="sess"><span class="code V" aria-hidden="true">${codeOf("V")}</span><span class="lbl"><b>${t("club")}</b><div class="sub">${esc(body)}</div></span></div><div class="minirow" style="padding:0 12px 10px;justify-content:flex-end">${acts}</div></div>`;
+    return `<div class="panel clubbox" style="--tc:var(--c-V)"><div class="sess"><span class="code V${simpleView() ? " ico" : ""}" aria-hidden="true">${codeOf("V")}</span><span class="lbl"><b>${t("club")}</b><div class="sub">${esc(body)}</div></span></div><div class="minirow" style="padding:0 12px 10px;justify-content:flex-end">${acts}</div></div>`;
   }
   function renderSession() {
     const ds = ui.sel || nextTrainingDate();
@@ -11929,7 +11955,7 @@
       if (lgd)
         return (
           h +
-          `<div class="note ok">✓ ${t("already")} ${t("types")[lgd.type] || ""} · RPE ${lgd.rpe} · ${lgd.minutes} ${t("min")}</div>`
+          `<div class="note ok">✓ ${t("already")} ${t("types")[lgd.type] || ""} · ${effortTxt(lgd.rpe)} · ${lgd.minutes} ${t("min")}</div>`
         );
       const info =
         ow.off === "moved" ? t("movedTo")(dayLbl(ow.to)) : ow.off === "skip" ? t("skipped") : t("noTraining");
@@ -11947,7 +11973,7 @@
           : {
               ds,
               loc: "gym",
-              eq: ["bag", "rope"],
+              eq: defaultEq(),
               type: planned,
               run: false,
               min: sessMin(planned),
@@ -11961,7 +11987,7 @@
     const durs = [...new Set(lowTime() ? [20, 30] : [30, 45, 60, S.profile.minutes])]
       .filter((m) => (ty !== "M" || m <= 45) && (kidAge() == null || m <= (kidAge() <= 9 ? 30 : 45)))
       .sort((a, b) => a - b);
-    h += `<div class="panel"><div class="field"><span class="lab">${t("sessType")}</span><div class="seg g3">${["T", "C", "P", "S", "K", "M"].map((k) => `<button type="button" data-stype="${k}" aria-pressed="${ty === k}" ${k === "P" && (koLock(ds) || ageGroup() === "kids") ? "disabled" : ""}>${t("types")[k]}${k === planned ? `<small>${t("suggested")}</small>` : ""}</button>`).join("")}</div>${koLock(ds) ? `<span class="sub">${t("koNote")}</span>` : ""}</div>
+    h += `<div class="panel"><div class="field"><span class="lab">${t("sessType")}</span><div class="seg g3">${["T", "C", "P", "S", "K", "M"].filter((k) => k !== "P" || !simpleView() || ty === "P").map((k) => `<button type="button" data-stype="${k}" aria-pressed="${ty === k}" ${k === "P" && (koLock(ds) || ageGroup() === "kids") ? "disabled" : ""}>${t("types")[k]}${k === planned ? `<small>${t("suggested")}</small>` : ""}</button>`).join("")}</div>${koLock(ds) ? `<span class="sub">${t("koNote")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("dur")}</span><div class="seg">${durs.map((m) => `<button type="button" data-dur="${m}" aria-pressed="${setup.min === m}">${m}</button>`).join("")}</div></div>
  <div class="field"><span class="lab">${t("where")}</span><div class="seg ${ty === "S" || ty === "K" ? "g2" : ""}">${(ty === "S" || ty === "K" ? ["gym", "studio", "home", "out"] : ["gym", "home", "out"]).map((l) => `<button type="button" data-loc="${l}" aria-pressed="${setup.loc === l}">${t("locs")[l]}</button>`).join("")}</div></div>
 ${setupFields(setup, ty)}
@@ -11976,7 +12002,7 @@ ${setupFields(setup, ty)}
     }
     if (!simpleView()) h += progressionInfoHtml(true);
     const rbS = roundBlock(sess);
-    h += `<div class="tags"><span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<button type="button" class="tg tgbtn" data-guide="wrap">🩹 ${t("guide").wrapLink} ›</button>` : ""}${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
+    h += `<div class="tags">${simpleView() ? "" : `<span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>`}${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<button type="button" class="tg tgbtn" data-guide="wrap">🩹 ${t("guide").wrapLink} ›</button>` : ""}${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
     let dataLine = "";
     if (sess.progression?.data) {
       const data = sess.progression.data,
@@ -12002,13 +12028,13 @@ ${setupFields(setup, ty)}
         .filter((x) => typeof x === "string");
       const critical = notes.filter((n) => safety.includes(n));
       if (critical.length) h += `<div class="note warn">${critical.map(esc).join("<br>")}</div>`;
-      h += `<details class="note"><summary>${flowText().why}</summary><div>${[...notes, dataLine].filter(Boolean).map(esc).join("<br>")}</div></details>`;
+      if (!simpleView()) h += `<details class="note"><summary>${flowText().why}</summary><div>${[...notes, dataLine].filter(Boolean).map(esc).join("<br>")}</div></details>`;
     }
     sess.blocks.forEach((b, bi) => {
       h += sessionBlockHtml(sess, bi, true);
     });
     const done = S.log.find((e) => e.date === ds && own(e));
-    if (done) h += `<div class="note ok">✓ ${t("already")} RPE ${done.rpe} · ${done.minutes} ${t("min")}</div>`;
+    if (done) h += `<div class="note ok">✓ ${t("already")} ${effortTxt(done.rpe)} · ${done.minutes} ${t("min")}</div>`;
     else
       h += `<div class="panel training-start"><p class="sub">${workoutText().preview}</p><p class="sub">${S.profile.lang === "de" ? "Bereitlegen" : "Prepare"}: ${esc(sess.eq.map((k) => t("equip")[k] || t("pb")?.[k] || k).join(", ") || (S.profile.lang === "de" ? "keine zusätzliche Ausrüstung" : "no extra equipment"))}</p><button type="button" class="btn" data-workout="start">${PLAY}<span>${sess.flow ? workoutText().resume : workoutText().start}</span></button></div>`;
     return h;
@@ -21347,7 +21373,7 @@ ${setupFields(setup, ty)}
   }
   /* Session page: today's form, two optional taps */
   function formHtml(ds, sess) {
-    if (ds !== iso(today()) || doneOn(ds) || (sess && sess.type === "M")) return "";
+    if (simpleView() || ds !== iso(today()) || doneOn(ds) || (sess && sess.type === "M")) return "";
     const L = t("life"),
       f = (S.profile.form || {})[ds] || {},
       row = (k) =>
@@ -21986,6 +22012,9 @@ ${setupFields(setup, ty)}
     if (ds.simple != null) {
       S.profile.simple = ds.simple === "1";
       if (draft) draft.simple = S.profile.simple;
+      // open sessions are planned again for the new view (equipment the simple view doesn't ask for drops out)
+      dropOpenSessions(iso(today()));
+      ui.setup = null;
       store.save();
       renderTabs();
       return render();
@@ -22746,7 +22775,7 @@ ${setupFields(setup, ty)}
   function ensureExample() {
     const nd = nextTrainingDate(),
       ty = planOn(nd);
-    if (ty && !S.sessions[nd]) S.sessions[nd] = buildSession(nd, ty, "gym", ["bag", "rope"]);
+    if (ty && !S.sessions[nd]) S.sessions[nd] = buildSession(nd, ty, "gym", defaultEq());
   }
   (function boot() {
     const local = store.readLocal();
