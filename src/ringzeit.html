@@ -3980,6 +3980,49 @@
   .player-early {
     align-self: center;
   }
+  .effort-faces {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .effort-faces button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 2px 8px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--panel2);
+    color: var(--frost);
+    font: inherit;
+  }
+  .effort-faces button span {
+    font-size: 28px;
+    line-height: 1;
+  }
+  .effort-faces button small {
+    font-size: 11px;
+    color: var(--mist);
+    text-align: center;
+    line-height: 1.2;
+  }
+  .effort-faces button[aria-pressed="true"] {
+    border-color: var(--ice);
+    background: var(--ice-dim);
+  }
+  .effort-faces button[aria-pressed="true"] small {
+    color: var(--frost);
+  }
+  .effort-fine {
+    margin-top: 8px;
+  }
+  .effort-fine summary {
+    color: var(--mist);
+    font-size: 13px;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
   .psound {
     border-left: 3px solid var(--ice);
   }
@@ -4667,6 +4710,13 @@
       },
       easeRound: "Einstiegsrunde: 70 % Tempo, Kicks höchstens auf Körperhöhe.",
       seasonLbl: "Jahreszeiten-Design",
+      view: {
+        lbl: "Ansicht",
+        opts: ["Einfach", "Ausführlich"],
+        hint: "Einfach: Heute zeigt nur dein Training. Fitnesstest und Verlauf findest du dann im Profil. Ausführlich: mit Statistiken, Tests und allen Hinweisen.",
+        onbQ: "Wie viel möchtest du sehen?",
+        rows: { test: ["Fitnesstest", "Testen, wo du stehst"], log: ["Verlauf", "Einheiten, Gewicht, Bestleistungen"] },
+      },
       vsel: {
         lbl: "Stimme der Ansagen",
         now: (n) => `Ringzeit nutzt automatisch die beste installierte Stimme. Gerade: ${n}.`,
@@ -5773,6 +5823,13 @@
       },
       easeRound: "Opening round: 70 % pace, kicks no higher than the body.",
       seasonLbl: "Seasonal design",
+      view: {
+        lbl: "View",
+        opts: ["Simple", "Detailed"],
+        hint: "Simple: Today shows only your training. The fitness test and history are then in your profile. Detailed: with statistics, tests and all hints.",
+        onbQ: "How much do you want to see?",
+        rows: { test: ["Fitness test", "See where you stand"], log: ["History", "Sessions, weight, best results"] },
+      },
       vsel: {
         lbl: "Announcer voice",
         now: (n) => `Ringzeit automatically uses the best installed voice. Right now: ${n}.`,
@@ -8377,6 +8434,26 @@
     if (b.total >= 15 && b.min >= 2) return 1;
     return 0;
   }
+  /* Effort with five faces instead of numbers; each face stands for a value on the 1–10 scale the planning uses */
+  const effortFaces = () =>
+    S.profile.lang === "de"
+      ? [
+          [2, "😌", "Sehr locker"],
+          [4, "🙂", "Locker"],
+          [6, "😤", "Fordernd"],
+          [8, "😣", "Hart"],
+          [10, "🥵", "Am Limit"],
+        ]
+      : [
+          [2, "😌", "Very easy"],
+          [4, "🙂", "Easy"],
+          [6, "😤", "Challenging"],
+          [8, "😣", "Hard"],
+          [10, "🥵", "All-out"],
+        ];
+  const faceOf = (rpe) => (Number.isFinite(rpe) && rpe > 0 ? Math.min(10, Math.ceil(rpe / 2) * 2) : null);
+  /* Simple view: only what's needed to train; statistics, test and history move into the profile */
+  const simpleView = () => S.profile.simple === true;
   /* under 15 (or a child without year of birth): no weight reminders */
   const under15 = () => {
     const a = ageAt();
@@ -10722,11 +10799,12 @@
     const bh = blockHtml(),
       blockAsk = bh.includes('data-blk="later');
     asks.push(packCardHtml(), blockAsk ? bh : "", weekCheckHtml());
+    const simple = simpleView();
     if (!blockAsk) h += bh;
-    h += asks.filter(Boolean).slice(0, 2).join("");
-    h += starterHtml();
+    h += asks.filter(Boolean).slice(0, simple ? 1 : 2).join("");
+    if (!simple) h += starterHtml();
     h += promptsHtml();
-    h += pulseHtml();
+    if (!simple) h += pulseHtml();
     if (S.profile.example) h += `<div class="note">${t("example")}</div>`;
     if (ph.phase !== "base") {
       let extra = "";
@@ -10746,7 +10824,7 @@
     }
     if (load.deload)
       h += `<div class="note warn">${load.why === "rpe" ? t("deloadRpe") : load.why === "acwr" ? t("deloadAcwr") : t("deloadPlan")}</div>`;
-    const ts = testStatus();
+    const ts = simple ? null : testStatus();
     if (ts)
       h += `<div class="note act"><span>${t({ due: "testDue", first: "testFirst", pre: "testPre", post: "testPost" }[ts])}</span><button type="button" class="btn ghost" data-tab="test">${t("toTest")}</button></div>`;
     h += `<h2>${t("thisWeekH")}</h2>` + weekStrip(null, "data-open");
@@ -10776,7 +10854,7 @@
     h += rows.join("") || `<div class="row"><span class="sub">${t("noTraining")}</span></div>`;
     h +=
       `</div></div>` +
-      ruleTags() +
+      (simple ? "" : ruleTags()) +
       `<p class="foot">${t("disclaimer")}<a href="https://www.wako-deutschland.de/downloads/" target="_blank" rel="noopener">${S.profile.lang === "de" ? "Regelwerke der WAKO Deutschland" : "WAKO Germany rulebooks (German)"}</a></p>`;
     return h;
   }
@@ -10889,6 +10967,24 @@
   const clampStep = (n) => Math.max(-2, Math.min(4, Number.isFinite(n) ? Math.round(n) : 0));
   function roundDone(sess, n) {
     return typeof sess.roundChecks?.[n] === "boolean" ? sess.roundChecks[n] : n <= (sess.rdone || 0);
+  }
+  /* Circuit laps of one exercise: which laps are done (indexes), not just how many – skipping laps 1 and 2 and
+     confirming lap 3 must leave 1 and 2 open. Older saves only kept a count (timedLaps); it is read as laps 0…n-1. */
+  function lapSet(sess, key) {
+    const m = (sess.lapsDone ||= {});
+    if (!m[key]) m[key] = Array.from({ length: sess.timedLaps?.[key] || 0 }, (_, i) => i);
+    return m[key];
+  }
+  const lapIsDone = (sess, key, lap) =>
+    sess.lapsDone?.[key] ? sess.lapsDone[key].includes(lap) : (sess.timedLaps?.[key] || 0) > lap;
+  function markLap(sess, key, lap, laps) {
+    const a = lapSet(sess, key);
+    if (lap == null) for (lap = 0; a.includes(lap); lap++);
+    if (lap >= laps) lap = laps - 1;
+    if (!a.includes(lap)) a.push(lap);
+    a.sort((x, y) => x - y);
+    (sess.timedLaps ||= {})[key] = a.length;
+    if (a.length >= laps) (sess.checked ||= {})[key] = true;
   }
   function itemDone(sess, bi, ni) {
     const b = sess.blocks[bi],
@@ -11129,8 +11225,8 @@
         good = entries.filter(
           (e) =>
             progressionRecordComplete(e) &&
+            // all exercises done and the effort in range – how long it took only feeds the personal time estimate
             e.completed === true &&
-            e.minutes >= e.progression.plannedMin * 0.8 &&
             e.rpe <= e.tHi,
         ),
         hard = entries.filter((e) => validEffort(e) && e.rpe >= e.tHi + 2),
@@ -11387,6 +11483,7 @@
           jump: "Zur nächsten offenen Übung",
           check: "Hakenfläche antippen zum Abhaken · i öffnet die Übungserklärung.",
           chooseEffort: "Wie anstrengend war die Einheit?",
+          effortFine: "Genauer: Skala 1–10",
           effortHelp: "1–3 leicht · 4–6 mittel · 7–8 schwer · 9–10 sehr schwer",
           durationHint: "Vorgeschlagen ist die geplante Dauer – ändere sie, wenn du kürzer oder länger trainiert hast.",
           durationEarly: (m) =>
@@ -11417,6 +11514,7 @@
           jump: "Go to next open exercise",
           check: "Tap the check control to mark complete · i opens exercise details.",
           chooseEffort: "How hard was the session?",
+          effortFine: "More precise: scale 1–10",
           effortHelp: "1–3 easy · 4–6 moderate · 7–8 hard · 9–10 very hard",
           durationHint: "The planned duration is suggested – change it if you trained shorter or longer.",
           durationEarly: (m) => `${m} minutes are entered. If you stopped early, tap Cancel and adjust the duration.`,
@@ -11477,17 +11575,24 @@
       txt = flowText(),
       completed = sessionCompletion(sess).complete;
     return `<div id="sessionFinish"><h2>${t("finish")}</h2><div class="panel"><div class="field"><label class="lab" for="fMin">${t("duration")}</label><input id="fMin" type="number" inputmode="numeric" min="1" max="300" value="${Number.isFinite(draft.minutes) ? draft.minutes : ""}"><span class="sub">${txt.durationHint}</span></div>
-        <div class="field"><span class="lab" id="effortLabel">${txt.chooseEffort}</span><div class="effort-options" role="group" aria-labelledby="effortLabel">${Array.from(
-          { length: 10 },
-          (_, i) => i + 1,
-        )
+        <div class="field"><span class="lab" id="effortLabel">${txt.chooseEffort}</span><div class="effort-faces" role="group" aria-labelledby="effortLabel">${effortFaces()
           .map(
-            (n) =>
-              `<button type="button" data-effort="${n}" aria-pressed="${draft.rpe === n}" aria-label="${n} / 10">${n}</button>`,
+            ([n, f, l]) =>
+              `<button type="button" data-effort="${n}" data-face="1" aria-pressed="${faceOf(draft.rpe) === n}" aria-label="${esc(l)}"><span aria-hidden="true">${f}</span><small>${esc(l)}</small></button>`,
           )
-          .join(
-            "",
-          )}</div><span class="sub">${txt.effortHelp}</span><input id="fRpe" type="hidden" value="${draft.rpe ?? ""}"></div>
+          .join("")}</div>${
+          simpleView()
+            ? ""
+            : `<details class="effort-fine"><summary>${txt.effortFine}</summary><div class="effort-options" role="group" aria-labelledby="effortLabel">${Array.from(
+                { length: 10 },
+                (_, i) => i + 1,
+              )
+                .map(
+                  (n) =>
+                    `<button type="button" data-effort="${n}" aria-pressed="${draft.rpe === n}" aria-label="${n} / 10">${n}</button>`,
+                )
+                .join("")}</div><span class="sub">${txt.effortHelp}</span></details>`
+        }<input id="fRpe" type="hidden" value="${draft.rpe ?? ""}"></div>
         <div class="field"><label class="lab" for="fNote">${t("note")}</label><textarea id="fNote" placeholder="${esc(t("notePh"))}">${esc(draft.note)}</textarea></div><div class="field"><div id="finishError" role="alert" class="note warn" hidden></div><button type="button" class="btn${completed ? " all-done" : ""}" id="fSave">${completed ? trainingText().ready : trainingText().complete}</button></div></div></div>`;
   }
   function itemTitle(sess, bi, ni) {
@@ -11625,10 +11730,12 @@
   /* one-legged exercises: left and right are entered separately; the set counts (r) once both legs are in,
      as the weaker leg – so progression, "last time" and completion keep working on one number */
   const legLabels = () => (S.profile.lang === "de" ? ["Links", "Rechts"] : ["Left", "Right"]);
+  /* One-legged sets: the set value r is the weaker side and only exists while BOTH sides are entered.
+     Deleting one side reopens the set. Old logs with only a shared r (no rL/rR yet) stay as they are. */
   function legSync(row) {
-    const l = row.rL ?? row.r,
-      r = row.rR ?? row.r;
-    row.r = l != null && l !== "" && r != null && r !== "" ? Math.min(+l, +r) : null;
+    if (!("rL" in row) && !("rR" in row)) return;
+    const has = (v) => v != null && v !== "";
+    row.r = has(row.rL) && has(row.rR) ? Math.min(+row.rL, +row.rR) : null;
   }
   function legInputs(key, i, row, ph, timed) {
     const LR = legLabels();
@@ -11865,7 +11972,7 @@ ${setupFields(setup, ty)}
         ? `<div class="note">${workoutText().preview}</div>`
         : `<div class="panel training-start top"><p class="sub">${workoutText().preview}</p>${isIOS() ? `<p class="sub">🔔 ${S.profile.lang === "de" ? "iPhone: Schalter an der Seite auf Ton stellen, sonst bleiben Gong und Ansagen stumm." : "iPhone: set the side switch to ring, otherwise gong and calls stay silent."}</p>` : isAndroid() ? `<p class="sub">🔔 ${S.profile.lang === "de" ? "Android: Medienlautstärke hochdrehen (Lautstärketaste → Musiknote), sonst sind Gong und Ansagen leise." : "Android: turn up the media volume (volume key → music note), otherwise gong and calls are quiet."}</p>` : ""}<button type="button" class="btn" data-workout="start">${PLAY}<span>${sess.flow ? workoutText().resume : workoutText().start}</span></button></div>`;
     }
-    h += progressionInfoHtml(true);
+    if (!simpleView()) h += progressionInfoHtml(true);
     const rbS = roundBlock(sess);
     h += `<div class="tags"><span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<button type="button" class="tg tgbtn" data-guide="wrap">🩹 ${t("guide").wrapLink} ›</button>` : ""}${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
     let dataLine = "";
@@ -12270,7 +12377,7 @@ ${setupFields(setup, ty)}
       const r = sess.perf?.[key]?.[st.lap];
       return !!r && r.r != null && r.r !== "";
     }
-    return itemDone(sess, st.bi, st.ni) || (sess.timedLaps?.[key] || 0) > st.lap;
+    return itemDone(sess, st.bi, st.ni) || lapIsDone(sess, key, st.lap);
   }
   const playerStep = () => {
     const sess = S.sessions[ui.sel];
@@ -12366,6 +12473,7 @@ ${setupFields(setup, ty)}
       ni: st.ni,
       phases,
       index: 0,
+      lap: st.lap,
       seconds: plan.seconds,
       setIndex: plan.setIndex,
       tracked: plan.tracked,
@@ -12469,11 +12577,8 @@ ${setupFields(setup, ty)}
     if (!sess || !st) return;
     const key = `${st.bi}.${st.ni}`;
     if (st.kind === "manual" || st.kind === "timed") {
-      if (st.lap != null) {
-        sess.timedLaps ||= {};
-        sess.timedLaps[key] = Math.max(sess.timedLaps[key] || 0, st.lap + 1);
-        if (sess.timedLaps[key] >= st.laps) (sess.checked ||= {})[key] = true;
-      } else (sess.checked ||= {})[key] = true;
+      if (st.lap != null) markLap(sess, key, st.lap, st.laps);
+      else (sess.checked ||= {})[key] = true;
       store.save();
     }
     playerGo(ui.workout.step + 1, { auto: true });
@@ -12678,6 +12783,11 @@ ${setupFields(setup, ty)}
   }
   // Structured phase plans use the same prescription as the visible exercise dose.
   // Work and rests stay distinct; per-side holds include an explicit changeover.
+  /* a prescription in repetitions (e.g. "10 reps" for burpees) is confirmed with ✓ – no work timer replaces it */
+  const repDose = (id, b) => {
+    const d = doseTxt(id, b) || "";
+    return /Wdh\.|\breps\b/.test(d) && !/\d\s*(s|Sek|Min\.|min)\b/.test(d);
+  };
   function exerciseTiming(sess, bi, ni, choice, setIndex) {
     const b = sess.blocks[bi],
       it = b.items[ni],
@@ -12787,7 +12897,7 @@ ${setupFields(setup, ty)}
         choices = Array.isArray(fixed[0]) ? fixed[0] : [fixed[0]];
         seconds = choices.includes(choice) ? choice : choices[0];
         sides = fixed[1];
-      } else if (EX[it.id]?.cat === "cond" && !DOSE_FIX[name]) {
+      } else if (EX[it.id]?.cat === "cond" && !DOSE_FIX[name] && !repDose(it.id, b)) {
         phases = interval(1, [30, 40, 45][S.profile.level], [30, 20, 15][S.profile.level]);
       } else if (["cool", "mob"].includes(b.key) && !DOSE_FIX[name]) {
         choices = b.key === "mob" ? [60, 90] : [45, 60];
@@ -12952,12 +13062,8 @@ ${setupFields(setup, ty)}
         if (DOSE_LEG.has(EX[b.items[tm.ni].id]?.de)) rows[tm.setIndex].rL = rows[tm.setIndex].rR = tm.seconds;
       }
     } else {
-      sess.timedLaps ||= {};
-      const laps = isCirc(b) ? circN(b) : 1;
-      sess.timedLaps[tm.key] = Math.min(laps, (sess.timedLaps[tm.key] || 0) + 1);
-      if (sess.timedLaps[tm.key] >= laps) {
-        (sess.checked ||= {})[tm.key] = true;
-      }
+      // the player knows which lap ran; the plain list timer completes the next open lap
+      markLap(sess, tm.key, tm.lap, isCirc(b) ? circN(b) : 1);
     }
     store.save();
   }
@@ -13437,6 +13543,10 @@ ${setupFields(setup, ty)}
     }
     life = lifePanelHtml() + life;
     app += `<div class="panel"><div class="field"><span class="lab">${t("seasonLbl")}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-season="${i ? "off" : "on"}" aria-pressed="${!!S.profile.seasonOff === !!i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${t("seasonHint")}</span></div></div>`;
+    {
+      const V = t("view");
+      app = `<div class="panel"><div class="field"><span class="lab">${V.lbl}</span><div class="seg">${V.opts.map((x, i) => `<button type="button" data-simple="${i ? 0 : 1}" aria-pressed="${simpleView() === !i}">${x}</button>`).join("")}</div><span class="sub">${V.hint}</span></div></div>` + app;
+    }
     if (canSpeak()) {
       const V = t("vsel"),
         bv = bestVoice();
@@ -13496,6 +13606,13 @@ ${setupFields(setup, ty)}
     ["train", "goals", "life", "guide", "app"].forEach((k) => {
       h += `<button type="button" class="grow" data-psec="${k}"><span class="gico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${PSEC_ICO[k]}</svg></span><span class="gtx"><b>${PS[k][0]}</b><small>${esc(sum[k])}</small></span><span class="chev">›</span></button>`;
     });
+    if (simpleView())
+      h += ["test", "log"]
+        .map(
+          (k) =>
+            `<button type="button" class="grow" data-tab="${k}"><span class="gico">${ICONS[k]}</span><span class="gtx"><b>${t("view").rows[k][0]}</b><small>${t("view").rows[k][1]}</small></span><span class="chev">›</span></button>`,
+        )
+        .join("");
     h += `</div><p class="sub" style="text-align:center">${t("autoSave")}</p><p class="foot" style="text-align:center">Ringzeit · Version ${APP_VER}</p>`;
     return h;
   }
@@ -13538,7 +13655,11 @@ ${setupFields(setup, ty)}
     } else {
       h += `<h1>${t("onbQ3")}</h1><div class="sub">${t("onbQ3s")}</div><input id="oBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${o.birthYear || ""}"><span class="lab">${t("sex")}</span><div class="seg g3">${["m", "f", "d"].map((k) => `<button type="button" data-osex="${k}" aria-pressed="${o.sex === k}">${t("sexes")[k]}</button>`).join("")}</div><span class="sub">${t("sexHint")}</span><label class="lab" for="oComp">${t("onbComp")}</label><input id="oComp" type="date" min="${iso(today())}" value="${o.comp || ""}">`;
     }
-    if (step === 4) h += `<div class="note"><b>${workoutText().start}</b><div>${esc(workoutText().intro)}</div></div>`;
+    if (step === 4) {
+      const V = t("view");
+      h += `<span class="lab">${V.onbQ}</span><div class="seg">${V.opts.map((x, i) => `<button type="button" data-osimple="${i ? 0 : 1}" aria-pressed="${(o.simple !== false) === !i}">${x}</button>`).join("")}</div><span class="sub">${V.hint}</span>`;
+      h += `<div class="note"><b>${workoutText().start}</b><div>${esc(workoutText().intro)}</div></div>`;
+    }
     if (step === 4)
       h += `<div class="acts"><button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button><button type="button" class="btn" data-onb="test">${t("blk").onbTest}</button></div><button type="button" class="btn ghost later" data-onb="done">${t("blk").onbLater}</button>`;
     else
@@ -13578,6 +13699,7 @@ ${setupFields(setup, ty)}
         days: o.days.slice().sort((a, b) => a - b),
         minutes: o.minutes,
         club: { days: (o.clubDays || []).slice(), minutes: o.clubMin || 90 },
+        simple: o.simple !== false,
         birthYear: o.birthYear || "",
         sex: o.sex || "",
         comps: o.comp ? [{ id: "c" + Date.now().toString(36), date: o.comp }] : [],
@@ -14030,7 +14152,17 @@ ${setupFields(setup, ty)}
   }
   function showTour() {
     const st = TOUR[ui.tour],
-      tx = t("tour")[st.k],
+      tx0 = t("tour")[st.k],
+      // the simple view has no test/history tabs – they live in the profile then
+      tx =
+        st.k === "prof" && simpleView()
+          ? [
+              tx0[0],
+              tx0[1]
+                .replace("Fitnesstest und Verlauf findest du unten in der Leiste.", "Fitnesstest und Verlauf findest du hier ganz unten.")
+                .replace("Fitness test and history are in the bar at the bottom.", "Fitness test and history are at the very bottom here."),
+            ]
+          : tx0,
       el = document.getElementById("tour");
     ui.focus = false;
     if (st.tab && (ui.tab !== st.tab || (st.tab === "profile" && (ui.profSec || null) !== (st.sec || null)))) {
@@ -17737,7 +17869,12 @@ ${setupFields(setup, ty)}
     if (o.kind === "club") {
       h += `<h3>${t("club")} · ${esc(dayLbl(o.ds))}</h3><div class="lab">${t("clubWhat")}</div><div class="seg g3">${["T", "P", "K", "S", "X"].map((k) => `<button type="button" data-sck="${k}" aria-pressed="${o.ck === k}">${t("clubKinds")[k]}</button>`).join("")}</div>
  <label class="lab" for="scMin">${t("duration")}</label><input id="scMin" type="number" inputmode="numeric" min="10" max="300" value="${o.min}">
- <label class="lab" for="scRpe">${t("rpe")}: <span id="scRpeV">${o.rpe}</span></label><input id="scRpe" type="range" min="1" max="10" value="${o.rpe}">
+ <span class="lab" id="scRpeL">${t("rpe")}</span><div class="effort-faces" role="group" aria-labelledby="scRpeL">${effortFaces()
+   .map(
+     ([n, f, l]) =>
+       `<button type="button" data-scface="${n}" aria-pressed="${faceOf(o.rpe) === n}" aria-label="${esc(l)}"><span aria-hidden="true">${f}</span><small>${esc(l)}</small></button>`,
+   )
+   .join("")}</div><input id="scRpe" type="hidden" value="${o.rpe}">
  <label class="lab" for="scNote">${t("note")}</label><textarea id="scNote">${esc(o.note || "")}</textarea>
  <div class="acts2">${cancel}${save("clubsave")}</div>`;
     } else if (o.kind === "move") {
@@ -18323,8 +18460,7 @@ ${setupFields(setup, ty)}
         .join("") +
       `<button type="button" class="tabft" data-ftx="open" aria-label="${t("ft").title}"><i>${ICO_T}</i><span>${t("tabTimer")}</span></button>` +
       [
-        ["test", "tabTest"],
-        ["log", "tabLog"],
+        ...(simpleView() ? [] : [["test", "tabTest"], ["log", "tabLog"]]),
         ["profile", "tabProfile"],
       ]
         .map(tab)
@@ -21602,6 +21738,7 @@ ${setupFields(setup, ty)}
         sess.checked = sess.checked || {};
         sess.checked[key] = !done;
         if (done && sess.timedLaps) sess.timedLaps[key] = 0;
+        if (done && sess.lapsDone) sess.lapsDone[key] = [];
       }
       store.save();
       markRounds(false);
@@ -21644,7 +21781,12 @@ ${setupFields(setup, ty)}
       if (hidden) hidden.value = String(draft.rpe);
       document
         .querySelectorAll("[data-effort]")
-        .forEach((el) => el.setAttribute("aria-pressed", String(+el.dataset.effort === draft.rpe)));
+        .forEach((el) =>
+          el.setAttribute(
+            "aria-pressed",
+            String(el.dataset.face ? +el.dataset.effort === faceOf(draft.rpe) : +el.dataset.effort === draft.rpe),
+          ),
+        );
       return;
     }
     if (ds.exerciseEffort) {
@@ -21837,6 +21979,20 @@ ${setupFields(setup, ty)}
       renderSheet();
       const sh = document.querySelector(".sheet");
       if (sh) sh.scrollTop = 0;
+      return;
+    }
+    if (ds.simple != null) {
+      S.profile.simple = ds.simple === "1";
+      if (draft) draft.simple = S.profile.simple;
+      store.save();
+      renderTabs();
+      return render();
+    }
+    if (ds.scface) {
+      const inp = document.getElementById("scRpe");
+      if (inp) inp.value = ds.scface;
+      if (ui.sheet) ui.sheet.rpe = +ds.scface;
+      document.querySelectorAll("[data-scface]").forEach((el) => el.setAttribute("aria-pressed", String(el.dataset.scface === ds.scface)));
       return;
     }
     if (ds.vtest) {
@@ -22215,6 +22371,11 @@ ${setupFields(setup, ty)}
       renderOnb();
       return;
     }
+    if (ds.osimple != null && ui.onb) {
+      ui.onb.simple = ds.osimple === "1";
+      renderOnb();
+      return;
+    }
     if (ds.ocmin) {
       ui.onb.clubMin = +ds.ocmin;
       renderOnb();
@@ -22507,7 +22668,6 @@ ${setupFields(setup, ty)}
   );
   document.addEventListener("input", (ev) => {
     const el = ev.target;
-    if (el.id === "scRpe") document.getElementById("scRpeV").textContent = el.value;
     if (el.classList && el.classList.contains("si")) {
       const sess = S.sessions[ui.sel];
       if (!sess || !sess.perf) return;
