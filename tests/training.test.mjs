@@ -1782,3 +1782,153 @@ test("set step: arriving by itself says to enter reps, › on an empty set notes
   await a.click({ dataset: { player: "next" } });
   assert.match(a.run("toasts.join('|')"), /bleibt offen/);
 });
+
+test("partner rounds: one counter action as variation – right place, discipline rules, level and limits respected", () => {
+  const a = app();
+  const res = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[],stat={};
+    for(const disc of ['lc','kl','fc','k1'])for(const lvl of [0,1,2])for(const lim of [[],['knee']])for(const by of [1995,today().getFullYear()-11]){
+      if(by>2010&&(disc==='fc'||disc==='k1'))continue;
+      S.profile.disc=disc;S.profile.level=lvl;S.profile.limits=lim;S.profile.birthYear=by;const kid=ageGroup()==='kids';
+      for(let i=0;i<120;i++){const c=['jab','cross','hook','round'].slice(0,2+(i%3));const r=partnerReact(c);const key=disc+lvl;stat[key]=stat[key]||{n:0,none:0,pre:0,mid:0,post:0};stat[key].n++;
+        if(!r){stat[key].none++;continue;}
+        const parts=['pre','mid','post'].filter(p=>r[p]);
+        if(lvl<2||kid?parts.length!==1:!(parts.length===1||(parts.length===2&&parts[1]==='post')))bad.push('parts '+parts+' lvl'+lvl);
+        if(r.pre&&r.mid)bad.push('pre and mid');
+        stat[key][parts[0]]++;for(const pp of parts){const x=r[pp];const def=COUNTER_ATT[x.a];
+        if(x.c){if(pp!=='post')bad.push('answer outside post');if(kid)bad.push('kid answer');if(!(ANSWER[x.d]||[]).includes(x.c))bad.push('answer '+x.c+' after '+x.d);
+          if(x.c==='lowk'&&!(disc==='kl'||disc==='k1'))bad.push('lowk answer in '+disc);if(x.c==='knee'&&disc!=='k1')bad.push('knee answer in '+disc);if(lim.length&&(x.c==='lowk'||x.c==='knee'))bad.push('answer with limit');}
+        if(x.a==='knee'&&disc!=='k1')bad.push('knee in '+disc);
+        if(!def)bad.push('unknown '+x.a);
+        if(x.a==='lowk'&&!(disc==='kl'||disc==='k1'))bad.push('lowk in '+disc);
+        if(lim.length&&(x.a==='lowk'||x.d==='check'))bad.push('lowk/check with knee');
+        if(kid&&!['jab','cross'].includes(x.a))bad.push('kid attack '+x.a);
+        if(kid&&!['cover','parry','step'].includes(x.d))bad.push('kid defence '+x.d);
+        if(!kid&&lvl<def.lvl)bad.push('level attack '+x.a+lvl);
+        const dl=def.d.find(([d])=>d===x.d);if(!dl)bad.push('defence '+x.d+' for '+x.a);else if(lvl<dl[1]&&!kid)bad.push('level defence '+x.d);
+        }
+        if(r.mid&&(r.mid.at<1||r.mid.at>c.length-2))bad.push('mid at '+r.mid.at);}}
+    return {bad:[...new Set(bad)],stat}})())`));
+  assert.deepEqual(res.bad, []);
+  const s = res.stat.kl2;
+  assert.equal(s.none, 0, "a chosen round always gets exactly one counter action");
+  assert.ok(s.pre > 0 && s.mid > 0 && s.post > 0, "start, middle and end all occur");
+  assert.equal(res.stat.lc0.mid, 0, "no interruption at Grundlage");
+});
+
+test("partner rounds: the plan attaches counter actions and shows and announces them", () => {
+  const a = app();
+  a.run(`S.profile.disc='kl';S.profile.level=2;S.profile.limits=[];S.profile.birthYear=1995;globalThis.got=null;
+    for(let i=0;i<30&&!got;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min:60});const it=s.blocks.find(b=>b.rounds).items.find(x=>x.react);if(it)got=it;}`);
+  assert.ok(a.run("!!got"), "partner rounds carry counter actions");
+  assert.match(a.run("reactHtml(got)"), /class="(rx|combo)/);
+  a.run("globalThis.solo=buildSession('2026-11-04','T','gym',['bag'],{min:60})");
+  assert.equal(a.run("solo.blocks.find(b=>b.rounds).items.some(x=>x.react)"), false, "no counters without a partner");
+});
+
+test("partner interruption only right after one of your own strikes; body hook is blocked", () => {
+  const a = app();
+  const bad = a.run(`(()=>{S.profile.disc='kl';S.profile.level=2;S.profile.limits=[];S.profile.birthYear=1995;let bad=0,mids=0;
+    for(let i=0;i<3000;i++){const c=['jab','slip','cross','step','hook'];const r=partnerReact(c);if(r&&r.mid){mids++;if(!STRIKE.has(c[r.mid.at-1]))bad++;}
+      for(const p of ['pre','mid','post'])if(r&&r[p]&&r[p].a==='hookb'&&r[p].d!=='block')bad++;}
+    return bad+'/'+mids})()`);
+  const [b, m] = bad.split("/").map(Number);
+  assert.equal(b, 0);
+  assert.ok(m > 0);
+});
+
+test("partner sessions: counter actions per session – Grundlage 1, Fortgeschritten 2–4, Wettkampf 3–6", () => {
+  const a = app();
+  const res = JSON.parse(a.run(`JSON.stringify((()=>{const out={};S.profile.disc='kl';S.profile.limits=[];S.profile.birthYear=1995;
+    for(const lvl of [0,1,2]){S.profile.level=lvl;const ns=[];for(let i=0;i<150;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min:90});const rb=s.blocks.find(b=>b.rounds);
+      const pr=rb.items.filter(x=>['partner','pads','counter'].includes(x.k)&&x.combo).length;ns.push([rb.items.filter(x=>x.react).length,pr]);}out[lvl]=ns;}return out})())`));
+  const check = (lvl, lo, hi) => {
+    for (const [n, pr] of res[lvl]) assert.ok(n >= Math.min(lo, pr) && n <= Math.min(hi, pr), `level ${lvl}: ${n} of ${pr}`);
+    const vals = new Set(res[lvl].map(([n]) => n));
+    return vals;
+  };
+  assert.deepEqual([...check(0, 1, 1)], [1]);
+  const v1 = check(1, 2, 4), v2 = check(2, 3, 6);
+  assert.ok(v1.has(2) && v1.has(4), "Fortgeschritten spans 2–4");
+  assert.ok(v2.has(3) && [...v2].some((x) => x >= 5), "Wettkampf spans 3–6");
+});
+
+test("partner sessions build up easy → hard; counters sit on the final combos and mostly later", () => {
+  const a = app();
+  const res = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];let first=0,late=0,total=0;
+    for(const disc of ['lc','kl','k1'])for(const lvl of [0,1,2]){S.profile.disc=disc;S.profile.level=lvl;S.profile.limits=[];S.profile.birthYear=1995;
+      for(let i=0;i<60;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min:90});const rb=s.blocks.find(b=>b.rounds);
+        const pr=rb.items.map((r,k)=>[r,k]).filter(([r])=>PARTNER_K.has(r.k)&&r.combo);
+        const lv=pr.map(([r])=>comboLevel(r.combo));
+        // allow the opening-round easing swap: compare from the second partner round on
+        for(let k=2;k<lv.length;k++)if(lv[k]+0.001<lv[k-1])bad.push('order '+lv.join(','));
+        for(const [r,k] of pr){if(!r.react)continue;total++;if(k===pr[0][1])first++;if(k>=pr[Math.floor(pr.length/2)][1])late++;
+          if(r.react.mid&&(r.react.mid.at<1||r.react.mid.at>r.combo.length-2||!STRIKE.has(r.combo[r.react.mid.at-1])))bad.push('mid '+r.combo.join('-')+'@'+r.react.mid.at);}}}
+    return {bad:[...new Set(bad)].slice(0,5),first,late,total}})())`));
+  assert.deepEqual(res.bad, []);
+  assert.equal(res.first, 0, "the opening partner round has no counter action");
+  assert.ok(res.late > res.total * 0.6, `counter actions mostly in the later rounds (${res.late}/${res.total})`);
+});
+
+test("partner counters: foot sweep from Fortgeschritten (lift the foot / step out), never with ankle limits; check = shin block", () => {
+  const a = app();
+  const r = JSON.parse(a.run(`JSON.stringify((()=>{const cnt=(lvl,lim)=>{S.profile.disc='lc';S.profile.level=lvl;S.profile.limits=lim;S.profile.birthYear=1995;let n=0;const d=new Set();
+      for(let i=0;i<3000;i++){const x=partnerReact(['jab','cross','hook']);const q=x.pre||x.mid||x.post;if(q.a==='sweep'){n++;d.add(q.d);}}return [n,[...d].sort()];};
+    return {l0:cnt(0,[]),l1:cnt(1,[]),ankle:cnt(2,['ankle']),label:DEFS.check[0]}})())`));
+  assert.equal(r.l0[0], 0);
+  assert.ok(r.l1[0] > 0);
+  assert.deepEqual(r.l1[1], ["lift", "step"]);
+  assert.equal(r.ankle[0], 0);
+  assert.match(r.label, /Schienbein-Block/);
+});
+
+test("K1 knees as counter (blocked), quick answers after the defence, double exchange at Wettkampf", () => {
+  const a = app();
+  const r = JSON.parse(a.run(`JSON.stringify((()=>{const run=(disc,lvl)=>{S.profile.disc=disc;S.profile.level=lvl;S.profile.limits=[];S.profile.birthYear=1995;let knee=0,kneeDefOk=true,post=0,ans=0,dbl=0;
+      for(let i=0;i<4000;i++){const x=partnerReact(['jab','cross','hook','round']);for(const p of ['pre','mid','post'])if(x[p]&&x[p].a==='knee'){knee++;if(!['block','step'].includes(x[p].d))kneeDefOk=false;}
+        if(x.post){post++;if(x.post.c)ans++;}if((x.pre||x.mid)&&x.post)dbl++;}return {knee,kneeDefOk,ans:ans/post,dbl};};
+    return {k1a:run('k1',1),k1w:run('k1',2),fcw:run('fc',2),lc0:run('lc',0)}})())`));
+  assert.ok(r.k1a.knee > 0 && r.k1a.kneeDefOk, "knees in K1 from Fortgeschritten, blocked or stepped out of");
+  assert.equal(r.fcw.knee, 0, "no knees in Full Contact");
+  assert.ok(r.k1a.ans > 0.35 && r.k1a.ans < 0.65, "Fortgeschritten answers about half the time");
+  assert.ok(r.k1w.ans > 0.75, "Wettkampf answers mostly");
+  assert.equal(r.lc0.ans, 0, "no answer at Grundlage");
+  assert.ok(r.k1w.dbl > 0 && r.lc0.dbl === 0, "double exchange only at Wettkampf");
+});
+
+test("partner attacks and quick answers always show the kick side; counters are not spoken", () => {
+  const a = app();
+  for (const disc of ["lc", "kl", "fc", "k1"]) {
+    for (let n = 0; n < 30; n++) {
+      const html = a.run(`(() => { S.profile.disc = ${JSON.stringify(disc)}; S.profile.level = "comp";
+        const R = { pre: { a: "round", d: "block", c: "lowk" }, post: { a: "sweep", d: "lift", c: "round" } };
+        return reactHtml({ combo: ["jab", "cross"], react: R }) + "|"; })()`);
+      const chips = [...html.split("|")[0].matchAll(/<span class="k">([^<]*)(<i>[^<]*<\/i>)?<\/span>/g)];
+      assert.ok(chips.length >= 3);
+      for (const m of chips) assert.ok(m[2], `kick without side: ${m[1]}`);
+      break;
+    }
+  }
+});
+
+test("with a partner every partner round is one Partnerdrill (with or without a counter action)", () => {
+  const a = app();
+  for (const disc of ["lc", "kl", "fc", "k1"]) {
+    const ks = a.run(`(() => { S.profile.disc = ${JSON.stringify(disc)}; S.profile.level = 2;
+      const out = []; for (let i = 0; i < 20; i++) out.push(...fightRounds("T", 6, "gym", ["partner", "pads"], null).map((r) => r.k));
+      return [...new Set(out)]; })()`);
+    assert.equal(ks.filter((k) => k !== "rope").join(), "partner");
+  }
+  assert.equal(a.run(`RT.pads[0] + RT.counter[0]`), "PartnerdrillPartnerdrill");
+  assert.doesNotMatch(a.run(`RT.partner[2] + RT.partner[3]`), /ruft|calls/);
+});
+
+test("low kicks are checked half of the time", () => {
+  const a = app();
+  const r = a.run(`(() => { S.profile.disc = "k1"; S.profile.level = 2; let ch = 0, st = 0, maxDiff = 0;
+    for (let i = 0; i < 300; i++) { let c = 0, s = 0;
+      for (const x of fightRounds("T", 7, "gym", ["partner"], null)) if (x.react) for (const q of [x.react.pre, x.react.mid, x.react.post]) if (q && q.a === "lowk") q.d === "check" ? c++ : s++;
+      ch += c; st += s; maxDiff = Math.max(maxDiff, Math.abs(c - s)); }
+    return { ch, st, maxDiff }; })()`);
+  assert.ok(r.ch > 50 && Math.abs(r.ch - r.st) / (r.ch + r.st) < 0.1, JSON.stringify(r));
+  assert.ok(r.maxDiff <= 1, JSON.stringify(r));
+});
