@@ -1769,3 +1769,16 @@ test("simple view: pictures instead of codes, no sparring choice, club logging o
   a.run("ui.setup=null");
   assert.match(a.run("renderSession()"), /data-stype="P"/);
 });
+
+test("set step: arriving by itself says to enter reps, › on an empty set notes that it stays open", async () => {
+  const a = app();
+  a.run(`globalThis.spoken=[];say=(x)=>spoken.push(x);const tid=EX.findIndex(e=>e.de==='Einlaufen'),gid=EX.findIndex(e=>e.de==='Goblet Squats');
+    ui.sel='g';ui.tab='session';S.sessions.g={date:'2026-11-02',type:'S',min:30,eq:['kb'],blocks:[{key:'warm',min:3,items:[{id:tid}]},{key:'str',min:10,sets:'2× 8–12',items:[{kind:'ex',id:gid}]}]};startWorkout();`);
+  const si = a.run("playerSteps(S.sessions.g).findIndex(s=>s.kind==='sets')");
+  a.run(`playerGo(${si},{auto:true})`);
+  assert.match(a.run("spoken[spoken.length-1]"), /Wiederholungen eintragen/);
+  assert.equal(a.run("openSetIndex(S.sessions.g,playerStep())"), 0);
+  a.run("globalThis.toasts=[];toast=(m)=>toasts.push(m)");
+  await a.click({ dataset: { player: "next" } });
+  assert.match(a.run("toasts.join('|')"), /bleibt offen/);
+});
