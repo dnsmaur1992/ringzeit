@@ -1602,3 +1602,26 @@ test("feedback: link to the form carries only version, device type and language"
   assert.match(url, /^https:\/\/tally\.so\/r\/OQQE5g\?version=[^&]+&geraet=iPhone%2FiPad%2C%20(Browser|installiert)&sprache=de$/);
   assert.doesNotMatch(url, /kg|rpe|birth|weight/i);
 });
+
+test("focus: 'more boxing' and 'more kicks' clearly shift the kick share of the plan", () => {
+  const a = app();
+  const share = (f) =>
+    a.run(`(()=>{S.profile.disc='kl';S.profile.level=2;S.profile.limits=[];S.profile.birthYear=1995;S.profile.focus='${f}';S.sessions={};let k=0,n=0;
+      for(let d=0;d<60;d++){const ds=iso(addDays(today(),d));const s=buildSession(ds,'T','gym',['bag','rope'],{min:60});s.created=d;S.sessions[ds]=s;
+        for(const b of s.blocks)for(const it of b.items)if(Array.isArray(it.combo))for(const x of it.combo)if(STRIKE.has(x)){n++;if(KICKS.has(x))k++;}}
+      return k/n})()`);
+  const box = share("box"), bal = share("bal"), kick = share("kick");
+  assert.ok(bal - box >= 0.05, `box ${box} vs bal ${bal}`);
+  assert.ok(kick - bal >= 0.08, `kick ${kick} vs bal ${bal}`);
+  assert.ok(box > 0.2 && kick < 0.8, "neither side disappears");
+});
+
+test("profile change: open sessions are rebuilt, a started one keeps its entries", () => {
+  const a = app();
+  a.run(`const d=iso(today());S.sessions[d]=buildSession(d,'S','gym',['kb'],{min:45});S.sessions[d].perf={'1.0':[{r:8}]};
+    const d2=iso(addDays(today(),1));S.sessions[d2]=buildSession(d2,'T','gym',['bag'],{min:45});
+    draft=JSON.parse(JSON.stringify(S.profile));draft.focus='box';applyPlan();`);
+  assert.equal(a.run("!!S.sessions[iso(today())]"), true, "started session kept");
+  assert.equal(a.run("S.sessions[iso(today())].perf['1.0'][0].r"), 8);
+  assert.equal(a.run("!!S.sessions[iso(addDays(today(),1))]"), false, "untouched future session rebuilt later");
+});
