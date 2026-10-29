@@ -69,6 +69,25 @@ Alte Protokolle ohne neue Leistungs-, Abschluss- oder Planinformationen bleiben 
 
 ## Technik und Kondition
 
+**Gegenaktionen in Partnerrunden** (nur mit Partner; jede Partnerrunde heißt **Partnerdrill** – eine Kombination ohne oder mit Gegenaktion, sonst gibt es keine Varianten): Gegenaktionen sind die Ausnahme: Pro Partner-Einheit bekommen bei Grundlage (und bei Kindern) genau 1, bei Fortgeschritten 2–4 und bei Wettkampf 3–6 Runden (Kombinationen) je eine Gegenaktion des Partners – nie mehr, als es Partnerrunden gibt (60 Minuten: meist 4, 90 Minuten: 7). Die Einstiegsrunde bleibt ohne, spätere Runden werden bevorzugt. Die Stelle wechselt: **am Anfang** (Partner greift zuerst an, du verteidigst, dann deine Kombi), **mittendrin** (ab Fortgeschritten, nur bei Kombis ab drei Techniken und nur direkt nach einem eigenen Schlag oder Tritt, nicht nach einer eigenen Ausweichbewegung) oder **am Ende** (Partner kontert, du verteidigst). Angriff und passende Verteidigung:
+
+| Angriff | Verteidigung | ab |
+|---|---|---|
+| Jab, Cross | Doppeldeckung, Rausgehen; Parieren, Slippen ab Fortgeschritten | Grundlage |
+| Roundhouse Körper | Abblocken, Rausgehen | Grundlage |
+| Haken | Doppeldeckung, Abducken | Fortgeschritten |
+| Uppercut | Doppeldeckung, Rausgehen | Fortgeschritten |
+| Körperhaken | Abblocken | Fortgeschritten |
+| Frontkick, Sidekick | Ableiten, Rausgehen | Fortgeschritten |
+| High Kick | Doppeldeckung, Rausgehen, Abducken | Wettkampf |
+| Low Kick (nur Kick Light und K1) | Checken (Schienbein-Block), Rausgehen | Grundlage |
+| Fußfeger (alle Disziplinen; nicht bei Sprunggelenk-Einschränkung) | Fuß anheben, Rausgehen | Fortgeschritten |
+| Knie (nur K1) | Abblocken, Rausgehen | Fortgeschritten |
+
+In Kick Light und K1 eröffnet der Partner bevorzugt mit einem Low Kick. Low Kicks werden je zur Hälfte gecheckt und mit Rausgehen verteidigt (in einer Einheit abwechselnd). Mit Knie- oder Sprunggelenk-Einschränkung gibt es weder Low Kicks noch Checken. Kinder bekommen nur Jab oder Cross mit Doppeldeckung, Parieren oder Rausgehen und keine Unterbrechung mittendrin. **Schneller Austausch:** Nach der eigenen Verteidigung folgt ab Fortgeschritten in etwa der Hälfte der Fälle, bei Wettkampf in etwa 85 % sofort eine eigene Antwort (zum Beispiel Parieren → Cross, Abducken → Haken, Checken → Low Kick, Doppeldeckung → Knie in K1). Bei Wettkampf kommt zu einer Gegenaktion am Anfang oder mittendrin in etwa 40 % der Fälle noch ein Konter am Ende dazu – ein doppelter Schlagabtausch wie im Kampf. Antworten mit Low Kick oder Knie gibt es nur dort, wo die Disziplin und Einschränkungen sie erlauben. **Full Contact:** In Partnerrunden erinnert ein Hinweis daran, nach jeder Aktion sofort in die Deckung zurückzugehen (Hände oben, Kinn unten). Die Abfolge wird in der Übersicht und im Vollbild als gerahmte Gruppen gezeigt – A (Angreifer mit der Kombination) hellblau, B (Partner) gelb, darin die gewohnten Technik-Bausteine, eine Verteidigung kursiv – angesagt wird nur die eigene Kombination. Auch einzelne Angriffe des Partners und die schnelle Antwort tragen die Seite (V/H) – bei Tritten ist also immer klar, welches Bein.
+
+**Steigerung von leicht zu schwer:** In Einheiten mit Partner werden die Kombinationen der Partnerrunden nach Schwierigkeit geordnet (Länge, Kicks, Kopf-Kicks, anspruchsvolle Techniken). Die Einstiegsrunde bleibt bei 70 % Tempo mit Kicks höchstens auf Körperhöhe; dort wird nicht mehr getauscht, damit die Reihenfolge erhalten bleibt. Ohne Partner (Schatten, Sandsack) gibt es keine Gegenaktionen.
+
 **Schwerpunkt „Mehr Boxen“ / „Mehr Kicks“** (Profil, ab Level Fortgeschritten): Kombis mit dem gewünschten Anteil werden quadratisch bevorzugt (Gewicht `(0,15 + Anteil)³`), Trainingsthemen der eigenen Seite bevorzugt und die der Gegenseite seltener gewählt. Gemessen über 60 Einheiten: „Mehr Boxen“ etwa 28–36 % Kicks, „Ausgeglichen“ 40–45 %, „Mehr Kicks“ 54–67 %. Keine Seite verschwindet ganz – im Full Contact sind ohnehin mindestens 6 Kicks pro Runde Pflicht. Die Einstellung wirkt sofort auf alle noch offenen Einheiten ab heute.
 
 **Neu erstellen nach Änderungen:** Profil-, Block-, Tagesform- und Fasten-Änderungen bauen alle offenen Einheiten ab heute neu. Eine bereits begonnene Einheit (Trainingsführung gestartet, abgehakt oder Sätze eingetragen) bleibt mit ihren Einträgen erhalten.
