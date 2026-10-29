@@ -1,5 +1,5 @@
 /* Ringzeit service worker: the app works offline; updates are fetched in the background and used on the next start */
-const CACHE = "ringzeit-202610292050";
+const CACHE = "ringzeit-202610292124";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-180.png", "icon-192.png", "icon-512.png", "icon-maskable-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
