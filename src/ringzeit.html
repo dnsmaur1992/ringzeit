@@ -9621,8 +9621,9 @@
     // counter action makes a round harder – the opening round never gets one when there is a choice
     if (partner) {
       const idx = out.map((r, i) => i).filter((i) => PARTNER_K.has(out[i].k) && out[i].combo),
-        want = reactCount(idx.length),
-        pool = idx.length > want ? idx.filter((i) => i > 0) : idx,
+        // the opening round never gets one – the count is capped by the rounds after it (short sessions: fewer)
+        pool = idx.length > 1 ? idx.slice(1) : idx,
+        want = reactCount(pool.length),
         order = pool.map((i) => ({ i, w: i + Math.random() * pool.length * 0.6 })).sort((a, b) => b.w - a.w);
       lowTurn = Math.random() < 0.5 ? 0 : 1;
       order.slice(0, want).forEach(({ i }) => (out[i].react = partnerReact(out[i].combo)));
