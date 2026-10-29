@@ -62,6 +62,8 @@
 ## Funktionen
 
 ### 🥊 Training, das zu dir passt
+- **Einfach oder ausführlich:** In der Einrichtung wählbar (für neue Nutzer ist „Einfach“ vorausgewählt), später unter Profil → App & Daten. Einfach zeigt auf Heute nur das Training; Fitnesstest und Verlauf liegen dann im Profil statt in der Leiste
+- **Anstrengung mit Gesichtern:** fünf Stufen von 😌 „Sehr locker“ bis 🥵 „Am Limit“; in der ausführlichen Ansicht zusätzlich die genaue Skala 1–10
 - **Wochenplan** für Light Contact, Kick Light, Full Contact und K1 Style – abgestimmt auf Trainingstage, Dauer, Level und Vereinstraining
 - **Einheiten** für Technik, Technik & Kondition, Sparring, Kraft, Kondition und Mobility – zu Hause, in der Halle, draußen oder im Fitnessstudio
 - **Kombinationen** passend zum Level, mit Führ- und Schlaghand-Hinweis; eigene Kombis aus dem Verein werden eingebaut
