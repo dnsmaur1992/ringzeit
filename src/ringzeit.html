@@ -5458,8 +5458,9 @@
       min: "min",
       round: "Runde",
       roundAbbr: "R",
-      legend: "<i>V</i> vorne (Führhand/-bein) · <i>H</i> hinten (Schlaghand/-bein)",
+      legend: "<i>V</i> vorne (Führhand/-bein) · <i>H</i> hinten (Schlaghand/-bein)<br>Schläge ohne Zusatz gehen zum Kopf.",
       legendReact: '<span class="lg a">A</span> greift mit der Kombination an · <span class="lg b">B</span> Partner',
+      partnerNote: "Kontrollierter Kontakt, nach 3–5 Wiederholungen Rollen tauschen.",
       fcGuard: "Full Contact: nach jeder Aktion sofort zurück in die Deckung – Hände oben, Kinn unten.",
       timer: "Rundentimer",
       ready: "Bereit",
@@ -6557,8 +6558,9 @@
       min: "min",
       round: "Round",
       roundAbbr: "R",
-      legend: "<i>L</i> lead (front hand/leg) · <i>R</i> rear (back hand/leg)",
+      legend: "<i>L</i> lead (front hand/leg) · <i>R</i> rear (back hand/leg)<br>Punches without a target go to the head.",
       legendReact: '<span class="lg a">A</span> attacks with the combo · <span class="lg b">B</span> partner',
+      partnerNote: "Controlled contact, swap roles every 3–5 reps.",
       fcGuard: "Full contact: straight back into your guard after every action – hands up, chin down.",
       timer: "Round timer",
       ready: "Ready",
@@ -7106,23 +7108,25 @@
   const TECH = {
     jab: ["Jab", "Jab"],
     cross: ["Cross", "Cross"],
+    jabb: ["Jab Körper", "Jab body"],
+    crossb: ["Cross Körper", "Cross body"],
     hook: ["Haken", "Hook"],
     hookb: ["Körperhaken", "Body hook"],
     upper: ["Uppercut", "Uppercut"],
-    front: ["Frontkick", "Front kick"],
+    front: ["Frontkick Körper", "Front kick body"],
     round: ["Roundhouse Körper", "Roundhouse body"],
     roundh: ["High Kick Kopf", "High kick head"],
-    side: ["Sidekick", "Side kick"],
-    back: ["Backkick gedreht", "Spinning back kick"],
-    hookk: ["Hook-Kick", "Hook kick"],
-    axe: ["Axe-Kick", "Axe kick"],
-    brazil: ["Brazilian Kick", "Brazilian kick"],
-    shook: ["Spinning Hook Kick", "Spinning hook kick"],
-    tornado: ["Tornado Kick", "Tornado kick"],
-    jknee: ["Gesprungenes Knie", "Flying knee"],
+    side: ["Sidekick Körper", "Side kick body"],
+    back: ["Backkick gedreht Körper", "Spinning back kick body"],
+    hookk: ["Hook-Kick Kopf", "Hook kick head"],
+    axe: ["Axe-Kick Kopf", "Axe kick head"],
+    brazil: ["Brazilian Kick Kopf", "Brazilian kick head"],
+    shook: ["Spinning Hook Kick Kopf", "Spinning hook kick head"],
+    tornado: ["Tornado Kick Kopf", "Tornado kick head"],
+    jknee: ["Gesprungenes Knie Kopf", "Flying knee head"],
     sweep: ["Fußfeger", "Foot sweep"],
     lowk: ["Low Kick Oberschenkel", "Low kick thigh"],
-    knee: ["Knie", "Knee"],
+    knee: ["Knie Körper", "Knee body"],
     slip: ["Abtauchen", "Slip"],
     step: ["Seitschritt", "Side step"],
     block: ["Block", "Block"],
@@ -7143,7 +7147,7 @@
     "knee",
     "jknee",
   ]);
-  const STRIKE = new Set(["jab", "cross", "hook", "hookb", "upper", ...KICKS]);
+  const STRIKE = new Set(["jab", "cross", "jabb", "crossb", "hook", "hookb", "upper", ...KICKS]);
   const RISKY = new Set(["back", "hookk", "brazil", "shook", "tornado", "sweep", "lowk", "knee", "jknee"]);
   /* demanding spinning and jumping techniques – not in kids mode */
   const ADV = new Set(["brazil", "shook", "tornado", "jknee"]);
@@ -7158,6 +7162,8 @@
       ["front", "jab", "cross"],
       ["jab", "jab", "cross"],
       ["round", "cross"],
+      ["jabb", "cross"],
+      ["jab", "crossb", "hook"],
     ],
     [
       ["jab", "cross", "hook", "round"],
@@ -7167,11 +7173,15 @@
       ["hook", "cross", "front"],
       ["round", "cross", "hook"],
       ["jab", "upper", "hook", "side"],
-      ["block", "cross", "hook", "round"],
+      ["jab", "block", "cross", "hook", "round"],
       ["jab", "cross", "brazil"],
       ["round", "cross", "brazil"],
       ["jab", "cross", "shook"],
       ["jab", "axe", "cross"],
+      ["jab", "cross", "hookb", "hook"],
+      ["jabb", "cross", "roundh"],
+      ["cross", "hookb", "round"],
+      ["jab", "crossb", "upper", "hook"],
     ],
     [
       ["jab", "cross", "hook", "roundh", "cross"],
@@ -7181,11 +7191,14 @@
       ["jab", "step", "roundh", "cross", "hook"],
       ["round", "roundh", "cross"],
       ["jab", "cross", "back"],
-      ["slip", "hook", "upper", "cross", "round"],
+      ["jab", "slip", "hook", "upper", "cross", "round"],
       ["jab", "cross", "tornado"],
       ["round", "tornado"],
       ["jab", "cross", "hook", "shook"],
       ["brazil", "cross", "hook", "roundh"],
+      ["jab", "crossb", "hook", "roundh"],
+      ["jabb", "jab", "cross", "hookb", "roundh"],
+      ["hookb", "hook", "cross", "back"],
     ],
   ];
   const EXTRA = {
@@ -7197,6 +7210,8 @@
       ["jab", "lowk"],
       ["lowk", "jab", "cross"],
       ["jab", "cross", "lowk", "roundh"],
+      ["jab", "crossb", "lowk"],
+      ["hookb", "cross", "lowk"],
     ],
     k1: [
       ["jab", "cross", "jknee"],
@@ -7209,6 +7224,8 @@
       ["jab", "lowk"],
       ["cross", "hook", "knee"],
       ["lowk", "cross", "knee"],
+      ["jab", "crossb", "knee"],
+      ["hookb", "hook", "lowk"],
     ],
   };
   const KICK_ONLY = [
@@ -7224,8 +7241,10 @@
     ["jab", "cross", "hook"],
     ["cross", "hook", "cross"],
     ["jab", "upper", "hook"],
-    ["slip", "cross", "hook"],
+    ["jab", "slip", "cross", "hook"],
     ["jab", "jab", "cross", "hook"],
+    ["jab", "crossb", "hook"],
+    ["jabb", "cross", "hookb"],
   ];
 
   /* Hidden technique themes — chosen automatically and balanced, never shown */
@@ -7243,7 +7262,10 @@
     {
       id: "counter",
       tag: "mix",
-      ap: (c) => [rnd(["block", "slip"]), ...c.filter((x) => x !== "block" && x !== "slip")],
+      ap: (c) => {
+        const r = c.filter((x) => x !== "block" && x !== "slip");
+        return [r[0], rnd(["block", "slip"]), ...r.slice(1)];
+      },
     },
     {
       id: "bodyHead",
@@ -9041,6 +9063,23 @@
       if (ka) c = c.filter((x) => !RISKY.has(x));
       if (c.length < 2) c.push("cross");
     }
+    return noDefFirst(c);
+  }
+  /* a defence needs a reason: slip, block and side step never open a combo. In partner rounds the own combo
+     holds no slip or block at all (defending is what the counter actions are for) – a side step only as the exit */
+  const OWN_DEF = new Set(["slip", "block", "step"]);
+  function noDefFirst(c) {
+    c = c.slice();
+    while (c.length && OWN_DEF.has(c[0])) c.shift();
+    return fill2(c);
+  }
+  function partnerClean(c) {
+    c = noDefFirst(c.filter((x, i) => !(x === "slip" || x === "block" || (x === "step" && i < c.length - 1))));
+    return fill2(c.filter((x, i) => !(x === "step" && i < c.length - 1)));
+  }
+  function fill2(c) {
+    if (!c.length) return ["jab", "cross"];
+    if (c.length === 1 || (c.length === 2 && c[1] === "step")) c.splice(c[0] === "jab" ? 1 : 0, 0, c[0] === "jab" ? "cross" : "jab");
     return c;
   }
   const RT = {
@@ -9341,6 +9380,7 @@
     roundh: { lvl: 2, d: [["cover", 2], ["step", 2], ["duck", 2]] },
     upper: { lvl: 1, d: [["cover", 1], ["step", 1]] },
     hookb: { lvl: 1, d: [["block", 1]] },
+    crossb: { lvl: 1, d: [["block", 1], ["step", 1]] },
     side: { lvl: 1, d: [["deflect", 1], ["step", 1]] },
     lowk: { lvl: 0, low: true, d: [["check", 0], ["step", 0]] },
     // foot sweep (foot against foot, allowed in all WAKO disciplines): from Fortgeschritten, not with ankle limits
@@ -9351,7 +9391,7 @@
   /* your own answer after a defence (the quick exchange): what fits best after each defence */
   const ANSWER = {
     parry: ["cross", "jab"],
-    slip: ["hookb", "cross", "upper"],
+    slip: ["hookb", "cross", "crossb", "upper"],
     duck: ["hook", "upper"],
     cover: ["cross", "hook", "knee"],
     block: ["cross", "round", "knee"],
@@ -9489,6 +9529,18 @@
         );
       return r;
     });
+    // no combo twice in one session (a repeat gets a fresh one, a few tries)
+    const seen = new Set();
+    for (const r of out) {
+      if (!r.combo || r.mine || r.k === "sixkick") continue;
+      if (PARTNER_K.has(r.k)) r.combo = partnerClean(r.combo);
+      for (let t = 0; t < 6 && seen.has(r.combo.join()); t++) {
+        const kk = r.k === "bag" || r.k === "shadow" ? r.k : "pads",
+          c = combo(kk, theme);
+        r.combo = PARTNER_K.has(r.k) ? partnerClean(c) : c;
+      }
+      seen.add(r.combo.join());
+    }
     // Kick Light & K1: every session trains the discipline's own techniques
     // every kickboxing session contains high kicks; Kick Light low kicks; K1 low kicks and knees
     const withC = out.filter(
@@ -9516,12 +9568,26 @@
           pool = free.length ? free : withC.filter((x) => !x.combo.includes(tech));
         if (!pool.length) break;
         const r = pool[(j + m * 2 + 1) % pool.length];
-        r.combo =
-          tech === "roundh"
-            ? rnd(highPool.length ? highPool : [["jab", "cross", "roundh"]]).slice()
-            : rnd(EXTRA[p.disc].filter((c) => c.includes(tech))).slice();
+        const src = tech === "roundh" ? (highPool.length ? highPool : [["jab", "cross", "roundh"]]) : EXTRA[p.disc].filter((c) => c.includes(tech)),
+          have = new Set(out.map((x) => x.combo && x.combo.join())),
+          fresh = src.filter((c) => !have.has(noDefFirst(c).join()));
+        // all fitting combos are in use already (few at Grundlage): this round's combo ends in the high kick instead
+        if (!fresh.length && tech === "roundh") r.combo = fill2([...r.combo.filter((x) => x !== "round" && x !== "step" && !HIGHK.has(x)).slice(0, p.level + 2), "roundh"]);
+        else r.combo = noDefFirst(rnd(fresh.length ? fresh : src));
       }
     });
+    // every session has punches to the body: without one, a cross (or jab) of one combo goes to the body
+    const BODY = ["jabb", "crossb", "hookb"];
+    if (!out.some((r) => r.combo && r.combo.some((x) => BODY.includes(x)))) {
+      const cand = withC.filter((r) => r.combo.includes("cross") || r.combo.includes("jab"));
+      if (cand.length) {
+        const r = rnd(cand),
+          i = r.combo.lastIndexOf("cross") >= 0 ? r.combo.lastIndexOf("cross") : r.combo.indexOf("jab");
+        r.combo[i] = r.combo[i] === "cross" ? "crossb" : "jabb";
+      }
+    }
+    // partner rounds: no defence without a reason in the own combo (my club combos stay as they are)
+    if (partner) for (const r of out) if (PARTNER_K.has(r.k) && r.combo && !r.mine) r.combo = partnerClean(r.combo);
     // partner rounds build up from easy to hard: the combos of the partner rounds are re-ordered by difficulty
     if (partner) {
       const pr = out.filter((r) => PARTNER_K.has(r.k) && r.combo),
@@ -12050,6 +12116,8 @@
   const FIXED = {
     jab: "L",
     cross: "R",
+    jabb: "L",
+    crossb: "R",
     side: "L",
     hookk: "L",
     sweep: "L",
@@ -12293,7 +12361,7 @@ ${setupFields(setup, ty)}
     let h = "";
     h += `<div class="block" data-block="${bi}">${blockHead(b)}`;
     if (b.items.some((it) => it.combo))
-      h += `<div class="legend">${t("legend")}${b.items.some((it) => it.react) ? `<br>${t("legendReact")}` : ""}${b.items.some((it) => guardCue(it)) ? `<br>${esc(t("fcGuard"))}` : ""}</div>`;
+      h += `<div class="legend">${t("legend")}${b.items.some((it) => it.react) ? `<br>${t("legendReact")}` : ""}${b.items.some((it) => PARTNER_K.has(it.k)) ? `<br>${esc(t("partnerNote"))}` : ""}${b.items.some((it) => guardCue(it)) ? `<br>${esc(t("fcGuard"))}` : ""}</div>`;
     b.items.forEach((it, n) => {
       const checked = itemDone(sess, bi, n),
         itemAttr = `data-item="${bi}.${n}"`;
@@ -12320,7 +12388,7 @@ ${setupFields(setup, ty)}
           h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${preview ? `<b>${esc(x[S.profile.lang])}</b>` : examRow(x, n, sess.eq)}</div></div>`;
       } else if (it.kind === "round") {
         const r = RT[it.k];
-        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? reactHtml(it) : ""}</div></div>`;
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b>${PARTNER_K.has(it.k) ? "" : `<div>${esc(r[lg + 2])}</div>`}${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? reactHtml(it) : ""}</div></div>`;
       } else {
         const x = exText(it.id),
           tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
@@ -19333,25 +19401,19 @@ ${setupFields(setup, ty)}
   /* ============ Round announcer: speaks round, exercise and combo once at the start of every round ============ */
   const SPEAK = {
     de: {
-      round: "Roundhouse",
-      roundh: "High Kick",
+      round: "Roundhouse Körper",
+      roundh: "High Kick Kopf",
       lowk: "Low Kick",
+      hookk: "Hook Kick Kopf",
       hookb: "Körperhaken",
-      back: "Backkick",
-      hookk: "Hook Kick",
-      front: "Frontkick",
-      side: "Sidekick",
       upper: "Uppercut",
     },
     en: {
-      round: "roundhouse",
-      roundh: "high kick",
+      round: "roundhouse body",
+      roundh: "high kick head",
       lowk: "low kick",
+      hookk: "hook kick head",
       hookb: "body hook",
-      back: "back kick",
-      hookk: "hook kick",
-      front: "front kick",
-      side: "side kick",
       upper: "uppercut",
     },
   };
@@ -20001,7 +20063,7 @@ ${setupFields(setup, ty)}
 
   /* ============ My combos: combos from club training, mixed into own sessions ============ */
   const MYC_GROUPS = {
-    hand: ["jab", "cross", "hook", "hookb", "upper"],
+    hand: ["jab", "cross", "jabb", "crossb", "hook", "hookb", "upper"],
     kick: [
       "front",
       "round",
@@ -21752,7 +21814,8 @@ ${setupFields(setup, ty)}
     const r = RT[it.k] || ["", "", "", ""];
     return {
       title: r[lg],
-      desc: r[lg + 2] + (guardCue(it) ? " " + guardCue(it) : "") + (paceTxt(it) ? " " + paceTxt(it) : ""),
+      // partner rounds: no long text, only the short rule (the A/B frames show the rest)
+      desc: (PARTNER_K.has(it.k) ? t("partnerNote") : r[lg + 2]) + (guardCue(it) ? " " + guardCue(it) : "") + (paceTxt(it) ? " " + paceTxt(it) : ""),
       combo: it.combo,
       item: it,
       label: it.mine ? "★ " + t("myc").lbl : undefined,
