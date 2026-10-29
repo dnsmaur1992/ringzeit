@@ -67,6 +67,8 @@
 - **Wochenplan** für Light Contact, Kick Light, Full Contact und K1 Style – abgestimmt auf Trainingstage, Dauer, Level und Vereinstraining
 - **Einheiten** für Technik, Technik & Kondition, Sparring, Kraft, Kondition und Mobility – zu Hause, in der Halle, draußen oder im Fitnessstudio
 - **Kombinationen** passend zum Level, mit Führ- und Schlaghand-Hinweis; eigene Kombis aus dem Verein werden eingebaut
+- **Partnerrunden mit Gegenaktion** (als Ausnahme: pro Einheit 1 bei Grundlage, 2–4 bei Fortgeschritten, 3–6 bei Wettkampf): Der Partner greift mal zuerst an, unterbricht mittendrin oder kontert am Ende – mit passender Verteidigung (Parieren, Slippen, Abducken, Doppeldeckung, Rausgehen, Ableiten; ab Fortgeschritten auch Fußfeger mit Fuß anheben; in Kick Light und K1 Low Kick mit Checken bzw. Schienbein-Block; in K1 Knie mit Abblocken), ab Fortgeschritten oft mit sofortiger eigener Antwort, bei Wettkampf auch als doppelter Schlagabtausch; in Full Contact mit Deckungs-Hinweis. Wer was macht, zeigen farbige Rahmen (A hellblau, B gelb)
+- **Partnerrunden von leicht zu schwer:** Die Kombinationen steigern sich über die Einheit
 - **Vereinstage und Ringzeit-Tage** getrennt eintragen: eigene Einheiten werden neben dem Verein geplant
 - **Kinder-Modus (8–12 Jahre):** kürzere Einheiten und angepasste Übungen und Belastungen
 - **Weitere Kicks:** Brazilian Kick, Spinning Hook Kick, Tornado Kick und gesprungenes Knie; Axe-Kick ab Fortgeschritten
