@@ -1625,3 +1625,101 @@ test("profile change: open sessions are rebuilt, a started one keeps its entries
   assert.equal(a.run("S.sessions[iso(today())].perf['1.0'][0].r"), 8);
   assert.equal(a.run("!!S.sessions[iso(addDays(today(),1))]"), false, "untouched future session rebuilt later");
 });
+
+test("circuit: skipped laps stay open – confirming only lap 3 completes lap 3 alone", async () => {
+  const a = app();
+  a.run(`const id=EX.findIndex(e=>e.de==='Burpees');ui.sel='c';ui.tab='session';
+    S.sessions.c={date:'2026-11-02',type:'K',min:30,eq:[],blocks:[{key:'cond',min:12,sets:'3×',items:[{kind:'ex',id}]}]};startWorkout();`);
+  const laps = a.run("circN(S.sessions.c.blocks[0])");
+  assert.ok(laps >= 3);
+  const kinds = JSON.parse(a.run("JSON.stringify(playerSteps(S.sessions.c).map(s=>[s.kind,s.lap]))"));
+  const lap3 = kinds.findIndex(([k, l]) => k === "manual" && l === 2);
+  assert.ok(lap3 > 0, "lap 3 is a manual step: " + JSON.stringify(kinds));
+  a.run(`playerGo(${lap3})`);
+  await a.click({ dataset: { player: "done" } });
+  assert.equal(a.run("lapIsDone(S.sessions.c,'0.0',2)"), true);
+  assert.equal(a.run("lapIsDone(S.sessions.c,'0.0',0)"), false);
+  assert.equal(a.run("lapIsDone(S.sessions.c,'0.0',1)"), false);
+  assert.equal(a.run("itemDone(S.sessions.c,0,0)"), false, "exercise not done");
+  assert.equal(a.run("S.sessions.c.timedLaps['0.0']"), 1, "one lap counted");
+  // older saves with only a count still read as laps 0…n-1
+  a.run("delete S.sessions.c.lapsDone;S.sessions.c.timedLaps={'0.0':2}");
+  assert.equal(a.run("lapIsDone(S.sessions.c,'0.0',1)"), true);
+  assert.equal(a.run("lapIsDone(S.sessions.c,'0.0',2)"), false);
+});
+
+test("rep prescription: burpees with '10 reps' are confirmed with ✓, no 40/20 work timer", () => {
+  const a = app();
+  a.run(`S.profile.level=1;const id=EX.findIndex(e=>e.de==='Burpees');S.sessions.b={date:'2026-11-02',type:'K',min:30,eq:[],blocks:[{key:'cond',min:10,sets:'',items:[{kind:'ex',id}]}]};`);
+  assert.match(a.run("doseTxt(S.sessions.b.blocks[0].items[0].id,S.sessions.b.blocks[0])"), /10 Wdh\./);
+  assert.equal(a.run("exerciseTiming(S.sessions.b,0,0)"), null);
+  assert.equal(a.run("playerSteps(S.sessions.b)[0].kind"), "manual");
+});
+
+test("one-legged set: deleting one side reopens the set; old shared values stay readable", async () => {
+  const a = app();
+  a.run(`const id=EX.findIndex(e=>DOSE_LEG.has(e.de)&&e.cat==='str'&&!TIMED.has(EX.indexOf(e)));ui.sel='l';ui.tab='session';
+    S.sessions.l={date:'2026-11-02',type:'S',min:30,eq:[],blocks:[{key:'str',min:10,sets:'2× 8–12',items:[{kind:'ex',id}]}]};
+    perfRows(S.sessions.l,'0.0',S.sessions.l.blocks[0]);`);
+  const inp = (f, v) => a.emit("input", { classList: { contains: (c) => c === "si", toggle() {} }, dataset: { k: "0.0", i: "0", f }, value: v });
+  await inp("rL", "8");
+  await inp("rR", "8");
+  assert.equal(a.run("S.sessions.l.perf['0.0'][0].r"), 8);
+  await inp("rR", "");
+  assert.equal(a.run("S.sessions.l.perf['0.0'][0].r"), null, "set open again");
+  assert.equal(a.run("itemDone(S.sessions.l,0,0)"), false);
+  // an old log with only r keeps its value
+  a.run("const row={r:9};legSync(row);globalThis.old=row.r");
+  assert.equal(a.run("old"), 9);
+});
+
+test("progression: a fully completed session counts even when it was faster than planned", () => {
+  const a = app();
+  history(a);
+  a.run("S.log.forEach(e=>{e.minutes=40;e.progression.plannedMin=60;})");
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 1);
+  history(a, { completed: false });
+  a.run("S.log.forEach(e=>{e.minutes=60;e.progression.plannedMin=60;})");
+  assert.equal(a.run(`progressionState('2026-11-02','T',false).step`), 0, "incomplete still doesn't count");
+});
+
+test("effort faces: five faces map onto the 1–10 scale, also when logging club training", async () => {
+  const a = app();
+  a.run(`ui.sel=iso(today());S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:45});`);
+  assert.equal(a.run("effortFaces().length"), 5);
+  await a.click({ dataset: { effort: "8", face: "1" } });
+  assert.equal(a.run("finishDraft().rpe"), 8);
+  assert.equal(a.run("faceOf(7)"), 8, "a fine value 7 lights up 'hard'");
+  assert.equal(a.run("faceOf(1)"), 2);
+  await a.click({ dataset: { clublog: a.run("iso(today())") } });
+  assert.equal(a.run("ui.sheet.kind"), "club");
+  await a.click({ dataset: { scface: "4" } });
+  assert.equal(a.run("ui.sheet.rpe"), 4);
+});
+
+test("simple view: only Today, Session, Timer and Profile; test and history move into the profile", () => {
+  const a = app();
+  a.run("S.profile.simple=true;S.profile.example=false");
+  a.run("renderTabs()");
+  const tabs = a.node("tabs").innerHTML;
+  assert.doesNotMatch(tabs, /data-tab="test"|data-tab="log"/);
+  assert.match(tabs, /data-tab="profile"/);
+  assert.match(a.run("ui.profSec=null;renderProfile()"), /data-tab="test"[\s\S]*data-tab="log"/);
+  const today = a.run("renderWeek()");
+  assert.doesNotMatch(today, /class="panel pulse"/, "no statistics");
+  a.run("S.profile.simple=false;renderTabs()");
+  assert.match(a.node("tabs").innerHTML, /data-tab="test"/);
+  assert.match(a.run("renderWeek()"), /class="panel pulse"/);
+});
+
+test("onboarding: the simple view is preselected for new users and can be switched off", async () => {
+  const a = app();
+  a.run(`S.profile.ackSafe='2026-11-02';S.profile.toured=true;loading=async()=>{};ui.onb={step:4,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90}`);
+  await a.click({ dataset: { onb: "done" } });
+  assert.equal(a.run("S.profile.simple"), true);
+  const b = app();
+  b.run(`S.profile.ackSafe='2026-11-02';S.profile.toured=true;loading=async()=>{};ui.onb={step:4,disc:'lc',days:[0],minutes:60,clubDays:[],clubMin:90}`);
+  await b.click({ dataset: { osimple: "0" } });
+  await b.click({ dataset: { onb: "done" } });
+  assert.equal(b.run("S.profile.simple"), false);
+});
