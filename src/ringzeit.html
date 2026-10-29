@@ -921,7 +921,9 @@
     padding: 8px max(6px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px))
       max(6px, env(safe-area-inset-left, 0px));
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    /* as many equal columns as there are tabs (6 in the detailed view, 4 in the simple view) */
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
   }
   .tabbar .tabft i {
     display: grid;
