@@ -605,6 +605,56 @@
     color: var(--frost);
     background: var(--night);
   }
+  /* partner rounds: who does what as framed groups – A light blue, B yellow */
+  .pseq {
+    align-items: stretch;
+  }
+  .combo .pg {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 6px 4px 4px;
+    border: 1.5px solid;
+    border-radius: 10px;
+    background: none;
+    font-family: inherit;
+  }
+  .combo .pg.a,
+  .legend .lg.a {
+    border-color: #7fb7f2;
+  }
+  .combo .pg.b,
+  .legend .lg.b {
+    border-color: #e8c25a;
+  }
+  .combo .pg .pgw,
+  .legend .lg {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 1px 5px;
+  }
+  .combo .pg.a .pgw,
+  .legend .lg.a {
+    color: #0a0b0d;
+    background: #7fb7f2;
+  }
+  .combo .pg.b .pgw,
+  .legend .lg.b {
+    color: #0a0b0d;
+    background: #e8c25a;
+  }
+  .legend .lg {
+    display: inline-block;
+    border: 0;
+    margin-top: 4px;
+  }
+  .combo span.dfn {
+    font-style: italic;
+    color: var(--mist);
+  }
   .combo span.k {
     border-color: #4a2a2e;
     color: #e08a90;
@@ -5003,7 +5053,7 @@
       },
       myc: {
         title: "Meine Kombis",
-        hint: "Kombis aus dem Vereinstraining: Aktive Kombis baut Ringzeit in deine Schatten-, Sandsack- und Pratzenrunden ein.",
+        hint: "Kombis aus dem Vereinstraining: Aktive Kombis baut Ringzeit in deine Schatten-, Sandsack- und Partnerrunden ein.",
         new: "Neue Kombi",
         edit: "Kombi bearbeiten",
         tap: "Tippe die Techniken in der richtigen Reihenfolge an.",
@@ -5409,6 +5459,8 @@
       round: "Runde",
       roundAbbr: "R",
       legend: "<i>V</i> vorne (Führhand/-bein) · <i>H</i> hinten (Schlaghand/-bein)",
+      legendReact: '<span class="lg a">A</span> greift mit der Kombination an · <span class="lg b">B</span> Partner',
+      fcGuard: "Full Contact: nach jeder Aktion sofort zurück in die Deckung – Hände oben, Kinn unten.",
       timer: "Rundentimer",
       ready: "Bereit",
       startRound: (n) => `Runde ${n} starten`,
@@ -6110,7 +6162,7 @@
       },
       myc: {
         title: "My combos",
-        hint: "Combos from club training: Ringzeit mixes active combos into your shadow, bag and pad rounds.",
+        hint: "Combos from club training: Ringzeit mixes active combos into your shadow, bag and partner rounds.",
         new: "New combo",
         edit: "Edit combo",
         tap: "Tap the techniques in order.",
@@ -6506,6 +6558,8 @@
       round: "Round",
       roundAbbr: "R",
       legend: "<i>L</i> lead (front hand/leg) · <i>R</i> rear (back hand/leg)",
+      legendReact: '<span class="lg a">A</span> attacks with the combo · <span class="lg b">B</span> partner',
+      fcGuard: "Full contact: straight back into your guard after every action – hands up, chin down.",
       timer: "Round timer",
       ready: "Ready",
       startRound: (n) => `Start round ${n}`,
@@ -9002,23 +9056,24 @@
       "Kombination mit Kraft, danach sofort raus aus der Linie.",
       "Throw the combo with power, then step off the line.",
     ],
+    // one partner round type – with or without a counter action. "pads"/"counter" only for sessions saved earlier
     partner: [
       "Partnerdrill",
       "Partner drill",
-      "A schlägt die Kombination kontrolliert, B verteidigt mit Block oder Ausweichen. Nach 3–5 Wiederholungen Rollen tauschen.",
-      "A throws the combo with control, B defends with blocks or slips. Swap roles every 3–5 reps.",
+      "A schlägt die Kombination kontrolliert, B verteidigt. Ist eine Gegenaktion angegeben, kommt sie genau an dieser Stelle und der andere verteidigt. Kontrollierter Kontakt. Nach 3–5 Wiederholungen Rollen tauschen.",
+      "A throws the combo with control, B defends. Where a counter action is shown, it comes exactly there and the other one defends. Controlled contact. Swap roles every 3–5 reps.",
     ],
     pads: [
-      "Pratzen",
-      "Pads",
-      "Partner hält und ruft die Kombination – Tempo steigern. Nach 3–5 Wiederholungen Rollen tauschen.",
-      "Partner holds and calls the combo – build the pace. Swap roles every 3–5 reps.",
+      "Partnerdrill",
+      "Partner drill",
+      "A schlägt die Kombination kontrolliert, B verteidigt. Ist eine Gegenaktion angegeben, kommt sie genau an dieser Stelle und der andere verteidigt. Kontrollierter Kontakt. Nach 3–5 Wiederholungen Rollen tauschen.",
+      "A throws the combo with control, B defends. Where a counter action is shown, it comes exactly there and the other one defends. Controlled contact. Swap roles every 3–5 reps.",
     ],
     counter: [
-      "Partner-Konter",
-      "Partner counters",
-      "A greift mit der Kombination an, B blockt und kontert. Nach 3–5 Wiederholungen Rollen tauschen.",
-      "A attacks with the combo, B blocks and counters. Swap roles every 3–5 reps.",
+      "Partnerdrill",
+      "Partner drill",
+      "A schlägt die Kombination kontrolliert, B verteidigt. Ist eine Gegenaktion angegeben, kommt sie genau an dieser Stelle und der andere verteidigt. Kontrollierter Kontakt. Nach 3–5 Wiederholungen Rollen tauschen.",
+      "A throws the combo with control, B defends. Where a counter action is shown, it comes exactly there and the other one defends. Controlled contact. Swap roles every 3–5 reps.",
     ],
     sixkick: [
       "6-Kick-Runde",
@@ -9262,6 +9317,135 @@
     tornado: "round",
     jknee: "knee",
   };
+  /* Partner rounds get a counter action by the partner now and then – an exception, more with a higher level
+     (reactCount): before the combo (you defend, then your combo starts), in the middle of a longer combo
+     (from Fortgeschritten) or after it (you defend).
+     Attack → fitting defences, with the level from which each appears. Low kicks only in Kick Light and K1. */
+  const DEFS = {
+    cover: ["Doppeldeckung", "Double guard"],
+    step: ["Rausgehen", "Step out"],
+    parry: ["Parieren", "Parry"],
+    slip: ["Slippen", "Slip"],
+    duck: ["Abducken", "Duck"],
+    block: ["Abblocken", "Block"],
+    deflect: ["Ableiten", "Deflect"],
+    check: ["Checken (Schienbein-Block)", "Check (shin block)"],
+    lift: ["Fuß anheben", "Lift the foot"],
+  };
+  const COUNTER_ATT = {
+    jab: { lvl: 0, d: [["cover", 0], ["step", 0], ["parry", 1], ["slip", 1]] },
+    cross: { lvl: 0, d: [["cover", 0], ["step", 0], ["parry", 1], ["slip", 1]] },
+    round: { lvl: 0, d: [["block", 0], ["step", 0]] },
+    hook: { lvl: 1, d: [["cover", 1], ["duck", 1]] },
+    front: { lvl: 1, d: [["deflect", 1], ["step", 1]] },
+    roundh: { lvl: 2, d: [["cover", 2], ["step", 2], ["duck", 2]] },
+    upper: { lvl: 1, d: [["cover", 1], ["step", 1]] },
+    hookb: { lvl: 1, d: [["block", 1]] },
+    side: { lvl: 1, d: [["deflect", 1], ["step", 1]] },
+    lowk: { lvl: 0, low: true, d: [["check", 0], ["step", 0]] },
+    // foot sweep (foot against foot, allowed in all WAKO disciplines): from Fortgeschritten, not with ankle limits
+    sweep: { lvl: 1, sweep: true, d: [["lift", 1], ["step", 1]] },
+    // K1 only: a knee to the body – blocked with the forearms or by stepping out
+    knee: { lvl: 1, k1: true, d: [["block", 1], ["step", 1]] },
+  };
+  /* your own answer after a defence (the quick exchange): what fits best after each defence */
+  const ANSWER = {
+    parry: ["cross", "jab"],
+    slip: ["hookb", "cross", "upper"],
+    duck: ["hook", "upper"],
+    cover: ["cross", "hook", "knee"],
+    block: ["cross", "round", "knee"],
+    check: ["lowk", "cross"],
+    deflect: ["cross", "round"],
+    step: ["jab", "front"],
+    lift: ["round", "cross"],
+  };
+  // low kicks: checked and stepped out half and half – alternating within a session, random start
+  let lowTurn = 0;
+  function partnerReact(c) {
+    const p = S.profile,
+      kid = ageGroup() === "kids",
+      ka = kneeAnk(),
+      lowOk = (p.disc === "kl" || p.disc === "k1") && !ka && !kid,
+      lvl = p.level || 0;
+    const atts = Object.keys(COUNTER_ATT).filter((a) => {
+      const x = COUNTER_ATT[a];
+      if (kid) return a === "jab" || a === "cross";
+      if (x.low) return lowOk;
+      if (x.sweep) return lvl >= x.lvl && !p.limits.includes("ankle");
+      if (x.k1) return p.disc === "k1" && lvl >= x.lvl;
+      return lvl >= x.lvl;
+    });
+    const pick = (low) => {
+      // low kicks come often in Kick Light/K1 – they are what those disciplines add
+      const pool = low && atts.includes("lowk") ? ["lowk"] : atts;
+      const a = pool[Math.floor(Math.random() * pool.length)],
+        ds = COUNTER_ATT[a].d.filter(([d, l]) => lvl >= l && !(kid && !["cover", "parry", "step"].includes(d)) && !(ka && d === "check"));
+      if (a === "lowk" && ds.length === 2) return { a, d: lowTurn++ % 2 ? "step" : "check" };
+      return { a, d: (ds[Math.floor(Math.random() * ds.length)] || ["cover"])[0] };
+    };
+    // the quick exchange: after the defence you answer right away (Fortgeschritten about half the time, Wettkampf mostly)
+    const answer = (x) => {
+      if (kid || Math.random() >= [0, 0.5, 0.85][lvl]) return x;
+      const ok = (ANSWER[x.d] || []).filter(
+        (t) =>
+          !(t === "lowk" && !lowOk) &&
+          !(t === "knee" && (p.disc !== "k1" || ka)) &&
+          !((t === "upper" || t === "hookb") && lvl < 1),
+      );
+      return ok.length ? { ...x, c: ok[Math.floor(Math.random() * ok.length)] } : x;
+    };
+    // one counter action – at the start, in the middle or at the end (how many rounds get one: reactCount)
+    const spots = ["pre", "post"],
+      cuts = c ? c.map((x, i) => i).filter((i) => i >= 1 && i <= c.length - 2 && STRIKE.has(c[i - 1])) : [];
+    if (!kid && lvl >= 1 && cuts.length) spots.push("mid");
+    const at = spots[Math.floor(Math.random() * spots.length)],
+      r = {};
+    if (at === "pre") r.pre = pick(lowOk && Math.random() < 0.5);
+    else if (at === "post") r.post = answer(pick(lowOk && Math.random() < 0.35));
+    else r.mid = { at: cuts[Math.floor(Math.random() * cuts.length)], ...pick(false) };
+    // Wettkampf: in some rounds the partner comes in twice – before your combo and again after it
+    if (lvl >= 2 && !kid && !r.post && Math.random() < 0.4) r.post = answer(pick(lowOk && Math.random() < 0.35));
+    return r;
+  }
+  /* how many partner rounds of one session get a counter action: Grundlage (and children) exactly 1,
+     Fortgeschritten 2–4, Wettkampf 3–6 – never more than there are partner rounds */
+  const REACT_N = [
+    [1, 1],
+    [2, 4],
+    [3, 6],
+  ];
+  function reactCount(partnerRounds) {
+    const lvl = ageGroup() === "kids" ? 0 : S.profile.level || 0,
+      [lo, hi] = REACT_N[lvl] || REACT_N[0];
+    return Math.min(lo + Math.floor(Math.random() * (hi - lo + 1)), partnerRounds);
+  }
+  /* Partner rounds with a counter action: who does what, in order, as framed groups – A (attacker, light blue)
+     and B (partner, yellow). Inside the frames the usual technique chips; a defence is a plain chip. */
+  function reactHtml(it) {
+    const R = it.react,
+      c = it.combo;
+    if (!R) return c ? comboHtml(c) : "";
+    const sd = sides(c),
+      lg = S.profile.lang === "de" ? 0 : 1,
+      chips = (from, to) => c.slice(from, to).map((x, i) => techChip(x, sd[from + i])).join(""),
+      def = (x) => `<span class="dfn">${esc(DEFS[x.d][lg])}</span>`,
+      att = (x) => techChip(x.a, oneSide(x.a)),
+      grp = (who, inner) => `<span class="pg ${who}"><b class="pgw">${who.toUpperCase()}</b>${inner}</span>`;
+    let g = [];
+    if (R.pre) g = [grp("b", att(R.pre)), grp("a", def(R.pre) + chips(0))];
+    else if (R.mid) g = [grp("a", chips(0, R.mid.at)), grp("b", att(R.mid)), grp("a", def(R.mid) + chips(R.mid.at))];
+    else g = [grp("a", chips(0))];
+    // a second partner action (Wettkampf) or the counter after the combo
+    if (R.post) g.push(grp("b", att(R.post)), grp("a", def(R.post) + (R.post.c ? techChip(R.post.c, oneSide(R.post.c)) : "")));
+    return `<div class="combo pseq">${g.join("")}</div>`;
+  }
+  const PARTNER_K = new Set(["partner", "pads", "counter"]);
+  // Full Contact partner rounds: a short reminder to get straight back into the guard
+  const guardCue = (it) => (PARTNER_K.has(it.k) && S.profile.disc === "fc" ? t("fcGuard") : "");
+  /* rough difficulty of a combo: length, kicks, head kicks and advanced techniques */
+  const comboLevel = (c) =>
+    c.length + 0.5 * c.filter((x) => KICKS.has(x)).length + c.filter((x) => HIGHK.has(x)).length + 1.5 * c.filter((x) => ADV.has(x)).length;
   function fightRounds(type, n, loc, eq, theme, easy = 1) {
     const p = S.profile,
       partner = eq.includes("partner"),
@@ -9269,9 +9453,7 @@
     const bag = eq.includes("bag") && loc !== "out",
       cyc = [];
     if (partner) {
-      cyc.push("partner");
-      if (eq.includes("pads")) cyc.push("pads");
-      cyc.push("counter");
+      cyc.push("partner"); // every partner round is a Partnerdrill: a combo with or without a counter action
     } else {
       cyc.push("shadow");
       if (bag) cyc.push("bag");
@@ -9299,6 +9481,7 @@
           r.mine = 1;
           gotMine = true;
         } else r.combo = combo(kk, theme);
+
       }
       if (k === "sixkick")
         r.combo = ["front", "round", "side", "roundh", "round", "front"].filter(
@@ -9339,6 +9522,16 @@
             : rnd(EXTRA[p.disc].filter((c) => c.includes(tech))).slice();
       }
     });
+    // partner rounds build up from easy to hard: the combos of the partner rounds are re-ordered by difficulty
+    if (partner) {
+      const pr = out.filter((r) => PARTNER_K.has(r.k) && r.combo),
+        sorted = pr.map((r) => ({ c: r.combo, m: r.mine })).sort((x, y) => comboLevel(x.c) - comboLevel(y.c));
+      pr.forEach((r, i) => {
+        r.combo = sorted[i].c;
+        if (sorted[i].m) r.mine = 1;
+        else delete r.mine;
+      });
+    }
     // ease into it: the first round (the first two in short sessions) at 70 % and with kicks to the body at most;
     // a head-kick combo there swaps places with a later round of the same kind, otherwise its kicks go to body height
     const isHigh = (r) => r.combo && r.combo.some((x) => HIGHK.has(x)),
@@ -9347,7 +9540,8 @@
       const r = out[i];
       r.ease = 1;
       if (!isHigh(r)) continue;
-      const j = out.findIndex((x, k) => k >= e && x.k === r.k && x.combo && !isHigh(x));
+      // partner sessions are ordered easy → hard: no swap there, the kicks just go to body height
+      const j = partner ? -1 : out.findIndex((x, k) => k >= e && x.k === r.k && x.combo && !isHigh(x));
       if (j >= 0) {
         const o = out[j];
         [r.combo, o.combo] = [o.combo, r.combo];
@@ -9357,6 +9551,16 @@
     // kids: at most 3 techniques (the opener and the finishing technique stay)
     if (ageGroup() === "kids")
       for (const r of out) if (r.combo && !r.mine) while (r.combo.length > 3) r.combo.splice(1, 1);
+    // counter actions as an exception (reactCount), on the final combos; later rounds are preferred because a
+    // counter action makes a round harder – the opening round never gets one when there is a choice
+    if (partner) {
+      const idx = out.map((r, i) => i).filter((i) => PARTNER_K.has(out[i].k) && out[i].combo),
+        want = reactCount(idx.length),
+        pool = idx.length > want ? idx.filter((i) => i > 0) : idx,
+        order = pool.map((i) => ({ i, w: i + Math.random() * pool.length * 0.6 })).sort((a, b) => b.w - a.w);
+      lowTurn = Math.random() < 0.5 ? 0 : 1;
+      order.slice(0, want).forEach(({ i }) => (out[i].react = partnerReact(out[i].combo)));
+    }
     return out;
   }
   /* Equipment that is relevant per session type – everything else the user selected is ignored */
@@ -11894,11 +12098,17 @@
       return SIDED.has(x) ? s : null;
     });
   }
+  // a single technique outside a combo (partner attack, quick answer): its usual side, so every kick says V or H
+  const oneSide = (x) => (SIDED.has(x) ? FIXED[x] || DEF[x] : null);
   const sideLbl = (s) => (S.profile.lang === "de" ? (s === "L" ? "V" : "H") : s);
+  /* one technique chip (kicks red, V/H side mark) – also used inside the partner groups */
+  function techChip(x, sd) {
+    const lg = S.profile.lang === "de" ? 0 : 1;
+    return `<span class="${KICKS.has(x) ? "k" : ""}">${esc(TECH[x][lg])}${sd ? `<i>${sideLbl(sd)}</i>` : ""}</span>`;
+  }
   function comboHtml(c) {
-    const lg = S.profile.lang === "de" ? 0 : 1,
-      sd = sides(c);
-    return `<div class="combo">${c.map((x, i) => `<span class="${KICKS.has(x) ? "k" : ""}">${esc(TECH[x][lg])}${sd[i] ? `<i>${sideLbl(sd[i])}</i>` : ""}</span>`).join("")}</div>`;
+    const sd = sides(c);
+    return `<div class="combo">${c.map((x, i) => techChip(x, sd[i])).join("")}</div>`;
   }
   const fmt = (s) => `${Math.floor(s / 60)}:${pad(s % 60)}`;
   /* Settings form of an existing session; "dirty" = the form was changed but the session not rebuilt yet */
@@ -12082,7 +12292,8 @@ ${setupFields(setup, ty)}
       lg = S.profile.lang === "de" ? 0 : 1;
     let h = "";
     h += `<div class="block" data-block="${bi}">${blockHead(b)}`;
-    if (b.items.some((it) => it.combo)) h += `<div class="legend">${t("legend")}</div>`;
+    if (b.items.some((it) => it.combo))
+      h += `<div class="legend">${t("legend")}${b.items.some((it) => it.react) ? `<br>${t("legendReact")}` : ""}${b.items.some((it) => guardCue(it)) ? `<br>${esc(t("fcGuard"))}` : ""}</div>`;
     b.items.forEach((it, n) => {
       const checked = itemDone(sess, bi, n),
         itemAttr = `data-item="${bi}.${n}"`;
@@ -12109,7 +12320,7 @@ ${setupFields(setup, ty)}
           h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${preview ? `<b>${esc(x[S.profile.lang])}</b>` : examRow(x, n, sess.eq)}</div></div>`;
       } else if (it.kind === "round") {
         const r = RT[it.k];
-        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? comboHtml(it.combo) : ""}</div></div>`;
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b><div>${esc(r[lg + 2])}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? reactHtml(it) : ""}</div></div>`;
       } else {
         const x = exText(it.id),
           tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
@@ -19230,7 +19441,7 @@ ${setupFields(setup, ty)}
     tm.called = round;
     const info = roundInfo(it),
       de = S.profile.lang === "de",
-      text = `${de ? "Runde" : "Round"} ${round}. ${info.title}.${it.combo ? " " + comboWords(it.combo) + "." : ""}`;
+      text = `${de ? "Runde" : "Round"} ${round}. ${info.title}.${it.combo ? " " + comboWords(it.combo) + "." : ""}`; // counter actions are shown, not spoken
     queueTimerSpeech(
       text,
       300,
@@ -21541,8 +21752,9 @@ ${setupFields(setup, ty)}
     const r = RT[it.k] || ["", "", "", ""];
     return {
       title: r[lg],
-      desc: r[lg + 2] + (paceTxt(it) ? " " + paceTxt(it) : ""),
+      desc: r[lg + 2] + (guardCue(it) ? " " + guardCue(it) : "") + (paceTxt(it) ? " " + paceTxt(it) : ""),
       combo: it.combo,
+      item: it,
       label: it.mine ? "★ " + t("myc").lbl : undefined,
     };
   }
@@ -21589,7 +21801,7 @@ ${setupFields(setup, ty)}
       h += `<div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="farc" class="arc" cx="140" cy="140" r="130" fill="none" stroke="var(--tc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/><g class="fknob" id="fknob"><circle cx="270" cy="140" r="9" fill="var(--tc)" stroke="#0a0b0d" stroke-width="4"/></g></svg>
    <div class="mid"><span class="ph" id="fph"></span><span class="clk" id="fclock">${fmt(tm.left)}</span><span class="sub">${t("roundOf")(Math.min(tm.round, tm.total), tm.total)}</span></div></div>`;
       const lbl = rest ? t("nextLbl") : info.label || t("roundOf")(Math.min(tm.round, tm.total), tm.total);
-      h += `<div class="fcur${sk ? (big ? " skb" : " sks") : ""}">${sk && big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}<div class="fct"><small>${esc(lbl)}</small><b>${esc(info.title)}</b><p>${esc(info.desc)}</p>${info.combo ? `<div id="fcall">${comboHtml(info.combo)}</div>` : ""}</div>${sk && !big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}</div>`;
+      h += `<div class="fcur${sk ? (big ? " skb" : " sks") : ""}">${sk && big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}<div class="fct"><small>${esc(lbl)}</small><b>${esc(info.title)}</b><p>${esc(info.desc)}</p>${info.combo ? `<div id="fcall">${info.item ? reactHtml(info.item) : comboHtml(info.combo)}</div>` : ""}</div>${sk && !big ? `<div class="fsk">${sketchSvg(EX[show.id].de, true)}</div>` : ""}</div>`;
       h += `<div class="fnext">${nxt ? `${t(rest ? "afterLbl" : "nextLbl")}: <b>${esc(roundInfo(nxt).title)}</b>` : t("lastRound")}</div>`;
       h += `<div class="fctl"><button type="button" class="s" data-fx="prev" aria-label="${flowText().previous}" ${tm.round <= 1 ? "disabled" : ""}>${ICO.prev}</button><button type="button" class="m" data-fx="go" id="fgo"></button><button type="button" class="s" data-fx="next" aria-label="${flowText().nextRound}" ${tm.round >= tm.total ? "disabled" : ""}>${ICO.next}</button></div>`;
     }
