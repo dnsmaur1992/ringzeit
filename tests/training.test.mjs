@@ -1932,3 +1932,41 @@ test("low kicks are checked half of the time", () => {
   assert.ok(r.ch > 50 && Math.abs(r.ch - r.st) / (r.ch + r.st) < 0.1, JSON.stringify(r));
   assert.ok(r.maxDiff <= 1, JSON.stringify(r));
 });
+
+test("no defence without a reason: never at the start, in partner combos no slip or block at all", () => {
+  const a = app();
+  const r = a.run(`(() => { const bad = [];
+    for (const disc of ["lc", "kl", "fc", "k1"]) for (const lvl of [0, 1, 2]) { S.profile.disc = disc; S.profile.level = lvl;
+      for (let i = 0; i < 40; i++) {
+        for (const x of fightRounds("T", 6, "gym", ["partner"], null)) if (x.combo && x.k !== "sixkick") {
+          const c = x.combo;
+          if (OWN_DEF.has(c[0]) || c.some((y, j) => y === "slip" || y === "block" || (y === "step" && j < c.length - 1)) || c.length < 2) bad.push(c.join("-"));
+        }
+        for (const x of fightRounds("T", 6, "gym", ["bag"], null)) if (x.combo && OWN_DEF.has(x.combo[0])) bad.push("solo:" + x.combo.join("-"));
+      } }
+    return bad.slice(0, 5); })()`);
+  assert.equal(r.length, 0, r.join(" | "));
+});
+
+test("every session has body punches, every kick and knee names its target", () => {
+  const a = app();
+  const r = a.run(`(() => { const miss = [];
+    for (const disc of ["lc", "kl", "fc", "k1"]) for (const lvl of [0, 1, 2]) for (const eq of [["partner"], ["bag"], []]) {
+      S.profile.disc = disc; S.profile.level = lvl;
+      for (let i = 0; i < 60; i++) if (!fightRounds("T", 6, "gym", eq, null).some((x) => x.combo && x.combo.some((y) => ["jabb","crossb","hookb"].includes(y)))) miss.push(disc + lvl + (eq[0] || "shadow"));
+    }
+    const noTarget = [...KICKS].filter((k) => k !== "sweep" && !/Kopf|Körper|Oberschenkel/.test(TECH[k][0]) || k !== "sweep" && !/head|body|thigh/.test(TECH[k][1]));
+    return { miss: miss.slice(0, 5), noTarget }; })()`);
+  assert.equal(r.miss.length, 0, r.miss.join());
+  assert.equal(r.noTarget.length, 0, r.noTarget.join());
+});
+
+test("no combo twice in one session", () => {
+  const a = app();
+  const r = a.run(`(() => { let dup = 0, all = 0;
+    for (const disc of ["lc", "kl", "fc", "k1"]) for (const lvl of [0, 1, 2]) { S.profile.disc = disc; S.profile.level = lvl;
+      for (let i = 0; i < 50; i++) { const cs = fightRounds("T", 6, "gym", ["partner"], null).filter((x) => x.combo && x.k !== "sixkick").map((x) => x.combo.join());
+        all++; if (new Set(cs).size < cs.length) dup++; } }
+    return dup / all; })()`);
+  assert.ok(r < 0.03, String(r));
+});
