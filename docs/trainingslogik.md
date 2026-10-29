@@ -107,6 +107,10 @@ Der Bildschirm bleibt während laufender Arbeits- und Pausenphasen bewusst an. I
 
 Auf erkannten Apple-Mobilgeräten beziehungsweise mit entsprechender Audio-Session-Unterstützung bleibt die bisherige nahezu unhörbare Audiowachhaltung während aktiver Timer erhalten. Andere Audiokontexte dürfen nach fünf Sekunden ohne neue Ausgabe ruhen; vor einer nächsten Web-Audio-Ausgabe werden sie wieder aktiviert. Nach dem Stoppen werden der Dauerton und seine Verbindungen beendet; eine letzte Glocke kann ausklingen. Auf dem Gerät müssen Glocke, Ansagen, Musik und Unterbrechungen zusätzlich praktisch geprüft werden.
 
+## Offline-Speicher (Service Worker)
+
+Der Service Worker speichert nur die App-Seite selbst (`./` bzw. `index.html`) als App: beim Start zuerst aus dem Netz, nach 3 Sekunden oder offline aus dem Speicher. Andere Seiten wie `installieren.html` werden normal geladen und überschreiben die gespeicherte App nie – sonst konnte nach dem Öffnen der Installationsanleitung offline die Anleitung statt der App erscheinen (behoben 29.10.2026).
+
 ## Akkuverbrauch auf dem Handy – geprüft
 
 Praxiswert vom 27.10.2026: 1 Stunde Training auf dem iPhone, Bildschirm dauerhaft an, parallel Spotify-Musik und eine zweite App → 10 % Akku. Den größten Teil davon verbrauchen Bildschirm und Musik; der Anteil von Ringzeit ist gering. Der Code vermeidet weiterhin unnötige Dauerabfragen und räumt Ressourcen auf. Offen bleibt nur die Tonprüfung (Gong, Ansagen, Musik) auf weiteren Geräten, vor allem Android.
