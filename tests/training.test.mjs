@@ -1792,7 +1792,7 @@ test("partner rounds: one counter action as variation – right place, disciplin
       for(let i=0;i<120;i++){const c=['jab','cross','hook','round'].slice(0,2+(i%3));const r=partnerReact(c);const key=disc+lvl;stat[key]=stat[key]||{n:0,none:0,pre:0,mid:0,post:0};stat[key].n++;
         if(!r){stat[key].none++;continue;}
         const parts=['pre','mid','post'].filter(p=>r[p]);
-        if(lvl<2||kid?parts.length!==1:!(parts.length===1||(parts.length===2&&parts[1]==='post')))bad.push('parts '+parts+' lvl'+lvl);
+        if((lvl<2&&!(disc==='fc'&&lvl===1))||kid?parts.length!==1:!(parts.length===1||(parts.length===2&&parts[1]==='post')))bad.push('parts '+parts+' lvl'+lvl);
         if(r.pre&&r.mid)bad.push('pre and mid');
         stat[key][parts[0]]++;for(const pp of parts){const x=r[pp];const def=COUNTER_ATT[x.a];
         if(x.c){if(pp!=='post')bad.push('answer outside post');if(kid)bad.push('kid answer');if(!(ANSWER[x.d]||[]).includes(x.c))bad.push('answer '+x.c+' after '+x.d);
@@ -1969,4 +1969,40 @@ test("no combo twice in one session", () => {
         all++; if (new Set(cs).size < cs.length) dup++; } }
     return dup / all; })()`);
   assert.ok(r < 0.03, String(r));
+});
+
+test("Full Contact vs Leichtkontakt: 6-kick rule with a partner, more body and pressure in FC; short combos and control in LC", () => {
+  const a = app();
+  const r = JSON.parse(a.run(`JSON.stringify((() => { S.profile.limits = []; S.profile.birthYear = 1995; const o = {};
+    S.profile.disc = "fc"; S.profile.level = 2; let six = 0, sixFirst = 0, body2 = 0, dbl = 0, cnt = 0;
+    for (let i = 0; i < 100; i++) { const rs = fightRounds("T", 6, "gym", ["partner"], null), pr = rs.filter((x) => PARTNER_K.has(x.k) && x.combo);
+      if (rs.filter((x) => x.six).length === 1) six++; if (pr[0].six) sixFirst++;
+      if (rs.filter((x) => x.combo && x.combo.some((y) => ["jabb","crossb","hookb"].includes(y))).length >= 2) body2++;
+      for (const x of rs) if (x.react) { cnt++; if ((x.react.pre || x.react.mid) && x.react.post) dbl++; } }
+    Object.assign(o, { six, sixFirst, body2, dblFc: dbl / cnt });
+    S.profile.disc = "kl"; dbl = 0; cnt = 0;
+    for (let i = 0; i < 100; i++) for (const x of fightRounds("T", 6, "gym", ["partner"], null)) if (x.react) { cnt++; if ((x.react.pre || x.react.mid) && x.react.post) dbl++; }
+    o.dblKl = dbl / cnt;
+    S.profile.disc = "lc"; let long = 0;
+    for (let i = 0; i < 100; i++) for (const eq of [["partner"], ["bag"], []]) for (const x of fightRounds("T", 6, "gym", eq, chooseTheme())) if (x.combo && !x.mine && x.combo.length > 4) long++;
+    o.long = long;
+    o.lcCue = guardCue({ k: "partner" }); o.lcBag = roundDesc({ k: "bag" }, 0);
+    S.profile.disc = "fc"; o.fcBag = roundDesc({ k: "bag" }, 0); S.profile.disc = "kl"; o.klBag = roundDesc({ k: "bag" }, 0); o.klCue = guardCue({ k: "partner" });
+    return o; })())`));
+  assert.equal(r.six, 100); assert.equal(r.sixFirst, 0);
+  assert.equal(r.body2, 100);
+  assert.ok(r.dblFc > r.dblKl, JSON.stringify(r));
+  assert.equal(r.long, 0);
+  assert.match(r.lcCue, /Leichtkontakt/); assert.match(r.lcBag, /Schnell und locker/); assert.match(r.fcBag, /voller Wirkung/);
+  assert.match(r.klBag, /mit Kraft/); assert.equal(r.klCue, "");
+});
+
+test("the partner's attacks vary within a session", () => {
+  const a = app();
+  const r = a.run(`(() => { S.profile.disc = "lc"; S.profile.level = 2; S.profile.limits = []; S.profile.birthYear = 1995; let rep = 0;
+    for (let i = 0; i < 200; i++) { const at = [];
+      for (const x of fightRounds("T", 7, "gym", ["partner"], null)) if (x.react) for (const q of [x.react.pre, x.react.mid, x.react.post]) if (q) at.push(q.a);
+      if (new Set(at).size < at.length) rep++; }
+    return rep; })()`);
+  assert.equal(r, 0);
 });
