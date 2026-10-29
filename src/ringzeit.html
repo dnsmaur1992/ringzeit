@@ -7260,14 +7260,6 @@
       ap: (c) => ["jab", "jab", ...c.filter((x, i) => !(i < 2 && x === "jab"))],
     },
     {
-      id: "counter",
-      tag: "mix",
-      ap: (c) => {
-        const r = c.filter((x) => x !== "block" && x !== "slip");
-        return [r[0], rnd(["block", "slip"]), ...r.slice(1)];
-      },
-    },
-    {
       id: "bodyHead",
       tag: "mix",
       ap: (c) => [...c.filter((x) => !["roundh", "hookb", "round"].includes(x)).slice(0, 2), "hookb", "roundh"],
@@ -9063,10 +9055,11 @@
       if (ka) c = c.filter((x) => !RISKY.has(x));
       if (c.length < 2) c.push("cross");
     }
-    return noDefFirst(c);
+    return partnerClean(c);
   }
-  /* a defence needs a reason: slip, block and side step never open a combo. In partner rounds the own combo
-     holds no slip or block at all (defending is what the counter actions are for) – a side step only as the exit */
+  /* a defence needs a reason: the generated own combos (shadow, bag, partner, coach) hold no slip or block at all –
+     defending happens only against a real counter action of the partner; a side step only as the exit at the end.
+     Combos the user entered from club training stay as they are. */
   const OWN_DEF = new Set(["slip", "block", "step"]);
   function noDefFirst(c) {
     c = c.slice();
@@ -9570,10 +9563,10 @@
         const r = pool[(j + m * 2 + 1) % pool.length];
         const src = tech === "roundh" ? (highPool.length ? highPool : [["jab", "cross", "roundh"]]) : EXTRA[p.disc].filter((c) => c.includes(tech)),
           have = new Set(out.map((x) => x.combo && x.combo.join())),
-          fresh = src.filter((c) => !have.has(noDefFirst(c).join()));
+          fresh = src.filter((c) => !have.has(partnerClean(c).join()));
         // all fitting combos are in use already (few at Grundlage): this round's combo ends in the high kick instead
         if (!fresh.length && tech === "roundh") r.combo = fill2([...r.combo.filter((x) => x !== "round" && x !== "step" && !HIGHK.has(x)).slice(0, p.level + 2), "roundh"]);
-        else r.combo = noDefFirst(rnd(fresh.length ? fresh : src));
+        else r.combo = partnerClean(rnd(fresh.length ? fresh : src));
       }
     });
     // every session has punches to the body: without one, a cross (or jab) of one combo goes to the body
