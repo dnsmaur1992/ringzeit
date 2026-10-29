@@ -11250,7 +11250,7 @@
         good = entries.filter(
           (e) =>
             progressionRecordComplete(e) &&
-            // all exercises done and the effort in range – how long it took only feeds the personal time estimate
+            // all exercises done and the effort in range – the duration doesn't matter here (it only counts for the load)
             e.completed === true &&
             e.rpe <= e.tHi,
         ),
