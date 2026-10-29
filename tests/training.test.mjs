@@ -1723,3 +1723,49 @@ test("onboarding: the simple view is preselected for new users and can be switch
   await b.click({ dataset: { onb: "done" } });
   assert.equal(b.run("S.profile.simple"), false);
 });
+
+test("simple view, session screen: no day form, no 'why', no RPE tag, no extra equipment – partner/bag stays", () => {
+  const a = app();
+  a.run(`S.profile.simple=true;S.profile.example=false;const d=iso(today());ui.sel=d;ui.tab='session';ui.setup=null;
+    S.sessions[d]=buildSession(d,'T','gym',defaultEq(),{min:60});S.sessions[d].notes=['Testgrund'];`);
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(defaultEq())")), ["bag"]);
+  const h = a.run("renderSession()");
+  assert.doesNotMatch(h, /data-form="/, "no day form");
+  assert.doesNotMatch(h, new RegExp(a.run("flowText().why")), "no why section");
+  assert.doesNotMatch(h, new RegExp(a.run("t('rpeTarget')")), "no RPE tag");
+  assert.doesNotMatch(h, /data-eq="/, "no extra equipment chips");
+  assert.match(h, /data-pb="/, "partner/bag question stays");
+  // detailed view shows everything again
+  a.run("S.profile.simple=false;ui.setup=null");
+  const d2 = a.run("renderSession()");
+  assert.match(d2, /data-eq="/);
+  assert.match(d2, new RegExp(a.run("flowText().why")));
+});
+
+test("switching to the simple view replans open sessions without hidden equipment", async () => {
+  const a = app();
+  a.run(`S.profile.simple=false;const d=iso(addDays(today(),1));S.sessions[d]=buildSession(d,'T','gym',['bag','rope','kb'],{min:60});`);
+  await a.click({ dataset: { simple: "1" } });
+  assert.equal(a.run("S.profile.simple"), true);
+  assert.equal(a.run("!!S.sessions[iso(addDays(today(),1))]"), false, "open session dropped and rebuilt later");
+  a.run("const s={eq:['bag','rope'],loc:'gym',type:'T',min:60};globalThis.su=setupOf(s,'x')");
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(su.eq)")), ["bag"]);
+});
+
+test("simple view: pictures instead of codes, no sparring choice, club logging only with club days", () => {
+  const a = app();
+  a.run(`S.profile.example=false;S.profile.simple=true;S.profile.club={days:[],minutes:90};const d=iso(today());ui.sel=d;ui.tab='session';ui.setup=null;
+    S.sessions[d]=buildSession(d,'T','gym',defaultEq(),{min:60});`);
+  assert.equal(a.run("codeOf('T')"), "🥊");
+  assert.equal(a.run("effortTxt(7)"), "😣 Hart");
+  assert.match(a.run("weekStrip(null,'data-open')"), /class="k ico"/);
+  const h = a.run("renderSession()");
+  assert.doesNotMatch(h, /data-stype="P"/, "no sparring choice");
+  assert.match(h, /data-stype="T"/);
+  assert.doesNotMatch(a.run("clubPanel(iso(addDays(today(),-1)))"), /data-clublog/, "no club logging without club days");
+  a.run("S.profile.club={days:[0,1,2,3,4,5,6],minutes:90}");
+  a.run("S.profile.simple=false");
+  assert.equal(a.run("codeOf('T')"), "TEC");
+  a.run("ui.setup=null");
+  assert.match(a.run("renderSession()"), /data-stype="P"/);
+});
