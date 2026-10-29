@@ -1842,7 +1842,7 @@ test("partner sessions: counter actions per session – Grundlage 1, Fortgeschri
     for(const lvl of [0,1,2]){S.profile.level=lvl;const ns=[];for(let i=0;i<150;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min:90});const rb=s.blocks.find(b=>b.rounds);
       const pr=rb.items.filter(x=>['partner','pads','counter'].includes(x.k)&&x.combo).length;ns.push([rb.items.filter(x=>x.react).length,pr]);}out[lvl]=ns;}return out})())`));
   const check = (lvl, lo, hi) => {
-    for (const [n, pr] of res[lvl]) assert.ok(n >= Math.min(lo, pr) && n <= Math.min(hi, pr), `level ${lvl}: ${n} of ${pr}`);
+    for (const [n, pr] of res[lvl]) assert.ok(n >= Math.min(lo, pr - 1) && n <= Math.min(hi, pr - 1), `level ${lvl}: ${n} of ${pr}`);
     const vals = new Set(res[lvl].map(([n]) => n));
     return vals;
   };
@@ -1856,7 +1856,7 @@ test("partner sessions build up easy → hard; counters sit on the final combos 
   const a = app();
   const res = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];let first=0,late=0,total=0;
     for(const disc of ['lc','kl','k1'])for(const lvl of [0,1,2]){S.profile.disc=disc;S.profile.level=lvl;S.profile.limits=[];S.profile.birthYear=1995;
-      for(let i=0;i<60;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min:90});const rb=s.blocks.find(b=>b.rounds);
+      for(const min of [30,45,60,90])for(let i=0;i<25;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min});if(!s.blocks.some(b=>b.rounds))continue;const rb=s.blocks.find(b=>b.rounds);
         const pr=rb.items.map((r,k)=>[r,k]).filter(([r])=>PARTNER_K.has(r.k)&&r.combo);
         const lv=pr.map(([r])=>comboLevel(r.combo));
         // allow the opening-round easing swap: compare from the second partner round on
