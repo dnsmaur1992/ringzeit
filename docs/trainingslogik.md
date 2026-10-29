@@ -69,6 +69,10 @@ Alte Protokolle ohne neue Leistungs-, Abschluss- oder Planinformationen bleiben 
 
 ## Technik und Kondition
 
+**Schwerpunkt „Mehr Boxen“ / „Mehr Kicks“** (Profil, ab Level Fortgeschritten): Kombis mit dem gewünschten Anteil werden quadratisch bevorzugt (Gewicht `(0,15 + Anteil)³`), Trainingsthemen der eigenen Seite bevorzugt und die der Gegenseite seltener gewählt. Gemessen über 60 Einheiten: „Mehr Boxen“ etwa 28–36 % Kicks, „Ausgeglichen“ 40–45 %, „Mehr Kicks“ 54–67 %. Keine Seite verschwindet ganz – im Full Contact sind ohnehin mindestens 6 Kicks pro Runde Pflicht. Die Einstellung wirkt sofort auf alle noch offenen Einheiten ab heute.
+
+**Neu erstellen nach Änderungen:** Profil-, Block-, Tagesform- und Fasten-Änderungen bauen alle offenen Einheiten ab heute neu. Eine bereits begonnene Einheit (Trainingsführung gestartet, abgehakt oder Sätze eingetragen) bleibt mit ihren Einträgen erhalten.
+
 Ein Schritt entspricht 5 % höherer **Pausendichte**: Die ursprüngliche Pause wird durch den Stufenfaktor geteilt. Das ist ausdrücklich keine Behauptung einer gleich großen Steigerung der gesamten Trainingsbelastung. Der Faktor ist zwischen 0,90 und 1,20 begrenzt; Pausen werden niemals kürzer als 30 Sekunden. Bei längeren Pausen wird die Rundenzahl nötigenfalls reduziert, damit Arbeitszeit plus Pausen in das bestehende Zeitbudget passen. Arbeitsrunden, Kontaktintensität und offizielle Wettkampfformate werden durch diese Progression nicht erhöht.
 
 ## Kraftziele
