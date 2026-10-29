@@ -65,7 +65,14 @@ self.addEventListener("activate", (e) => {{
 }});
 self.addEventListener("fetch", (e) => {{
   if (e.request.method !== "GET" || new URL(e.request.url).origin !== location.origin) return;
-  // the app page itself: network first (so an update shows on the next start), the cached copy offline or after 3 s
+  // the app page itself ("./" or index.html): network first (so an update shows on the next start), the cached copy
+  // offline or after 3 s. Other pages (e.g. installieren.html) are not the app and must never replace it in the cache.
+  const path = new URL(e.request.url).pathname,
+    appShell = path === new URL("./", location.href).pathname || path.endsWith("/index.html");
+  if (e.request.mode === "navigate" && !appShell) {{
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request, {{ ignoreSearch: true }})));
+    return;
+  }}
   if (e.request.mode === "navigate") {{
     e.respondWith(
       caches.open(CACHE).then((c) => {{
