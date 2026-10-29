@@ -8774,15 +8774,20 @@
     out.forEach((e) => used.add(e.id));
     return out.map((e) => ({ kind: "ex", id: e.id }));
   }
+  const FOCUS_POW = 3,
+    FOCUS_THEME = 1.2;
   const kickShare = (c) => {
     const s = c.filter((x) => STRIKE.has(x));
     return s.length ? s.filter((x) => KICKS.has(x)).length / s.length : 0;
   };
+  /* "More boxing"/"More kicks": combos with the preferred share are picked clearly more often (squared weight),
+     the other side still appears – nobody should lose kicks or punches entirely */
   function weightedPick(pool, focus) {
     if (focus === "bal") return rnd(pool);
     const w = pool.map((c) => {
-      const k = kickShare(c);
-      return focus === "kick" ? 1 + k * 3 : 1 + (1 - k) * 3;
+      const k = kickShare(c),
+        x = focus === "kick" ? k : 1 - k;
+      return (0.15 + x) ** FOCUS_POW;
     });
     let r = Math.random() * w.reduce((a, b) => a + b, 0);
     for (let i = 0; i < pool.length; i++) {
@@ -8809,7 +8814,8 @@
       .map((s) => s.theme);
     const sc = (th) =>
       recent.filter((x) => x === th.id).length -
-      ((focus === "box" && th.tag === "hand") || (focus === "kick" && th.tag === "kick") ? 0.6 : 0) +
+      ((focus === "box" && th.tag === "hand") || (focus === "kick" && th.tag === "kick") ? FOCUS_THEME : 0) +
+      ((focus === "box" && th.tag === "kick") || (focus === "kick" && th.tag === "hand") ? FOCUS_THEME : 0) +
       Math.random() * 0.5;
     return ok.sort((a, b) => sc(a) - sc(b))[0] || null;
   }
@@ -19849,7 +19855,7 @@ ${setupFields(setup, ty)}
     }
     // planned sessions from today on are rebuilt with the new block content
     const td = iso(today());
-    for (const k of Object.keys(S.sessions)) if (k >= td && !doneOn(k)) delete S.sessions[k];
+    dropOpenSessions(td);
     ui.setup = null;
     store.save();
   }
@@ -21186,7 +21192,7 @@ ${setupFields(setup, ty)}
   /* ============ Everyday life: week check-in, today's form, profile panel ============ */
   function lifeReplan(fromDs) {
     const td = fromDs || iso(today());
-    for (const k of Object.keys(S.sessions)) if (k >= td && !doneOn(k)) delete S.sessions[k];
+    dropOpenSessions(td);
     ui.setup = null;
     loadCache = {};
     ["weekMood", "lowTime", "work", "form"].forEach((k) => draft && (draft[k] = S.profile[k]));
@@ -21699,7 +21705,7 @@ ${setupFields(setup, ty)}
       S.profile.fast = { y: hj.y, on };
       if (draft) draft.fast = S.profile.fast;
       const td = iso(today());
-      for (const k of Object.keys(S.sessions)) if (k >= td && !doneOn(k)) delete S.sessions[k];
+      dropOpenSessions(td);
       ui.setup = null;
       store.save();
       render();
@@ -22433,6 +22439,14 @@ ${setupFields(setup, ty)}
   });
   /* Profile changes take effect at once: the plan settings are copied over and planned sessions from today on are rebuilt */
   const PLAN_KEYS = ["level", "disc", "focus", "birthYear", "sex", "days", "minutes", "club", "comps", "limits"];
+  /* Open sessions from `from` on are dropped and rebuilt with the new settings when they are next shown.
+     A session that was already started (player progress, ticks or logged sets) is kept with its entries. */
+  function dropOpenSessions(from) {
+    const started = (x) =>
+      !!(x && (x.flow || (x.perf && Object.keys(x.perf).length) || (x.checked && Object.keys(x.checked).length)));
+    for (const k of Object.keys(S.sessions))
+      if (k >= from && !doneOn(k) && !started(S.sessions[k])) delete S.sessions[k];
+  }
   function applyPlan() {
     if (!draft) return;
     if (!draft.days.length) return toast(t("needDay"));
@@ -22440,7 +22454,7 @@ ${setupFields(setup, ty)}
     S.profile.example = false;
     if (!S.profile.planStart) S.profile.planStart = iso(today());
     const td = iso(today());
-    for (const k of Object.keys(S.sessions)) if (k >= td && !doneOn(k)) delete S.sessions[k];
+    dropOpenSessions(td);
     ui.setup = null;
     loadCache = {};
     store.save();
