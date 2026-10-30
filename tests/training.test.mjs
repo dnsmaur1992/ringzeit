@@ -2006,3 +2006,40 @@ test("the partner's attacks vary within a session", () => {
     return rep; })()`);
   assert.equal(r, 0);
 });
+
+test("as a pair: circuits are offset so no device is needed by both, set work alternates; split view A|B", () => {
+  const a = app();
+  const r = JSON.parse(a.run(`JSON.stringify((() => { S.profile.disc = "kl"; S.profile.level = 1; S.profile.limits = []; S.profile.birthYear = 1995;
+    let duo = 0, clash = 0, html = "", sets = 0;
+    for (let i = 0; i < 150; i++) for (const ty of ["T", "S", "K"]) {
+      const s = buildSession("2026-11-04", ty, "gym", ["partner", "kb", "bar", "weights", "bag", "rope"], { min: 60 });
+      s.eq = s.eq || ["partner", "kb", "bar", "weights", "bag", "rope"];
+      s.blocks.forEach((b) => { if (isDuo(s, b)) { duo++; clash += duoOff(s, b).clash; if (!html) html = blockHead(b, s); }
+        else if (!b.rounds && blockHead(b, s).includes("Satzpause ist der Satz")) sets++; }); }
+    const kb = EX.findIndex((e) => e.cat === "str" && e.eq && e.eq.includes("kb"));
+    sets = blockHead({ key: "str", sets: "3× 8–10", min: 12, items: [{ id: kb }] }, { eq: ["partner", "kb"] }).includes("Satzpause ist der Satz") ? 1 : 0;
+    const solo = buildSession("2026-11-04", "S", "gym", ["kb", "bar"], { min: 60 });
+    return { duo, clash, html, sets, soloDuo: solo.blocks.some((b) => isDuo(solo, b)) }; })())`));
+  assert.ok(r.duo > 20, JSON.stringify(r).slice(0, 200));
+  assert.ok(r.clash / r.duo < 0.1, `clashes ${r.clash}/${r.duo}`);
+  assert.match(r.html, /class="duo"/); assert.match(r.html, /B bei Übung \d/);
+  assert.ok(r.sets > 0, "set-based blocks say: take turns");
+  assert.equal(r.soloDuo, false);
+});
+
+test("full contact (FC, K1): harder conditioning for adults, same length; not in LC/KL, not for youth", () => {
+  const a = app();
+  const r = JSON.parse(a.run(`JSON.stringify((() => { const o = {}; S.profile.limits = []; S.profile.level = 2;
+    for (const [disc, by] of [["fc", 1995], ["k1", 1995], ["lc", 1995], ["kl", 1995], ["fc", today().getFullYear() - 16]]) {
+      S.profile.disc = disc; S.profile.birthYear = by; let h = 0, n = 0, area = 0, min = 0;
+      for (let i = 0; i < 100; i++) { const b = hardBlock(["partner", "bag"], "gym", false); min = Math.max(min, b.min);
+        for (const it of b.items) { n++; if (it.h) h++; } if (b.items.some((it) => (disc === "k1" ? ["checks","shinbag","shintap"] : ["abs","bodybag","brace"]).includes(it.id))) area++; }
+      o[disc + by] = { h: h / n, area, min }; }
+    S.profile.disc = "fc"; S.profile.birthYear = 1995; o.soft = hardBlock(["partner"], "gym", true).items.some((it) => it.h);
+    return o; })())`));
+  assert.ok(r.fc1995.h > 0.9 && r.k11995.h > 0.9, JSON.stringify(r));
+  assert.equal(r.lc1995.h, 0); assert.equal(r.kl1995.h, 0);
+  assert.equal(Object.keys(r).filter((k) => k.startsWith("fc") && k !== "fc1995").map((k) => r[k].h)[0], 0);
+  assert.ok(r.fc1995.area > 90 && r.k11995.area > 90);
+  assert.equal(r.fc1995.min, 6); assert.equal(r.soft, false);
+});
