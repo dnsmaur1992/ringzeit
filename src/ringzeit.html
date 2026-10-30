@@ -621,15 +621,20 @@
     font-family: inherit;
   }
   .combo .pg.a,
-  .legend .lg.a {
+  .legend .lg.a,
+  .fnext .lg.a,
+  .pmine .lg.a {
     border-color: #7fb7f2;
   }
   .combo .pg.b,
-  .legend .lg.b {
+  .legend .lg.b,
+  .fnext .lg.b {
     border-color: #e8c25a;
   }
   .combo .pg .pgw,
-  .legend .lg {
+  .legend .lg,
+  .fnext .lg,
+  .pmine .lg {
     font-family: var(--mono);
     font-size: 10px;
     font-weight: 700;
@@ -637,12 +642,15 @@
     padding: 1px 5px;
   }
   .combo .pg.a .pgw,
-  .legend .lg.a {
+  .legend .lg.a,
+  .fnext .lg.a,
+  .pmine .lg.a {
     color: #0a0b0d;
     background: #7fb7f2;
   }
   .combo .pg.b .pgw,
-  .legend .lg.b {
+  .legend .lg.b,
+  .fnext .lg.b {
     color: #0a0b0d;
     background: #e8c25a;
   }
@@ -4013,6 +4021,114 @@
   }
   .pcard.done b {
     color: var(--done);
+  }
+  /* training as a pair: two columns, A left (light blue), B right (yellow), row by row */
+  .duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 10px;
+    text-align: left;
+  }
+  .duo .dh b {
+    display: inline-block;
+    line-height: 1.5;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 1px 7px;
+    color: #0a0b0d;
+  }
+  .duo .dh.a b {
+    background: #7fb7f2;
+  }
+  .duo .dh.b b {
+    background: #e8c25a;
+  }
+  .duo .dc {
+    border: 1.5px solid;
+    border-radius: 10px;
+    padding: 6px 8px;
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--frost);
+  }
+  .duo .dc i {
+    font-style: normal;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--mist);
+    margin-right: 5px;
+  }
+  .duo .dc.a {
+    border-color: #7fb7f2;
+  }
+  .duo .dc.b {
+    border-color: #e8c25a;
+  }
+  .duo .dc.on {
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  /* player, training as a pair: both exercises side by side in the big card */
+  .pduo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .pduo .pdc {
+    border: 1.5px solid;
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 0;
+  }
+  .pduo .pdc.a {
+    border-color: #7fb7f2;
+  }
+  .pduo .pdc.b {
+    border-color: #e8c25a;
+  }
+  .pduo .pdw {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 1px 7px;
+    color: #0a0b0d;
+  }
+  .pduo .a .pdw {
+    background: #7fb7f2;
+  }
+  .pduo .b .pdw {
+    background: #e8c25a;
+  }
+  .pduo .fsk {
+    margin: 6px 0 4px;
+  }
+  .pduo .fsk svg {
+    max-height: 90px;
+  }
+  .pduo b {
+    font-size: 18px;
+    line-height: 1.2;
+    margin: 4px 0;
+    overflow-wrap: anywhere;
+  }
+  .pduo .dose {
+    font-size: 14px;
+  }
+  .pduo p {
+    font-size: 13px;
+    margin: 4px 0 0;
+  }
+  .pmine {
+    margin: 10px 2px 4px;
+    font-size: 13px;
+    color: var(--mist);
   }
   .plap {
     margin: 12px 0 0;
@@ -9683,6 +9799,7 @@
     /* Fist (fist: true) – one of these is in every hardening block. strike = hitting something; wr = loads the wrist */
     {
       id: "fGlove",
+      h: { de: "3× 20 s kräftige Geraden mit voller Wucht und fest geschlossener Faust, Treffer mit den ersten beiden Knöcheln, Handgelenk gerade.", en: "3× 20 s hard straights with full impact and a tight fist, land with the first two knuckles, wrist straight." },
       fist: true,
       m: "b",
       strike: true,
@@ -9698,6 +9815,7 @@
     },
     {
       id: "fWraps",
+      h: { de: "Nur mit Bandagen, ohne Handschuhe: 3× 30 s gerade Schläge mit 50–70 % Kraft. Sofort stoppen, wenn etwas schmerzt.", en: "Wraps only, no gloves: 3× 30 s straight punches at 50–70 % power. Stop at once if anything hurts." },
       fist: true,
       m: "b",
       strike: true,
@@ -9714,6 +9832,7 @@
     },
     {
       id: "fBare",
+      h: { de: "Ohne Bandagen und Handschuhe: 3× 20 s Geraden mit höchstens 50 % Kraft, nur auf den Sack. Steigerung über Wochen, nicht über Tage.", en: "No wraps, no gloves: 3× 20 s straights at no more than 50 % power, bag only. Progress over weeks, not days." },
       fist: true,
       m: "b",
       strike: true,
@@ -9731,21 +9850,23 @@
     },
     {
       id: "fPads",
+      h: { de: "Partner hält fest dagegen, 3× 20 s harte Geraden mit fester Faust und geradem Handgelenk. Dann tauschen.", en: "Partner holds firm, 3× 20 s hard straights with a tight fist and straight wrist. Then swap." },
       fist: true,
       m: "p",
       strike: true,
       wr: true,
       de: [
         "Faust fest an den Pratzen",
-        "Partner hält ruhig, 3× 20 s Geraden mit fester Faust und geradem Handgelenk – Fokus auf saubere Knöchelfläche.",
+        "Partner hält ruhig, 3× 20 s Geraden mit fester Faust und geradem Handgelenk – Fokus auf saubere Knöchelfläche. Dann tauschen.",
       ],
       en: [
         "Firm fist on the pads",
-        "Partner holds steady, 3× 20 s straights with a tight fist and straight wrist – focus on a clean knuckle surface.",
+        "Partner holds steady, 3× 20 s straights with a tight fist and straight wrist – focus on a clean knuckle surface. Then swap.",
       ],
     },
     {
       id: "fPush",
+      h: { de: "Auf den ersten beiden Knöcheln auf festem Boden statt Matte. 3× 10–15 Wiederholungen, Handgelenk gerade.", en: "On the first two knuckles on a hard floor instead of a mat. 3× 10–15 reps, wrist straight." },
       fist: true,
       m: "s",
       wr: true,
@@ -9757,6 +9878,7 @@
     },
     {
       id: "fPlank",
+      h: { de: "Liegestütz-Position auf den Fäusten auf festem Boden halten, 3× 30–45 s, Handgelenke gerade.", en: "Hold the push-up position on your fists on a hard floor, 3× 30–45 s, wrists straight." },
       fist: true,
       m: "s",
       wr: true,
@@ -9765,6 +9887,7 @@
     },
     {
       id: "fTap",
+      h: { de: "Mit der Faust kräftig auf eine feste, dünn gepolsterte Fläche klopfen, 3× 45 s pro Hand.", en: "Tap a firm, thinly padded surface hard with your fist, 3× 45 s per hand." },
       fist: true,
       m: "s",
       strike: true,
@@ -9800,18 +9923,20 @@
     },
     {
       id: "abs",
+      h: { de: "Partner schlägt mit Handschuhen Geraden und Körperhaken mit mittlerem Druck gegen Bauch und Seiten, du spannst an und atmest scharf aus. 3× 20 s, dann tauschen. Den Druck über Wochen steigern.", en: "Partner throws straights and body hooks with gloves at medium pressure to your stomach and sides while you brace and exhale sharply. 3× 20 s, then swap. Build pressure over weeks." },
       m: "p",
       de: [
         "Bauch-Abhärtung",
-        "Partner tippt mit Handschuhen kontrolliert gegen den Bauch, du spannst an und atmest scharf aus. 3× 20 s, Druck nur langsam steigern.",
+        "Partner tippt mit Handschuhen kontrolliert gegen den Bauch, du spannst an und atmest scharf aus. 3× 20 s, Druck nur langsam steigern. Dann tauschen.",
       ],
       en: [
         "Ab conditioning",
-        "Partner taps your stomach with gloves while you brace and exhale sharply. 3× 20 s, build pressure slowly.",
+        "Partner taps your stomach with gloves while you brace and exhale sharply. 3× 20 s, build pressure slowly. Then swap.",
       ],
     },
     {
       id: "arms",
+      h: { de: "Partner schlägt und tritt mittelhart auf deine Deckung, du blockst mit festen Unterarmen. 2× 30 s, dann tauschen.", en: "Partner punches and kicks at medium power into your guard, you block with firm forearms. 2× 30 s, then swap." },
       m: "p",
       lim: "s",
       de: [
@@ -9825,6 +9950,7 @@
     },
     {
       id: "checks",
+      h: { de: "Abwechselnd Low Kicks mit mittlerem Druck und Checks Schienbein gegen Schienbein, mit Schienbeinschonern. 3× 30 s.", en: "Take turns throwing low kicks at medium pressure and checking shin to shin, with shin guards. 3× 30 s." },
       m: "p",
       disc: ["kl", "k1"],
       risky: true,
@@ -9836,6 +9962,7 @@
     },
     {
       id: "shinbag",
+      h: { de: "Je Seite 30 Roundhouse-Kicks mit dem Schienbein mit kräftiger Wucht – nur so fest, wie es ohne Schmerz geht.", en: "30 roundhouse kicks per side with the shin and real impact – only as hard as you can without pain." },
       m: "b",
       adult: true,
       de: [
@@ -9846,6 +9973,7 @@
     },
     {
       id: "bodybag",
+      h: { de: "Den Sandsack kräftig anschwingen und den angespannten Rumpf dagegen nehmen, vorne und seitlich. 3× 20 s je Seite.", en: "Swing the bag hard and take it on your braced core, front and sides. 3× 20 s per side." },
       m: "b",
       de: [
         "Rumpf an den Sack",
@@ -9855,6 +9983,7 @@
     },
     {
       id: "brace",
+      h: { de: "Bauch fest anspannen, scharf ausatmen und dabei mit der eigenen Faust kräftig gegen den Bauch drücken. 3× 15 Wiederholungen.", en: "Brace hard, exhale sharply and press your own fist firmly into your stomach. 3× 15 reps." },
       m: "s",
       de: [
         "Spannung & Ausatmen",
@@ -9864,6 +9993,7 @@
     },
     {
       id: "shintap",
+      h: { de: "Schienbeine mit der Faust kräftig abklopfen, von unten nach oben, je Bein 1 Minute.", en: "Tap your shins firmly with a fist, bottom to top, 1 minute per leg." },
       m: "s",
       de: [
         "Schienbeine abklopfen",
@@ -9873,13 +10003,22 @@
     },
     {
       id: "neck",
+      h: { de: "Isometrisch kräftig gegen die eigene Hand drücken, je 15 s in vier Richtungen, 2 Durchgänge.", en: "Press hard isometrically against your own hand, 15 s in four directions, 2 rounds." },
       m: "s",
       de: ["Nacken stabil", "Isometrisch gegen die eigene Hand drücken, je 10 s in vier Richtungen."],
       en: ["Stable neck", "Press isometrically against your own hand, 10 s in four directions."],
     },
   ];
+  /* name and text of a hardening item; the harder full-contact dose when the item carries h */
+  function hardTxt(id, h) {
+    const hd = HARD.find((x) => x.id === id) || HARD[0],
+      lg = S.profile.lang;
+    return [hd[lg][0], h && hd.h ? hd.h[lg] : hd[lg][1]];
+  }
   function hardBlock(eq, loc, soft) {
     const p = S.profile,
+      // harder only for full-contact adults and never in taper/recovery weeks (soft)
+      full = (p.disc === "fc" || p.disc === "k1") && !young() && !soft,
       ka = kneeAnk(),
       modes = ["s"];
     // taper and recovery weeks: solo work without impact only
@@ -9898,11 +10037,19 @@
     const fists = ok.filter((x) => x.fist && (!x.lvl || p.level >= x.lvl) && !(x.wr && p.limits.includes("wrist"))),
       fistPick = shuffle(fists.filter((x) => x.m !== "s"))[0] || shuffle(fists)[0];
     const others = ok.filter((x) => !x.fist),
-      other = shuffle(others.filter((x) => x.m !== "s"))[0] || shuffle(others)[0];
+      // full contact (FC, K1): the area the discipline takes the hits on comes first – body in FC, shins in K1
+      focusArea = full ? (p.disc === "k1" ? ["checks", "shinbag", "shintap"] : ["abs", "bodybag", "brace"]) : [],
+      pref = others.filter((x) => focusArea.includes(x.id)),
+      other =
+        shuffle(pref.filter((x) => x.m !== "s"))[0] ||
+        shuffle(others.filter((x) => x.m !== "s"))[0] ||
+        shuffle(pref)[0] ||
+        shuffle(others)[0];
+    // same length, harder: full-contact adults get the harder dose (h) where an exercise has one
     return {
       key: "hard",
       min: 6,
-      items: [fistPick, other].filter(Boolean).map((x) => ({ kind: "hard", id: x.id })),
+      items: [fistPick, other].filter(Boolean).map((x) => (full && x.h ? { kind: "hard", id: x.id, h: 1 } : { kind: "hard", id: x.id })),
     };
   }
   function buildSession(dateStr, type, loc, eqIn, opts = {}) {
@@ -11965,7 +12112,7 @@
   }
   function itemTitle(sess, bi, ni) {
     const it = sess.blocks[bi].items[ni];
-    if (it.kind === "hard") return (HARD.find((x) => x.id === it.id) || HARD[0])[S.profile.lang][0];
+    if (it.kind === "hard") return hardTxt(it.id, it.h)[0];
     if (it.kind === "run") return t("run");
     if (it.kind === "exam") return examItem(it.id)?.[S.profile.lang] || t("main");
     if (EX[it.id]) return exText(it.id).name;
@@ -12394,7 +12541,7 @@ ${setupFields(setup, ty)}
     const b = sess.blocks[bi],
       lg = S.profile.lang === "de" ? 0 : 1;
     let h = "";
-    h += `<div class="block" data-block="${bi}">${blockHead(b)}`;
+    h += `<div class="block" data-block="${bi}">${blockHead(b, sess)}`;
     if (b.items.some((it) => it.combo))
       h += `<div class="legend">${t("legend")}${b.items.some((it) => it.react) ? `<br>${t("legendReact")}` : ""}${b.items.some((it) => PARTNER_K.has(it.k)) ? `<br>${esc(t("partnerNote"))}` : ""}${(() => { const g = b.items.map(guardCue).find(Boolean); return g ? `<br>${esc(g)}` : ""; })()}</div>`;
     b.items.forEach((it, n) => {
@@ -12408,8 +12555,8 @@ ${setupFields(setup, ty)}
         h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, "Z" + it.zone, preview)}<div class="tx"><b>${z3 ? t("z3set")(it.reps, it.on, it.off) : `${it.min} ${t("min")} · ${t("z2")}`}</b><div>${z3 ? t("z3d") : t("z2d")}</div></div></div>`;
       } else if (it.kind === "hard") {
         const hd = HARD.find((q) => q.id === it.id) || HARD[0],
-          x = hd[S.profile.lang];
-        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${SKETCH[hd.de[0]] ? `<button type="button" class="exn" data-hardinfo="${hd.id}"><b>${esc(x[0])}</b><span class="exi" aria-hidden="true">i</span></button>` : `<b>${esc(x[0])}</b>`}<div>${esc(x[1])}</div></div></div>`;
+          x = hardTxt(hd.id, it.h);
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${SKETCH[hd.de[0]] ? `<button type="button" class="exn" data-hardinfo="${hd.id}${it.h ? "|h" : ""}"><b>${esc(x[0])}</b><span class="exi" aria-hidden="true">i</span></button>` : `<b>${esc(x[0])}</b>`}<div>${esc(x[1])}</div></div></div>`;
       } else if (it.k === "sim") {
         h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx"><b>${t("simT")(it.fight, it.r)}</b><div>${it.fight > 1 && it.r === 1 ? t("simD2") : t("simD1")}${it.beg ? t("simBeg") : ""}</div></div></div>`;
       } else if (it.k === "task") {
@@ -12676,6 +12823,7 @@ ${setupFields(setup, ty)}
           enterFirst: "Bitte erst die Wiederholungen eintragen.",
           enterSay: "Wiederholungen eintragen",
           skippedOpen: "Übersprungen – der Satz bleibt offen.",
+          mine: "deine Werte – B trägt nichts ein",
         }
       : {
           ready: "Get ready",
@@ -12714,6 +12862,7 @@ ${setupFields(setup, ty)}
           enterFirst: "Please enter your reps first.",
           enterSay: "enter your reps",
           skippedOpen: "Skipped – the set stays open.",
+          mine: "your numbers – B enters nothing",
         };
   /* iPhone/iPad: the side switch (or silent mode on newer models) mutes gong and calls */
   /* Android: no mute switch, but media volume is separate from the ringer volume */
@@ -12785,7 +12934,7 @@ ${setupFields(setup, ty)}
   function stepDesc(sess, st) {
     const it = sess.blocks[st.bi].items[st.ni];
     if (!it) return "";
-    if (it.kind === "hard") return (HARD.find((x) => x.id === it.id) || HARD[0])[S.profile.lang][1];
+    if (it.kind === "hard") return hardTxt(it.id, it.h)[1];
     if (it.kind === "run") return it.zone === 3 ? t("z3d") : t("z2d");
     if (EX[it.id]) return exText(it.id).desc;
     return "";
@@ -13110,19 +13259,40 @@ ${setupFields(setup, ty)}
           playerRing(tm, st, true) +
           `<button type="button" class="btn ghost prest" data-exercise-timer="toggle" id="exerciseToggle">${tm.running ? workoutText().pause : workoutText().continue}</button>`;
       let small = st.lap != null ? P.lap(st.lap + 1, st.laps) : "";
+      // training as a pair: the big card shows both – A left, B right – each with picture, dose and text
+      if (st.lap != null && isDuo(sess, b)) {
+        const bk = (st.ni + duoOff(sess, b).off) % b.items.length,
+          side = (who, ni) => {
+            const s2 = { ...st, ni },
+              x = b.items[ni],
+              d2 = stepDose(sess, s2),
+              t2 = stepDesc(sess, s2),
+              sk2 = x && EX[x.id] && hasSketch(x.id);
+            return `<div class="pdc ${who}"><span class="pdw">${who.toUpperCase()}</span>${sk2 ? `<div class="fsk">${sketchSvg(EX[x.id].de, true)}</div>` : ""}<b>${esc(itemTitle(sess, st.bi, ni))}${who === "a" && done ? " ✓" : ""}</b>${d2 ? `<span class="dose">${esc(d2)}</span>` : ""}${t2 ? `<p>${esc(t2)}</p>` : ""}</div>`;
+          };
+        h += `<div class="pcard${done ? " done" : ""}">${small ? `<small>${esc(small)}</small>` : ""}<div class="pduo">${side("a", st.ni)}${side("b", bk)}</div></div>`;
+      } else {
       h += `<div class="pcard${done ? " done" : ""}">${sk ? `<div class="fsk">${sketchSvg(EX[it.id].de, true)}</div>` : ""}${small ? `<small>${esc(small)}</small>` : ""}<b>${esc(stepTitle(sess, st))}${done ? " ✓" : ""}</b>${dose ? `<span class="dose">${esc(dose)}</span>` : ""}${desc ? `<p>${esc(desc)}</p>` : ""}`;
       if (st.lap != null)
         h += `<ol class="plap">${b.items.map((x, k) => `<li class="${k === st.ni ? "on" : ""}">${esc(itemTitle(sess, st.bi, k))}</li>`).join("")}</ol>`;
       h += `</div>`;
+      }
       if (st.kind === "timed") {
         const plan = exerciseTiming(sess, st.bi, st.ni, undefined, st.lap || 0),
           running = tm && tm.player === i && !tm.done;
         if (plan && plan.choices.length > 1 && !running)
           h += `<div class="minirow player-tools"><span class="sub">${P.choose}:</span>${plan.choices.map((n) => `<button type="button" class="btn ghost" data-player="toggle" data-seconds="${n}">${n} s</button>`).join("")}</div>`;
       }
-      if (st.kind === "sets") h += playerSetsHtml(sess, st);
+      // as a pair the entries are A's – the person whose phone it is
+      if (st.kind === "sets")
+        h += (st.lap != null && isDuo(sess, b) ? `<div class="pmine"><span class="lg a">A</span> ${esc(P.mine)}</div>` : "") + playerSetsHtml(sess, st);
     }
-    h += `<div class="fnext">${nx ? (nx.kind === "finish" ? P.last : `${P.next}: <b>${esc(stepTitle(sess, nx))}</b>`) : ""}</div>`;
+    // as a pair inside a circuit: what comes next for A and for B
+    const nxB =
+      nx && nx.lap != null && nx.ni != null && isDuo(sess, sess.blocks[nx.bi])
+        ? itemTitle(sess, nx.bi, (nx.ni + duoOff(sess, sess.blocks[nx.bi]).off) % sess.blocks[nx.bi].items.length)
+        : "";
+    h += `<div class="fnext">${nx ? (nx.kind === "finish" ? P.last : nxB ? `${P.next}: <span class="lg a">A</span> <b>${esc(stepTitle(sess, nx))}</b> · <span class="lg b">B</span> <b>${esc(nxB)}</b>` : `${P.next}: <b>${esc(stepTitle(sess, nx))}</b>`) : ""}</div>`;
     // controls: previous · main · next
     let main;
     if (st.kind === "timed" || st.kind === "rest" || timedSets(st, sess)) {
@@ -18337,7 +18507,7 @@ ${setupFields(setup, ty)}
       h += `<h3>${esc(x[S.profile.lang])}</h3>${sdInfoHtml(o.id)}<div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
     } else if (o.kind === "hard") {
       const hd = HARD.find((q) => q.id === o.id),
-        x = hd[S.profile.lang],
+        x = hardTxt(o.id, o.h),
         k = SKETCH[hd.de[0]];
       h += `<h3>${esc(x[0])}</h3><div class="skwrap">${sketchSvg(hd.de[0])}${k.hold ? `<span class="skhold">${t("skHold")}</span>` : ""}</div><p class="sub" style="margin:0">${esc(x[1])}</p><div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>`;
     } else if (o.kind === "ex") {
@@ -20933,7 +21103,46 @@ ${setupFields(setup, ty)}
     }
     return circ ? one : `${n} × ${one}`;
   }
-  function blockHead(b) {
+  /* Training with a partner: you are two and every device is there once.
+     Circuit: both work at the same time, B starts further down the list so nobody needs the same device at once
+     (duoOff); the plan shows the two orders side by side, A left and B right.
+     Sets with set rest: you take turns – the set rest is the partner's set. Other device work: take turns. */
+  const exEqOf = (sess, id) => (EX[id] && EX[id].eq ? EX[id].eq.split("|").filter((q) => (sess.eq || []).includes(q)) : []);
+  const isDuo = (sess, b) =>
+    !!sess && (sess.eq || []).includes("partner") && isCirc(b) && !b.rounds && !["warm", "cool"].includes(b.key) && b.items.length > 1 && b.items.every((it) => EX[it.id]);
+  function duoOff(sess, b) {
+    const n = b.items.length,
+      eqs = b.items.map((it) => exEqOf(sess, it.id)),
+      clash = (o) => eqs.filter((e, i) => e.length && eqs[(i + o) % n].some((q) => e.includes(q))).length,
+      cand = [Math.ceil(n / 2), ...Array.from({ length: n - 1 }, (_, i) => i + 1).filter((o) => o !== Math.ceil(n / 2))];
+    let best = cand[0];
+    for (const o of cand) if (clash(o) < clash(best)) best = o;
+    return { off: best, clash: clash(best) };
+  }
+  const duoTxt = () =>
+    S.profile.lang === "de"
+      ? {
+          circ: (k) => `Zu zweit: gleichzeitig, aber versetzt – A beginnt bei Übung 1, B bei Übung ${k}. So ist jedes Gerät immer nur bei einem von euch.`,
+          clash: " Wo trotzdem beide dasselbe Gerät brauchen: abwechselnd.",
+          sets: " Zu zweit: abwechselnd – die Satzpause ist der Satz deines Partners.",
+          turns: "Zu zweit: Geräte abwechselnd – während einer arbeitet, macht der andere Pause, dann tauschen.",
+        }
+      : {
+          circ: (k) => `As a pair: at the same time, but offset – A starts at exercise 1, B at exercise ${k}. That way each device is only ever with one of you.`,
+          clash: " Where you both still need the same device: take turns.",
+          sets: " As a pair: take turns – the set rest is your partner's set.",
+          turns: "As a pair: take turns on the devices – one works, the other rests, then swap.",
+        };
+  function duoHtml(sess, bi, cur) {
+    const b = sess.blocks[bi],
+      n = b.items.length,
+      { off } = duoOff(sess, b),
+      cell = (who, k, on) => `<div class="dc ${who}${on ? " on" : ""}"><i>${k + 1}</i>${esc(itemTitle(sess, bi, k))}</div>`;
+    let h = `<div class="duo"><div class="dh a"><b>A</b></div><div class="dh b"><b>B</b></div>`;
+    for (let i = 0; i < n; i++) h += cell("a", i, cur === i) + cell("b", (i + off) % n, cur === i);
+    return h + `</div>`;
+  }
+  function blockHead(b, sess) {
     const de = S.profile.lang === "de";
     let info = b.sets || "";
     if (b.key === "mob") info = "";
@@ -20960,7 +21169,18 @@ ${setupFields(setup, ty)}
                   : " The heavy rep numbers are for weighted exercises; without weight you do more reps, but slowly."
                 : "")
             : "";
-    return `<div class="bhead"><b>${t(b.key)}</b><span>${b.min} ${t("min")}${info ? ` · ${esc(info)}` : ""}</span></div>${note ? `<div class="bnote">${note}</div>` : ""}`;
+    let duo = "",
+      extra = "";
+    const pair = !!sess && (sess.eq || []).includes("partner") && !b.rounds && !["warm", "cool", "hard"].includes(b.key);
+    if (pair && isDuo(sess, b)) {
+      const bi = sess.blocks.indexOf(b),
+        d = duoOff(sess, b);
+      extra = " " + duoTxt().circ(d.off + 1) + (d.clash ? duoTxt().clash : "");
+      duo = duoHtml(sess, bi, -1);
+    } else if (pair && straight) extra = duoTxt().sets;
+    else if (pair && b.items.some((it) => exEqOf(sess, it.id).length)) extra = (note ? " " : "") + duoTxt().turns;
+    const nt = note + esc(extra);
+    return `<div class="bhead"><b>${t(b.key)}</b><span>${b.min} ${t("min")}${info ? ` · ${esc(info)}` : ""}</span></div>${nt ? `<div class="bnote">${nt}${duo}</div>` : ""}`;
   }
 
   /* ============ Guide: hand wraps (animated), gear care, care & first aid ============ */
@@ -22362,7 +22582,10 @@ ${setupFields(setup, ty)}
       window.scrollTo(0, y);
       return;
     }
-    if (ds.hardinfo) return openSheet({ kind: "hard", id: ds.hardinfo });
+    if (ds.hardinfo) {
+      const [id, hh] = ds.hardinfo.split("|");
+      return openSheet({ kind: "hard", id, h: hh === "h" });
+    }
     if (ds.sdinfo) return openSheet({ kind: "sd", id: ds.sdinfo });
     if (ds.th) return openSheet({ kind: "th", id: ds.th, mode: "cards" });
     if (ds.thq || ds.tha) {
