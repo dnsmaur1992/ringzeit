@@ -99,6 +99,14 @@ Innerhalb einer Einheit wiederholt sich ein Angriff des Partners erst, wenn alle
 
 Kick Light und K1 behalten die bisherigen Texte („Kombination mit Kraft“) und bekommen keinen eigenen Hinweis im Partnerdrill.
 
+**Training zu zweit (Technik-Einheit mit Partner):** Ringzeit geht davon aus, dass ihr zu zweit seid und jedes Gerät einmal da ist.
+- **Zirkel** (z. B. Kraft): Beide arbeiten gleichzeitig, aber versetzt – A beginnt bei Übung 1, B weiter unten in der Liste. Der Versatz wird so gewählt, dass nie beide dasselbe Gerät brauchen (sonst: abwechselnd). Der Plan zeigt die beiden Reihenfolgen nebeneinander, A links (hellblau), B rechts (gelb), Zeile für Zeile; im Vollbild zeigt die große Karte beide Übungen nebeneinander – A links, B rechts, jeweils mit Bild, Dosierung und Hinweis – und „Als Nächstes“ nennt den nächsten Schritt für beide. Der Timer läuft nach der Übung von A; B macht seine Dosierung in derselben Zeit. Eingetragen werden nur die Werte von A – der Person, der das Handy gehört; über den Eingabefeldern steht „A – deine Werte, B trägt nichts ein“.
+- **Sätze mit Satzpause:** abwechselnd – die Satzpause ist der Satz des Partners.
+- **Andere Geräte-Übungen:** abwechselnd, einer arbeitet, der andere pausiert, dann tauschen.
+- **Partner-Übungen der Abhärtung** sagen ausdrücklich „dann tauschen“.
+
+**Abhärtung im Vollkontakt (Full Contact, K1):** gleiche Länge (6 Minuten, 2 Übungen), aber härter – für Erwachsene eine kräftigere Dosis (z. B. Bauch-Abhärtung mit Geraden und Körperhaken mit mittlerem Druck, Schienbein am Sack mit kräftiger Wucht, Faust-Liegestütze auf festem Boden), und der Bereich, der im Kampf getroffen wird, kommt zuerst dran: Rumpf in Full Contact, Schienbein in K1. Nicht für Jugendliche, nicht in Taper- und Erholungswochen; Leichtkontakt und Kick Light bleiben unverändert.
+
 **Ziel jeder Technik:** Jeder Tritt und jedes Knie nennt sein Ziel – Kopf, Körper oder Oberschenkel (zum Beispiel „Frontkick Körper“, „Hook-Kick Kopf“, „Knie Körper“); die Ansage sagt es mit. Schläge ohne Zusatz gehen zum Kopf (so steht es auch in der Legende über den Runden), dazu gibt es **Schläge zum Körper**: Jab Körper, Cross Körper und Körperhaken – in Kombinationen aller Niveaus, beim Schattenboxen, am Sandsack und im Partnerdrill (auch als Angriff des Partners, ab Fortgeschritten). Jede Einheit enthält mindestens einen Körpertreffer; fehlt er, geht ein Cross (oder Jab) einer Kombination zum Körper.
 
 **Keine Verteidigung ohne Grund:** Die von Ringzeit gebauten Kombinationen – Schattenboxen, Sandsack, Partnerdrill und Coach-Modus – enthalten kein Abtauchen und keinen Block. Verteidigt wird nur gegen eine echte Gegenaktion des Partners; ein Seitschritt steht höchstens am Ende, um die Linie zu verlassen. Eigene Vereins-Kombis bleiben unverändert.
