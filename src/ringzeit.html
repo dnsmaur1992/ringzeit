@@ -10941,6 +10941,8 @@
         extra += `<g transform="translate(${x} 196)"><path d="M-9 0 Q0 9 9 0 Z" fill="#B5562A" stroke="#6E2F12" stroke-width="1.5"/><ellipse class="flame" cx="0" cy="-5" rx="2.4" ry="4.4" fill="#FFC94A"/><circle cx="0" cy="-4" r="9" fill="#FFC94A" opacity=".12"/></g>`;
       }
     } else if (ev === "easter") {
+      // double size: the whole group scaled ×2 around the floor point (200, 207)
+      extra += `<g transform="translate(200 207) scale(2) translate(-200 -207)">`;
       [
         [176, 200, "#F48FB1", "#FFFFFF"],
         [200, 196, "#5DADE2", "#FFD23F"],
@@ -10948,7 +10950,7 @@
       ].forEach(([x, y, a, b]) => {
         extra += `<g transform="translate(${x} ${y})"><ellipse rx="8" ry="10.5" fill="${a}" stroke="#111318" stroke-width="2"/><path d="M-7.5 -2 q3.75 3 7.5 0 t7.5 0" fill="none" stroke="${b}" stroke-width="2.4"/><path d="M-6 4 h12" stroke="${b}" stroke-width="2" stroke-dasharray="2 2"/></g>`;
       });
-      extra += `<path d="M160 206 l4 -7 l3 7 l4 -8 l3 8 l4 -6 l3 6 M226 206 l4 -7 l3 7 l4 -8 l3 8" stroke="#58D68D" stroke-width="2" fill="none"/>`;
+      extra += `<path d="M160 206 l4 -7 l3 7 l4 -8 l3 8 l4 -6 l3 6 M226 206 l4 -7 l3 7 l4 -8 l3 8" stroke="#58D68D" stroke-width="2" fill="none"/></g>`;
     } else if (ev === "nouruz") {
       // sabzeh: sprouted wheat in a bowl, tied with a red ribbon
       let blades = "";
@@ -10983,7 +10985,8 @@
         extra += `<g transform="translate(${x} ${y})"><g class="fw" style="animation-delay:${dl}s" stroke="${c}" stroke-width="2.2" stroke-linecap="round">${rays}</g></g>`;
       });
     } else if (ev === "halloween") {
-      extra += `<g transform="translate(200 190)"><ellipse rx="17" ry="13" fill="#E8761F" stroke="#111318" stroke-width="2.5"/><path d="M-6 -12 Q0 -16 6 -12 M-9 -10 Q-12 0 -8 11 M9 -10 Q12 0 8 11" fill="none" stroke="#B85A12" stroke-width="2"/><path d="M0 -13 q1 -6 5 -8" stroke="#4E7A35" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-9 -3 l4 -4 l4 4z M1 -3 l4 -4 l4 4z" fill="#FFD23F"/><path d="M-8 4 q8 6 16 0 l-3 2 l-2 -2 l-3 2 l-3 -2 l-2 2z" fill="#FFD23F"/></g>`;
+      // double size, standing on the floor
+      extra += `<g transform="translate(200 203) scale(2) translate(0 -13)"><ellipse rx="17" ry="13" fill="#E8761F" stroke="#111318" stroke-width="2.5"/><path d="M-6 -12 Q0 -16 6 -12 M-9 -10 Q-12 0 -8 11 M9 -10 Q12 0 8 11" fill="none" stroke="#B85A12" stroke-width="2"/><path d="M0 -13 q1 -6 5 -8" stroke="#4E7A35" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-9 -3 l4 -4 l4 4z M1 -3 l4 -4 l4 4z" fill="#FFD23F"/><path d="M-8 4 q8 6 16 0 l-3 2 l-2 -2 l-3 2 l-3 -2 l-2 2z" fill="#FFD23F"/></g>`;
     }
     const orb = sky.sun
       ? `<circle cx="70" cy="170" r="90" fill="url(#orb)"/>`
