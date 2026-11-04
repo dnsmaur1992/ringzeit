@@ -1,7 +1,8 @@
 {
+  "id": "./",
   "name": "Ringzeit",
   "short_name": "Ringzeit",
-  "description": "Trainingsplaner für Kickboxen nach WAKO-Regeln",
+  "description": "Trainingsplaner für Kickboxen, Boxen und Taekwondo",
   "lang": "de",
   "start_url": "./",
   "scope": "./",
