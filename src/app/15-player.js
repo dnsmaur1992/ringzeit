@@ -1290,16 +1290,26 @@
         life += `<div class="panel"><div class="field"><span class="lab">${F.lbl}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-fast="${i ? "off" : "on"}" aria-pressed="${on === !i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${F.hint}</span></div></div>`;
       }
     }
-    life = lifePanelHtml() + life;
+    life = relaxPanelHtml() + lifePanelHtml() + life; // 7k: relaxing comes first
     app += `<div class="panel"><div class="field"><span class="lab">${t("seasonLbl")}</span><div class="seg">${[0, 1].map((i) => `<button type="button" data-season="${i ? "off" : "on"}" aria-pressed="${!!S.profile.seasonOff === !!i}">${t("onOff")[i]}</button>`).join("")}</div><span class="sub">${t("seasonHint")}</span></div></div>`;
     {
       const V = t("view");
       app = `<div class="panel"><div class="field"><span class="lab">${V.lbl}</span><div class="seg">${V.opts.map((x, i) => `<button type="button" data-simple="${i ? 0 : 1}" aria-pressed="${simpleView() === !i}">${x}</button>`).join("")}</div><span class="sub">${V.hint}</span></div></div>` + app;
     }
     if (canSpeak()) {
+      // 7l: choose a voice (with sample); a missing or failing choice falls back to the automatic one
       const V = t("vsel"),
-        bv = bestVoice();
-      app += `<div class="panel"><div class="field"><span class="lab">${V.lbl}</span><span class="sub">${bv ? esc(V.now(bv.name)) : V.none}</span>${speechFail ? `<span class="sub">${esc(V.fail(speechFail.code, speechFail.voice))}</span>` : ""}<span class="sub">${isIOS() ? V.ios : isAndroid() ? V.android : V.other}</span><button type="button" class="btn sec" data-vtest="1">${V.test}</button></div></div>`;
+        bv = bestVoice(),
+        lg = S.profile.lang === "de" ? "de" : "en",
+        pick = voicePickFor(lg),
+        list = voiceList(),
+        has = pick && list.some((v) => voiceKey(v) === pick.id),
+        row = (id, name, tag) =>
+          `<div class="vrow"><button type="button" class="chip" data-vpick="${esc(id)}" aria-pressed="${id ? !!has && pick.id === id : !has}">${esc(name)}${tag ? ` <small>${tag}</small>` : ""}</button>${id ? `<button type="button" class="btn ghost" data-vprobe="${esc(id)}" aria-label="${V.test}">▶</button>` : ""}</div>`;
+      app += `<div class="panel"><div class="field"><span class="lab">${V.lbl}</span><span class="sub">${pick && !has ? esc(V.missing(pick.name, bv ? bv.name : "–")) : has ? esc(V.chosen(pick.name)) : bv ? esc(V.now(bv.name)) : V.none}</span>${speechFail ? `<span class="sub">${esc(V.fail(speechFail.code, speechFail.voice))}</span>` : ""}<div class="vlist">${row("", V.auto, "")}${list
+        .slice(0, 16)
+        .map((v) => row(voiceKey(v), v.name, (new RegExp(V.q[voiceQual(v)], "i").test(v.name) ? "" : V.q[voiceQual(v)]) + (v.localService === false ? " · online" : "")))
+        .join("")}</div><span class="sub">${isIOS() ? V.ios : isAndroid() ? V.android : V.other}</span>${isIOS() ? `<span class="sub">${V.iosWeb}</span>` : ""}<button type="button" class="btn sec" data-vtest="1">${V.test}</button></div></div>`;
     }
     if (audioSessionOk())
       app += `<div class="panel"><div class="field"><span class="lab">${t("music").lbl}</span><div class="seg">${t(

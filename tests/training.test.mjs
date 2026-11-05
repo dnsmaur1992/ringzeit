@@ -2050,7 +2050,7 @@ test("full contact (FC, K1): harder conditioning for adults, same length; not in
 });
 
 // ---- 2-B: resume after reload / close ----
-const RESUME_KEY = "ringzeit-dev.resume.v1";
+const RESUME_KEY = "ringzeit.resume.v1";
 function restart(a) {
   // a second page load on the same device: only localStorage survives
   const b = app();

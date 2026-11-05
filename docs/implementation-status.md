@@ -258,6 +258,11 @@ Unterteilung (Betreiber, 03.11.2026 22:40, Empfehlungen übernommen): 7a automat
   - Die Liste unter dem Streifen (Heute) folgt der gezeigten Woche. Einheit öffnet auf der Woche des gewählten Tages, die Pfeile blättern von dort weiter. Heute startet immer auf der aktuellen Woche.
   - Künftige Tage zeigen den geplanten Typ. Die Einheit wird wie bisher erst beim Einrichten gebaut, das Blättern speichert also nichts.
   - Neuer Test „7m calendar“ (237 Tests), Baseline gleich, Gesamtprüfung ohne Befund, Browser 13/13, Isolation 12/12.
+- **Release 2 vorbereitet** (Auftrag 05.11.2026 06:41: „Navigation und stimmgeführte Meditation, Entspannung, Atmung gefallen mir … als Release-Paket inkl. Was ist neu“): Enthalten sind 7k Entspannen, 7l Stimmenauswahl und 7m Kalender. „Was ist neu“ ist neu geschrieben (5 Punkte DE/EN), `NEWS_V` = 8.
+  - Paket mit `tools/release.py` erzeugt. Geprüft im Release-Stand: 237 Tests, Baseline gleich, Gesamtprüfung ohne Befund, Browser 13/13, Cache nur `ringzeit-…`.
+  - **Update-Test vom heutigen Prod-Stand** (`40b42d9`, App-Version 04.11. 14:06) auf Release 2 mit der echten Sicherung des Betreibers: 16/16 bestanden. Daten vollständig, „Was ist neu“ genau einmal, Dev-Daten unberührt.
+  - Isolation gegen Dev 12/12.
+  - Hochgeladen wird nur durch den Betreiber.
 
 ## Nächster Vorschlag (ohne Freigabe)
 

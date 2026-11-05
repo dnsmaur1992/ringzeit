@@ -36,6 +36,45 @@
       })
       .join(", ");
   }
+  /* 7l: chosen voice per language ({ id, name }; id = voiceURI or name) and the list of voices the device gives the app */
+  const voiceKey = (v) => String(v.voiceURI || v.name || "");
+  // Apple's novelty voices (Grandpa, Bells, Zarvox …) live under com.apple.speech.synthesis.voice.*, the Eloquence ones under com.apple.eloquence.*
+  const voiceOdd = (v) => /eloquence|novelty|com\.apple\.speech\.synthesis\.voice\./i.test(`${v.name} ${v.voiceURI}`);
+  const voicePickFor = (lg) => {
+    const p = S.profile.voicePick && S.profile.voicePick[lg];
+    return p && p.id ? p : null;
+  };
+  const voiceQual = (v) => {
+    const id = `${v.name} ${v.voiceURI}`.toLowerCase();
+    return /premium/.test(id) ? "premium" : /enhanced|erweitert|verbessert|neural|natural/.test(id) ? "enh" : "std";
+  };
+  function voiceList() {
+    try {
+      if (!canSpeak() || !speechSynthesis.getVoices) return [];
+      const lg = S.profile.lang === "de" ? "de" : "en",
+        rank = { premium: 0, enh: 1, std: 2 },
+        seen = new Set();
+      return (speechSynthesis.getVoices() || [])
+        .filter((v) => String(v.lang || "").toLowerCase().replace("_", "-").startsWith(lg) && !voiceOdd(v))
+        .filter((v) => !seen.has(voiceKey(v)) && seen.add(voiceKey(v)))
+        .sort((a, b) => rank[voiceQual(a)] - rank[voiceQual(b)] || String(a.name).localeCompare(String(b.name)));
+    } catch (e) {
+      return [];
+    }
+  }
+  /* sample with exactly this voice (from a tap, so iOS lets it speak) */
+  function voiceProbe(id) {
+    try {
+      const v = voiceList().find((x) => voiceKey(x) === id);
+      if (!v) return;
+      const u = new SpeechSynthesisUtterance(t("voiceTest"));
+      u.voice = v;
+      u.lang = bcp47(v.lang) || (S.profile.lang === "de" ? "de-DE" : "en-GB");
+      u.rate = 0.95;
+      speechSynthesis.cancel();
+      setTimeout(() => speechSynthesis.speak(u), 60);
+    } catch (e) {}
+  }
   /* The best installed voice for the app language: premium/enhanced voices first, novelty and online-only voices last
      (the app runs offline in the gym). No voice found: the device default is used. */
   function bestVoice(skip = []) {
@@ -47,13 +86,17 @@
         norm = (v) => String(v.lang || "").toLowerCase().replace("_", "-"),
         vs = (speechSynthesis.getVoices() || []).filter((v) => norm(v).startsWith(lg) && !skip.includes(v.voiceURI || v.name));
       if (!vs.length) return null;
+      // 7l: the voice chosen under App & data comes first; if it is missing or failed (skip), the automatic choice follows
+      const pick = voicePickFor(lg),
+        mine = pick && vs.find((v) => voiceKey(v) === pick.id);
+      if (mine) return mine;
       const score = (v) => {
         const id = `${v.name} ${v.voiceURI}`.toLowerCase();
         let sc = 0;
         if (/premium/.test(id)) sc += 30;
         else if (/enhanced|erweitert|verbessert/.test(id)) sc += 20;
         else if (/neural|natural/.test(id)) sc += 15;
-        if (/eloquence|novelty/.test(id)) sc -= 20;
+        if (voiceOdd(v)) sc -= 20;
         if (v.localService === false) sc -= 12;
         if (norm(v) === want) sc += 3;
         if (v.default) sc += 1;

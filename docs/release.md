@@ -84,3 +84,10 @@ Ergebnis des Altdaten-Tests 2 (Browser):
 - Die Sicherung der alten App lässt sich auf einem frischen Gerät nach der Rückfrage laden.
 
 Die Sicherung des Betreibers liegt nicht im Repo.
+
+## 7. Release 2 (05.11.2026)
+
+Inhalt: Entspannen (Atemübungen und Meditationen mit Stimme), Stimmenauswahl, Kalender mit Wochen-Blättern.
+„Was ist neu“ hat `NEWS_V` 8. Upload wie in Abschnitt 3, aber **nur die geänderten Dateien** (siehe Paket). Es muss
+nichts gelöscht werden. Geprüft: 237 Tests, Baseline, Gesamtprüfung, Browser, Isolation und ein Update vom
+Prod-Stand `40b42d9` auf Release 2 mit der echten Sicherung (16/16).

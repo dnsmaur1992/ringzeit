@@ -276,7 +276,7 @@
     audioIdle = null;
   const timerVisible = () => document.visibilityState !== "hidden";
   const freeRunning = () => !!ui.ft && !ui.ft.paused && ["prep", "work", "rest"].includes(ui.ft.phase);
-  const timerRunning = () => !!ui.timer?.running || freeRunning() || !!ui.exerciseTimer?.running;
+  const timerRunning = () => !!ui.timer?.running || freeRunning() || !!ui.exerciseTimer?.running || relaxRunning();
   function scheduleTimers() {
     clearTimeout(timerClock);
     timerClock = null;

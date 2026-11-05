@@ -101,7 +101,7 @@ flowchart TB
 | **Planung** | `07-fitness-test`, `08-plan`, `12-progression`, `22-moving`, `28-my-combos`, `30-focus-blocks`, `33-dose`, `36-everyday`, `36-tkd-grade` | Wochenplan und Einheiten je Sportart bauen; Belastung und Entlastung; Steigerung; Schwerpunkt-Blöcke; Dosierung; Alltag; Taekwondo-Grade |
 | **Ansichten** | `09-illustrations-seasons`, `11-render`, `13-training-flow`, `15-player`, `15b-profile`, `16-onboarding`, `18-tour`, `19-sketches`, `21-sheet`, `26-badges`, `29-first-steps`, `32-success` | Heute, Einheit, Test, Verlauf, Profil (Über mich, Termine & Ziele in `15b-profile`); Figuren und Jahreszeiten; Einrichtung und Tour; Skizzen; Blätter (Sheets); Abzeichen |
 | **Training und Timer** | `14-guided-training`, `15-player`, `24-timer`, `25-announcer`, `27-free-timer`, `37-training-mode` | Geführtes Training Schritt für Schritt; Rundentimer mit gemeinsamer Uhr; Ansagen; freier Rundentimer; Vollbild |
-| **Inhalte** | `01-overview-i18n`, `02-tips`, `10-loader`, `17-grading`, `20-grading-theory`, `34-guide`, `34b-guide-box`, `34c-guide-tkd`, `35-packing` | Alle Texte DE/EN; Tipps und Fakten; Ladebild; Gürtelprüfung Kickboxen; Ratgeber je Sportart; Packliste |
+| **Inhalte** | `01-overview-i18n`, `02-tips`, `10-loader`, `17-grading`, `20-grading-theory`, `34-guide`, `34b-guide-box`, `34c-guide-tkd`, `34d-relax`, `35-packing` | Alle Texte DE/EN; Tipps und Fakten; Ladebild; Gürtelprüfung Kickboxen; Ratgeber je Sportart; Entspannen (Atemübungen, Meditationen); Packliste |
 | **Rahmen** | `00-imports`, `31-install-share`, `38-events`, `39-boot` | Naht zu den Modulen; Installieren und Teilen; ein zentraler Klick- und Eingabe-Handler; Start |
 
 ---
