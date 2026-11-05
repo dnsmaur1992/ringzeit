@@ -1,4 +1,4 @@
-<title>Ringzeit</title>
+<title>Ringzeit Dev</title>
 <meta name="claude:viewport-fit-sides" content="cover" />
 <style>
   /* Layout: quiet premium sports app — near-black ground, hairline panels with soft radius, thin condensed numerals, brass for state and focus, crimson only for kicks. Deliberately dark-only. */
@@ -250,6 +250,57 @@
     font-size: 22px;
     line-height: 1.15;
     font-variant-numeric: tabular-nums;
+  }
+  /* 7m: month hint under the date (first shown day and the 1st of a month) and the week navigation */
+  .day .m {
+    font-family: var(--mono);
+    font-size: 9px;
+    height: 11px;
+    line-height: 11px;
+    color: var(--mist);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .day .m.first {
+    color: var(--ice);
+    font-weight: 700;
+  }
+  .wknav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 0 8px;
+  }
+  .wknav .x {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--frost);
+    font-size: 22px;
+    line-height: 1;
+  }
+  .wknav .x:disabled {
+    opacity: 0.35;
+  }
+  .wknav .wkt {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .wknav .wkt b {
+    font-size: 18px;
+  }
+  .wknav .wkt small {
+    color: var(--mist);
+    font-size: 12.5px;
+  }
+  .wknav .wktoday {
+    flex: none;
+    padding: 6px 12px;
   }
   .day .k {
     font-family: var(--mono);
@@ -2343,6 +2394,149 @@
   }
   /* quick entry for the free timer */
   /* free timer – full screen, the colour tells the phase from across the room */
+  /* 7l: voice list – chip with name and quality, sample button */
+  .vlist {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .vrow {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .vrow .chip {
+    flex: 1;
+    text-align: left;
+  }
+  .vrow .chip small {
+    opacity: 0.7;
+    font-weight: 600;
+  }
+  /* 7k relax: near-black screen (OLED pixels off), slow breathing circle, very low contrast while running */
+  .relax {
+    position: fixed;
+    inset: 0;
+    z-index: 47;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: calc(14px + env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px))
+      calc(24px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));
+    background: #050608;
+    color: #e8ecf2;
+  }
+  .relax .sub {
+    color: #9aa3ae;
+  }
+  .relax .rxeve {
+    color: #b9a7e8;
+  }
+  .relax .rxgo {
+    margin-top: 4px;
+  }
+  .relax .chk {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+  .relax .chk input {
+    width: 20px;
+    height: 20px;
+  }
+  .relax.run {
+    background: #000;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    color: rgba(232, 236, 242, 0.42);
+    transition: color 0.6s;
+  }
+  .relax.run.bright {
+    color: rgba(232, 236, 242, 0.9);
+  }
+  .rxtop {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .rxball {
+    flex-shrink: 0;
+    width: 230px;
+    height: 230px;
+    margin: 10px auto;
+    display: grid;
+    place-items: center;
+  }
+  .rxball i {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, rgba(150, 175, 255, 0.55), rgba(90, 110, 200, 0.28) 55%, rgba(40, 50, 90, 0.12) 100%);
+    box-shadow: 0 0 70px rgba(120, 140, 255, 0.18);
+    transform: scale(0.5);
+    transition-property: transform;
+    transition-timing-function: ease-in-out;
+    transition-duration: inherit;
+  }
+  .rxball.in i {
+    transform: scale(1);
+  }
+  .relax.run .rxball i {
+    opacity: 0.55;
+    transition-property: transform, opacity;
+  }
+  .relax.run.bright .rxball i {
+    opacity: 1;
+  }
+  .rxball.idle i,
+  .rxball.med i {
+    transform: scale(0.75);
+    animation: rxidle 10s ease-in-out infinite;
+  }
+  @keyframes rxidle {
+    0%,
+    100% {
+      transform: scale(0.62);
+    }
+    45% {
+      transform: scale(0.86);
+    }
+  }
+  .rxph {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .rxline {
+    font-size: 17px;
+    line-height: 1.5;
+    max-width: 32ch;
+    margin: 0 auto;
+    min-height: 4.5em;
+  }
+  .rxhint {
+    font-size: 12px;
+    margin: 0;
+  }
+  .relax .rxstop {
+    color: inherit;
+    border-color: rgba(232, 236, 242, 0.18);
+  }
+  .rxdone {
+    text-align: center;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rxball i {
+      transition: none !important;
+      animation: none !important;
+      transform: scale(0.75) !important;
+    }
+  }
   .ftimer {
     position: fixed;
     inset: 0;
@@ -4623,7 +4817,7 @@
 <div class="loader" id="loader" hidden>
   <svg class="burst" id="burst" viewBox="-100 -100 200 200" aria-hidden="true"></svg>
   <div class="fig" id="loaderFig"></div>
-  <div class="lt" id="loaderTitle">Ringzeit</div>
+  <div class="lt" id="loaderTitle">Ringzeit Dev</div>
   <div class="fact" id="factBox">
     <div class="fk" id="factK"></div>
     <p id="factT"></p>
@@ -4635,6 +4829,7 @@
 <div class="workout" id="workout" role="dialog" aria-modal="true" aria-labelledby="workoutTitle" hidden></div>
 <div class="focus" id="focus" hidden></div>
 <div class="ftimer" id="ftimer" hidden></div>
+<div class="relax" id="relax" hidden></div>
 <div class="onb" id="onb" hidden></div>
 <div class="tour" id="tour" hidden></div>
 <div class="sheetbg" id="sheet" hidden></div>

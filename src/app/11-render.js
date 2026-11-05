@@ -47,8 +47,42 @@
     }
     return iso(today());
   }
+  /* 7m calendar: the shown week (ui.wk weeks from the current one), month names and ISO week numbers */
+  const weekMon = () => addDays(monday(today()), 7 * (ui.wk || 0));
+  const monShort = (d) => d.toLocaleDateString(S.profile.lang === "de" ? "de-DE" : "en-GB", { month: "short" }).replace(".", "");
+  function isoWeekNo(d) {
+    const x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())),
+      day = x.getUTCDay() || 7;
+    x.setUTCDate(x.getUTCDate() + 4 - day);
+    return Math.ceil(((x - Date.UTC(x.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7);
+  }
+  /* back to the first week with a plan or a log entry, ahead 6 weeks (the plan reacts week by week; further out would only be placeholders) */
+  function wkRange() {
+    const m0 = monday(today()),
+      first = [S.profile.planStart, ...S.log.map((e) => e.date)].filter(Boolean).sort()[0];
+    return { min: first ? Math.min(0, -Math.round(daysBetween(monday(parse(first)), m0) / 7)) : 0, max: 6 };
+  }
+  function weekNavHtml() {
+    const W = t("wkNav"),
+      wk = ui.wk || 0,
+      r = wkRange(),
+      a = weekMon(),
+      b = addDays(a, 6),
+      de = S.profile.lang === "de",
+      yr = b.getFullYear() !== today().getFullYear() ? " " + b.getFullYear() : "",
+      range =
+        a.getMonth() === b.getMonth()
+          ? de
+            ? `${a.getDate()}.–${b.getDate()}. ${monShort(b)}${yr}`
+            : `${a.getDate()}–${b.getDate()} ${monShort(b)}${yr}`
+          : de
+            ? `${a.getDate()}. ${monShort(a)} – ${b.getDate()}. ${monShort(b)}${yr}`
+            : `${a.getDate()} ${monShort(a)} – ${b.getDate()} ${monShort(b)}${yr}`,
+      lbl = wk === 0 ? t("thisWeekH") : wk === -1 ? W.last : wk === 1 ? W.next : W.kw(isoWeekNo(a));
+    return `<div class="wknav"><button type="button" class="x" data-wk="-1" aria-label="${W.prev}" ${wk <= r.min ? "disabled" : ""}>‹</button><div class="wkt"><b>${esc(lbl)}</b><small>${esc((wk === 0 || Math.abs(wk) === 1 ? W.kw(isoWeekNo(a)) + " · " : "") + range)}</small></div>${wk ? `<button type="button" class="btn ghost wktoday" data-wk="0">${W.today}</button>` : ""}<button type="button" class="x" data-wk="1" aria-label="${W.nextA}" ${wk >= r.max ? "disabled" : ""}>›</button></div>`;
+  }
   function weekStrip(selDs, attr) {
-    const mon = monday(today()),
+    const mon = weekMon(),
       td = iso(today());
     return (
       `<div class="week">` +
@@ -68,7 +102,7 @@
             ds === selDs ? "sel" : "",
           ].join(" ");
           const k = done ? "✓" : ty ? codeOf(ty) : cl ? codeOf("V") : pausedOn(ds) ? "–" : "·";
-          return `<button type="button" class="${cls}" ${attr}="${ds}"${tc ? ` style="--tc:var(--c-${tc})"` : ""} aria-label="${t("weekday")[i]}${ty ? " · " + t("types")[ty] : ""}${cl ? " · " + t("club") : ""}"><span class="d">${t("dayNames")[i]}</span><span class="n">${d.getDate()}</span><span class="k${simpleView() && (ty || cl) && !done ? " ico" : ""}">${k}</span>${ty && cl ? `<i class="cl"></i>` : ""}</button>`;
+          return `<button type="button" class="${cls}" ${attr}="${ds}"${tc ? ` style="--tc:var(--c-${tc})"` : ""} aria-label="${t("weekday")[i]}${ty ? " · " + t("types")[ty] : ""}${cl ? " · " + t("club") : ""}"><span class="d">${t("dayNames")[i]}</span><span class="n">${d.getDate()}</span><span class="m${d.getDate() === 1 ? " first" : ""}">${i === 0 || d.getDate() === 1 ? esc(monShort(d)) : ""}</span><span class="k${simpleView() && (ty || cl) && !done ? " ico" : ""}">${k}</span>${ty && cl ? `<i class="cl"></i>` : ""}</button>`;
         })
         .join("") +
       `</div>`
@@ -196,7 +230,7 @@
     return h;
   }
   function renderWeek() {
-    const mon = monday(today()),
+    const mon = weekMon(),
       ph = phaseInfo(),
       nd = nextTrainingDate(),
       nty = typeOn(nd),
@@ -243,10 +277,16 @@
     }
     if (load.deload)
       h += `<div class="note warn">${load.why === "rpe" ? t("deloadRpe") : load.why === "acwr" ? t("deloadAcwr") : load.why === "proj" ? t("deloadProj") : t("deloadPlan")}</div>`;
+    // 7k: on rest days (nothing left to do today, no break) and in deload weeks a small offer to wind down
+    {
+      const td = iso(today()),
+        open = (typeOn(td) && !doneOn(td)) || (clubOn(td) && !clubDone(td));
+      if (!pausedOn(td) && (!open || load.deload)) h += relaxCardHtml(open && load.deload);
+    }
     const ts = simple ? null : testStatus();
     if (ts)
       h += `<div class="note act"><span>${t({ due: "testDue", first: "testFirst", pre: "testPre", post: "testPost" }[ts])}</span><button type="button" class="btn ghost" data-tab="test">${t("toTest")}</button></div>`;
-    h += `<h2>${t("thisWeekH")}</h2>` + weekStrip(null, "data-open");
+    h += weekNavHtml() + weekStrip(null, "data-open");
     h += `<div><div class="sub" style="margin:0 2px 8px">${t("phases")[ph.phase]}${ph.days != null ? ` · ${(ph.kind === "grade" ? t("daysToGrade") : t("daysToComp"))(ph.days)}` : ""}</div><div class="panel">`;
     const rows = [];
     for (let i = 0; i < 7; i++) {

@@ -59,8 +59,21 @@
       return toast(t("fb").offline);
     }
     const b = ev.target.closest("button");
+    // 7k relax: a tap on the dark screen (not on a button) gives a little light for a few seconds
+    if (!b && ui.relax && ui.relax.run && ev.target.closest("#relax")) {
+      ui.relax.bright = true;
+      document.getElementById("relax").classList.add("bright");
+      clearTimeout(ui.relax.bt);
+      ui.relax.bt = setTimeout(() => {
+        if (!ui.relax) return;
+        ui.relax.bright = false;
+        document.getElementById("relax")?.classList.remove("bright");
+      }, 4000);
+      return;
+    }
     if (!b || b.disabled) return;
     const ds = b.dataset;
+    if (ds.rx) return relaxAction(ds.rx, ds);
     if (ds.workout) return workoutAction(ds.workout);
     if (ds.player) return playerAction(ds.player, ds);
     if (ds.exerciseTimer) return exerciseTimerAction(ds.exerciseTimer, ds);
@@ -292,6 +305,16 @@
       document.querySelectorAll("[data-scface]").forEach((el) => el.setAttribute("aria-pressed", String(el.dataset.scface === ds.scface)));
       return;
     }
+    if (ds.vpick != null) {
+      const lg = S.profile.lang === "de" ? "de" : "en",
+        v = ds.vpick && voiceList().find((x) => voiceKey(x) === ds.vpick);
+      S.profile.voicePick = Object.assign({}, S.profile.voicePick, { [lg]: v ? { id: ds.vpick, name: v.name } : null });
+      if (draft) draft.voicePick = S.profile.voicePick;
+      store.save();
+      if (v) voiceProbe(ds.vpick);
+      return render();
+    }
+    if (ds.vprobe) return voiceProbe(ds.vprobe);
     if (ds.vtest) {
       if (!voiceOn()) {
         S.profile.voice = true;
@@ -543,6 +566,7 @@
         ui.psport = null;
         ui.pedit = null;
       }
+      if (ds.tab === "week") ui.wk = 0; // Today always opens on the current week
       ui.tab = ds.tab;
       if (ds.tab !== "profile") draft = null;
       render(true);
@@ -556,6 +580,12 @@
       store.save();
       render();
       return;
+    }
+    if (ds.wk != null) {
+      const r = wkRange();
+      ui.wk = ds.wk === "0" ? 0 : Math.max(r.min, Math.min(r.max, (ui.wk || 0) + +ds.wk));
+      ui.wkFor = ui.sel;
+      return render();
     }
     if (ds.open) {
       ui.sel = ds.open;
@@ -1103,6 +1133,10 @@
     true,
   );
   document.addEventListener("change", (ev) => {
+    if (ev.target.dataset && ev.target.dataset.rxchk && ui.relax) {
+      ui.relax[ev.target.dataset.rxchk] = ev.target.checked;
+      return;
+    }
     if (ev.target.id === "impFile" && ev.target.files && ev.target.files[0]) {
       importFile(ev.target.files[0]);
       ev.target.value = "";

@@ -486,7 +486,12 @@
       lg = S.profile.lang === "de" ? 0 : 1,
       ow = (S.ov || {})[ds] || {},
       recent = ds >= iso(addDays(today(), -7));
-    let h = header(t("sessTitle")) + weekStrip(ds, "data-sel");
+    // 7m: the strip opens on the week of the chosen day; the arrows may then show other weeks
+    if (ui.wkFor !== ds) {
+      ui.wk = Math.round(daysBetween(monday(today()), monday(parse(ds))) / 7);
+      ui.wkFor = ds;
+    }
+    let h = header(t("sessTitle")) + weekNavHtml() + weekStrip(ds, "data-sel");
     h += clubPanel(ds);
     const pz = pausedOn(ds);
     if (pz) return h + `<div class="empty"><b>${t("pauseWhy")[pz.why]}</b>${t("pausedDay")}</div>`;
