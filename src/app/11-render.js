@@ -239,6 +239,7 @@
     let h = header(t("todayTitle"));
     h += installHtml();
     h += todayCard(nd, nty, pose);
+    h += arcCardHtml(); // 7n Winter Arc
     // prompts that need an answer: at most two at once, by importance; the rest follow once one is done
     const asks = [];
     {

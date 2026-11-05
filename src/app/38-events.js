@@ -74,6 +74,13 @@
     if (!b || b.disabled) return;
     const ds = b.dataset;
     if (ds.rx) return relaxAction(ds.rx, ds);
+    if (ds.arc) return arcAction(ds.arc, ds);
+    if (ds.arcchk) return arcToggle(ds.arcchk, ds.ad);
+    if (ds.arcpick && ui.arc) {
+      const p = ui.arc.pick;
+      ui.arc.pick = p.includes(ds.arcpick) ? p.filter((x) => x !== ds.arcpick) : p.concat([ds.arcpick]);
+      return renderArc();
+    }
     if (ds.workout) return workoutAction(ds.workout);
     if (ds.player) return playerAction(ds.player, ds);
     if (ds.exerciseTimer) return exerciseTimerAction(ds.exerciseTimer, ds);

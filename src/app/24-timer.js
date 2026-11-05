@@ -276,7 +276,7 @@
     audioIdle = null;
   const timerVisible = () => document.visibilityState !== "hidden";
   const freeRunning = () => !!ui.ft && !ui.ft.paused && ["prep", "work", "rest"].includes(ui.ft.phase);
-  const timerRunning = () => !!ui.timer?.running || freeRunning() || !!ui.exerciseTimer?.running || relaxRunning();
+  const timerRunning = () => !!ui.timer?.running || freeRunning() || !!ui.exerciseTimer?.running || relaxRunning() || mobRunning();
   function scheduleTimers() {
     clearTimeout(timerClock);
     timerClock = null;
@@ -348,6 +348,15 @@
   }
   function stopAllTimers() {
     // Account for elapsed full rounds before stopping, never mark the current unfinished round complete.
+    // Relax and mobility (review 05.11.2026) end without logging or ticking anything; their own intervals and pending
+    // speech end with them, their screens close.
+    if (typeof ui !== "undefined" && ui.relax && (ui.relax.run || ui.relax.paused)) relaxClose();
+    if (ui.mob && (ui.mob.run || ui.mob.paused)) {
+      arcMobStop(false);
+      ui.mob = null;
+      if (ui.arc && ui.arc.view === "mob") ui.arc = null;
+      renderArc();
+    }
     tick();
     ftTick();
     exerciseTick();
@@ -376,9 +385,12 @@
       free.innerHTML = "";
     }
   }
+  /* Starting one run pauses every other one and keeps its progress (kinds: session, free, exercise, relax, mob). */
   function pauseOtherTimer(kind) {
+    if (kind !== "relax" && relaxRunning()) relaxPause();
+    if (kind !== "mob" && mobRunning()) arcMobPause();
     if (kind !== "exercise" && ui.exerciseTimer?.running) pauseExerciseTimer();
-    if ((kind === "free" || kind === "exercise") && ui.timer?.running) {
+    if (["free", "exercise", "relax", "mob"].includes(kind) && ui.timer?.running) {
       tick();
       if (ui.timer) {
         ui.timer.carryMs = Math.max(0, Date.now() - lastTick);
@@ -388,7 +400,7 @@
       cancelTimerSpeech();
       if (timerVisible()) toast(flowText().pausedSession);
     }
-    if ((kind === "session" || kind === "exercise") && freeRunning()) {
+    if (["session", "exercise", "relax", "mob"].includes(kind) && freeRunning()) {
       ftTick();
       if (ui.ft) {
         ui.ft.remainingMs = Math.max(0, ui.ft.endAt - Date.now());

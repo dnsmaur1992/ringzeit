@@ -1262,7 +1262,7 @@
  <div class="field"><label class="lab" for="pMin">${t("minutes")}: <span id="pMinV">${mv}</span></label><input id="pMin" type="range" min="30" max="${cap}" step="15" value="${mv}"><span class="sub">${t("minCap")}</span></div>
  </div>`;
     train += blockProfHtml();
-    goals += profGoalsHtml(p);
+    goals += profGoalsHtml(p) + arcProfileHtml();
     const note = `<p class="sub" style="text-align:center;margin:-4px 0 0">${p.days.length ? t("autoSave") : t("needDay")}</p>`;
     me += note;
     train += note;

@@ -161,6 +161,9 @@
       again: "Noch einmal",
       close: "Schließen",
       stop: "Beenden",
+      pause: "Pause",
+      paused: "Pausiert",
+      resume: "Weiter",
       eyes: "Augen zu – ich führe dich.",
       tap: "Antippen für mehr Licht",
       noVoice: "Dieses Gerät hat keine Sprachausgabe. Die Übung läuft mit Kreis und Ton.",
@@ -219,6 +222,9 @@
       again: "Again",
       close: "Close",
       stop: "Stop",
+      pause: "Pause",
+      paused: "Paused",
+      resume: "Resume",
       eyes: "Eyes closed – I'll guide you.",
       tap: "Tap for more light",
       noVoice: "This device has no speech output. The exercise runs with circle and tone.",
@@ -344,8 +350,9 @@
   function relaxStart() {
     const r = ui.relax;
     rxSave({ mode: r.mode, pat: r.pat, bmin: r.bmin, kind: r.kind, mlen: r.mlen, voice: r.voice, tone: r.tone });
+    pauseOtherTimer("relax"); // review 05.11.: no other timer keeps running unnoticed
     unlockAudio();
-    Object.assign(r, { phase: "run", run: true, start: Date.now(), last: null, said: {}, idx: 0, enc: 0, line: "" });
+    Object.assign(r, { phase: "run", run: true, paused: false, start: Date.now(), last: null, said: {}, idx: 0, enc: 0, line: "" });
     r.plan = r.mode === "breath" ? rxBreathPlan(r.pat, r.bmin) : rxMedPlan(r.kind, r.mlen, S.profile.lang);
     if (r.mode === "breath") rxSay(rxT().sIntro[r.pat]);
     syncTimers();
@@ -355,20 +362,49 @@
     // the breathing starts after the spoken intro (about 8 s); the meditation starts with its first sentence
     if (r.mode === "breath") r.start = Date.now() + (r.voice && canSpeak() ? 8000 : 1500);
   }
+  /* pause keeps the progress: on resume the clock moves on by the paused time (review 05.11.2026) */
+  function relaxPause() {
+    const r = ui.relax;
+    if (!r || !r.run) return;
+    clearInterval(relaxStart.iv);
+    r.run = false;
+    r.paused = true;
+    r.pausedAt = Date.now();
+    try {
+      if (canSpeak()) speechSynthesis.cancel();
+    } catch (e) {}
+    syncTimers();
+    renderRelax();
+  }
+  function relaxResume() {
+    const r = ui.relax;
+    if (!r || !r.paused) return;
+    pauseOtherTimer("relax");
+    r.start += Date.now() - r.pausedAt;
+    r.run = true;
+    r.paused = false;
+    r.last = null; // redraw the breathing phase
+    syncTimers();
+    renderRelax();
+    clearInterval(relaxStart.iv);
+    relaxStart.iv = setInterval(relaxTick, 200);
+  }
   function relaxStop(done) {
     const r = ui.relax;
     if (!r) return;
     clearInterval(relaxStart.iv);
     r.run = false;
+    r.paused = false;
     try {
       if (!done && canSpeak()) speechSynthesis.cancel();
     } catch (e) {}
     r.phase = done ? "done" : "setup";
+    if (done) relaxLogAdd(r); // 7n: counts for the Winter Arc
     syncTimers();
     renderRelax();
   }
   function relaxClose() {
-    if (relaxRunning()) relaxStop(false);
+    if (relaxRunning() || (ui.relax && ui.relax.paused)) relaxStop(false);
     ui.relax = null;
     renderRelax();
   }
@@ -451,8 +487,8 @@
       el.innerHTML = `<div class="rxtop"><span>${esc(med ? L.kinds[r.kind] : L.pats[r.pat])}</span><span id="rxclk" class="num">${fmt(Math.ceil(r.plan.total))}</span></div>
         <div class="rxball${med ? " med" : ""}" id="rxball" aria-hidden="true"><i></i></div>
         ${med ? `<p class="rxline" id="rxline" aria-live="polite">${esc(r.line || L.eyes)}</p>` : `<p class="rxph" id="rxph" aria-live="polite">${esc(L.ph.in)}</p>`}
-        <p class="rxhint">${L.tap}</p>
-        <button type="button" class="btn ghost rxstop" data-rx="stop">${L.stop}</button>`;
+        ${r.paused ? `<p class="rxph">${L.paused}</p><button type="button" class="btn" data-rx="resume">${L.resume}</button>` : `<p class="rxhint">${L.tap}</p>`}
+        <div class="inline">${r.paused ? "" : `<button type="button" class="btn ghost rxstop" data-rx="pause">${L.pause}</button>`}<button type="button" class="btn ghost rxstop" data-rx="stop">${L.stop}</button></div>`;
       return;
     }
     el.className = "relax";
@@ -484,6 +520,8 @@
     if (!r) return;
     if (a === "close") return relaxClose();
     if (a === "stop") return relaxStop(false);
+    if (a === "pause") return relaxPause();
+    if (a === "resume") return relaxResume();
     if (a === "start") return relaxStart();
     if (a === "set") {
       const k = ds.rk;

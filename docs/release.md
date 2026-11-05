@@ -91,3 +91,11 @@ Inhalt: Entspannen (Atemübungen und Meditationen mit Stimme), Stimmenauswahl, K
 „Was ist neu“ hat `NEWS_V` 8. Upload wie in Abschnitt 3, aber **nur die geänderten Dateien** (siehe Paket). Es muss
 nichts gelöscht werden. Geprüft: 237 Tests, Baseline, Gesamtprüfung, Browser, Isolation und ein Update vom
 Prod-Stand `40b42d9` auf Release 2 mit der echten Sicherung (16/16).
+
+## 8. Release 3 (05.11.2026)
+
+Inhalt: Winter Arc (Oktober bis Januar, Gewohnheiten nach Wahl, Wochenziel Trainings), geführte 10-Minuten-Mobility mit
+der Dosierung des Trainings, Pausieren für Entspannen und Mobility und die gemeinsame Timer-Steuerung (Korrektur nach der
+externen Codeprüfung). „Was ist neu“ hat `NEWS_V` 9. Upload wie in Abschnitt 3, aber **nur die geänderten Dateien**
+(siehe Paket). Es muss nichts gelöscht werden. Geprüft im Release-Stand: Testsuite, Baseline, Gesamtprüfung, Browser,
+Isolation und ein Update vom Prod-Stand (Release 2) auf Release 3 mit der echten Sicherung.

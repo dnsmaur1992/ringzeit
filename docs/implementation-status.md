@@ -263,6 +263,46 @@ Unterteilung (Betreiber, 03.11.2026 22:40, Empfehlungen übernommen): 7a automat
   - **Update-Test vom heutigen Prod-Stand** (`40b42d9`, App-Version 04.11. 14:06) auf Release 2 mit der echten Sicherung des Betreibers: 16/16 bestanden. Daten vollständig, „Was ist neu“ genau einmal, Dev-Daten unberührt.
   - Isolation gegen Dev 12/12.
   - Hochgeladen wird nur durch den Betreiber.
+- **Release 2 in Prod** am 05.11.2026: `dnsmaur1992/ringzeit` steht auf `4032e23` und ist gleich mit dem Paket. Um 06:51 waren versehentlich die Dev-Dateien in Prod gelandet; die Prod-Dateien haben sie um 08:07 vollständig überschrieben. Die Prod-Daten (`ringzeit.v1`) waren nicht betroffen. Ab jetzt heißen Pakete `NUR-DEV_…` bzw. `NUR-PROD_…` und enthalten einen Ordner mit dem Ziel im Namen.
+- **7n Winter Arc** (Auftrag 05.11.2026 09:58, nach Entwurf): neue Datei `src/app/34e-arc.js`, Einblendung `#arcov`.
+  - **Start** nur von Oktober bis Januar; ein laufender Arc endet auch später. Länge wählbar: 6, 8, 10 oder 12 Wochen ab dem nächsten Montag.
+  - **Bausteine zum Antippen:**
+    - Training: Wochenziel Einheiten 2–5, Fitnesstest am Start und am Ende, 10 Min Mobility, Spaziergang.
+    - Erholung: Wochenziel Entspannen 1–3, Schlaf vor 23 Uhr, 7 Stunden Schlaf, Atemübung, Handy weg.
+    - Mindset: Impuls der Woche (12 Sätze DE/EN), Meditation „Stärken“ 1× pro Woche, 3 gute Dinge, 10 Min lesen.
+    - Disziplin: Weckzeit, kalt duschen mit Hinweis, 2 Liter Wasser, kein Alkohol, Social-Media-Pause.
+    - Körper: Gewicht 1× pro Woche, nur als Verlauf ohne Ziel.
+    - Optik: Winter-Design.
+  - **Heute:** Karte mit „Woche x von n“, Fortschritt und Wochenzielen. Vereinstraining zählt, Entspannen zählt über das neue Protokoll `S.profile.relaxLog`. Nur die gewählten Gewohnheiten erscheinen zum Abhaken; die Atemübung hakt sich selbst ab, die Meditation „Stärken“ und das Gewicht zählen wochenweise. Dazu Hinweis auf den End-Test, Serie in Wochen sowie Pausieren und Beenden mit Rückfrage. Wochen mit mindestens 3 Pausentagen „ruhen“ und brechen die Serie nicht.
+  - **Bilanz:** Fitnesstest vorher → nachher je Bereich, Gewohnheiten (Tage bzw. Wochen), Gewichtsverlauf, Teilen. „Abschließen“ legt den Arc in `S.profile.arcs` ab, die früheren Arcs stehen unter Termine & Ziele.
+  - **Einstiege:** von Oktober bis Januar eine Karte auf Heute, je Saison ausblendbar; dauerhaft unter Profil → Termine & Ziele.
+  - Daten im Profil (`arc`, `arcs`, `relaxLog`), also auch in der Sicherung.
+  - **Beifang:**
+    - Lange Auswahlseiten (Entspannen, Winter Arc) werden nicht mehr zusammengedrückt (`flex-shrink`).
+    - Ein Namenskonflikt mit der bestehenden Klasse `.win` ist umgangen (`wawin`).
+  - Neuer Test „7n Winter Arc“ (238 Tests), Baseline gleich, Gesamtprüfung ohne Befund, Browser 13/13, Isolation 12/12.
+  - **Nachtrag 10:20 (Rückfrage des Betreibers):**
+    - Gewohnheiten lassen sich für **heute und die 2 Tage davor** abhaken, nicht früher und nicht vor dem Start. Dafür zeigen 7 Tagesfelder die Woche, die antippbaren sind gestrichelt.
+    - Schlaf-Gewohnheiten „zählen für die letzte Nacht“.
+    - Das Wochenziel heißt „Trainings“: Gezählt wird jedes eingetragene Training, Ringzeit oder Verein. Vorausgewählt ist die geplante Zahl (eigene Tage + Vereinstage), wählbar 1–7.
+    - Neuer Test „7n+“ (239 Tests).
+  - **10-Minuten-Mobility** (Wunsch 10:26): Neben „10 Min Mobility“ startet „▶ 10 Min“ eine geführte Folge. Der Plan-Generator (`buildSession`, Typ Mobility, 10 Min, zu Hause, ohne Geräte) wählt passend zu Sportart und Einschränkungen. Übernommen werden nur Mobility-, Dehn- und Gelenkübungen; Drills aus dem Aufwärmen bleiben draußen. Aufgefüllt wird auf 6 bis 10 Übungen, zusammen 10 Minuten.
+    - Ansage von Übung und Beschreibung, leiser Ton beim Wechsel, „Danach: …“. Der Bildschirm bleibt wach.
+    - Am Ende ist die Gewohnheit abgehakt. Plan und Verlauf bleiben unberührt, vorzeitiges Beenden hakt nicht ab.
+    - Neuer Test (240 Tests).
+- **Korrektur nach externer Codeprüfung (05.11.2026, Prüfbasis `971126a`)**: Beide Befunde bestanden noch und sind behoben.
+  - **Gemeinsame Timer-Steuerung** (`24-timer.js`, `34d-relax.js`, `34e-arc.js`):
+    - `pauseOtherTimer` kennt jetzt auch Entspannen und Mobility. Jeder Start (Einheit, Rundentimer, Übungstimer, Entspannen, Mobility) pausiert die anderen Läufe. Ihr Fortschritt bleibt erhalten.
+    - Entspannen und Mobility haben dafür Pausieren und Weiter.
+    - `stopAllTimers` beendet auch Entspannen und Mobility, mit Intervall und offenen Ansagen. Ein abgebrochener Lauf zählt nicht: kein Eintrag, kein Haken.
+    - Wach halten und Ton folgen dem echten Zustand. Pausiert hält nichts den Bildschirm wach.
+  - **Dosierung der 10-Minuten-Mobility**:
+    - Die Mobility nutzt jetzt dieselbe Dosierung wie das Training (`exerciseTiming` → `core/prescription.js`, Text aus `DOSE_FIX`). Anzeige, Ansage und Uhr beschreiben also dieselbe Dosis.
+    - Beidseitige Übungen laufen „Seite 1/2 → Seitenwechsel → Seite 2/2“ mit Ansage. „Kick-Halten“ läuft in Halte- und Pausenphasen.
+    - Wdh.-Übungen behalten ihre Wiederholungen, ohne Uhr: Man tippt „Weiter“.
+    - Die Auswahl kommt auf etwa 9–12 Minuten. Vor dem Start zeigt eine Vorschau Übungen, Dosis und Länge.
+    - Einschränkungen, Sport-Schwerpunkt und Abschlussregel bleiben. Nur ein Lauf bis zum Ende hakt ab.
+  - Tests: Der Mobility-Test ist neu geschrieben, dazu kommt ein Test für die Timer-Wechsel (241 Tests). Die Baseline ist gleich, die Gesamtprüfung ohne Befund, Browser 13/13, Isolation 12/12.
 
 ## Nächster Vorschlag (ohne Freigabe)
 
