@@ -14,7 +14,7 @@
     h += sp === main ? `<span class="sub">${M.mainIs(sportLabel(main))}</span></div>` : `<span class="sub">${M.otherMain(sportLabel(main), sportLabel(sp))}</span><button type="button" class="btn sec" data-p="sport" data-v="${sp}" style="align-self:flex-start">${M.setMain(sportLabel(sp))}</button></div>`;
     if (sp === "kickboxing") {
       h += `<div class="field"><span class="lab">${t("discipline")}</span><div class="seg g2">${["lc", "kl", "fc", "k1"].map((k) => (age != null && age < 15 && (k === "fc" || k === "k1") ? `<button type="button" class="locked" data-lock="age" aria-disabled="true">${LOCK_SVG}${t("disc")[k]}</button>` : `<button type="button" data-p="disc" data-v="${k}" aria-pressed="${p.disc === k}">${t("disc")[k]}</button>`)).join("")}</div></div>`;
-      h += `<div class="field"><span class="lab">${t("focus")}</span><div class="seg">${["box", "bal", "kick"].map((k) => `<button type="button" data-p="focus" data-v="${k}" aria-pressed="${(p.level === 0 ? "bal" : p.focus) === k}" ${p.level === 0 && k !== "bal" ? "disabled" : ""}>${t("focusOpt")[k]}</button>`).join("")}</div>${p.level === 0 ? `<span class="sub">${t("focusLock")}</span>` : ""}</div>`;
+      h += `<div class="field"><span class="lab">${t("focus")}</span><div class="seg">${["box", "bal", "kick"].map((k) => `<button type="button" data-p="focus" data-v="${k}" aria-pressed="${(techniqueLevel("kickboxing", undefined, p) === 0 ? "bal" : p.focus) === k}" ${techniqueLevel("kickboxing", undefined, p) === 0 && k !== "bal" ? "disabled" : ""}>${t("focusOpt")[k]}</button>`).join("")}</div>${techniqueLevel("kickboxing", undefined, p) === 0 ? `<span class="sub">${t("focusLock")}</span>` : ""}</div>`;
       const b = beltIdx();
       h += `<div class="field"><span class="lab">${M.beltKb}</span><div class="row" style="gap:10px;align-items:center">${beltDot(b)}<b style="flex:1">${esc(beltName(b))}</b><button type="button" class="btn ghost" data-pedit="belt">${ui.pedit === "belt" ? M.done : M.change}</button></div>`;
       if (ui.pedit === "belt") h += `<div class="chips">${BELTS.map((x, i) => `<button type="button" class="chip" data-belt="${i}" aria-pressed="${b === i}">${beltDot(i)}${esc(beltName(i))}</button>`).join("")}</div>`;
@@ -54,15 +54,14 @@
       }
       h += `</div>`;
     }
+    h += techniqueChoices(sp, sp === "taekwondo" ? p.tkd?.style : undefined, p);
     return h + `</div>`;
   }
   function profPersonHtml(p) {
     const M = t("pme"),
-      ml = Math.max(maxLevel(), S.profile.level),
       age = ageAt(today(), p);
     return `<div class="panel"><div class="field"><span class="lab">${M.person}</span></div><div class="field"><label class="lab" for="pBirth">${t("birth")}</label><input id="pBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${p.birthYear || ""}"><span class="sub">${M.birthHint[p.sport || mainSport()] || M.birthHint.kickboxing}${age != null ? ` · ${age} · ${t("ages")[ageGroup(p)]}` : ""}</span>${ageGroup(p) === "kids" ? `<span class="sub">${t("kidsNote")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("sex")}</span><div class="seg g3">${["m", "f", "d"].map((k) => `<button type="button" data-p="sex" data-v="${k}" aria-pressed="${p.sex === k}">${t("sexes")[k]}</button>`).join("")}</div><span class="sub">${t("sexHint")}</span></div>
- <div class="field"><span class="lab">${t("level")}</span><div class="seg">${[0, 1, 2].map((k) => (k > ml ? `<button type="button" class="locked" data-lock="level" aria-disabled="true">${LOCK_SVG}${t("levels")[k]}</button>` : `<button type="button" data-p="level" data-v="${k}" aria-pressed="${p.level === k}">${t("levels")[k]}</button>`)).join("")}</div>${ml < 2 ? `<span class="sub">${t("levelLock")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("limits")}</span><div class="chips">${Object.keys(AV)
    .map((k) => `<button type="button" class="chip" data-lim="${k}" aria-pressed="${p.limits.includes(k)}">${t("lim")[k]}</button>`)
    .join("")}</div><span class="sub">${t("limitsHint")}</span></div></div>`;

@@ -13,12 +13,12 @@
           ownWeight: "Gewicht selbst wählen",
           learningTitle: "So lernt Ringzeit dein Training kennen",
           learning:
-            "Ringzeit passt dein Training anhand deiner Einträge an. Je regelmäßiger du absolvierte Einheiten, Wiederholungen, Gewichte und deine empfundene Anstrengung erfasst, desto gezielter kann die App die Belastung anpassen. Zu Beginn bleibt die Planung vorsichtig.",
+            "Ringzeit passt dein Training anhand deiner Einträge an. Je regelmäßiger du absolvierte Einheiten, Wiederholungen, Gewichte und deine empfundene Anstrengung erfasst, desto gezielter kann die App die Belastung anpassen. Zu Beginn bleibt die Planung vorsichtig. Deine Abschlussbewertung steuert die nächste eigene Einheit derselben Sportart und Gattung. Tagesform und Entlastung haben Vorrang.",
           understood: "Verstanden",
           data: (level, count, weeks) =>
             `Datengrundlage: ${{ collecting: "im Aufbau", sufficient: "ausreichend", reliable: "gut belegt" }[level]} · ${count} vergleichbare Einheiten in ${weeks} Wochen.`,
           dataWhy: {
-            few: "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten.",
+            few: "Für eine langfristige Zyklussteigerung fehlen noch regelmäßig erfasste Einheiten.",
             missing: "Einige Leistungsangaben fehlen; die Belastung bleibt vorsichtig.",
             coverage: "Vom geplanten Training ist noch zu wenig erfasst; das Niveau bleibt bestehen.",
             trend:
@@ -54,12 +54,12 @@
           ownWeight: "choose your weight",
           learningTitle: "How Ringzeit learns about your training",
           learning:
-            "Ringzeit adapts training using your entries. Regularly recording completed sessions, reps, weights and perceived effort helps the app tailor the load. Planning stays cautious at first.",
+            "Ringzeit adapts training using your entries. Regularly recording completed sessions, reps, weights and perceived effort helps the app tailor the load. Planning stays cautious at first. Your final effort rating controls your next own session of the same sport and type. Readiness and recovery take priority.",
           understood: "Got it",
           data: (level, count, weeks) =>
             `Training data: ${{ collecting: "building up", sufficient: "sufficient", reliable: "well supported" }[level]} · ${count} comparable sessions across ${weeks} weeks.`,
           dataWhy: {
-            few: "More regularly recorded sessions are needed before increasing load.",
+            few: "More regularly recorded sessions are needed for a long-term cycle increase.",
             missing: "Some performance details are missing; training stays cautious.",
             coverage: "Too little of the planned training has been recorded; maintain the current level.",
             trend: "Recent sessions became harder relative to their targets; no increase today.",
@@ -299,7 +299,7 @@
   }
   function progressionState(ds, type, run) {
     const cycle = progressionCycle(ds),
-      signature = `${S.profile.disc}:${S.profile.level}:${type}:${run ? "run" : "regular"}`,
+      signature = `${S.profile.disc}:${fitnessLevel()}:${type}:${run ? "run" : "regular"}`,
       cutoff = ds < iso(today()) ? ds : iso(today()),
       groups = new Map();
     for (const e of S.log) {
@@ -412,9 +412,9 @@
             [20, 30],
             [30, 45],
             [45, 60],
-          ][S.profile.level]
+          ][doseLevel(b)]
         : bwHeavy(b, it.id)
-          ? BW_RANGE[S.profile.level] || BW_RANGE[1]
+          ? BW_RANGE[doseLevel(b)] || BW_RANGE[1]
           : match && [+match[1], +match[2]];
     // Circuits, explosive lifts, AMRAP/special prescriptions and changed equipment keep their own dosing.
     if (!range || isCirc(b) || EX[it.id]?.cat !== "str" || (DOSE_FIX[EX[it.id].key] && !timed)) return null;
@@ -473,6 +473,13 @@
         ),
       ),
     });
+    if (sess.effortDose?.active && sess.effortDose.eligible) {
+      if (hasKg(it.id) && target.kg == null && last?.perf?.sets?.length >= n) {
+        const weights = last.perf.sets.slice(0,n).map(r => r.kg);
+        if (weights.every(w => Number.isFinite(w) && w > 0 && w === weights[0])) target.kg = weights[0];
+      }
+      return {...target,baseR:target.r};
+    }
     if (!last) return waveTarget();
     // A load is only suggested once it was actually entered for all sets; never invent a starting weight.
     if (hasKg(it.id) && target.kg == null) {
@@ -542,12 +549,13 @@
     const pr = progressionState(sess.date, sess.type, sess.run),
       txt = trainingText();
     sess.progression = { ...pr, plannedMin: sess.min };
+    sess.effortDose = effortDoseState(sess, pr);
     if (sess.blocks.some((b) => b.items.some((it) => it.basic))) sess.notes.push(flowText().anchors);
     if (!["T", "C", "K", "S"].includes(sess.type) || sess.run || young()) return sess;
-    sess.notes.push(pr.eligible ? `${txt.cycle(pr.week, pr.weeks, pr.step)} ${txt[pr.reason]}` : txt.protected);
+    sess.notes.push(pr.eligible ? `${txt.cycle(pr.week, pr.weeks, pr.step)} ${sess.effortDose?.active ? (S.profile.lang === "de" ? "Die Abschlussbewertung steuert die nächste Dosierung." : "Final effort controls the next dose.") : txt[pr.reason]}` : txt.protected);
     if (!pr.eligible) return sess;
     sess.notes.push(txt.data(pr.data.level, pr.data.count, pr.data.weeks));
-    if (pr.data.reason) sess.notes.push(txt.dataWhy[pr.data.reason]);
+    if (pr.data.reason && !sess.effortDose?.active) sess.notes.push(txt.dataWhy[pr.data.reason]);
     // Increase density alone, never contact intensity or the official competition format.
     // Changing pauses, with fewer rounds if needed, keeps the existing time budget intact.
     if (["T", "C", "K"].includes(sess.type)) {
@@ -555,11 +563,15 @@
         wave = pr.block ? 1 : pr.data.level === "collecting" ? 0.9 : [0.9, 0.95, 1, 1.05, 1][pr.week - 1];
       if (b && b.w && b.b) {
         const old = b.b,
-          factor = (1 + pr.step * 0.05) * wave;
+          factor = (sess.effortDose?.active
+            ? sess.effortDose.eligible ? sess.effortDose.factor : Math.min(1, sess.effortDose.factor, 1 + pr.step * 0.05)
+            : 1 + pr.step * 0.05) * wave;
         b.b = Math.max(30, Math.round(old / factor));
         const maxRounds = Math.max(1, Math.floor((b.min * 60 + b.b) / (b.w + b.b)));
         if (b.items.length > maxRounds) b.items = b.items.slice(0, maxRounds);
-        if (old !== b.b) sess.notes.push(txt.density(old, b.b));
+        if (sess.effortDose) sess.effortDose.roundRest = b.b;
+        const prev = sess.effortDose?.source && S.log.find(e => e.id === sess.effortDose.source)?.effortDose?.roundRest;
+        if ((prev || old) !== b.b) sess.notes.push(txt.density(prev || old, b.b));
       }
     }
     sess.blocks.forEach((b) => {
@@ -569,6 +581,33 @@
         if (target) it.target = target;
       });
     });
+    applyStrengthRestDose(sess);
     return sess;
   }
 
+
+  /* Keep one learnt density correction per sport/style/type, independently of location and equipment.
+     The cycle wave still varies recovery. The control replaces the cycle's upward density factor,
+     rather than multiplying two independent increases. */
+  function effortDoseState(sess, pr) {
+    if (!["T","C","K","S"].includes(sess.type) || sess.run || young()) return null;
+    const sport = sportNow(), style = sport === "taekwondo" ? tkdUnitStyle() : "",
+      disc = sport === "kickboxing" ? discOf() : "",
+      scope = JSON.stringify([1,sport,style,disc,sess.type,fitnessLevel()]),
+      eligible = pr.eligible && pr.reason !== "down" && !pr.data.worsening && lightRegions({log:S.log,date:sess.date}).length === 0;
+    const entries = S.log.filter(e => e.src === "own" && e.type === sess.type && entrySport(e) === sport &&
+      (sport !== "taekwondo" || (e.tstyle || "wt") === style) &&
+      (sport !== "kickboxing" || (e.disc || S.profile.disc) === disc));
+    const state = nextEffortDose({entries,scope,date:sess.date,today:iso(today()),fallback:sess.type === "S" ? 1 : 1 + pr.step * .05});
+    return {v:1,scope,eligible,setRest:60,...state};
+  }
+  function applyStrengthRestDose(sess) {
+    const d = sess.effortDose;
+    if (!d?.active || !d.eligible || sess.type !== "S") return;
+    sess.setRest = Math.max(45, Math.min(90, Math.round(60 / d.factor)));
+    sess.lapRest = Math.max(60, Math.min(135, Math.round(90 / d.factor)));
+    d.setRest = sess.setRest;
+    if (sess.setRest !== 60) sess.notes.push(S.profile.lang === "de"
+      ? `Abschlussbewertung: Satzpause 60 → ${sess.setRest} s. Gewichte und Wiederholungen bleiben unverändert.`
+      : `Final effort rating: set rest 60 → ${sess.setRest} s. Weights and reps stay unchanged.`);
+  }

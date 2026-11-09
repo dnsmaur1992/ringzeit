@@ -399,3 +399,14 @@ test("taekwondo grades: waiting times, forms (name only), exam parts, earliest d
   assert.equal(TKD.gradeText("d1", "en"), "1st Dan");
   assert.equal(TKD.gradeText("k10", "en"), "10th Kup");
 });
+
+import { fitnessFor } from '../src/core/history.js';
+test('physical dosing ignores technique, partial tests and unknown test methods',()=>{
+  const x=(scores,date='2026-11-02',method='rz-1')=>({date,method,scores});
+  assert.equal(fitnessFor([]).level,null);
+  assert.equal(fitnessFor([x({str:1,spd:5,end:5,flx:5,tec:5})]).level,0);
+  assert.equal(fitnessFor([x({str:5,spd:5,end:5,flx:5,tec:1})]).level,2);
+  const complete=x({str:3,spd:3,end:3,flx:3,tec:1});
+  assert.equal(fitnessFor([complete,x({str:null,spd:5,end:5,flx:5},'2026-11-03')]).level,1);
+  assert.equal(fitnessFor([complete,x({str:5,spd:5,end:5,flx:5},'2026-11-04','other-test')]).level,1);
+});

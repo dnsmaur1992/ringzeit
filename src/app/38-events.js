@@ -84,8 +84,15 @@
     if (ds.workout) return workoutAction(ds.workout);
     if (ds.player) return playerAction(ds.player, ds);
     if (ds.exerciseTimer) return exerciseTimerAction(ds.exerciseTimer, ds);
+    if (ds.doseChoice) {
+      if (!["hold","change"].includes(ds.doseChoice)) return;
+      if (ds.doseSheet && ui.sheet) { readSheet(); ui.sheet.doseChoice = ds.doseChoice; renderSheet(); }
+      else { const d = readFinishDraft(); d.doseChoice = ds.doseChoice; document.getElementById("doseAdvice").innerHTML = effortControlHtml(S.sessions[ui.sel],d); }
+      return;
+    }
     if (ds.effort) {
       const draft = finishDraft();
+      if (effortFace(draft.rpe) !== effortFace(+ds.effort)) draft.doseChoice = "hold";
       draft.rpe = +ds.effort;
       const hidden = document.getElementById("fRpe");
       if (hidden) hidden.value = String(draft.rpe);
@@ -97,19 +104,8 @@
             String(el.dataset.face ? +el.dataset.effort === faceOf(draft.rpe) : +el.dataset.effort === draft.rpe),
           ),
         );
-      return;
-    }
-    if (ds.exerciseEffort) {
-      const sess = S.sessions[ui.sel];
-      if (!sess) return;
-      sess.exerciseEffort = sess.exerciseEffort || {};
-      sess.exerciseEffort[ds.exerciseEffort] =
-        sess.exerciseEffort[ds.exerciseEffort] === ds.value ? null : ds.value;
-      document.querySelectorAll("[data-exercise-effort]").forEach((el) => {
-        if (el.dataset.exerciseEffort === ds.exerciseEffort)
-          el.setAttribute("aria-pressed", String(el.dataset.value === sess.exerciseEffort[ds.exerciseEffort]));
-      });
-      store.save();
+      const advice = document.getElementById("doseAdvice");
+      if (advice) advice.innerHTML = effortControlHtml(S.sessions[ui.sel],draft);
       return;
     }
     if (ds.progressInfoClose) {
@@ -308,8 +304,9 @@
     if (ds.scface) {
       const inp = document.getElementById("scRpe");
       if (inp) inp.value = ds.scface;
-      if (ui.sheet) ui.sheet.rpe = +ds.scface;
+      if (ui.sheet) { if (effortFace(ui.sheet.rpe) !== effortFace(+ds.scface)) ui.sheet.doseChoice = "hold"; ui.sheet.rpe = +ds.scface; }
       document.querySelectorAll("[data-scface]").forEach((el) => el.setAttribute("aria-pressed", String(el.dataset.scface === ds.scface)));
+      if (ui.sheet?.kind === "edit") renderSheet();
       return;
     }
     if (ds.vpick != null) {
@@ -662,6 +659,8 @@
         ck: e.ck,
         min: e.minutes,
         rpe: e.rpe,
+        effortDose: e.effortDose,
+        doseChoice: e.effortControl?.choice || "hold",
         kmRaw: e.km != null ? String(e.km).replace(".", S.profile.lang === "de" ? "," : ".") : "",
         note: e.note || "",
       });
@@ -757,6 +756,7 @@
       return;
     }
     if (ds.otstyle) {
+      if (ui.onb.tstyle !== ds.otstyle) ui.onb.techLevel = 0;
       ui.onb.tstyle = ds.otstyle;
       if (ui.onb.tgrade && !TKDT.isGrade(ds.otstyle, ui.onb.tgrade)) ui.onb.tgrade = "";
       renderOnb();
@@ -768,6 +768,7 @@
       return;
     }
     if (ds.osport) {
+      if (ui.onb.sport !== ds.osport) ui.onb.techLevel = 0;
       ui.onb.sport = ds.osport;
       renderOnb();
       return;
@@ -899,7 +900,10 @@
       return;
     }
     if (ds.tdel) {
+      const oldFitness = fitnessLevel();
       S.tests = S.tests.filter((e) => e.id !== ds.tdel);
+      if (fitnessLevel() !== oldFitness) dropOpenSessions(iso(today()));
+      loadCache = {};
       store.save();
       render();
       return;
@@ -958,8 +962,7 @@
         techOnly = tsp !== mainSport();
       if (techOnly) Object.assign(raw, { str: null, spd: null, end: null, flx: null });
       if (Object.values(raw).every((v) => v == null)) return;
-      const before = maxLevel(),
-        r = scoreTest(raw);
+      const oldFitness = fitnessLevel(), r = scoreTest(raw);
       await loading("loadingTest");
       S.tests.push({
         id: "t" + Date.now().toString(36),
@@ -970,12 +973,12 @@
         ...r,
       });
       ui.testOpen = false;
+      if (fitnessLevel() !== oldFitness) dropOpenSessions(iso(today()));
+      loadCache = {};
       store.save();
       render();
       window.scrollTo(0, 0);
-      const after = maxLevel();
-      if (after > before) toast(t("lvlUp")(t("levels")[after]));
-      else toast(t("saved"));
+      toast(t("saved"));
       if (ui.tourAfter) {
         ui.tourAfter = false;
         if (!S.profile.toured) startTour();
@@ -983,8 +986,23 @@
       return;
     }
     if (ds.tk) return tkdAction(ds);
-    // profile
+    // profile: a technical choice changes no physical score, grade or competition goal.
+    if (ds.techlevel != null) {
+      const k = ds.techkey, v = +ds.techlevel;
+      if (!["kickboxing","boxing","taekwondo:wt","taekwondo:itf"].includes(k) || ![0,1,2].includes(v)) return;
+      draft.techLevels = { ...(draft.techLevels || {}), [k]: v };
+      if (k === trainingKey(draft.sport, undefined, draft)) draft.level = v;
+      applyPlan(); render(); return;
+    }
+    if (ds.otech != null && ui.onb) {
+      if ([0,1,2].includes(+ds.otech)) ui.onb.techLevel = +ds.otech;
+      renderOnb(); return;
+    }
     if (ds.p) {
+      if (ds.p === "sport" && sportChoices(true).includes(ds.v)) {
+        draft.techLevels = { ...(draft.techLevels || {}), [trainingKey(draft.sport, undefined, draft)]: draft.level };
+        draft.level = draft.techLevels[trainingKey(ds.v, undefined, draft)] || 0;
+      }
       draft[ds.p] = ds.p === "level" ? +ds.v : ds.v;
       // full contact and K1 are no longer tied to the level; only the age limit applies (pBirth)
       if (draft.level === 0) draft.focus = "bal";
@@ -1032,7 +1050,7 @@
     }
   });
   /* Profile changes take effect at once: the plan settings are copied over and planned sessions from today on are rebuilt */
-  const PLAN_KEYS = ["level", "sport", "disc", "focus", "birthYear", "sex", "days", "minutes", "club", "comps", "limits"];
+  const PLAN_KEYS = ["techLevels", "fitnessBase", "level", "sport", "disc", "focus", "birthYear", "sex", "days", "minutes", "club", "comps", "limits"];
   /* Open sessions from `from` on are dropped and rebuilt with the new settings when they are next shown.
      A session that was already started (player progress, ticks or logged sets) is kept with its entries. */
   function dropOpenSessions(from) {

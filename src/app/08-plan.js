@@ -14,7 +14,7 @@
     const m = {};
     days.forEach((d, i) => {
       let ty = pat[i];
-      if ((p.level === 0 || ageGroup() === "kids") && ty === "P") ty = "T";
+      if ((techniqueLevel() === 0 || ageGroup() === "kids") && ty === "P") ty = "T";
       m[d] = ty;
     });
     if (bk) blockTypes(m, days, bk);
@@ -276,8 +276,8 @@
   function baseRpe(type, ds) {
     const { phase } = phaseInfo(ds);
     let r = { base: 6, build: 7, peak: 8, taper: 5, recover: 4, grade: 6 }[phase];
-    if (S.profile.level === 0) r -= 1;
-    if (S.profile.level === 2) r += 0.5;
+    if (fitnessLevel() === 0) r -= 1;
+    if (fitnessLevel() === 2) r += 0.5;
     if (type === "M") r = 3;
     if (type === "S") r -= 0.5;
     if (type === "K") r += 0.5;
@@ -335,6 +335,11 @@
       if (ds < td) continue;
       parts.push((weekLoad(ds).deload ? 1 : 0) + lightRegions({ log: S.log, date: ds }).join(","));
     }
+    // Once short-loop records exist, every own-session correction can affect the next comparable pair.
+    // Legacy histories alone keep their former invalidation behaviour.
+    if (S.log.some(e => e.effortDose?.v === 1)) parts.push(JSON.stringify(S.log.filter(e => e.src === "own").map(e =>
+      [e.id,e.date,e.sport,e.tstyle,e.disc,e.type,e.minutes,e.rpe,e.tHi,e.completed,e.inputConfirmed,
+        e.effortControl,e.effortDose,e.progression?.eligible,e.perf])));
     return parts.join("|");
   }
   /* Runs a change of the log; if it alters what open sessions depend on, they are dropped (started ones stay).
@@ -372,7 +377,7 @@
     // e.eq may list alternatives, e.g. "weights|kb" = dumbbells or a kettlebell
     if (e.eq && !e.eq.split("|").some((q) => eq.includes(q))) return false;
     for (const c of av) if (e.avoid.includes(c)) return false;
-    if (e.lvl > S.profile.level) return false;
+    if (e.lvl > techniqueLevel()) return false;
     if (young() && /weights|kb|bb/.test(e.eq) && (e.lvl > 0 || ageGroup() === "kids")) return false;
     return true;
   }
@@ -458,7 +463,7 @@
   function chooseTheme() {
     if (isTkd()) return null; // taekwondo has no hidden themes yet
     if (isBox()) {
-      const lv = S.profile.level,
+      const lv = techniqueLevel(),
         recent = Object.values(S.sessions)
           .sort((a, b) => (a.created || 0) - (b.created || 0))
           .slice(-12)
@@ -468,11 +473,11 @@
     }
     const p = S.profile,
       ka = kneeAnk(),
-      focus = p.level === 0 ? "bal" : p.focus;
+      focus = techniqueLevel() === 0 ? "bal" : p.focus;
     const ok = THEMES.filter(
       (th) =>
         (!th.disc || th.disc.includes(discOf())) &&
-        (!th.lvl || p.level >= th.lvl) &&
+        (!th.lvl || techniqueLevel() >= th.lvl) &&
         !(ka && th.risky) &&
         !(th.id === "sweepFinish" && p.limits.includes("ankle")),
     );
@@ -493,7 +498,7 @@
     const p = S.profile,
       lim = p.limits,
       ka = kneeAnk(),
-      focus = p.level === 0 ? "bal" : p.focus;
+      focus = techniqueLevel() === 0 ? "bal" : p.focus;
     let pool,
       kickOnly = false;
     if (kind === "bag" && lim.includes("wrist")) {
@@ -503,27 +508,27 @@
       pool = KICK_ONLY;
       kickOnly = true;
     } else {
-      pool = COMBOS.slice(0, p.level + 1).flat();
+      pool = COMBOS.slice(0, techniqueLevel() + 1).flat();
       if (EXTRA[discOf()] && !ka && Math.random() < 0.35) pool = EXTRA[discOf()];
       if (ka) pool = pool.filter((c) => c.every((x) => !RISKY.has(x)));
       if (ka && kind === "bag") pool = HAND_ONLY;
       if (young()) pool = pool.filter((c) => !c.includes("back"));
       if (ageGroup() === "kids") pool = pool.filter((c) => c.length <= 3 && !c.some((x) => ADV.has(x)));
-      if (p.level < 2) pool = pool.filter((c) => !c.includes("jknee"));
+      if (techniqueLevel() < 2) pool = pool.filter((c) => !c.includes("jknee"));
       if (!pool.length) pool = HAND_ONLY;
     }
     // 7f: from level 1 about every fifth combo is a kick chain (2 kicks, from level 2 also 3); low kicks only where the
     // discipline allows them (Kick Light, K1); not for children, not with a knee/ankle limit
     // 7g: the plan focus steers the share too – more boxing fewer chains, more kicks more chains
     const chainP = p.focus === "box" ? 0.08 : p.focus === "kick" ? 0.3 : 0.22;
-    if (!kickOnly && p.level >= 1 && ageGroup() !== "kids" && !ka && Math.random() < chainP) {
-      const ch = KICK_CHAINS.filter((x) => x.lvl <= p.level && (!x.low || ["kl", "k1"].includes(discOf()))).map((x) => x.c);
+    if (!kickOnly && techniqueLevel() >= 1 && ageGroup() !== "kids" && !ka && Math.random() < chainP) {
+      const ch = KICK_CHAINS.filter((x) => x.lvl <= techniqueLevel() && (!x.low || ["kl", "k1"].includes(discOf()))).map((x) => x.c);
       if (ch.length) return partnerClean(rnd(ch).slice());
     }
     let c = weightedPick(pool, focus).slice();
     if (theme && (!kickOnly || theme.kick)) {
       c = theme.ap(c, p);
-      const maxLen = ageGroup() === "kids" ? 3 : p.level + 3;
+      const maxLen = ageGroup() === "kids" ? 3 : techniqueLevel() + 3;
       while (c.length > maxLen) c.splice(1, 1);
       if (ka) c = c.filter((x) => !RISKY.has(x));
       if (c.length < 2) c.push("cross");
@@ -538,13 +543,13 @@
     let pool =
       load && (lim.includes("wrist") || lim.includes("shoulder"))
         ? BOXT.BOX_LIGHT
-        : BOXT.BOX_COMBOS.slice(0, p.level + 1).flat();
+        : BOXT.BOX_COMBOS.slice(0, techniqueLevel() + 1).flat();
     if (ageGroup() === "kids") pool = pool.filter((c) => c.length <= 3);
     if (!pool.length) pool = BOXT.BOX_LIGHT;
     let c = rnd(pool).slice();
     if (theme && pool !== BOXT.BOX_LIGHT) {
       c = theme.ap(c, p);
-      const maxLen = ageGroup() === "kids" ? 3 : p.level + 3;
+      const maxLen = ageGroup() === "kids" ? 3 : techniqueLevel() + 3;
       while (c.length > maxLen) c.splice(1, 1);
       if (c.length < 2) c.push("cross");
     }
@@ -841,11 +846,11 @@
         (box ? x.sport === "boxing" : tkd ? x.sport === "taekwondo" && (!x.style || x.style === tkdUnitStyle()) : x.sport !== "boxing" && x.sport !== "taekwondo") &&
         !(x.minAge && age != null && age < x.minAge) &&
         !(x.maxAge && age != null && age > x.maxAge) &&
-        !(x.kup != null && (tkdKup() == null ? p.level < 1 : tkdKup() > x.kup)) &&
+        !(x.kup != null && (tkdKup() == null ? techniqueLevel() < 1 : tkdKup() > x.kup)) &&
         !(x.touch && (kid || light)) &&
         (mode === "p" || x.de[2]) &&
         (!x.disc || x.disc.includes(discOf())) &&
-        (!x.lvl || p.level >= x.lvl) &&
+        (!x.lvl || techniqueLevel() >= x.lvl) &&
         !(ka && x.risky) &&
         !(x.gear && mode !== "p") &&
         !(light && !(LIGHT_TASKS.includes(x.id) || x.light)),
@@ -938,7 +943,7 @@
       ka = kneeAnk(),
       box = isBox(),
       lowOk = (discOf() === "kl" || discOf() === "k1") && !ka && !kid,
-      lvl = p.level || 0;
+      lvl = techniqueLevel() || 0;
     const atts = Object.keys(COUNTER_ATT).filter((a) => {
       const x = COUNTER_ATT[a];
       if (box) return BOXT.BOX_ATT.has(a) && (kid ? a === "jab" || a === "cross" : lvl >= x.lvl);
@@ -995,7 +1000,7 @@
     [3, 6],
   ];
   function reactCount(partnerRounds) {
-    const lvl = ageGroup() === "kids" ? 0 : S.profile.level || 0,
+    const lvl = ageGroup() === "kids" ? 0 : techniqueLevel() || 0,
       [lo, hi] = REACT_N[lvl] || REACT_N[0];
     // boxing: more evasion work with a real opponent action (docs/boxing-concept.md §3.1)
     return Math.min(lo + Math.floor(Math.random() * (hi - lo + 1)) + (isBox() && lvl > 0 ? 1 : 0), partnerRounds);
@@ -1048,12 +1053,12 @@
       ctx = tkdCtx(),
       lim = p.limits;
     const M = tkm();
-    let pool = M.COMBOS.slice(0, (p.level || 0) + 1).flat();
+    let pool = M.COMBOS.slice(0, (techniqueLevel() || 0) + 1).flat();
     pool = pool.filter((c) => c.every((x) => M.allowed(x, ctx)));
     // 7g: a technique released by the grade alone (level OR grade) also brings the higher combos that carry it – 7h: about
     // every fifth combo, so the level pool stays the core
     if (ctx.kup != null) {
-      const extra = M.COMBOS.slice((p.level || 0) + 1).flat().filter((c) => c.some((x) => M.byGrade(x, ctx)) && c.every((x) => M.allowed(x, ctx)));
+      const extra = M.COMBOS.slice((techniqueLevel() || 0) + 1).flat().filter((c) => c.some((x) => M.byGrade(x, ctx)) && c.every((x) => M.allowed(x, ctx)));
       if (extra.length && Math.random() < 0.2) pool = extra;
     }
     if (lim.includes("wrist") || lim.includes("shoulder")) pool = pool.filter((c) => !c.some((x) => TKDT.HANDS.has(x) || (M.HANDS && M.HANDS.has(x))));
@@ -1061,7 +1066,7 @@
     if (ctx.kid) pool = pool.filter((c) => c.length <= 3);
     // the fitter, the longer the kick chains: advanced at least 3 kicks, competition level at least 4 (most of the time).
     // 7f: warm-up rounds without head kicks and ITF (hand-foot, weaker form) need one kick less: 2 / 3
-    const lvl = p.level || 0,
+    const lvl = techniqueLevel() || 0,
       need = (noHead || M === ITFT ? 1 : 2) + lvl,
       longer = pool.filter((c) => M.kickCount(c) >= need);
     // ITF (7b B8): from level 1 about every second combo carries a jumping or spinning kick, as far as grade, age and limits allow
@@ -1080,7 +1085,7 @@
     const p = S.profile,
       partner = eq.includes("partner"),
       ka = kneeAnk(),
-      lvl = p.level || 0,
+      lvl = techniqueLevel() || 0,
       kid = ageGroup() === "kids",
       ctx = tkdCtx(),
       bag = eq.includes("bag") && loc !== "out" && !p.limits.includes("shoulder"),
@@ -1139,7 +1144,7 @@
     const p = S.profile,
       partner = eq.includes("partner"),
       ka = kneeAnk(),
-      lvl = p.level || 0,
+      lvl = techniqueLevel() || 0,
       kid = ageGroup() === "kids",
       bag = eq.includes("bag") && loc !== "out" && !p.limits.includes("wrist") && !p.limits.includes("shoulder"),
       cyc = partner ? ["partner", "foot", "partner", "evade"] : bag ? ["shadow", "foot", "bag", "evade"] : ["shadow", "foot", "evade"],
@@ -1243,7 +1248,7 @@
       }
       if (k === "sixkick")
         r.combo = ["front", "round", "side", "roundh", "round", "front"].filter(
-          (x) => !(p.level === 0 && x === "roundh"),
+          (x) => !(techniqueLevel() === 0 && x === "roundh"),
         );
       return r;
     });
@@ -1271,7 +1276,7 @@
     );
     const need = ["roundh"];
     if (EXTRA[discOf()] && !ka) need.push(...(discOf() === "k1" ? ["lowk", "knee"] : ["lowk"]));
-    const highPool = COMBOS.slice(0, p.level + 1)
+    const highPool = COMBOS.slice(0, techniqueLevel() + 1)
       .flat()
       .filter(
         (c) =>
@@ -1291,7 +1296,7 @@
           have = new Set(out.map((x) => x.combo && x.combo.join())),
           fresh = src.filter((c) => !have.has(partnerClean(c).join()));
         // all fitting combos are in use already (few at Grundlage): this round's combo ends in the high kick instead
-        if (!fresh.length && tech === "roundh") r.combo = fill2([...r.combo.filter((x) => x !== "round" && x !== "step" && !HIGHK.has(x)).slice(0, p.level + 2), "roundh"]);
+        if (!fresh.length && tech === "roundh") r.combo = fill2([...r.combo.filter((x) => x !== "round" && x !== "step" && !HIGHK.has(x)).slice(0, techniqueLevel() + 2), "roundh"]);
         else r.combo = lcShort(partnerClean(rnd(fresh.length ? fresh : src)));
       }
     });
@@ -1658,7 +1663,7 @@
      hardening and the harder hardening dose – like full contact in kickboxing (7e). Children and free sparring stay as they are. */
   const wtFull = (soft) => {
     const age = ageAt(today());
-    return isTkd() && tkdUnitStyle() === "wt" && !soft && (S.profile.level || 0) >= 1 && age != null && age >= 16;
+    return isTkd() && tkdUnitStyle() === "wt" && !soft && (techniqueLevel() || 0) >= 1 && age != null && age >= 16;
   };
   function tkdHardBlock(eq, loc, soft) {
     const p = S.profile,
@@ -1669,7 +1674,7 @@
       if (eq.includes("partner")) modes.unshift("p");
       else if (eq.includes("bag") && loc !== "out") modes.unshift("b");
     }
-    const ok = (x) => modes.includes(x.m) && !(x.adult && yg) && !(soft && x.strike) && !(x.wr && p.limits.includes("wrist")) && (!x.lvl || p.level >= x.lvl);
+    const ok = (x) => modes.includes(x.m) && !(x.adult && yg) && !(soft && x.strike) && !(x.wr && p.limits.includes("wrist")) && (!x.lvl || techniqueLevel() >= x.lvl);
     const byId = (ids) => HARD.filter((x) => ids.includes(x.id) && ok(x));
     const hand = [byId(["fTap"]), byId(["tkEdge"]), byId(["tkTips", "fFinger", "fWring"])].filter((g) => g.length),
       leg = [byId(["shintap", "shinbag"]), byId(["tkFoot", "tkBall"])].filter((g) => g.length);
@@ -1698,7 +1703,7 @@
       more = [];
     if (!soft && !kid) {
       if (!lim) more.push("fPlank");
-      if (!lim && p.level >= 1 && !yg) more.push("fPush");
+      if (!lim && techniqueLevel() >= 1 && !yg) more.push("fPush");
       if (!lim && eq.some((q) => ["weights", "kb", "bands"].includes(q))) more.push("wristCurl");
       if (eq.includes("bands")) more.push("fingerExt");
     }
@@ -1707,7 +1712,7 @@
     // toughness (7b B7): from level 1, from 16 years, without limits and not in taper/recovery weeks the second half is body
     // conditioning – with a partner the ab conditioning, at the bag the core against the bag, otherwise brace & exhale
     const age = ageAt(today());
-    if (!soft && !kid && p.level >= 1 && age != null && age >= 16 && !p.limits.length) {
+    if (!soft && !kid && techniqueLevel() >= 1 && age != null && age >= 16 && !p.limits.length) {
       const body = eq.includes("partner") ? "abs" : eq.includes("bag") && loc !== "out" ? "bodybag" : "brace";
       return { key: "wrist", lbl: "tough", min: 6, items: [...base, body].map((id) => ({ kind: "hard", id })) };
     }
@@ -1737,7 +1742,7 @@
         !(soft && x.strike),
     );
     // the fist is always covered (with the equipment at hand first), plus one other body area
-    const fists = ok.filter((x) => x.fist && (!x.lvl || p.level >= x.lvl) && !(x.wr && p.limits.includes("wrist"))),
+    const fists = ok.filter((x) => x.fist && (!x.lvl || techniqueLevel() >= x.lvl) && !(x.wr && p.limits.includes("wrist"))),
       fistPick = shuffle(fists.filter((x) => x.m !== "s"))[0] || shuffle(fists)[0];
     const others = ok.filter((x) => !x.fist),
       // full contact (FC, K1): the area the discipline takes the hits on comes first – body in FC, shins in K1
@@ -1774,6 +1779,9 @@
     let s;
     try {
       s = buildSessionCore(dateStr, type, loc, eqIn, opts);
+      s.techniqueLevel = techniqueLevel();
+      s.fitnessLevel = fitnessLevel();
+      s.blocks.forEach(b => { b.fitnessLevel = s.fitnessLevel; });
     } finally {
       buildSport = null;
       buildDisc = null;
@@ -1835,7 +1843,7 @@
       if (ph.phase === "recover") n = Math.max(2, Math.round(n * 0.6));
       if (load.deload) n = Math.max(2, Math.round(n * 0.7));
       if (ramp) n = Math.max(2, Math.round(n * ramp.f));
-      if (prep && p.level === 0) n = Math.max(2, Math.round(n * 0.8));
+      if (prep && fitnessLevel() === 0) n = Math.max(2, Math.round(n * 0.8));
       if (fasting) n = Math.max(2, Math.round(n * 0.8));
       if (mood === "hard") n = Math.max(2, Math.round(n * 0.8));
       if (mood === "easy") n += 1;
@@ -1929,8 +1937,8 @@
       const warm = 8,
         cool = 7,
         main = D - warm - cool - 6,
-        iv = p.level > 0 && !load.deload && !soft && ph.phase !== "base" && main >= 30;
-      const reps = iv ? (p.level === 2 ? 4 : 3) : 0,
+        iv = fitnessLevel() > 0 && !load.deload && !soft && ph.phase !== "base" && main >= 30;
+      const reps = iv ? (fitnessLevel() === 2 ? 4 : 3) : 0,
         ivMin = reps * 5,
         z2a = iv ? Math.round((main - ivMin) / 2) : main;
       const items = [{ kind: "run", zone: 2, min: z2a }];
@@ -2005,7 +2013,7 @@
             ? "2× 8–10"
             : young()
               ? "3× 10–12"
-              : p.level === 2
+              : fitnessLevel() === 2
                 ? "4× 5–8"
                 : "3× 8–12";
     const supSets = load.deload || work === "phys" ? "2×" : "3×";
@@ -2014,7 +2022,7 @@
       // boxing: a longer strength-endurance finisher (≈ 24 / 15 min of 39, 7b B7)
       const main = Math.round(rest * (box ? 24 / 39 : 0.7)),
         fin = rest - main,
-        light = p.level === 0 || young(),
+        light = fitnessLevel() === 0 || young(),
         B = t("blk").sets;
       if (bk === "pow" && bi.st > 0 && !load.deload) {
         // explosive transfer / contrast: power work first, while fresh
@@ -2028,11 +2036,11 @@
         blocks.push({
           key: "str",
           min: main - pm,
-          items: strengthBasics(p.level === 0 ? 3 : 4, loc, eq, used, machines),
+          items: strengthBasics(fitnessLevel() === 0 ? 3 : 4, loc, eq, used, machines),
           sets: light ? "3× 8–10" : "3× 4–6 · " + B.heavy,
         });
       } else {
-        const nStr = (taper ? 3 : p.level === 0 ? 4 : 5) - (work === "phys" ? 1 : 0),
+        const nStr = (taper ? 3 : fitnessLevel() === 0 ? 4 : 5) - (work === "phys" ? 1 : 0),
           // explosive sets (taper / tournament preparation) without weights: only exercises that are explosive by nature,
           // so "3–5 explosive reps" is never asked of a plank or a slow push-up (docs/data-load-concept.md A10)
           explNoWeights = (taper || prep) && !(bk === "pow" && !load.deload) && !/weights|kb|bb/.test(eq.join(",")) && loc !== "studio";
@@ -2141,14 +2149,14 @@
         // fight simulation: two full bouts in the exact format, like two bouts on tournament day
         items = [];
         // beginners simulate one bout, as shadow or bag sparring
-        for (let k = 1; k <= (p.level === 0 ? 1 : 2); k++)
+        for (let k = 1; k <= (fitnessLevel() === 0 ? 1 : 2); k++)
           for (let r = 1; r <= fmtR.r; r++)
             items.push({
               kind: "round",
               k: "sim",
               fight: k,
               r,
-              beg: p.level === 0,
+              beg: techniqueLevel() === 0,
             });
       } else if (type === "P") items = sparRounds(nR, loc, eq, soft || ph.phase === "grade");
       else {

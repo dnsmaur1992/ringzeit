@@ -178,7 +178,8 @@ const note = (id, ok, txt) => R.push(`${ok ? "OK    " : "BEFUND"} ${id}: ${txt}`
 {
   const a = app();
   a.run("S.tests=[{id:'t0',date:'2026-10-01',raw:{str:30,spd:30,end:700,flx:4,tec:4},scores:{str:4,spd:4,end:4,flx:4,tec:4},techBy:{'taekwondo:wt':4},total:20,complete:true,min:4}];");
-  note("H6", a.run("levelFor(S.tests,'taekwondo','wt').needTech") === false && a.run("levelFor(S.tests,'taekwondo','itf').needTech") === true && a.run("levelFor(S.tests,'kickboxing').needTech") === true, "Technik je Sport/Stil getrennt, Fitness gemeinsam");
+  a.run("S.profile.techLevels={'taekwondo:wt':2,'taekwondo:itf':0};");
+  note("H6", a.run("techniqueLevel('taekwondo','wt')") === 2 && a.run("techniqueLevel('taekwondo','itf')") === 0 && a.run("fitnessLevel()") === 2, "Manuelle Technik je Sport/Stil getrennt, körperliche Dosierung aus vier gemeinsamen Testwerten");
 }
 // H7 grade never set automatically by a finished session
 {

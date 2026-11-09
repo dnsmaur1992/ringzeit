@@ -2,7 +2,7 @@
   /* Every name the app takes from the shared core is listed here – nothing else reaches into RZ. */
   const { pad, fmtTime: fmt, iso, parse, monday, addDays, today, daysBetween, wd, rnd, shuffle, createStore } = RZ;
 /* shared history and load (src/core/history.js) */
-  const { entryLoad, entryComplete, entrySport, weekLoadSum, weekIncomplete, deloadFor, projectWeek, REGIONS, clubRegions, exRegions, meanRegions, entryRegions, lightRegions, levelFor, techKey, tkdRegions } = RZ;
+  const { entryLoad, entryComplete, entrySport, weekLoadSum, weekIncomplete, deloadFor, projectWeek, REGIONS, clubRegions, exRegions, meanRegions, entryRegions, lightRegions, fitnessFor, techKey, tkdRegions, effortFace, effortRequest, nextEffortDose } = RZ;
 /* prescriptions: dose text, timer phases and time estimate from one source (src/core/prescription.js) */
   const { RX, RX_HARD, rxOf, rxText, rxFill, rxPlan, rxSeconds, rxMinutes } = RZ;
   /* exercise catalogue (src/catalog) and sports (src/sports) */

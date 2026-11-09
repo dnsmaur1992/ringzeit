@@ -124,6 +124,8 @@
     return steps;
   }
   const LAP_REST = 90;
+  const lapRest = sess => sess?.lapRest || LAP_REST;
+  const setRest = sess => sess?.setRest || 60;
   function stepDone(sess, st) {
     if (!st || st.kind === "finish") return false;
     if (st.kind === "rest") return !!sess.flow?.rests?.[`${st.bi}.${st.lap}`];
@@ -212,14 +214,14 @@
         key: `${st.bi}.lap${st.lap}`,
         bi: st.bi,
         ni: -1,
-        phases: [{ seconds: LAP_REST, label: workoutText().rest }],
+        phases: [{ seconds: lapRest(sess), label: workoutText().rest }],
         index: 0,
         restOnly: true,
         running: true,
         done: false,
         player: ui.workout.step,
-        remainingMs: LAP_REST * 1000,
-        endAt: Date.now() + LAP_REST * 1000,
+        remainingMs: lapRest(sess) * 1000,
+        endAt: Date.now() + lapRest(sess) * 1000,
       };
       (sess.flow.rests ||= {})[`${st.bi}.${st.lap}`] = true;
       ui.workout.auto = true;
@@ -260,7 +262,6 @@
     renderWorkout();
   }
   /* timed strength (plank & co.): get ready → set → rest → set …, like rounds; values fill in set by set */
-  const SET_REST = 60;
   const timedSets = (st, sess) => st?.kind === "sets" && TIMED.has(sess.blocks[st.bi].items[st.ni].id);
   function playerStartSets() {
     const sess = S.sessions[ui.sel],
@@ -285,7 +286,7 @@
         phases.push({ seconds: 5, label: W.change });
         phases.push({ seconds: plan.seconds, label: `${W.set} ${i + 1}/${rows.length} · ${LR[1]}`, set: i, leg: "rR" });
       } else phases.push({ seconds: plan.seconds, label: `${W.set} ${i + 1}/${rows.length}`, set: i });
-      if (k < todo.length - 1) phases.push({ seconds: SET_REST, label: W.rest });
+      if (k < todo.length - 1) phases.push({ seconds: setRest(sess), label: W.rest });
     });
     pauseOtherTimer("exercise");
     if (ui.exerciseTimer?.running) pauseExerciseTimer();
@@ -451,7 +452,7 @@
         nextSet = st.lap != null ? st.lap : Math.max(0, rows.findIndex((r) => r.r == null));
       h += `<button type="button" class="btn sec" data-exercise-timer="start" data-key="${key}" data-set-index="${nextSet}">${P.setTimer(nextSet + 1)}</button>`;
     }
-    if (st.lap == null) h += `<button type="button" class="btn ghost" data-exercise-timer="rest" data-key="${key}">${P.rest}</button>`;
+    if (st.lap == null) h += `<button type="button" class="btn ghost" data-exercise-timer="rest" data-key="${key}">${S.profile.lang === "de" ? "Satzpause" : "Set rest"} ${fmt(setRest(sess))}</button>`;
     return h + `</div>`;
   }
   function playerHtml() {
@@ -471,7 +472,7 @@
       done = stepDone(sess, st);
     let h = head + soundHintHtml(P);
     if (st.kind === "rest") {
-      h += playerRing(tm, st, false, LAP_REST);
+      h += playerRing(tm, st, false, lapRest(sess));
       h += `<div class="pcard"><small>${esc(P.lap(st.lap + 1, st.laps))}</small><b>${P.lapRest}</b><p>${P.lapRestHint}</p></div>`;
     } else if (st.kind === "rounds") {
       const n = b.items.filter((it, ni) => itemDone(sess, st.bi, ni)).length;
@@ -679,14 +680,14 @@
             [20, 30],
             [30, 45],
             [45, 60],
-          ][S.profile.level] || [30, 45];
+          ][doseLevel(b)] || [30, 45];
       seconds = choices.includes(choice) ? choice : choices[0];
       sides = DOSE_SIDE.has(name) || DOSE_LEG.has(name) ? 2 : 1;
     } else {
       const rx = RX[name];
       if (rx) fromRx(rx);
       else if (EX[it.id]?.cat === "cond" && !DOSE_FIX[name] && !repDose(it.id, b)) {
-        phases = interval(1, [30, 40, 45][S.profile.level], [30, 20, 15][S.profile.level]);
+        phases = interval(1, [30, 40, 45][doseLevel(b)], [30, 20, 15][doseLevel(b)]);
       } else if (["cool", "mob"].includes(b.key) && !DOSE_FIX[name]) {
         choices = b.key === "mob" ? [60, 90] : [45, 60];
         seconds = choices.includes(choice) ? choice : choices[0];
@@ -776,7 +777,7 @@
     const plan =
       action === "rest"
         ? {
-            phases: [{ seconds: 60, label: workoutText().rest }],
+            phases: [{ seconds: setRest(sess), label: workoutText().rest }],
             tracked: false,
           }
         : exerciseTiming(sess, bi, ni, +ds.seconds, +ds.setIndex);
@@ -989,8 +990,7 @@
     if (view === "exam") return h + (mainSport() === "taekwondo" ? tkdPanelHtml() : renderExam());
     const tests = S.tests.filter((x) => !x.raw || [x.raw.str, x.raw.spd, x.raw.end, x.raw.flx].some((v) => v != null)),
       last = tests[tests.length - 1],
-      prev = tests.length > 1 ? tests[tests.length - 2] : null,
-      ml = maxLevel();
+      prev = tests.length > 1 ? tests[tests.length - 2] : null;
     if (!last) {
       h += `<div class="empty"><b>${t("testNone")}</b>${t("testNoneT")}</div>`;
     } else {
@@ -998,8 +998,7 @@
   ${TCATS.map((k) => `<div class="sub">${t("cats")[k]}: <span class="res">${last.scores[k] ?? "–"}</span>${prev && prev.scores[k] && last.scores[k] ? ` <span class="sub">(${last.scores[k] - prev.scores[k] >= 0 ? "+" : ""}${last.scores[k] - prev.scores[k]})</span>` : ""}</div>`).join("")}
   ${prev ? `<div class="sub">- - - ${t("testPrev")}</div>` : ""}</div></div></div>`;
     }
-    h += `<div class="panel"><div class="row"><span style="flex:1">${t("levels")[1]}<div class="sub">${t("need1")}</div></span><span class="tg ${ml >= 1 ? "ok" : ""}">${ml >= 1 ? t("unlocked") : t("lockedL")}</span></div>
- <div class="row"><span style="flex:1">${t("levels")[2]}<div class="sub">${t("need2")}</div></span><span class="tg ${ml >= 2 ? "ok" : ""}">${ml >= 2 ? t("unlocked") : t("lockedL")}</span></div></div>`;
+    h += fitnessSummaryHtml();
     h += `<button type="button" class="btn" id="tOpen">${t("testStart")}</button><p class="foot">${t("testEvery")}</p>`;
     if (tests.length)
       h +=

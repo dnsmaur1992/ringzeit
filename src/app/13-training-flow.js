@@ -7,7 +7,7 @@
           next: "Als Nächstes",
           progress: (n, total) => `${n} von ${total} Übungen erledigt`,
           check: "Hakenfläche antippen zum Abhaken · i öffnet die Übungserklärung.",
-          chooseEffort: "Wie anstrengend war die Einheit?",
+          chooseEffort: "Wie anstrengend war die Einheit? (Pflicht)",
           effortFine: "Genauer: Skala 1–10",
           effortHelp: "1–3 leicht · 4–6 mittel · 7–8 schwer · 9–10 sehr schwer",
           durationHint: "Vorgeschlagen ist die geplante Dauer – ändere sie, wenn du kürzer oder länger trainiert hast.",
@@ -23,8 +23,6 @@
           start: "Runde starten",
           resume: "Fortsetzen",
           pause: "Timer pausieren",
-          exerciseEffort: "Wie schwer war diese Übung? (freiwillig)",
-          effort: { easy: "Leicht", right: "Passend", hard: "Zu schwer" },
           anchors: "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
         }
       : {
@@ -33,7 +31,7 @@
           next: "Up next",
           progress: (n, total) => `${n} of ${total} exercises completed`,
           check: "Tap the check control to mark complete · i opens exercise details.",
-          chooseEffort: "How hard was the session?",
+          chooseEffort: "How hard was the session? (required)",
           effortFine: "More precise: scale 1–10",
           effortHelp: "1–3 easy · 4–6 moderate · 7–8 hard · 9–10 very hard",
           durationHint: "The planned duration is suggested – change it if you trained shorter or longer.",
@@ -48,8 +46,6 @@
           start: "Start round",
           resume: "Resume",
           pause: "Pause timer",
-          exerciseEffort: "How hard was this exercise? (optional)",
-          effort: { easy: "Easy", right: "About right", hard: "Too hard" },
           anchors: "These basic exercises recur in your plan so strength performances stay comparable.",
         };
   function finishDraft() {
@@ -61,6 +57,7 @@
         minutesConfirmed: true,
         minutesTouched: false,
         rpe: null,
+        doseChoice: "hold",
         note: "",
       };
     return ui.finishDraft;
@@ -112,9 +109,25 @@
                     `<button type="button" data-effort="${n}" aria-pressed="${draft.rpe === n}" aria-label="${n} / 10">${n}</button>`,
                 )
                 .join("")}</div><span class="sub">${txt.effortHelp}</span></details>`
-        }<input id="fRpe" type="hidden" value="${draft.rpe ?? ""}"></div>
+        }<input id="fRpe" type="hidden" value="${draft.rpe ?? ""}"><div id="doseAdvice">${effortControlHtml(sess,draft)}</div></div>
         <div class="field"><label class="lab" for="fNote">${t("note")}</label><textarea id="fNote" placeholder="${esc(t("notePh"))}">${esc(draft.note)}</textarea></div><div class="field"><div id="finishError" role="alert" class="note warn" hidden></div><button type="button" class="btn${completed ? " all-done" : ""}" id="fSave">${completed ? trainingText().ready : trainingText().complete}</button></div></div></div>`;
   }
+  function effortControlHtml(sess, d, sheet = false) {
+    const de = S.profile.lang === "de", f = effortFace(d.rpe), dose = sess?.effortDose;
+    if (!f) return "";
+    if (!dose?.eligible) return `<p class="sub">${de ? "Bewertung gespeichert für Belastung und Verlauf. Die heutigen Schutz- und Erholungsvorgaben haben Vorrang." : "Rating counts towards load and history. Today's protection and recovery rules take priority."}</p>`;
+    const choice = d.doseChoice || "hold", percent = effortRequest(d.rpe, choice), type = t("types")[sess.type];
+    const question = f === 6 ? (de ? "Nächste Einheit dieser Art etwas fordernder?" : "Make the next session of this type a little harder?")
+      : (de ? "Nächste Einheit dieser Art etwas leichter?" : "Make the next session of this type a little easier?");
+    const controls = f >= 6 ? `<span class="lab">${question}</span><div class="chips">${["hold","change"].map(v => `<button type="button" class="chip" data-dose-choice="${v}"${sheet ? ' data-dose-sheet="1"' : ''} aria-pressed="${choice === v}">${v === "hold" ? (de ? "Beibehalten" : "Keep it") : f === 6 ? "+5 %" : f === 8 ? "−5 %" : "−10 %"}</button>`).join("")}</div>` : "";
+    const next = Math.max(.8, Math.min(1.2, dose.factor * (1 + (percent || 0) / 100)));
+    const info = !percent || next === dose.factor
+      ? (de ? "Die bisherige Anpassung bleibt. Tagesform und Periodisierung werden weiter berücksichtigt." : "Keep the current adjustment. Readiness and periodisation still apply.")
+      : (de ? `Für die nächste Einheit „${type}“: Steuerimpuls ${percent > 0 ? "+" : ""}${percent} %, umgesetzt über die Pausen. Gerundet und auf ±20 % begrenzt.`
+        : `For the next “${type}” session: ${percent > 0 ? "+" : ""}${percent}% planning impulse, applied through rests. Rounded and capped at ±20%.`);
+    return `${controls}<p class="sub" role="status">${info}</p>`;
+  }
+  const finishEffortControl = d => ({v:1,face:effortFace(d.rpe),choice:d.doseChoice || "hold"});
   function itemTitle(sess, bi, ni) {
     const it = sess.blocks[bi].items[ni];
     if (it.kind === "hard") return hardTxt(it.id, it.h)[0];
@@ -123,11 +136,6 @@
     if (EX[it.id]) return exText(it.id).name;
     if (it.kind === "round") return roundInfo(it).title;
     return `${t("main")} ${ni + 1}`;
-  }
-  function exerciseFeedbackHtml(sess, key) {
-    const txt = flowText(),
-      effort = sess.exerciseEffort?.[key];
-    return `<div class="exercise-effort"><span class="sub">${txt.exerciseEffort}</span><div class="chips">${["easy", "right", "hard"].map((value) => `<button type="button" class="chip" data-exercise-effort="${key}" data-value="${value}" aria-pressed="${effort === value}">${txt.effort[value]}</button>`).join("")}</div></div>`;
   }
   function relevantEquipment(id, eq) {
     const alternatives = (EX[id]?.eq || "").split("|").filter(Boolean);
@@ -193,6 +201,8 @@
       completed: completion.complete,
       openExercises: completion.open,
       progression: sess?.progression,
+      effortDose: sess?.effortDose,
+      effortControl: finishEffortControl(actual),
       rpe: actual.rpe,
       inputConfirmed: true,
       tHi: sess ? sess.tHi : rpeRange(ty, ui.sel).hi,
@@ -288,7 +298,7 @@
         [20, 30],
         [30, 45],
         [45, 60],
-      ][S.profile.level] || [30, 45],
+      ][doseLevel(b)] || [30, 45],
       ph = timed ? String(hold[0]) : ((b.sets || "").match(/(\d+)[–-](\d+)/) || [, "10"])[1];
     let h = timed ? `<div class="last" style="margin-top:6px">${t("holdTarget")(rows.length, hold)}</div>` : "";
     const leg = DOSE_LEG.has(EX[id]?.key),
@@ -303,7 +313,7 @@
     const last = lastPerf(id, sess.date);
     return (
       h +
-      `</div><div class="setfoot"><span class="last">${last ? `${t("lastTime")}: ${esc(fmtSets(last, id))}` : ""}</span><button type="button" class="btn ghost" data-addset="${key}">${t("addSet")}</button></div>${exerciseFeedbackHtml(sess,key)}`
+      `</div><div class="setfoot"><span class="last">${last ? `${t("lastTime")}: ${esc(fmtSets(last, id))}` : ""}</span><button type="button" class="btn ghost" data-addset="${key}">${t("addSet")}</button></div>`
     );
   }
   /* Lead/rear side for hooks, uppercuts and kicks: hands alternate; a kick comes from the side opposite the last strike */

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import vm from "node:vm";
+import { readFileSync } from "node:fs";
 import { appHtml } from "./app-source.mjs";
 
 // Execute the actual inline application, without starting the DOM boot/animation loop.
@@ -111,7 +112,7 @@ function app() {
   // Boot was deliberately not run (see script replacement below).
   const run = (code) => vm.runInContext(code, context, { timeout: 3000 });
   // 3-D: exercises are found by their text id; exKey(fn) returns the id of the first exercise matching fn
-  run(`globalThis.exKey=(f)=>{const e=EX.find(f);return e?e.key:-1};`);
+  run(`globalThis.levelFor=RZ.levelFor;globalThis.exKey=(f)=>{const e=EX.find(f);return e?e.key:-1};`);
   run(
     `S = hydrate({profile:{...DEFAULT_PROFILE, level:1, example:false, planStart:'2026-08-31'}}); ui.onb = null;`,
   );
@@ -520,7 +521,7 @@ function simulateCycles(type, behavior, cycles = 4) {
       );
       weeks.push(summary);
       a.run(
-        "saveTrainingSession(); S=hydrate(JSON.parse(localStorage.getItem(LS)));",
+        "saveTrainingSession(); S=hydrate(JSON.parse(localStorage.getItem(LS))); S.log.forEach(e=>{delete e.effortControl;delete e.effortDose;});",
       );
     }
     output.push(weeks);
@@ -528,7 +529,7 @@ function simulateCycles(type, behavior, cycles = 4) {
   return output;
 }
 
-test("20 weeks of generated, fully completed technique plans raise baselines only after cycle boundaries", () => {
+test("legacy history: 20 weeks of generated, fully completed technique plans raise baselines only after cycle boundaries", () => {
   const result = simulateCycles("T", () => "good");
   assert.deepEqual(
     result.map((c) => c[0].step),
@@ -566,7 +567,7 @@ test("20 weeks with partial training hold the baseline, and an overloaded cycle 
   );
 });
 
-test("40 weeks of generated strength plans carry base reps and earned weights through deloads without inventing entered values", () => {
+test("legacy history: 40 weeks of generated strength plans carry base reps and earned weights through deloads without inventing entered values", () => {
   const result = simulateCycles("S", () => "good", 8);
   const first = result[0][0].targets.find((t) => t.kg == null && !t.timed);
   assert.ok(first);
@@ -1192,7 +1193,7 @@ test("simplified start: six-step tour, compact first steps, profile split into a
   assert.doesNotMatch(prof, /data-pmore="1"|data-p="level"|id="pBirth"/);
   a.run("ui.profSec='me';");
   const me = a.run("renderProfile()");
-  assert.match(me, /data-p="level"/);
+  assert.match(me, /data-techlevel="0"/);
   assert.match(me, /id="pBirth"/);
   assert.ok(me.indexOf("data-psport=") < me.indexOf('id="pBirth"'), "sport & belt first, then the person");
 });
@@ -2358,16 +2359,15 @@ test("3-U case 11: a backup round trip restores exactly the exported state – n
   assert.equal(a.run("new Set(S.log.map(e=>e.id)).size"), 12);
 });
 
-test("3-U: levels above the tested one show a lock; tapping it explains the fitness test", async () => {
+test("technical choices are available without a fitness-test lock", async () => {
   const a = app();
   a.run("S.profile.level=0;S.tests=[];draft=null;ui.profSec='me';");
   const h = a.run("renderProfile()");
-  assert.equal((h.match(/data-lock="level"/g) || []).length, 2, "Fortgeschritten and Wettkampf are locked");
-  assert.match(h, /data-p="level" data-v="0"/);
-  assert.doesNotMatch(h, /data-p="level" data-v="1"/);
-  a.run("toast=(m)=>{globalThis.__t=m}");
-  await a.click({ dataset: { lock: "level" } });
-  assert.match(a.run("globalThis.__t"), /Fitnesstest/);
+  assert.doesNotMatch(h, /data-lock="level"/);
+  for (const k of [0,1,2]) assert.match(h, new RegExp(`data-techlevel="${k}"`));
+  await a.click({dataset:{techlevel:"2",techkey:"kickboxing"}});
+  assert.equal(a.run("techniqueLevel()"),2);
+  assert.equal(a.run("fitnessLevel()"),1,"migrated physical baseline is unchanged");
 });
 
 // ---- 3-D: stable exercise ids, prescriptions, deviations A1–A13 ----
@@ -2597,7 +2597,7 @@ test("4a-U: round formats – DBV age class, standard without tournament, 3 × 2
 test("4a-U: partner days – Aufgabensparring only; touch sparring max once, never for beginners, kids, taper/recovery or after a KO", () => {
   const a = app();
   const tasksOf = (s) => boxItems(s).filter((it) => it.k === "task");
-  a.run("S.profile.level=1;S.profile.birthYear=1995;S.profile.limits=[];S.profile.comps=[];");
+  a.run("S.profile.sport='boxing';S.profile.level=1;S.profile.birthYear=1995;S.profile.limits=[];S.profile.comps=[];");
   let free = 0;
   for (let i = 0; i < 60; i++) {
     const t = tasksOf(boxSess(a, "P", ["partner"], { min: 90 }));
@@ -4442,4 +4442,248 @@ test("review 05.11. timers: every start pauses the other runs with their progres
   assert.equal(a.run("ui.relax.phase"), "run", "no completion while paused");
   assert.equal(a.run("S.profile.relaxLog.length"), 0);
   a.run("relaxClose();");
+});
+
+// Technical familiarity and physical dosing are independent, per-sport selections survive every switch.
+test("separation: weak fitness cannot demote familiar techniques; high fitness cannot unlock unfamiliar ones", () => {
+  const a=app();
+  a.run("S.profile.level=2;S.profile.birthYear=1990;S.profile.comps=[];S.profile.fitnessBase=0;S.profile.techLevels={kickboxing:2,boxing:0,'taekwondo:wt':1,'taekwondo:itf':0};S.tests=[{date:'2026-11-02',method:'rz-1',scores:{str:1,spd:5,end:5,flx:5,tec:5}}];");
+  assert.equal(a.run("techniqueLevel()"),2);
+  assert.equal(a.run("fitnessLevel()"),0);
+  const low=JSON.parse(a.run("JSON.stringify(buildSession('2026-11-02','S','gym',['weights']))"));
+  assert.equal(low.techniqueLevel,2);
+  assert.equal(low.fitnessLevel,0);
+  const rpeLow=a.run("baseRpe('T','2026-11-02')");
+  a.run("S.tests.push({date:'2026-11-03',method:'rz-1',scores:{str:5,spd:5,end:5,flx:5,tec:1}});");
+  assert.equal(a.run("fitnessLevel()"),2);
+  assert.equal(a.run("techniqueLevel()"),2);
+  assert.ok(a.run("baseRpe('T','2026-11-02')")>rpeLow);
+  assert.equal(a.run("buildSession('2026-11-02','T','gym',[],{sport:'boxing'}).techniqueLevel"),0,"no sport-to-sport technical transfer");
+  assert.equal(a.run("buildSession('2026-11-02','T','gym',[],{sport:'boxing'}).fitnessLevel"),2,"physical test shared");
+  assert.equal(a.run("buildSession('2026-11-02','T','gym',[],{sport:'taekwondo',tstyle:'wt'}).techniqueLevel"),1);
+  assert.equal(a.run("buildSession('2026-11-02','T','gym',[],{sport:'taekwondo',tstyle:'itf'}).techniqueLevel"),0);
+  assert.equal(a.run("buildSport===null && unitStyle===null"),true);
+});
+
+test("separation: profile sport/style choices persist; migration, backup and started dose snapshots retain values", async () => {
+  const a=app();
+  a.run("S=hydrate({profile:{...DEFAULT_PROFILE,level:2,sport:'kickboxing',example:false}});draft=null;ui.profSec='me';renderProfile();");
+  assert.equal(a.run("S.profile.fitnessBase"),2,"old dose is preserved independently");
+  await a.click({dataset:{p:'sport',v:'boxing'}});
+  assert.equal(a.run("S.profile.level"),0);
+  await a.click({dataset:{techlevel:'1',techkey:'boxing'}});
+  assert.equal(a.run("S.profile.level"),1);
+  await a.click({dataset:{p:'sport',v:'kickboxing'}});
+  assert.equal(a.run("S.profile.level"),2);
+  await a.click({dataset:{p:'sport',v:'boxing'}});
+  assert.equal(a.run("S.profile.level"),1);
+  await a.click({dataset:{p:'sport',v:'taekwondo'}});
+  assert.equal(a.run("S.profile.level"),0);
+  await a.click({dataset:{techlevel:'2',techkey:'taekwondo:wt'}});
+  await a.click({dataset:{tk:'style',tv:'itf'}});
+  assert.equal(a.run("S.profile.level"),0);
+  await a.click({dataset:{techlevel:'1',techkey:'taekwondo:itf'}});
+  await a.click({dataset:{tk:'style',tv:'wt'}});
+  assert.equal(a.run("S.profile.level"),2);
+  a.run("S=hydrate(JSON.parse(JSON.stringify(S)));draft=null;");
+  assert.equal(a.run("techniqueLevel('taekwondo','itf')"),1);
+  assert.equal(a.run("fitnessLevel()"),2);
+  // A later test must not alter a running session's conditioning dose or phase lengths.
+  a.run("S.profile.sport='kickboxing';S.profile.level=2;S.tests=[];ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'K','home',[]);S.sessions[ui.sel].flow={step:1};");
+  const before=a.run("JSON.stringify(S.sessions[ui.sel].blocks.map(b=>b.items.filter(it=>EX[it.id]).map(it=>doseTxt(it.id,b))))");
+  a.run("S.tests=[{date:'2026-11-03',scores:{str:1,spd:1,end:1,flx:1}}];dropOpenSessions('2026-11-02');");
+  assert.equal(a.run("JSON.stringify(S.sessions[ui.sel].blocks.map(b=>b.items.filter(it=>EX[it.id]).map(it=>doseTxt(it.id,b))))"),before);
+  assert.equal(a.run("fitnessLevel()"),0);
+});
+
+test("separation: beginner onboarding is conservative, technical selection works in DE/EN and does not carry between sports", async () => {
+  const a=app();
+  a.run("ui.onb={step:0,sport:'kickboxing',disc:'lc',days:[0,2,4],clubDays:[],minutes:60};renderOnb();");
+  await a.click({dataset:{otech:'2'}});
+  assert.equal(a.run("ui.onb.techLevel"),2);
+  await a.click({dataset:{osport:'boxing'}});
+  assert.equal(a.run("ui.onb.techLevel"),0);
+  for(const lang of ['de','en']) {
+    a.run(`S.profile.lang='${lang}';renderOnb();draft=null;ui.profSec='me';`);
+    const ui=a.run("renderProfile()+fitnessSummaryHtml()+document.getElementById('onb').innerHTML");
+    assert.doesNotMatch(ui,/undefined|NaN|data-lock="level"/);
+    assert.match(ui,/data-otech="2"/);
+    assert.doesNotMatch(a.run("t('onbQ1s')+t('blk').onbS"), /schaltest.*frei|unlock.*fitness test/i);
+  }
+  a.run("S=hydrate({profile:DEFAULT_PROFILE});S.tests=[];");
+  assert.equal(a.run("fitnessLevel()"),0);
+});
+
+test("separation: saving/deleting a fitness test replans open units, preserves started doses and never changes experience", async()=>{
+  const a=app();
+  a.run("loading=async()=>{};blockAfterTest=()=>{};S.profile.level=2;S.profile.fitnessBase=2;S.profile.example=false;S.tests=[];S.sessions={};ui.sel='2026-11-02';S.sessions[ui.sel]=buildSession(ui.sel,'K','home',[]);S.sessions[ui.sel].flow={step:1};S.sessions['2026-11-03']=buildSession('2026-11-03','T','gym',[]);ui.testDraft={flx:1,tec:5};ui.testOpen=true;");
+  for(const [id,value] of Object.entries({tStr:'1',tSpd:'1',tEndM:'20',tEndS:'0'})) a.node(id).value=value;
+  await a.click({id:'tSave'});
+  assert.equal(a.run("S.tests.length"),1);
+  assert.equal(a.run("fitnessLevel()"),0);
+  assert.equal(a.run("techniqueLevel()"),2);
+  assert.equal(a.run("S.sessions[ui.sel].fitnessLevel"),2);
+  assert.equal(a.run("!!S.sessions['2026-11-03']"),false);
+  const id=a.run("S.tests[0].id");
+  await a.click({dataset:{tdel:id}});
+  assert.equal(a.run("fitnessLevel()"),2,"deleting test restores migrated baseline");
+  assert.equal(a.run("techniqueLevel()"),2);
+});
+
+
+function finalEffortSetup(a,sport='kickboxing',style='wt') {
+  a.setDate('2026-11-09');
+  a.run(`S=hydrate({profile:{...DEFAULT_PROFILE,example:false,sport:'${sport}',level:1,birthYear:1992,planStart:'2026-11-02',days:[0,1,2,3,4,5,6],minutes:60,club:{days:[]},tkd:{style:'${style}',wt:'',itf:''}},log:[]});loadCache={};ui.onb=null;
+    globalThis.eb=(date,type='T')=>buildSession(date,type,'gym',type==='S'?['weights','bar']:['bag']);
+    globalThis.el=(s,rpe,choice='hold',patch={})=>{const perf=s.blocks.flatMap(b=>b.items.filter(it=>it.target).map(it=>({id:it.id,target:JSON.parse(JSON.stringify(it.target)),sets:Array.from({length:it.target.n},()=>({r:it.target.r,kg:20}))})));
+      S.log.push({id:'e'+S.log.length,date:s.date,src:'own',type:s.type,sport:s.sport,tstyle:s.tstyle,disc:s.disc||S.profile.disc,minutes:s.min,inputConfirmed:true,completed:true,rpe,tHi:s.tHi,progression:s.progression,effortDose:s.effortDose,effortControl:{v:1,face:effortFace(rpe),choice},perf,...patch});};`);
+}
+test('emoji control: the next same-type unit reacts in all four sports, without extra work time or a second feedback question',()=>{
+  for(const [sport,style] of [['kickboxing','wt'],['boxing','wt'],['taekwondo','wt'],['taekwondo','itf']]) {
+    const a=app();finalEffortSetup(a,sport,style);
+    a.run("globalThis.one=eb('2026-11-02');el(one,2);globalThis.two=eb('2026-11-04');");
+    assert.equal(a.run('two.effortDose.factor'),1.1);
+    assert.ok(a.run('roundBlock(two).b')<a.run('roundBlock(one).b'));
+    assert.equal(a.run('roundBlock(two).w'),a.run('roundBlock(one).w'));
+    assert.equal(a.run("eb('2026-11-04','S').effortDose.active"),false,'different training category');
+    assert.equal(a.run("eb('2026-11-04').effortDose.factor"),1.1,'same feedback never applied twice on rebuild');
+  }
+});
+test('emoji control: moderate and high effort hold unless the user explicitly requests the offered change',()=>{
+  for(const [rpe,choice,factor] of [[4,'hold',1.05],[6,'hold',1],[6,'change',1.05],[8,'hold',1],[8,'change',.95],[10,'hold',1],[10,'change',.9]]) {
+    const a=app();finalEffortSetup(a);
+    a.run(`el(eb('2026-11-02'),${rpe},'${choice}');`);
+    assert.equal(a.run("eb('2026-11-04').effortDose.factor"),factor,`${rpe}/${choice}`);
+  }
+});
+test('emoji control: poor readiness, hard club load and protected phases keep priority; incomplete light work cannot raise load',()=>{
+  for(const patch of ["S.profile.form={'2026-11-04':{sleep:0,energy:0}};","S.log.push({id:'club',src:'club',date:'2026-11-03',sport:'boxing',ck:'P',rpe:8,minutes:90});","S.profile.comps=[{date:'2026-11-10',kind:'comp',sport:'kickboxing'}];"]) {
+    const a=app();finalEffortSetup(a);a.run("el(eb('2026-11-02'),2);"+patch);
+    assert.equal(a.run("eb('2026-11-04').effortDose.eligible"),false);
+  }
+  const a=app();finalEffortSetup(a);a.run("el(eb('2026-11-02'),2,'hold',{completed:false});");
+  assert.equal(a.run("eb('2026-11-04').effortDose.factor"),1);
+});
+test('emoji control: strength uses one set-rest prescription in label and timer; no per-exercise questions remain',async()=>{
+  const a=app();finalEffortSetup(a);
+  a.run("el(eb('2026-11-02','S'),2);ui.sel='2026-11-04';S.sessions[ui.sel]=eb(ui.sel,'S');startWorkout();");
+  assert.equal(a.run('S.sessions[ui.sel].setRest'),55);
+  const index=a.run("playerSteps(S.sessions[ui.sel]).findIndex(st=>st.kind==='sets'&&!timedSets(st,S.sessions[ui.sel]))");
+  a.run(`playerGo(${index})`);
+  assert.match(a.run('playerHtml()'),/Satzpause 0:55/);
+  assert.doesNotMatch(a.run('playerHtml()'),/data-exercise-effort/);
+  const key=a.run("playerStep().bi+'.'+playerStep().ni");
+  await a.click({dataset:{exerciseTimer:'rest',key}});
+  assert.equal(a.run('ui.exerciseTimer.phases[0].seconds'),55);
+});
+test('emoji control UI: RPE is mandatory, only higher faces show one conditional question, and face changes clear the old answer',async()=>{
+  const a=app();finalEffortSetup(a);
+  a.run("ui.sel='2026-11-09';S.sessions[ui.sel]=eb(ui.sel);finishDraft();");
+  a.node('fMin').value='60';a.node('fRpe').value='';a.node('fNote').value='';
+  assert.equal(a.run('validateFinish()'),false);
+  assert.doesNotMatch(a.run('finishFormHtml(S.sessions[ui.sel])'),/data-session-difficulty|data-exercise-effort/);
+  await a.click({dataset:{effort:'2',face:'1'}});
+  assert.match(a.node('doseAdvice').innerHTML,/\+10/);
+  assert.doesNotMatch(a.node('doseAdvice').innerHTML,/data-dose-choice/);
+  await a.click({dataset:{effort:'6',face:'1'}});
+  assert.match(a.node('doseAdvice').innerHTML,/fordernder/);
+  await a.click({dataset:{doseChoice:'change'}});
+  assert.equal(a.run('ui.finishDraft.doseChoice'),'change');
+  await a.click({dataset:{effort:'10',face:'1'}});
+  assert.equal(a.run('ui.finishDraft.doseChoice'),'hold');
+  assert.match(a.node('doseAdvice').innerHTML,/leichter/);
+  assert.equal(a.run('validateFinish()'),true);
+});
+test('emoji control storage: actual closing saves the final answer, updates future plans, and keeps started units intact',async()=>{
+  const a=app();finalEffortSetup(a);
+  a.run("ui.sel='2026-11-09';S.sessions[ui.sel]=eb(ui.sel);const s=S.sessions[ui.sel];s.checked={};s.perf={};s.rdone=roundBlock(s).items.length;s.blocks.forEach((b,bi)=>b.items.forEach((it,ni)=>{s.checked[bi+'.'+ni]=true;if(EX[it.id]?.cat==='str')s.perf[bi+'.'+ni]=Array.from({length:blockSets(b)},()=>({r:10,kg:20}));}));S.sessions['2026-11-10']=eb('2026-11-10');finishDraft();");
+  a.node('fMin').value='60';a.node('fRpe').value='4';a.node('fNote').value='';
+  a.run('saveTrainingSession()');
+  assert.equal(a.run('S.log[0].effortControl.face'),4);
+  assert.equal(a.run("!!S.sessions['2026-11-10']"),false);
+  a.run('S=hydrate(JSON.parse(JSON.stringify(S)));');
+  assert.equal(a.run('S.log[0].effortControl.v'),1);
+  await a.click({dataset:{edit:a.run('S.log[0].id')}});
+  a.node('scMin').value='60';a.node('scRpe').value='10';a.node('scNote').value='';
+  await a.click({dataset:{scface:'10'}});
+  await a.click({dataset:{doseChoice:'change',doseSheet:'1'}});
+  a.run("sheetAction('editsave')");
+  assert.equal(a.run('S.log[0].effortControl.face'),10);
+  assert.equal(a.run('S.log[0].effortControl.choice'),'change');
+});
+
+// A previously learnt increase must yield even when only the cycle's trend guard is active.
+test('emoji control: a worsening trend cannot reuse a positive density correction',()=>{
+  const a=app();finalEffortSetup(a);
+  a.run("el(eb('2026-11-02'),2);S.log[0].effortDose.factor=1.15;globalThis.normalState=progressionState;progressionState=(...args)=>{const p=normalState(...args);return {...p,eligible:true,reason:'down',step:0,data:{...p.data,worsening:true}};};globalThis.protectedUnit=eb('2026-11-04');");
+  assert.equal(a.run('protectedUnit.effortDose.eligible'),false);
+  const guarded=a.run('roundBlock(protectedUnit).b');
+  a.run("S.log=[];loadCache={};globalThis.plainUnit=eb('2026-11-04');");
+  assert.ok(guarded>=a.run('roundBlock(plainUnit).b'),'no shorter rests when the cycle requests recovery');
+});
+
+
+test('release 4: actual previous-production states migrate without losing profile, history or begun prescriptions',()=>{
+  const {fixtures}=JSON.parse(readFileSync(new URL('./fixtures/prod-e23d121.json',import.meta.url),'utf8'));
+  for(const f of fixtures){
+    const a=app();a.setDate('2026-11-09');
+    a.saved.set('ringzeit-dev.v1','dev-sentinel');
+    a.saved.set('ringzeit-dev.resume.v1','dev-resume-sentinel');
+    a.run(`S=hydrate(${JSON.stringify(f.state)});store.save();`);
+    assert.equal(a.run('LS'),'ringzeit.v1');
+    assert.equal(a.run('APP_ID'),'ringzeit');
+    assert.equal(a.saved.get('ringzeit-dev.v1'),'dev-sentinel');
+    assert.equal(a.saved.get('ringzeit-dev.resume.v1'),'dev-resume-sentinel');
+    const migrated=JSON.parse(a.saved.get('ringzeit.v1'));
+    for(const key of ['log','weights','tests','ov','cov','pauses','ko']) assert.deepEqual(migrated[key],f.state[key],`${f.sport}/${f.style}: ${key}`);
+    for(const [key,value] of Object.entries(f.state.profile)) assert.deepEqual(migrated.profile[key],value,`${f.sport}/${f.style}: profile.${key}`);
+    assert.equal(migrated.profile.fitnessBase,2);
+    const sportKey=f.sport==='taekwondo'?'taekwondo:'+f.style:f.sport;
+    assert.equal(migrated.profile.techLevels[sportKey],2);
+    const normalized=JSON.parse(JSON.stringify(migrated.sessions));
+    for(const sess of Object.values(normalized)){
+      delete sess.fitnessLevel;
+      sess.blocks.forEach(b=>delete b.fitnessLevel);
+    }
+    assert.deepEqual(normalized,f.state.sessions,'saved prescriptions/progress remain intact');
+    assert.equal(a.run('needNews()'),true);
+    assert.equal(a.run(`nextEffortDose({entries:S.log,scope:'unseen',date:'2026-11-10',today:'2026-11-09'}).active`),false,'legacy RPE is not interpreted as agreement');
+    a.run('S=hydrate(JSON.parse(localStorage.getItem(LS)));store.save();');
+    assert.deepEqual(JSON.parse(a.saved.get('ringzeit.v1')),migrated,'reload is idempotent');
+  }
+});
+
+test('release 4: new information is shown once in both languages and survives a reload',async()=>{
+  const a=app();a.run('S.profile.example=false;S.profile.toured=true;S.profile.newsSeen=9;');
+  assert.equal(a.run('needNews()'),true);
+  for(const lang of ['de','en']){
+    a.run(`S.profile.lang='${lang}'`);
+    assert.equal(a.run('t("news").pts.length'),4);
+    assert.match(a.run('t("news").pts.join(" ")'),lang==='de'?/fünf Emojis/:/five emojis/);
+  }
+  await a.click({dataset:{newsOk:'1'}});
+  assert.equal(a.run('needNews()'),false);
+  a.run('S=hydrate(JSON.parse(localStorage.getItem(LS)));');
+  assert.equal(a.run('needNews()'),false);
+});
+
+
+test('release 4: upgrade refreshes untouched old previews with the same settings, retaining every started/resumable plan',()=>{
+  const {fixtures}=JSON.parse(readFileSync(new URL('./fixtures/prod-e23d121.json',import.meta.url),'utf8'));
+  for(const f of fixtures){
+    const a=app();a.setDate('2026-11-09');a.run(`S=hydrate(${JSON.stringify(f.state)});`);
+    const begun=a.run("JSON.stringify(S.sessions['2026-11-09'])");
+    const settings=a.run("JSON.stringify([S.sessions['2026-11-10'].sport,S.sessions['2026-11-10'].type,S.sessions['2026-11-10'].loc,S.sessions['2026-11-10'].eq,S.sessions['2026-11-10'].min])");
+    assert.equal(a.run('refreshLegacyPlans()'),true);
+    assert.equal(a.run("JSON.stringify(S.sessions['2026-11-09'])"),begun);
+    assert.equal(a.run("JSON.stringify([S.sessions['2026-11-10'].sport,S.sessions['2026-11-10'].type,S.sessions['2026-11-10'].loc,S.sessions['2026-11-10'].eq,S.sessions['2026-11-10'].min])"),settings);
+    assert.equal(a.run("S.sessions['2026-11-10'].effortDose.v"),1);
+    assert.equal(a.run('refreshLegacyPlans()'),false,'new previews are not generated twice');
+  }
+  for(const progress of ["s.flow={step:0}","s.perf={'0.0':[{r:5}]}","s.checked={'0.0':true}","s.rdone=1","s.roundChecks={1:false}","localStorage.setItem(RESUME_KEY,JSON.stringify({v:1,ds:'2026-11-10'}))"]){
+    const a=app();a.setDate('2026-11-09');a.run(`S=hydrate(${JSON.stringify(fixtures[0].state)});let s=S.sessions['2026-11-10'];${progress};`);
+    const before=a.run("JSON.stringify(S.sessions['2026-11-10'])");
+    assert.equal(a.run('refreshLegacyPlans()'),false);
+    assert.equal(a.run("JSON.stringify(S.sessions['2026-11-10'])"),before);
+  }
 });

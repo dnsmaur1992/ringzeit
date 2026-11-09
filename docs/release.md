@@ -99,3 +99,59 @@ der Dosierung des Trainings, Pausieren für Entspannen und Mobility und die geme
 externen Codeprüfung). „Was ist neu“ hat `NEWS_V` 9. Upload wie in Abschnitt 3, aber **nur die geänderten Dateien**
 (siehe Paket). Es muss nichts gelöscht werden. Geprüft im Release-Stand: Testsuite, Baseline, Gesamtprüfung, Browser,
 Isolation und ein Update vom Prod-Stand (Release 2) auf Release 3 mit der echten Sicherung.
+
+
+## 9. Release 4 (09.11.2026)
+
+**Diese Schritte gelten für das aktuelle Änderungspaket.** Basis Prod `e23d121`, übernommen aus
+Dev `3385b8b`. Es enthält nur neue oder geänderte Dateien gegenüber diesem Prod-Stand.
+Keine Dateien löschen und keinen Dev-Datenspeicher in die Prod-App übernehmen.
+
+### Inhalt
+
+- Technikniveau je Sport/Stil unabhängig von körperlicher Fitness. Bestehende Profile behalten ohne neuen
+  Fitnesstest ihre körperliche Ausgangsstufe; neue Profile starten zurückhaltend.
+- Pflichtbewertung mit fünf Emojis am Ende statt separater Rückfragen an Übungen und zusätzlicher
+  Dreierbewertung. Sehr locker +10 %, Locker +5 %; Fordernd optional +5 %;
+  Hart optional −5 %, Am Limit optional −10 %, ansonsten beibehalten.
+- Impulse betreffen die nächste eigene Einheit derselben Sportart/Stil/Disziplin und Gattung,
+  zunächst über Pausen, insgesamt Faktor 0,8–1,2. Erholung und Schutzregeln bleiben vorrangig.
+- Einmaliger Update-Hinweis (`NEWS_V` 10) in DE/EN.
+- Beim ersten Start werden alte unbegonnene Planvorschauen unter Beibehaltung von Sport/Stil,
+  Gattung, Dauer, Ort und Ausrüstung neu erzeugt. Begonnene, erledigte und fortsetzbare Einheiten bleiben bestehen.
+
+### Upload
+
+1. In der bisherigen **Ringzeit** eine Sicherung exportieren. Den bisherigen Code als GitHub-ZIP aufheben.
+2. Das Paket `NUR-PROD_ringzeit_Release-4_2026-11-09.zip` entpacken.
+3. Im Repository **dnsmaur1992/ringzeit** alle enthaltenen Dateien mit ihren vorhandenen Unterordnern hochladen.
+   Insbesondere Root-`index.html` und `sw.js`, Quelle `src`, Tests und Dokumentation gemeinsam ersetzen.
+4. Nichts löschen. Keine Installation und kein erneutes Einrichten erforderlich.
+5. Pages-Veröffentlichung abwarten, App online schließen/neu öffnen; bei altem Stand noch einmal öffnen.
+
+### Nachkontrolle
+
+- Die App heißt Ringzeit und zeigt die neue Version und einmal den neuen Hinweis.
+- Eigenes Profil, Verlauf, Gürtel, Turniere und Tests sind erhalten; begonnene Einheit ist fortsetzbar.
+- Im neuen Training keine Schweregrad-Fragen pro Übung. Abschluss ohne Emoji/RPE nicht möglich.
+- Locker/Sehr locker zeigt den automatischen Impuls. Fordernd/Hart/Am Limit zeigt die angebotene Wahl.
+- Bei Kraft stimmt die angezeigte Satzpause mit dem Timer überein.
+- Dev-App hat unverändert ihre eigenen Daten. Nach einem Online-Start optional offline öffnen prüfen.
+
+Details: `einheiten-progression-test.md`, `technik-fitness-test.md`, `release-4-pruefung.md`.
+
+### Prüfung vor Erstellung des Pakets
+
+261 Tests bestanden; Kickbox-Baseline 24 Profile × 9 Einheiten plus 2 Abläufe identisch zum neuen Sollstand.
+648 vollständige Trainingsabläufe ohne Befund plus H1–H9, darunter 216 Text-/Timer-Vergleiche.
+Update von synthetischen Zuständen aus dem echten vorherigen Prod-Code für Kickboxen, Boxen, WT und ITF
+geprüft: Profil, Verlauf, Einstellungen, begonnene Vorgaben, Reload und getrennte Speicher erhalten.
+Service-Worker-Cachetrennung in einer simulierten Aktivierung geprüft; fertiger Produktionsbuild erstellt.
+**Keine neue echte Browser-/iPhone-/Android-Abnahme.** Frühere Browserergebnisse in diesem Dokument
+beziehen sich auf frühere Releases. Nichts wurde automatisch hochgeladen oder veröffentlicht.
+
+### Rückweg
+
+Falls nötig den vorher gesicherten Code wieder hochladen. Den Service-Worker-Cachebezeichner dabei auf
+einen neuen eindeutigen Wert setzen, damit auch das Zurückspielen zuverlässig als Update erkannt wird.
+Nur falls Nutzerdaten zurückgesetzt werden sollen, die vor dem Update exportierte Ringzeit-Sicherung laden.

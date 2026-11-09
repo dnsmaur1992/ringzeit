@@ -25,7 +25,7 @@ Kurz und nur das, was die App heute tut. Die Herleitung steht in `data-load-conc
 - Ändert sich dadurch der Zustand der Woche, werden die noch nicht begonnenen Einheiten bis Sonntag neu erstellt. Begonnene und abgeschlossene Einheiten bleiben unverändert.
 
 ## Level
-- Das Level kommt aus dem Fitnesstest: gemeinsame Werte (Kraft, Schnelligkeit, Ausdauer, Beweglichkeit) plus die Technik-Einschätzung der jeweiligen Sportart. Full Contact und K1 sind nicht mehr an das Level gebunden, nur an das Mindestalter (15 Jahre).
+- Technikniveau (Grundlagen/Geübt/Erfahren) wird je Sportart bzw. WT/ITF nach bereits im Verein erlernten Techniken gewählt. Es wird durch keinen Fitnesswert gesperrt. Die vier körperlichen Testbereiche steuern getrennt die Dosierung; die Technikbewertung im Test bleibt eine Verlaufsinformation. Full Contact und K1 sind nicht mehr an das Level gebunden, nur an das Mindestalter (15 Jahre).
 
 ## Dosierung und Timer
 - Jede zeitbehaftete Übung hat eine strukturierte Verordnung (`core/prescription.js`). Dosierungstext, Timerphasen und Zeitangaben werden daraus abgeleitet – es gibt keine zweite Zahlenquelle.
@@ -44,3 +44,37 @@ Seit 4b regulär wählbar (Hauptsport im Profil/Onboarding, Sportwahl je Einheit
 - **Partnertage:** Aufgabensparring. „Freies Touch-Sparring“ (30–40 % Schlaghärte, Partner und volle Schutzausrüstung) höchstens einmal je Einheit, ab Fortgeschritten, nie für Kinder, nie in Tapering-/Erholungswochen oder bei K.o.-Sperre; Hinweis „nur nach Absprache mit deinem Trainer und unter Aufsicht“. Kinder trainieren ohne Partnersparring.
 - **Statt Abhärtung:** Block „Handgelenk & Griff“ (6 min): Handtuch auswringen und Faustschluss immer; dazu je nach Alter, Level, Einschränkung und Ausrüstung eine weitere Übung. Kinder nur Handtuch und Griff.
 - **K.o.:** Sperre 30 Tage (nur Solo ohne Treffer), Hinweis auf Steigerung bei Wiederholung (§89) und Stufenplan (Anhang 5); keine automatische Stufensteuerung, keine medizinische Bewertung.
+
+
+## Abschlussbewertung und nächste Einheit (09.11.2026, ersetzt die frühere Zweimal-„Zu leicht“-Schleife)
+
+Die fünf Emojis am Abschluss sind verpflichtend. Zusätzliche Fragen pro Übung und die separate
+Dreierauswahl entfallen. Die genaue RPE-Skala bleibt alternativ nutzbar (1–2, 3–4, 5–6, 7–8, 9–10).
+
+| Bewertung | Planungsimpuls |
+|---|---|
+| Sehr locker | automatisch +10 % |
+| Locker | automatisch +5 % |
+| Fordernd | Beibehalten (Vorauswahl) oder +5 % |
+| Hart | Beibehalten (Vorauswahl) oder −5 % |
+| Am Limit | Beibehalten (Vorauswahl) oder −10 % |
+
+- Ein Wechsel des Emojis setzt die Zusatzentscheidung auf Beibehalten zurück.
+- Gilt getrennt nach Sport/Stil/Disziplin, Einheitstyp und körperlicher Ausgangsstufe; Ort und
+  Ausrüstung müssen nicht identisch sein. T/C/K/S sind unterstützt, nicht Lauf, Mobility oder Sparring.
+- Der Faktor wird aus der tatsächlich erlebten letzten Einheit fortgeschrieben, auf 0,8–1,2 begrenzt.
+  Prozentwerte sind Planungsimpulse für die Dichte, keine gemessenen physiologischen Belastungsprozente.
+  Rundenpause = Grundpause / Faktor / Periodisierungswelle, mindestens 30 Sekunden.
+  Kraft: Satzpause = 60 / Faktor (45–90 s), Zirkelpause = 90 / Faktor (60–135 s), gerundet.
+- Sobald die neue Steuerung aktiv ist, ersetzt sie die unabhängige bisherige Aufwärtskorrektur;
+  Gewichte und Wiederholungen werden dadurch nicht zusätzlich erhöht. Bekannte protokollierte Gewichte
+  können weiter übernommen werden. Bestehende Reduktionsregeln bleiben wirksam.
+- Automatische Erhöhung nur nach vollständiger, bestätigter Einheit mit positiver Dauer und RPE nicht
+  über deren Ziel, außerhalb der Schutzphasen. Abbrüche erlauben ausdrücklich gewünschte Reduktionen.
+- Tagesform, Vorbelastung, Entlastung, Wiedereinstieg, Kinder/Jugend, Wettkampfvorbereitung und andere
+  bestehende Schutzregeln haben Vorrang. Bei gesperrter Erhöhung wird kein zusätzlicher Druck erzeugt.
+- Nach mehr als 42 Tagen ohne passenden Eintrag greift wieder die normale Planung. Alte RPE-Einträge
+  und frühere `difficulty`-/`fast`-Daten werden nicht nachträglich als Einverständnis umgedeutet.
+- Neuaufbau wendet dieselbe Antwort nicht mehrfach an. Begonnene Einheiten bleiben unverändert;
+  unbegonnene werden nach relevanten Verlaufskorrekturen neu erzeugt. Zukünftige Einträge zählen nicht.
+- Kern: `src/core/session-progression.js`; Adapter: `effortDoseState` und `applyStrengthRestDose`.

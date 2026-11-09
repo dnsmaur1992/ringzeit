@@ -177,7 +177,7 @@
     if (!changed && old === f.left) return;
     if (!changed && f.phase === "work" && f.cfg.warn && f.left === 10) beep(660, 0.1, 2);
     if (f.phase === "work" && f.cfg.coach && f.left > 4 && f.cfg.w - f.left >= 3) {
-      const gap = [8, 6, 5][S.profile.level] || 6;
+      const gap = [8, 6, 5][techniqueLevel()] || 6;
       if (!f.lastCall || f.lastCall - f.left >= gap) {
         f.lastCall = f.left;
         const c = combo(Math.random() < 0.5 ? "shadow" : "bag", null);

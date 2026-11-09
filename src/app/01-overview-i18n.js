@@ -54,10 +54,10 @@
         sub: "Die Neuerungen des letzten großen Updates",
         h: "Was ist neu",
         pts: [
-          "<b>Winter Arc:</b> Von Oktober bis Januar kannst du unter Profil → Termine & Ziele ein Winter-Arc-Bundle starten, 6 bis 12 Wochen lang. Du suchst dir deine Gewohnheiten selbst aus, zum Beispiel 10 Min Mobility, Schlaf, Wasser, kein Alkohol, Entspannen oder Gewicht.",
-          "<b>Abhaken:</b> Die Karte unter Heute zeigt deine Woche. Abhaken kannst du heute und die 2 Tage davor. Beim Wochenziel zählt jedes eingetragene Training, egal ob Ringzeit oder Verein.",
-          "<b>10 Min Mobility:</b> Auf Knopfdruck stellt dir Ringzeit eine geführte Mobility-Folge passend zu Sport und Einschränkungen zusammen. Die Stimme sagt Seitenwechsel und Haltezeiten an, bei Wiederholungen tippst du „Weiter“.",
-          "<b>Pausieren:</b> Entspannen und Mobility lassen sich jetzt pausieren. Startest du einen anderen Timer, wartet der laufende pausiert auf dich – es sprechen nie zwei Stimmen gleichzeitig.",
+          "<b>Technik und Fitness getrennt:</b> Wähle deine Erfahrung je Sportart unter Profil → Über mich. Ein Fitnesstest dosiert die körperliche Belastung unabhängig davon; bekannte Techniken werden dadurch nicht gesperrt.",
+          "<b>Eine Bewertung am Schluss:</b> Keine zusätzlichen Fragen mehr bei jeder Kraftübung. Bewerte die ganze Einheit mit einem der fünf Emojis oder der genauen Skala.",
+          "<b>Nächste Einheit:</b> Sehr locker und Locker geben automatisch einen kleinen Erhöhungsimpuls. Bei Fordernd kannst du eine Erhöhung wählen, bei Hart oder Am Limit eine Reduktion. Der Hinweis zeigt dir die Anpassung.",
+          "<b>Getrennt und begrenzt:</b> Die Anpassung gilt für dieselbe Trainingsart und Sportart, zunächst über Pausen. Tagesform, Erholung und Entlastungsphasen haben Vorrang. Profil, Verlauf und begonnene Einheiten bleiben erhalten.",
         ],
         ok: "Verstanden",
       },
@@ -512,7 +512,7 @@
         tag: "Block",
         hist: "Abgeschlossen",
         onbT: "Wo stehst du gerade?",
-        onbS: "Freiwillig: Mit einem kurzen Fitnesstest schlägt dir Ringzeit einen ersten 6-Wochen-Schwerpunkt vor – Ausdauer, Schnellkraft oder Beweglichkeit. Einzelne Teile kannst du auslassen und später nachtragen. Damit schaltest du auch Full Contact und K1 Style frei.",
+        onbS: "Freiwillig: Mit einem kurzen Fitnesstest schlägt dir Ringzeit einen ersten 6-Wochen-Schwerpunkt vor – Ausdauer, Schnellkraft oder Beweglichkeit. Einzelne Teile kannst du auslassen und später nachtragen. Das Technikniveau wählst du unabhängig davon nach deiner Vereinserfahrung.",
         onbTest: "Fitnesstest öffnen",
         onbLater: "Später – direkt loslegen",
         onbPts: ["Liegestütze am Stück", "Jab-Cross in 20 s", "2,4 km Lauf", "Sidekick-Höhe", "Technik-Einschätzung"],
@@ -584,7 +584,7 @@
           club: ["Vereinstage eintragen", "Ringzeit plant deine eigenen Einheiten drumherum"],
           session: ["Erste Einheit absolvieren", "Plan sichten → Training beginnen → geführt trainieren"],
           timer: ["Rundentimer ausprobieren", "Eine Runde mit Glocke, ganz ohne Plan"],
-          test: ["Fitnesstest ablegen", "Dein Ausgangswert und der Weg zum nächsten Level"],
+          test: ["Fitnesstest ablegen", "Dein Ausgangswert für die körperliche Dosierung"],
           combo: ["Eine eigene Kombi anlegen", "Kombis aus dem Verein in deine Einheiten bringen"],
         },
       },
@@ -939,9 +939,9 @@
       onbBoxS: "Beim Boxen gibt es keine Disziplin zur Auswahl: Deine Altersklasse und das Rundenformat berechnet die App aus dem Geburtsjahr (ohne Angabe: Erwachsene). Die zweite Sportart kannst du jederzeit im Profil wechseln.",
       onbQ1: "Welche Disziplin trainierst du?",
       onbQ1s:
-        "Starte mit Light Contact oder Kick Light. Full Contact und K1 Style schaltest du mit dem Fitnesstest frei – den kannst du am Ende der Einrichtung direkt machen.",
+        "Wähle deine Disziplin aus dem Verein. Full Contact und K1 Style sind ab 15 Jahren wählbar. Technikniveau und Fitness stellst du getrennt ein.",
       discAgeT: "Full Contact und K1 Style gibt es bei der WAKO erst ab 15 Jahren.",
-      discLockT: "Erst den Fitnesstest machen: Ab Level Fortgeschritten sind Full Contact und K1 Style frei.",
+      discLockT: "Full Contact und K1 Style sind ab 15 Jahren wählbar; das Technikniveau gilt unabhängig vom Fitnesstest.",
       onbQ2: "Wann trainierst du zusätzlich mit Ringzeit?",
       onbQ2s:
         "Deine eigenen Einheiten neben dem Verein: Wähle die Tage und wie lange eine Einheit dauern soll. Blau markiert sind deine Vereinstage.",
@@ -996,7 +996,7 @@
       deloadPlan: "Geplante Entlastungswoche: weniger Runden, niedrigere Intensität. So kann sich der Körper anpassen.",
       deloadRpe: "Deine Intensität lag zuletzt deutlich über dem Ziel. Diese Woche wird automatisch leichter.",
       testDue: "Zeit für einen Fitnesstest – so siehst du deinen Fortschritt.",
-      testFirst: "Mach einen Fitnesstest, um deinen Stand zu messen und Level freizuschalten.",
+      testFirst: "Mach einen Fitnesstest, um deinen Stand zu messen und die körperliche Dosierung anzupassen.",
       toTest: "Zum Test →",
       types: {
         T: "Technik",
@@ -1193,9 +1193,43 @@
       focus: "Technik-Schwerpunkt",
       focusOpt: { box: "Mehr Boxen", bal: "Ausgeglichen", kick: "Mehr Kicks" },
       focusLock: "Anfänger trainieren ausgeglichen.",
-      level: "Level",
-      levels: ["Anfänger", "Fortgeschritten", "Wettkampf"],
-      levelLock: "Höhere Level schaltest du mit dem Fitnesstest frei.",
+      ability: {
+        "question": "Welche Techniken trainierst du bereits im Verein?",
+        "options": [
+          "Grundlagen",
+          "Geübt",
+          "Erfahren"
+        ],
+        "details": {
+          "kickboxing": [
+            "Grundschläge, Grundtritte und kurze Kombinationen.",
+            "Mehrteilige Hand-Fuß-Kombinationen und bekannte Konter.",
+            "Komplexe Kombinationen, Richtungswechsel und bekannte Techniken unter Druck."
+          ],
+          "boxing": [
+            "Grundschläge, Deckung und einfache Beinarbeit.",
+            "Mehrteilige Schlagfolgen, Meidbewegungen und bekannte Konter.",
+            "Komplexe Schlagfolgen, Winkelarbeit und bekannte Techniken unter Druck."
+          ],
+          "taekwondo": [
+            "Grundtritte, Stellungen und einfache Verbindungen dieses Styles.",
+            "Mehrteilige Trittfolgen und bekannte Hand-Fuß-Verbindungen dieses Styles.",
+            "Komplexe Verbindungen und bereits erlernte Dreh-/Sprungtechniken dieses Styles."
+          ]
+        },
+        "hint": "Wähle nur, was du bereits kontrolliert ausführen kannst; bei Unsicherheit die niedrigere Stufe. Gürtel-, Alters- und Einschränkungsregeln gelten zusätzlich.",
+        "fitness": "Körperliche Dosierung",
+        "doses": [
+          "Zurückhaltend",
+          "Moderat",
+          "Anspruchsvoller"
+        ],
+        "noTest": "Ohne vollständigen Fitnesstest: zurückhaltender Einstieg. Bei bestehenden Profilen bleibt die bisherige Dosierung zunächst erhalten.",
+        "separate": "Der Fitnesstest steuert Belastung und Pausen. Er schaltet keine Techniken frei. Das Technikniveau wählst du je Sportart unter Über mich → Sport & Gürtel."
+      },
+      level: "Technikniveau",
+      levels: ["Grundlagen", "Geübt", "Erfahren"],
+      levelLock: "Das Technikniveau wählst du nach deiner Erfahrung im Verein. Der Fitnesstest steuert nur die körperliche Dosierung.",
       age: "Altersklasse",
       ages: {
         kids: "Kinder 8–12",
@@ -1334,10 +1368,7 @@
       testIncomplete: "unvollständig",
       unlocked: "Freigeschaltet",
       lockedL: "Noch gesperrt",
-      need1: "Fortgeschritten: mind. 15 Punkte, kein Bereich unter 2",
-      need2: "Wettkampf: mind. 20 Punkte, kein Bereich unter 3",
       testEvery: "Empfehlung: alle 6–8 Wochen testen, immer ausgeruht und unter gleichen Bedingungen.",
-      lvlUp: (n) => `Level „${n}“ freigeschaltet!`,
       setL: "Satz",
       holdTarget: (n, h) => `Auf Zeit: ${n}× ${h[0]}–${h[1]} s halten`,
       reps: "Wdh.",
@@ -1386,10 +1417,10 @@
         sub: "The changes of the last big update",
         h: "What's new",
         pts: [
-          "<b>Winter Arc:</b> from October to January you can start a Winter Arc bundle under Profile → Dates & goals, 6 to 12 weeks long. You pick your own habits, e.g. 10 min mobility, sleep, water, no alcohol, relaxing or weight.",
-          "<b>Ticking off:</b> the card under Today shows your week. You can tick today and the 2 days before. The weekly goal counts every logged training, Ringzeit or club.",
-          "<b>10 min mobility:</b> at the push of a button Ringzeit builds a guided mobility routine for your sport and limitations. The voice calls side changes and hold times; for reps you tap “Next”.",
-          "<b>Pause:</b> relaxing and mobility can now be paused. If you start another timer, the running one waits paused for you – two voices never talk at once.",
+          "<b>Technique and fitness:</b> Choose your experience per sport under Profile → About me. A fitness test sets physical dose independently; familiar techniques are not locked by fitness scores.",
+          "<b>One final rating:</b> No more extra questions at each strength exercise. Rate the whole session using one of five emojis or the precise scale.",
+          "<b>Next session:</b> Very easy and Easy automatically give a small increase impulse. At Challenging you can choose an increase, at Hard or At the limit a decrease. The hint explains the adjustment.",
+          "<b>Separate and bounded:</b> Adjustments apply to the same training type and sport, initially through rests. Readiness, recovery and deload phases take priority. Your profile, history and started sessions stay intact.",
         ],
         ok: "Got it",
       },
@@ -1833,7 +1864,7 @@
         tag: "Block",
         hist: "Completed",
         onbT: "Where do you stand right now?",
-        onbS: "Optional: with a short fitness test Ringzeit suggests a first 6-week focus – endurance, power or mobility. You can skip single parts and add them later. It also unlocks Full Contact and K1 Style.",
+        onbS: "Optional: with a short fitness test Ringzeit suggests a first 6-week focus – endurance, power or mobility. You can skip single parts and add them later. Technical experience is chosen separately in your profile.",
         onbTest: "Open fitness test",
         onbLater: "Later – just start",
         onbPts: ["Push-ups in a row", "Jab-cross in 20 s", "2.4 km run", "Side kick height", "Technique rating"],
@@ -1905,7 +1936,7 @@
           club: ["Add your club days", "Ringzeit plans your own sessions around them"],
           session: ["Finish your first session", "Start, train, log the effort"],
           timer: ["Try the round timer", "One round with the bell, no plan needed"],
-          test: ["Take the fitness test", "Your baseline and the way to the next level"],
+          test: ["Take the fitness test", "Your baseline for physical dosing"],
           combo: ["Create your own combo", "Bring combos from the club into your sessions"],
         },
       },
@@ -2252,9 +2283,9 @@
       onbBoxS: "Boxing has no discipline to pick: the app works out your age class and round format from your birth year (without it: adults). You can switch your main sport in the profile at any time.",
       onbQ1: "Which discipline do you train?",
       onbQ1s:
-        "Start with Light Contact or Kick Light. You unlock Full Contact and K1 Style with the fitness test – you can take it right at the end of the setup.",
+        "Choose the discipline you practise at your club. Full Contact and K1 Style are available from age 15. Technical experience and fitness are separate.",
       discAgeT: "WAKO ring disciplines (Full Contact, K1 Style) start at age 15.",
-      discLockT: "Take the fitness test first: Full Contact and K1 Style open up from Advanced level.",
+      discLockT: "Full Contact and K1 Style are available from age 15; technical experience is independent of the fitness test.",
       onbQ2: "When do you want to train extra with Ringzeit?",
       onbQ2s:
         "Your own sessions next to the club: pick the days and how long a session should be. Your club days are marked blue.",
@@ -2307,7 +2338,7 @@
       deloadPlan: "Planned deload week: fewer rounds, lower intensity. This is when your body adapts.",
       deloadRpe: "Your intensity has been well above target lately. This week is automatically lighter.",
       testDue: "Time for a fitness test – see how far you've come.",
-      testFirst: "Take a fitness test to measure where you stand and unlock levels.",
+      testFirst: "Take a fitness test to measure your baseline and adjust physical dosing.",
       toTest: "Go to test →",
       types: {
         T: "Technique",
@@ -2504,9 +2535,43 @@
       focus: "Technique focus",
       focusOpt: { box: "More boxing", bal: "Balanced", kick: "More kicks" },
       focusLock: "Beginners train balanced.",
-      level: "Level",
-      levels: ["Beginner", "Advanced", "Competition"],
-      levelLock: "Unlock higher levels with the fitness test.",
+      ability: {
+        "question": "Which techniques do you already practise at your club?",
+        "options": [
+          "Basics",
+          "Practised",
+          "Experienced"
+        ],
+        "details": {
+          "kickboxing": [
+            "Basic punches, kicks and short combinations.",
+            "Multi-part hand-foot combinations and familiar counters.",
+            "Complex combinations, direction changes and familiar techniques under pressure."
+          ],
+          "boxing": [
+            "Basic punches, guard and simple footwork.",
+            "Multi-punch sequences, head movement and familiar counters.",
+            "Complex sequences, angles and familiar techniques under pressure."
+          ],
+          "taekwondo": [
+            "Basic kicks, stances and simple links in this style.",
+            "Multi-kick sequences and familiar hand-foot links in this style.",
+            "Complex links and spinning/jumping techniques already learned in this style."
+          ]
+        },
+        "hint": "Choose only what you can already perform with control; choose the lower option if unsure. Grade, age and limitation rules still apply.",
+        "fitness": "Physical dosing",
+        "doses": [
+          "Conservative",
+          "Moderate",
+          "More demanding"
+        ],
+        "noTest": "Without a complete fitness test: a conservative start. Existing profiles initially keep their previous dosing.",
+        "separate": "The fitness test controls load and rests. It does not unlock techniques. Choose technical experience separately for each sport under About me → Sport & belt."
+      },
+      level: "Technical experience",
+      levels: ["Basics", "Practised", "Experienced"],
+      levelLock: "Choose technical experience based on club practice. The fitness test controls physical dosing only.",
       age: "Age group",
       ages: {
         kids: "Kids 8–12",
@@ -2638,10 +2703,7 @@
       testIncomplete: "incomplete",
       unlocked: "Unlocked",
       lockedL: "Still locked",
-      need1: "Advanced: at least 15 points, no area below 2",
-      need2: "Competition: at least 20 points, no area below 3",
       testEvery: "Recommendation: test every 6–8 weeks, always rested and under the same conditions.",
-      lvlUp: (n) => `Level “${n}” unlocked!`,
       setL: "Set",
       holdTarget: (n, h) => `Timed: hold ${n}× ${h[0]}–${h[1]} s`,
       reps: "reps",

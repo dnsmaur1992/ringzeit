@@ -20,7 +20,7 @@
 
 **Ringzeit** plant dein Training im **Kickboxen, Boxen oder Taekwondo** neben dem Verein – passend zu Disziplin bzw. Stil, Level, Alter und Trainingstagen. Runden, Kombinationen und Übungen kommen fertig dosiert aufs Handy, der Rundentimer läutet die Glocke, eine Ansage ruft die Kombis, und am Ende siehst du, was du geschafft hast. Jede Sportart folgt den Regeln ihres Verbands und hat ihren eigenen Trainingsschwerpunkt.
 
-> **Neu:** Neben Kickboxen plant Ringzeit jetzt auch **Boxen** (DBV) und **Taekwondo** (WT/DTU, ITF-D). Wer Ringzeit schon nutzt, behält alle Daten – Profil, Verlauf, Gürtel und Turniere werden beim ersten Start übernommen. Entwickelt wird in [ringzeit-dev](https://github.com/dnsmaur1992/ringzeit-dev). Stand und Prüfungen: [Umsetzungsstand](docs/implementation-status.md) · [Gesamtprüfung](docs/final-check.md) · [Release](docs/release.md).
+> **Update 09.11.2026:** Technikniveau und körperliche Dosierung sind unabhängig. Eine abschließende Emoji-Bewertung steuert die nächste passende Einheit; die zusätzlichen Übungsfragen entfallen. Daten bleiben in der bestehenden Ringzeit-App. Upload und Prüfung: [Release 4](docs/release.md#9-release-4-09112026).
 
 ## Drei Sportarten auf einen Blick
 
@@ -33,7 +33,7 @@
 | **Gürtel** | BFVKB-Prüfungsprogramm | – | Kup/Poom/Dan nach DTU-PO, Taegeuk | Kup/Dan nach ITF-D-PO, Tul |
 | **Begriffe** | Deutsch/Englisch | Deutsch/Englisch | Koreanisch (Kukkiwon) oder App-Namen | Koreanisch (ITF-D-PO) oder App-Namen |
 
-Hauptsport im Profil jederzeit wechselbar; einzelne Einheiten lassen sich auf eine andere Sportart, Disziplin oder einen anderen Stil stellen. **Verlauf, Belastung und Fitnesstest sind gemeinsam**, das Technik-Level gilt je Sportart und Stil.
+Hauptsport im Profil jederzeit wechselbar; einzelne Einheiten lassen sich auf eine andere Sportart, Disziplin oder einen anderen Stil stellen. **Verlauf, Belastung und Fitnesstest sind gemeinsam**, das Technikniveau wird je Sportart und Stil nach Vereinserfahrung gewählt. Der Fitnesstest steuert unabhängig davon die körperliche Dosierung.
 
 > **Neu hier?** Öffne die [Installationsanleitung](https://dnsmaur1992.github.io/ringzeit/installieren.html) auf deinem Handy – mit QR-Code und Schritt-für-Schritt-Hilfe für iPhone und Android.
 
@@ -89,7 +89,7 @@ Hauptsport im Profil jederzeit wechselbar; einzelne Einheiten lassen sich auf ei
 ## Funktionen
 
 ### 🥋 Die Sportarten im Detail
-- **Hauptsport im Profil** jederzeit wechselbar, zusätzlich eine andere Sportart (bzw. Disziplin oder Stil) für einzelne Einheiten; Verlauf, Belastung und Fitnesstest sind gemeinsam, das Technik-Level gilt je Sportart und Stil
+- **Hauptsport im Profil** jederzeit wechselbar, zusätzlich eine andere Sportart (bzw. Disziplin oder Stil) für einzelne Einheiten; Verlauf, Belastung und Fitnesstest sind gemeinsam, das Technikniveau wird je Sportart und Stil gewählt; Fitness steuert die körperliche Dosierung
 - **Kickboxen** (WAKO): Light Contact, Kick Light, Full Contact, K1 Style – wie bisher
 - **Boxen** (DBV): Schläge ohne Kicks, Altersklassen und Rundenlängen nach den DBV-Wettkampfbestimmungen; Schwerpunkt **Ausdauer und Zähigkeit** – Kondition in 3-Minuten-Runden, längerer Kraftausdauer-Teil, „Handgelenk & Körperabhärtung“ ab Level 1 und 16 Jahren, Mobility mit lockerer Beinarbeit und Schatten
 - **Taekwondo WT / DTU**: Trittketten, die mit der Fitness länger werden, Serien mit schnellem Wechsel, Step- und Situations-Sparring; Schwerpunkt **Beweglichkeit, Spritzigkeit und Kontrolle in der vollen Bewegungsweite** – aktive Beweglichkeit in jeder Technikeinheit, Mobility als aktive Beweglichkeit, ab 4 Tagen eine Mobility-Einheit statt Kondition
@@ -180,7 +180,8 @@ Hauptsport im Profil jederzeit wechselbar; einzelne Einheiten lassen sich auf ei
 ### 📈 Leistungsabhängige Progression
 - Fünf-Wochen-Wellen im Grundlagentraining mit vier Aufbauwochen und anschließender Entlastung; Schwerpunkt-Blöcke behalten ihre sechs Wochen
 - Vollständig absolvierte, vergleichbare Einheiten und die eingetragene Anstrengung entscheiden über Steigerung, Wiederholung oder Reduktion im nächsten Zyklus
-- **Datengrundlage statt bloßer Eintragszahl:** Anzahl, Regelmäßigkeit, Vollständigkeit und Abdeckung des geplanten Trainings werden je Trainingsbereich ausgewertet; wenige oder lückenhafte Daten verhindern eine Steigerung
+- **Abschlussbewertung steuert die nächste eigene Einheit derselben Art:** Fünf verpflichtende Emojis statt zusätzlicher Übungsfragen. Sehr locker: +10 %, Locker: +5 %; Fordernd: auf Wunsch +5 %; Hart/Am Limit: auf Wunsch −5 %/−10 %, sonst beibehalten. Die Impulse verändern zunächst Pausen, keine Gewichte oder Kontaktstärke; insgesamt ±20 % begrenzt. Tagesform und Entlastung haben Vorrang.
+- **Datengrundlage statt bloßer Eintragszahl:** Anzahl, Regelmäßigkeit, Vollständigkeit und Abdeckung des geplanten Trainings werden je Trainingsbereich ausgewertet; wenige oder lückenhafte Daten verhindern die langfristige Zyklussteigerung
 - **Lernhinweis** einmalig in der ersten Einheit; der Stand der Datengrundlage steht unter „Warum diese Einheit?“
 - Bei Technik und Kondition wird die **Pausendichte** in kleinen Schritten angepasst, innerhalb der eingeplanten Trainingszeit
 - Wiederkehrende **Grundübungen** schaffen vergleichbare Kraftprotokolle; zusätzliches, für die Übung irrelevantes Equipment unterbricht den Vergleich nicht

@@ -1,0 +1,2180 @@
+{
+  "source": "dnsmaur1992/ringzeit@e23d121",
+  "synthetic": true,
+  "fixtures": [
+    {
+      "sport": "kickboxing",
+      "style": "wt",
+      "state": {
+        "v": 2,
+        "profile": {
+          "lang": "de",
+          "sport": "kickboxing",
+          "disc": "lc",
+          "focus": "bal",
+          "level": 2,
+          "age": "adult",
+          "sex": "",
+          "days": [
+            0,
+            2,
+            4
+          ],
+          "minutes": 75,
+          "comps": [
+            {
+              "kind": "comp",
+              "id": "t1",
+              "sport": "kickboxing",
+              "date": "2027-02-27",
+              "result": "2 von 3 gewonnen"
+            }
+          ],
+          "club": {
+            "days": [],
+            "minutes": 90
+          },
+          "birthYear": 1992,
+          "limits": [],
+          "example": false,
+          "planStart": "2026-11-02",
+          "toured": true,
+          "newsSeen": 9,
+          "tkd": {
+            "style": "wt",
+            "names": "ko",
+            "wt": "",
+            "itf": "",
+            "hist": [],
+            "exams": []
+          },
+          "belt": 0,
+          "gp": {}
+        },
+        "sessions": {
+          "2026-11-09": {
+            "date": "2026-11-09",
+            "type": "T",
+            "loc": "gym",
+            "eq": [
+              "bag"
+            ],
+            "blocks": [
+              {
+                "key": "warm",
+                "min": 11,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "warm.dynamic_stretching"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.easy_shadowboxing"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "pre.short_pre_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.easy_jog"
+                  }
+                ]
+              },
+              {
+                "key": "main",
+                "min": 33,
+                "rounds": true,
+                "w": 180,
+                "b": 67,
+                "items": [
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "combo": [
+                      "front",
+                      "jab",
+                      "crossb",
+                      "sweep"
+                    ],
+                    "ease": 1
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "combo": [
+                      "jab",
+                      "roundh",
+                      "sweep"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "combo": [
+                      "round",
+                      "roundh",
+                      "cross",
+                      "sweep"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "combo": [
+                      "round",
+                      "round"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "combo": [
+                      "front",
+                      "round",
+                      "roundh"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "combo": [
+                      "jab",
+                      "hook",
+                      "shook",
+                      "sweep"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "combo": [
+                      "brazil",
+                      "hook",
+                      "roundh",
+                      "sweep"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "combo": [
+                      "round",
+                      "tornado",
+                      "sweep"
+                    ]
+                  }
+                ]
+              },
+              {
+                "key": "str",
+                "min": 17,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cond.burpees"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cond.skater_jumps"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.step_ups"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.single_leg_kick_hold"
+                  }
+                ],
+                "sets": "3×"
+              },
+              {
+                "key": "hard",
+                "min": 6,
+                "items": [
+                  {
+                    "kind": "hard",
+                    "id": "fBare"
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "shinbag"
+                  }
+                ]
+              },
+              {
+                "key": "cool",
+                "min": 8,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cool.hip_flexor_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.breathing"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.shoulder_and_chest"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "Belastungszyklus: Woche 2/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+              "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+              "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten.",
+              "Gleiche Rundenzeit, angepasste Pausen: 60 → 67 s; innerhalb deiner Trainingszeit."
+            ],
+            "rpe": "6–8",
+            "tHi": 8,
+            "theme": "sweepFinish",
+            "min": 75,
+            "blk": null,
+            "created": 1794178800000,
+            "progression": {
+              "v": 1,
+              "id": "base:2026-11-02",
+              "start": "2026-11-02",
+              "end": "2026-12-06",
+              "week": 2,
+              "weeks": 5,
+              "block": null,
+              "signature": "lc:2:T:regular",
+              "step": 0,
+              "reason": "initial",
+              "eligible": true,
+              "data": {
+                "level": "collecting",
+                "reason": "few",
+                "count": 0,
+                "weeks": 0,
+                "planned": 0,
+                "coverage": 0,
+                "completeness": 0,
+                "planKnown": 0,
+                "worsening": false
+              },
+              "plannedDates": [
+                "2026-11-02",
+                "2026-11-09",
+                "2026-11-16",
+                "2026-11-23"
+              ],
+              "plannedMin": 75
+            },
+            "sport": "kickboxing",
+            "id": "smw8fqe80uv",
+            "flow": {
+              "step": 1,
+              "block": 0
+            },
+            "checked": {
+              "0.0": true
+            }
+          },
+          "2026-11-10": {
+            "date": "2026-11-10",
+            "type": "S",
+            "loc": "gym",
+            "eq": [
+              "weights",
+              "bar"
+            ],
+            "blocks": [
+              {
+                "key": "warm",
+                "min": 11,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "warm.easy_shadowboxing"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.footwork_drill"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.joint_mobility"
+                  }
+                ]
+              },
+              {
+                "key": "str",
+                "min": 35,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "str.goblet_squats",
+                    "basic": true,
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:weights:5-8:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 5,
+                      "hi": 8,
+                      "r": 5,
+                      "kg": null,
+                      "timed": false,
+                      "reason": "initial",
+                      "baseR": 5
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.dumbbell_press",
+                    "basic": true,
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:weights:5-8:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 5,
+                      "hi": 8,
+                      "r": 5,
+                      "kg": null,
+                      "timed": false,
+                      "reason": "initial",
+                      "baseR": 5
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.pull_ups",
+                    "basic": true
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.dead_hang",
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:bar:45-60:4:s",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 45,
+                      "hi": 60,
+                      "r": 45,
+                      "kg": null,
+                      "timed": true,
+                      "reason": "initial",
+                      "baseR": 45
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.romanian_deadlift",
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:weights:5-8:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 5,
+                      "hi": 8,
+                      "r": 5,
+                      "kg": null,
+                      "timed": false,
+                      "reason": "initial",
+                      "baseR": 5
+                    }
+                  }
+                ],
+                "sets": "4× 5–8"
+              },
+              {
+                "key": "cond",
+                "min": 15,
+                "rounds": true,
+                "items": [
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.bear_crawl"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.kick_intervals"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.shadow_sprints"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.sprints"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.kettlebell_swings"
+                  }
+                ]
+              },
+              {
+                "key": "hard",
+                "min": 6,
+                "items": [
+                  {
+                    "kind": "hard",
+                    "id": "fPush"
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "brace"
+                  }
+                ]
+              },
+              {
+                "key": "cool",
+                "min": 8,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cool.breathing"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.hip_flexor_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.shoulder_and_chest"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
+              "Belastungszyklus: Woche 2/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+              "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+              "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten."
+            ],
+            "rpe": "6–7",
+            "tHi": 7,
+            "theme": null,
+            "min": 75,
+            "blk": null,
+            "created": 1794178800000,
+            "progression": {
+              "v": 1,
+              "id": "base:2026-11-02",
+              "start": "2026-11-02",
+              "end": "2026-12-06",
+              "week": 2,
+              "weeks": 5,
+              "block": null,
+              "signature": "lc:2:S:regular",
+              "step": 0,
+              "reason": "initial",
+              "eligible": true,
+              "data": {
+                "level": "collecting",
+                "reason": "few",
+                "count": 0,
+                "weeks": 0,
+                "planned": 0,
+                "coverage": 0,
+                "completeness": 0,
+                "planKnown": 0,
+                "worsening": false
+              },
+              "plannedDates": [
+                "2026-11-04",
+                "2026-11-10",
+                "2026-11-11",
+                "2026-11-18",
+                "2026-11-25"
+              ],
+              "plannedMin": 75
+            },
+            "sport": "kickboxing",
+            "id": "smw8fqe8015"
+          }
+        },
+        "log": [
+          {
+            "id": "own1",
+            "src": "own",
+            "sport": "kickboxing",
+            "tstyle": "wt",
+            "date": "2026-11-06",
+            "type": "T",
+            "minutes": 60,
+            "rpe": 6,
+            "inputConfirmed": true,
+            "completed": true
+          },
+          {
+            "id": "club1",
+            "src": "club",
+            "sport": "kickboxing",
+            "date": "2026-11-05",
+            "ck": "T",
+            "minutes": 90,
+            "rpe": 5
+          }
+        ],
+        "weights": [
+          {
+            "date": "2026-11-08",
+            "kg": 72
+          }
+        ],
+        "tests": [],
+        "ov": {
+          "2026-11-10": {
+            "type": "S"
+          }
+        },
+        "cov": {},
+        "pauses": [],
+        "ko": ""
+      }
+    },
+    {
+      "sport": "boxing",
+      "style": "wt",
+      "state": {
+        "v": 2,
+        "profile": {
+          "lang": "de",
+          "sport": "boxing",
+          "disc": "lc",
+          "focus": "bal",
+          "level": 2,
+          "age": "adult",
+          "sex": "",
+          "days": [
+            0,
+            2,
+            4
+          ],
+          "minutes": 75,
+          "comps": [
+            {
+              "kind": "comp",
+              "id": "t1",
+              "sport": "boxing",
+              "date": "2027-02-27",
+              "result": "2 von 3 gewonnen"
+            }
+          ],
+          "club": {
+            "days": [],
+            "minutes": 90
+          },
+          "birthYear": 1992,
+          "limits": [],
+          "example": false,
+          "planStart": "2026-11-02",
+          "toured": true,
+          "newsSeen": 9,
+          "tkd": {
+            "style": "wt",
+            "names": "ko",
+            "wt": "",
+            "itf": "",
+            "hist": [],
+            "exams": []
+          },
+          "belt": 0,
+          "gp": {}
+        },
+        "sessions": {
+          "2026-11-09": {
+            "date": "2026-11-09",
+            "type": "T",
+            "loc": "gym",
+            "eq": [
+              "bag"
+            ],
+            "blocks": [
+              {
+                "key": "warm",
+                "min": 11,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "warm.dynamic_stretching"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.joint_mobility"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "pre.short_pre_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.footwork_drill"
+                  }
+                ]
+              },
+              {
+                "key": "main",
+                "min": 33,
+                "rounds": true,
+                "w": 180,
+                "b": 67,
+                "items": [
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "combo": [
+                      "jab",
+                      "upper",
+                      "cross",
+                      "hookb",
+                      "hook"
+                    ],
+                    "ease": 1,
+                    "box": 1
+                  },
+                  {
+                    "kind": "round",
+                    "k": "foot"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "combo": [
+                      "jab",
+                      "upper",
+                      "hook"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "evade",
+                    "combo": [
+                      "cross"
+                    ],
+                    "evade": {
+                      "d": "parry"
+                    }
+                  },
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "combo": [
+                      "jab",
+                      "crossb",
+                      "hook"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "foot"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "combo": [
+                      "cross",
+                      "upper",
+                      "hook"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "evade",
+                    "combo": [
+                      "cross",
+                      "hook"
+                    ],
+                    "evade": {
+                      "d": "slip"
+                    }
+                  }
+                ]
+              },
+              {
+                "key": "str",
+                "min": 17,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cond.bear_crawl"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cond.speed_rounds"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.hollow_hold"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.plank_shoulder_taps"
+                  }
+                ],
+                "sets": "3×"
+              },
+              {
+                "key": "wrist",
+                "lbl": "tough",
+                "min": 6,
+                "items": [
+                  {
+                    "kind": "hard",
+                    "id": "fWring"
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "fFinger"
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "bodybag"
+                  }
+                ]
+              },
+              {
+                "key": "cool",
+                "min": 8,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cool.breathing"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.hip_flexor_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.hamstrings"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "Belastungszyklus: Woche 2/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+              "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+              "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten.",
+              "Gleiche Rundenzeit, angepasste Pausen: 60 → 67 s; innerhalb deiner Trainingszeit."
+            ],
+            "rpe": "6–8",
+            "tHi": 8,
+            "theme": "hookFinish",
+            "min": 75,
+            "blk": null,
+            "created": 1794178800000,
+            "progression": {
+              "v": 1,
+              "id": "base:2026-11-02",
+              "start": "2026-11-02",
+              "end": "2026-12-06",
+              "week": 2,
+              "weeks": 5,
+              "block": null,
+              "signature": "lc:2:T:regular",
+              "step": 0,
+              "reason": "initial",
+              "eligible": true,
+              "data": {
+                "level": "collecting",
+                "reason": "few",
+                "count": 0,
+                "weeks": 0,
+                "planned": 0,
+                "coverage": 0,
+                "completeness": 0,
+                "planKnown": 0,
+                "worsening": false
+              },
+              "plannedDates": [
+                "2026-11-02",
+                "2026-11-09",
+                "2026-11-16",
+                "2026-11-23"
+              ],
+              "plannedMin": 75
+            },
+            "sport": "boxing",
+            "id": "smw8fqe80qh",
+            "flow": {
+              "step": 1,
+              "block": 0
+            },
+            "checked": {
+              "0.0": true
+            }
+          },
+          "2026-11-10": {
+            "date": "2026-11-10",
+            "type": "S",
+            "loc": "gym",
+            "eq": [
+              "weights",
+              "bar"
+            ],
+            "blocks": [
+              {
+                "key": "warm",
+                "min": 11,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "warm.dynamic_stretching"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.footwork_drill"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.easy_shadowboxing"
+                  }
+                ]
+              },
+              {
+                "key": "str",
+                "min": 31,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "str.goblet_squats",
+                    "basic": true,
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:weights:5-8:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 5,
+                      "hi": 8,
+                      "r": 5,
+                      "kg": null,
+                      "timed": false,
+                      "reason": "initial",
+                      "baseR": 5
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.dumbbell_press",
+                    "basic": true,
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:weights:5-8:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 5,
+                      "hi": 8,
+                      "r": 5,
+                      "kg": null,
+                      "timed": false,
+                      "reason": "initial",
+                      "baseR": 5
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.pull_ups",
+                    "basic": true
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.neck_iso_hold",
+                    "target": {
+                      "kind": "lc:2:S:regular:gym::45-60:4:s",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 45,
+                      "hi": 60,
+                      "r": 45,
+                      "kg": null,
+                      "timed": true,
+                      "reason": "initial",
+                      "baseR": 45
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.plank_shoulder_taps",
+                    "target": {
+                      "kind": "lc:2:S:regular:gym::45-60:4:s",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 45,
+                      "hi": 60,
+                      "r": 45,
+                      "kg": null,
+                      "timed": true,
+                      "reason": "initial",
+                      "baseR": 45
+                    }
+                  }
+                ],
+                "sets": "4× 5–8"
+              },
+              {
+                "key": "cond",
+                "min": 19,
+                "rounds": true,
+                "items": [
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.speed_rounds"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.shadow_sprints"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.bear_crawl"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.stepping_and_light_footwork"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.stair_or_bench_runs"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.burpees"
+                  }
+                ]
+              },
+              {
+                "key": "wrist",
+                "lbl": "tough",
+                "min": 6,
+                "items": [
+                  {
+                    "kind": "hard",
+                    "id": "fWring"
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "fFinger"
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "brace"
+                  }
+                ]
+              },
+              {
+                "key": "cool",
+                "min": 8,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cool.shoulder_and_chest"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.breathing"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.hip_flexor_stretch"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
+              "Belastungszyklus: Woche 2/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+              "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+              "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten."
+            ],
+            "rpe": "6–7",
+            "tHi": 7,
+            "theme": null,
+            "min": 75,
+            "blk": null,
+            "created": 1794178800000,
+            "progression": {
+              "v": 1,
+              "id": "base:2026-11-02",
+              "start": "2026-11-02",
+              "end": "2026-12-06",
+              "week": 2,
+              "weeks": 5,
+              "block": null,
+              "signature": "lc:2:S:regular",
+              "step": 0,
+              "reason": "initial",
+              "eligible": true,
+              "data": {
+                "level": "collecting",
+                "reason": "few",
+                "count": 0,
+                "weeks": 0,
+                "planned": 0,
+                "coverage": 0,
+                "completeness": 0,
+                "planKnown": 0,
+                "worsening": false
+              },
+              "plannedDates": [
+                "2026-11-04",
+                "2026-11-10",
+                "2026-11-11",
+                "2026-11-18",
+                "2026-11-25"
+              ],
+              "plannedMin": 75
+            },
+            "sport": "boxing",
+            "id": "smw8fqe80y7"
+          }
+        },
+        "log": [
+          {
+            "id": "own1",
+            "src": "own",
+            "sport": "boxing",
+            "tstyle": "wt",
+            "date": "2026-11-06",
+            "type": "T",
+            "minutes": 60,
+            "rpe": 6,
+            "inputConfirmed": true,
+            "completed": true
+          },
+          {
+            "id": "club1",
+            "src": "club",
+            "sport": "boxing",
+            "date": "2026-11-05",
+            "ck": "T",
+            "minutes": 90,
+            "rpe": 5
+          }
+        ],
+        "weights": [
+          {
+            "date": "2026-11-08",
+            "kg": 72
+          }
+        ],
+        "tests": [],
+        "ov": {
+          "2026-11-10": {
+            "type": "S"
+          }
+        },
+        "cov": {},
+        "pauses": [],
+        "ko": ""
+      }
+    },
+    {
+      "sport": "taekwondo",
+      "style": "wt",
+      "state": {
+        "v": 2,
+        "profile": {
+          "lang": "de",
+          "sport": "taekwondo",
+          "disc": "lc",
+          "focus": "bal",
+          "level": 2,
+          "age": "adult",
+          "sex": "",
+          "days": [
+            0,
+            2,
+            4
+          ],
+          "minutes": 75,
+          "comps": [
+            {
+              "kind": "comp",
+              "id": "t1",
+              "sport": "taekwondo",
+              "date": "2027-02-27",
+              "result": "2 von 3 gewonnen"
+            }
+          ],
+          "club": {
+            "days": [],
+            "minutes": 90
+          },
+          "birthYear": 1992,
+          "limits": [],
+          "example": false,
+          "planStart": "2026-11-02",
+          "toured": true,
+          "newsSeen": 9,
+          "tkd": {
+            "style": "wt",
+            "names": "ko",
+            "wt": "",
+            "itf": "",
+            "hist": [],
+            "exams": []
+          },
+          "belt": 0,
+          "gp": {}
+        },
+        "sessions": {
+          "2026-11-09": {
+            "date": "2026-11-09",
+            "type": "T",
+            "loc": "gym",
+            "eq": [
+              "bag"
+            ],
+            "blocks": [
+              {
+                "key": "warm",
+                "min": 11,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "warm.easy_jog"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.joint_mobility"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "pre.short_pre_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.dynamic_stretching"
+                  }
+                ]
+              },
+              {
+                "key": "main",
+                "min": 33,
+                "rounds": true,
+                "w": 180,
+                "b": 67,
+                "items": [
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "sp": "t",
+                    "combo": [
+                      "ap",
+                      "dol",
+                      "ttdol"
+                    ],
+                    "ease": 1
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "sp": "t",
+                    "combo": [
+                      "dol",
+                      "dolh",
+                      "nae",
+                      "dol"
+                    ],
+                    "pow": 1
+                  },
+                  {
+                    "kind": "round",
+                    "k": "foot",
+                    "sp": "t"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "sp": "t",
+                    "combo": [
+                      "ap",
+                      "dol",
+                      "dolh",
+                      "dol",
+                      "yeop"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "evade",
+                    "sp": "t",
+                    "combo": [
+                      "jir",
+                      "dol",
+                      "dolh",
+                      "dol",
+                      "dolh"
+                    ],
+                    "evade": {
+                      "d": "tblock"
+                    }
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "sp": "t",
+                    "combo": [
+                      "ap",
+                      "dol",
+                      "yeop",
+                      "dolh"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "sp": "t",
+                    "combo": [
+                      "ap",
+                      "dol",
+                      "dolh",
+                      "dwi",
+                      "dol"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "sp": "t",
+                    "combo": [
+                      "sr1",
+                      "dolh"
+                    ],
+                    "pow": 1
+                  }
+                ]
+              },
+              {
+                "key": "str",
+                "min": 10,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cond.kick_intervals"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cond.sprints"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.copenhagen_plank"
+                  }
+                ],
+                "sets": "3×"
+              },
+              {
+                "key": "mob",
+                "lbl": "amob",
+                "min": 7,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "mob.kick_holds"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "mob.active_leg_raises"
+                  }
+                ],
+                "sets": "je 60–90 s, ruhig atmen"
+              },
+              {
+                "key": "hard",
+                "min": 6,
+                "items": [
+                  {
+                    "kind": "hard",
+                    "id": "bodybag",
+                    "h": 1
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "tkBall"
+                  }
+                ]
+              },
+              {
+                "key": "cool",
+                "min": 8,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cool.hip_flexor_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.adductors_and_splits"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.shoulder_and_chest"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "Belastungszyklus: Woche 2/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+              "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+              "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten.",
+              "Gleiche Rundenzeit, angepasste Pausen: 60 → 67 s; innerhalb deiner Trainingszeit."
+            ],
+            "rpe": "6–8",
+            "tHi": 8,
+            "theme": null,
+            "min": 75,
+            "blk": null,
+            "created": 1794178800000,
+            "progression": {
+              "v": 1,
+              "id": "base:2026-11-02",
+              "start": "2026-11-02",
+              "end": "2026-12-06",
+              "week": 2,
+              "weeks": 5,
+              "block": null,
+              "signature": "lc:2:T:regular",
+              "step": 0,
+              "reason": "initial",
+              "eligible": true,
+              "data": {
+                "level": "collecting",
+                "reason": "few",
+                "count": 0,
+                "weeks": 0,
+                "planned": 0,
+                "coverage": 0,
+                "completeness": 0,
+                "planKnown": 0,
+                "worsening": false
+              },
+              "plannedDates": [
+                "2026-11-02",
+                "2026-11-09",
+                "2026-11-16",
+                "2026-11-23"
+              ],
+              "plannedMin": 75
+            },
+            "sport": "taekwondo",
+            "tstyle": "wt",
+            "id": "smw8fqe80e4",
+            "flow": {
+              "step": 1,
+              "block": 0
+            },
+            "checked": {
+              "0.0": true
+            }
+          },
+          "2026-11-10": {
+            "date": "2026-11-10",
+            "type": "S",
+            "loc": "gym",
+            "eq": [
+              "weights",
+              "bar"
+            ],
+            "blocks": [
+              {
+                "key": "warm",
+                "min": 11,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "warm.joint_mobility"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.easy_jog"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.footwork_drill"
+                  }
+                ]
+              },
+              {
+                "key": "str",
+                "min": 35,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "str.goblet_squats",
+                    "basic": true,
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:weights:5-8:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 5,
+                      "hi": 8,
+                      "r": 5,
+                      "kg": null,
+                      "timed": false,
+                      "reason": "initial",
+                      "baseR": 5
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.dumbbell_press",
+                    "basic": true,
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:weights:5-8:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 5,
+                      "hi": 8,
+                      "r": 5,
+                      "kg": null,
+                      "timed": false,
+                      "reason": "initial",
+                      "baseR": 5
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.pull_ups",
+                    "basic": true
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.hanging_knee_raises",
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:bar:12-15:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 12,
+                      "hi": 15,
+                      "r": 12,
+                      "kg": null,
+                      "timed": false,
+                      "slow": true,
+                      "reason": "initial",
+                      "baseR": 12
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.copenhagen_plank",
+                    "target": {
+                      "kind": "lc:2:S:regular:gym::45-60:4:s",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 45,
+                      "hi": 60,
+                      "r": 45,
+                      "kg": null,
+                      "timed": true,
+                      "reason": "initial",
+                      "baseR": 45
+                    }
+                  }
+                ],
+                "sets": "4× 5–8"
+              },
+              {
+                "key": "cond",
+                "min": 15,
+                "rounds": true,
+                "items": [
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.stair_or_bench_runs"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.sprints"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.burpees"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.kettlebell_swings"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.speed_rounds"
+                  }
+                ]
+              },
+              {
+                "key": "hard",
+                "min": 6,
+                "items": [
+                  {
+                    "kind": "hard",
+                    "id": "brace",
+                    "h": 1
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "tkFoot"
+                  }
+                ]
+              },
+              {
+                "key": "cool",
+                "min": 8,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cool.breathing"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.hip_flexor_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.shoulder_and_chest"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
+              "Belastungszyklus: Woche 2/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+              "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+              "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten."
+            ],
+            "rpe": "6–7",
+            "tHi": 7,
+            "theme": null,
+            "min": 75,
+            "blk": null,
+            "created": 1794178800000,
+            "progression": {
+              "v": 1,
+              "id": "base:2026-11-02",
+              "start": "2026-11-02",
+              "end": "2026-12-06",
+              "week": 2,
+              "weeks": 5,
+              "block": null,
+              "signature": "lc:2:S:regular",
+              "step": 0,
+              "reason": "initial",
+              "eligible": true,
+              "data": {
+                "level": "collecting",
+                "reason": "few",
+                "count": 0,
+                "weeks": 0,
+                "planned": 0,
+                "coverage": 0,
+                "completeness": 0,
+                "planKnown": 0,
+                "worsening": false
+              },
+              "plannedDates": [
+                "2026-11-04",
+                "2026-11-10",
+                "2026-11-11",
+                "2026-11-18",
+                "2026-11-25"
+              ],
+              "plannedMin": 75
+            },
+            "sport": "taekwondo",
+            "tstyle": "wt",
+            "id": "smw8fqe80i7"
+          }
+        },
+        "log": [
+          {
+            "id": "own1",
+            "src": "own",
+            "sport": "taekwondo",
+            "tstyle": "wt",
+            "date": "2026-11-06",
+            "type": "T",
+            "minutes": 60,
+            "rpe": 6,
+            "inputConfirmed": true,
+            "completed": true
+          },
+          {
+            "id": "club1",
+            "src": "club",
+            "sport": "taekwondo",
+            "date": "2026-11-05",
+            "ck": "T",
+            "minutes": 90,
+            "rpe": 5
+          }
+        ],
+        "weights": [
+          {
+            "date": "2026-11-08",
+            "kg": 72
+          }
+        ],
+        "tests": [],
+        "ov": {
+          "2026-11-10": {
+            "type": "S"
+          }
+        },
+        "cov": {},
+        "pauses": [],
+        "ko": ""
+      }
+    },
+    {
+      "sport": "taekwondo",
+      "style": "itf",
+      "state": {
+        "v": 2,
+        "profile": {
+          "lang": "de",
+          "sport": "taekwondo",
+          "disc": "lc",
+          "focus": "bal",
+          "level": 2,
+          "age": "adult",
+          "sex": "",
+          "days": [
+            0,
+            2,
+            4
+          ],
+          "minutes": 75,
+          "comps": [
+            {
+              "kind": "comp",
+              "id": "t1",
+              "sport": "taekwondo",
+              "date": "2027-02-27",
+              "result": "2 von 3 gewonnen"
+            }
+          ],
+          "club": {
+            "days": [],
+            "minutes": 90
+          },
+          "birthYear": 1992,
+          "limits": [],
+          "example": false,
+          "planStart": "2026-11-02",
+          "toured": true,
+          "newsSeen": 9,
+          "tkd": {
+            "style": "itf",
+            "names": "ko",
+            "wt": "",
+            "itf": "",
+            "hist": [],
+            "exams": []
+          },
+          "belt": 0,
+          "gp": {}
+        },
+        "sessions": {
+          "2026-11-09": {
+            "date": "2026-11-09",
+            "type": "T",
+            "loc": "gym",
+            "eq": [
+              "bag"
+            ],
+            "blocks": [
+              {
+                "key": "warm",
+                "min": 11,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "warm.easy_jog"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.joint_mobility"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "pre.short_pre_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.dynamic_stretching"
+                  }
+                ]
+              },
+              {
+                "key": "main",
+                "min": 33,
+                "rounds": true,
+                "w": 180,
+                "b": 67,
+                "items": [
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "sp": "t",
+                    "combo": [
+                      "jir",
+                      "ap",
+                      "dol",
+                      "yeop"
+                    ],
+                    "ease": 1
+                  },
+                  {
+                    "kind": "round",
+                    "k": "foot",
+                    "sp": "t"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "sp": "t",
+                    "combo": [
+                      "swch",
+                      "jir",
+                      "dung",
+                      "dol",
+                      "dolh",
+                      "dwi"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "evade",
+                    "sp": "t",
+                    "combo": [
+                      "dung",
+                      "dol"
+                    ],
+                    "evade": {
+                      "d": "iturn"
+                    }
+                  },
+                  {
+                    "kind": "round",
+                    "k": "shadow",
+                    "sp": "t",
+                    "combo": [
+                      "jir",
+                      "dol",
+                      "ban",
+                      "dol"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "foot",
+                    "sp": "t"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "bag",
+                    "sp": "t",
+                    "combo": [
+                      "dol",
+                      "jir",
+                      "dolh",
+                      "ttyeop"
+                    ]
+                  },
+                  {
+                    "kind": "round",
+                    "k": "evade",
+                    "sp": "t",
+                    "combo": [
+                      "jir",
+                      "jir",
+                      "dol"
+                    ],
+                    "evade": {
+                      "d": "itblock"
+                    }
+                  }
+                ]
+              },
+              {
+                "key": "str",
+                "min": 17,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cond.sprints"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cond.skater_jumps"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.bulgarian_split_squats"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.single_leg_kick_hold"
+                  }
+                ],
+                "sets": "3×"
+              },
+              {
+                "key": "hard",
+                "min": 6,
+                "items": [
+                  {
+                    "kind": "hard",
+                    "id": "fTap"
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "shinbag"
+                  }
+                ]
+              },
+              {
+                "key": "cool",
+                "min": 8,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cool.hip_flexor_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.breathing"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.adductors_and_splits"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "Belastungszyklus: Woche 2/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+              "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+              "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten.",
+              "Gleiche Rundenzeit, angepasste Pausen: 60 → 67 s; innerhalb deiner Trainingszeit."
+            ],
+            "rpe": "6–8",
+            "tHi": 8,
+            "theme": null,
+            "min": 75,
+            "blk": null,
+            "created": 1794178800000,
+            "progression": {
+              "v": 1,
+              "id": "base:2026-11-02",
+              "start": "2026-11-02",
+              "end": "2026-12-06",
+              "week": 2,
+              "weeks": 5,
+              "block": null,
+              "signature": "lc:2:T:regular",
+              "step": 0,
+              "reason": "initial",
+              "eligible": true,
+              "data": {
+                "level": "collecting",
+                "reason": "few",
+                "count": 0,
+                "weeks": 0,
+                "planned": 0,
+                "coverage": 0,
+                "completeness": 0,
+                "planKnown": 0,
+                "worsening": false
+              },
+              "plannedDates": [
+                "2026-11-02",
+                "2026-11-09",
+                "2026-11-16",
+                "2026-11-23"
+              ],
+              "plannedMin": 75
+            },
+            "sport": "taekwondo",
+            "tstyle": "itf",
+            "id": "smw8fqe80zn",
+            "flow": {
+              "step": 1,
+              "block": 0
+            },
+            "checked": {
+              "0.0": true
+            }
+          },
+          "2026-11-10": {
+            "date": "2026-11-10",
+            "type": "S",
+            "loc": "gym",
+            "eq": [
+              "weights",
+              "bar"
+            ],
+            "blocks": [
+              {
+                "key": "warm",
+                "min": 11,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "warm.joint_mobility"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.easy_jog"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "warm.dynamic_stretching"
+                  }
+                ]
+              },
+              {
+                "key": "str",
+                "min": 35,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "str.goblet_squats",
+                    "basic": true,
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:weights:5-8:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 5,
+                      "hi": 8,
+                      "r": 5,
+                      "kg": null,
+                      "timed": false,
+                      "reason": "initial",
+                      "baseR": 5
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.dumbbell_press",
+                    "basic": true,
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:weights:5-8:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 5,
+                      "hi": 8,
+                      "r": 5,
+                      "kg": null,
+                      "timed": false,
+                      "reason": "initial",
+                      "baseR": 5
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.pull_ups",
+                    "basic": true
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.hanging_knee_raises",
+                    "target": {
+                      "kind": "lc:2:S:regular:gym:bar:12-15:4:r",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 12,
+                      "hi": 15,
+                      "r": 12,
+                      "kg": null,
+                      "timed": false,
+                      "slow": true,
+                      "reason": "initial",
+                      "baseR": 12
+                    }
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "str.plank_shoulder_taps",
+                    "target": {
+                      "kind": "lc:2:S:regular:gym::45-60:4:s",
+                      "cycle": "base:2026-11-02",
+                      "n": 4,
+                      "lo": 45,
+                      "hi": 60,
+                      "r": 45,
+                      "kg": null,
+                      "timed": true,
+                      "reason": "initial",
+                      "baseR": 45
+                    }
+                  }
+                ],
+                "sets": "4× 5–8"
+              },
+              {
+                "key": "cond",
+                "min": 15,
+                "rounds": true,
+                "items": [
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.sprints"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.speed_rounds"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.skater_jumps"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.burpees"
+                  },
+                  {
+                    "kind": "round",
+                    "k": "ex",
+                    "id": "cond.kick_intervals"
+                  }
+                ]
+              },
+              {
+                "key": "hard",
+                "min": 6,
+                "items": [
+                  {
+                    "kind": "hard",
+                    "id": "tkEdge"
+                  },
+                  {
+                    "kind": "hard",
+                    "id": "shintap"
+                  }
+                ]
+              },
+              {
+                "key": "cool",
+                "min": 8,
+                "items": [
+                  {
+                    "kind": "ex",
+                    "id": "cool.shoulder_and_chest"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.hip_flexor_stretch"
+                  },
+                  {
+                    "kind": "ex",
+                    "id": "cool.adductors_and_splits"
+                  }
+                ]
+              }
+            ],
+            "notes": [
+              "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
+              "Belastungszyklus: Woche 2/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+              "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+              "Für eine Steigerung fehlen noch regelmäßig erfasste Einheiten."
+            ],
+            "rpe": "6–7",
+            "tHi": 7,
+            "theme": null,
+            "min": 75,
+            "blk": null,
+            "created": 1794178800000,
+            "progression": {
+              "v": 1,
+              "id": "base:2026-11-02",
+              "start": "2026-11-02",
+              "end": "2026-12-06",
+              "week": 2,
+              "weeks": 5,
+              "block": null,
+              "signature": "lc:2:S:regular",
+              "step": 0,
+              "reason": "initial",
+              "eligible": true,
+              "data": {
+                "level": "collecting",
+                "reason": "few",
+                "count": 0,
+                "weeks": 0,
+                "planned": 0,
+                "coverage": 0,
+                "completeness": 0,
+                "planKnown": 0,
+                "worsening": false
+              },
+              "plannedDates": [
+                "2026-11-04",
+                "2026-11-10",
+                "2026-11-11",
+                "2026-11-18",
+                "2026-11-25"
+              ],
+              "plannedMin": 75
+            },
+            "sport": "taekwondo",
+            "tstyle": "itf",
+            "id": "smw8fqe80xx"
+          }
+        },
+        "log": [
+          {
+            "id": "own1",
+            "src": "own",
+            "sport": "taekwondo",
+            "tstyle": "itf",
+            "date": "2026-11-06",
+            "type": "T",
+            "minutes": 60,
+            "rpe": 6,
+            "inputConfirmed": true,
+            "completed": true
+          },
+          {
+            "id": "club1",
+            "src": "club",
+            "sport": "taekwondo",
+            "date": "2026-11-05",
+            "ck": "T",
+            "minutes": 90,
+            "rpe": 5
+          }
+        ],
+        "weights": [
+          {
+            "date": "2026-11-08",
+            "kg": 72
+          }
+        ],
+        "tests": [],
+        "ov": {
+          "2026-11-10": {
+            "type": "S"
+          }
+        },
+        "cov": {},
+        "pauses": [],
+        "ko": ""
+      }
+    }
+  ]
+}

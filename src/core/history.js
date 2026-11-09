@@ -149,6 +149,7 @@ const techOf = (t, key) => (t.techBy ? (t.techBy[key] != null ? t.techBy[key] : 
     them all, plus the technique self-rating of THIS sport from the latest test that rated it.
     Thresholds as before: total ≥ 20 and minimum ≥ 3 → 2; ≥ 15 and ≥ 2 → 1.
     Also reports what is missing, so a new sport inside the 42 days only needs its technique part. */
+// Historical combined score, retained for compatibility comparisons only. The app uses fitnessFor + manual techniqueLevel.
 export function levelFor(tests, sport, style) {
   const key = techKey(sport, style),
     list = (tests || []).slice().sort((a, b) => a.date.localeCompare(b.date)),
@@ -160,4 +161,17 @@ export function levelFor(tests, sport, style) {
     min = Math.min(...vals);
   const level = total >= 20 && min >= 3 ? 2 : total >= 15 && min >= 2 ? 1 : 0;
   return { level, needShared: false, needTech: false, shared, total, min };
+}
+
+
+/** Physical dosing only. Four identical rz-1 fitness categories are shared across sports;
+ * technique ratings never influence this value. Thresholds are product settings, not clinical norms.
+ * Ignore partial/unknown-method tests instead of fabricating missing physical scores. */
+export function fitnessFor(tests) {
+  const latest = (tests || []).filter(t => (!t.method || t.method === "rz-1") &&
+    SHARED.every(k => Number.isFinite(t.scores?.[k]) && t.scores[k] >= 1 && t.scores[k] <= 5))
+    .slice().sort((a,b) => a.date.localeCompare(b.date)).pop();
+  if (!latest) return { level: null, test: null };
+  const values = SHARED.map(k => latest.scores[k]), total = values.reduce((a,b) => a+b,0), min = Math.min(...values);
+  return { level: total >= 16 && min >= 3 ? 2 : total >= 12 && min >= 2 ? 1 : 0, test: latest, total, min };
 }

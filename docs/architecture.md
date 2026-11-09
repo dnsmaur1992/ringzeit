@@ -1,3 +1,8 @@
+> **Nachtrag 08.11.2026 – Technik/Fitness getrennt:** `core/history.js` liefert `fitnessFor` aus den vier
+> körperlichen Testwerten. `app/07-fitness-test.js` liefert technische Erfahrung je Sport/Style und
+> eine unabhängige Dosierungsstufe. Profil/Onboarding verwenden einen gemeinsamen Drei-Stufen-Selektor.
+> Dosierung ist je gebauter Einheit/Block eingefroren. Details: `data-load-concept.md`, Abschnitt 4.6.
+
 # Ringzeit Dev – Architektur
 
 Stand: Schritt 2 umgesetzt (wartet auf Abnahme), 03.11.2026. Konzept (Abschnitte 3–8) in Schritt 1 abgenommen.

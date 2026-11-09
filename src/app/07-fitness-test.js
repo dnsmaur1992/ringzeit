@@ -37,9 +37,28 @@
       min: complete ? Math.min(...vals) : 0,
     };
   }
-  /* Level from the latest tests, per sport: shared values + the technique part of THIS sport (core/history.js levelFor) */
-  function maxLevel(sport = mainSport(), style) {
-    return levelFor(S.tests, sport, style || (sport === "taekwondo" ? tkdUnitStyle() : undefined)).level;
+  // Technical familiarity is chosen per sport/style; never inferred from fitness or transferred between sports.
+  const trainingKey = (sport, style, p = S.profile) => techKey(sport, sport === "taekwondo" ? style || (p.tkd?.style === "itf" ? "itf" : "wt") : undefined);
+  function techniqueLevel(sport = sportNow(), style, p = S.profile) {
+    const key = trainingKey(sport, style || (sport === "taekwondo" ? tkdUnitStyle() : undefined), p);
+    const main = trainingKey(p.sport || "kickboxing", undefined, p);
+    const value = key === main ? p.level : p.techLevels?.[key];
+    return [0,1,2].includes(value) ? value : 0;
+  }
+  function fitnessLevel() {
+    const f = fitnessFor(S.tests).level;
+    // Migration freezes the former physical dose independently of subsequent technical selections.
+    return f ?? ([0,1,2].includes(S.profile.fitnessBase) ? S.profile.fitnessBase : S.profile.level || 0);
+  }
+  const doseLevel = (b) => [0,1,2].includes(b?.fitnessLevel) ? b.fitnessLevel : fitnessLevel();
+  function maxLevel(sport = mainSport(), style) { return techniqueLevel(sport, style); }
+  function techniqueChoices(sport, style, p = S.profile, onboarding = false) {
+    const L = t("ability"), key = trainingKey(sport, style, p), current = techniqueLevel(sport, style, p);
+    return `<div class="field"><span class="lab">${L.question}</span><div class="seg">${L.options.map((label, i) => `<button type="button" ${onboarding ? `data-otech="${i}"` : `data-techlevel="${i}" data-techkey="${key}"`} aria-pressed="${current === i}">${label}</button>`).join("")}</div><span class="sub">${L.details[sport][current]} ${L.hint}</span></div>`;
+  }
+  function fitnessSummaryHtml() {
+    const f = fitnessFor(S.tests), L = t("ability");
+    return `<div class="note"><b>${L.fitness}</b><div>${f.test ? `${L.doses[f.level]} · ${fmtDate(f.test.date)}` : L.noTest}</div><div>${L.separate}</div></div>`;
   }
   /* Effort with five faces instead of numbers; each face stands for a value on the 1–10 scale the planning uses */
   const effortFaces = () =>

@@ -4,7 +4,7 @@
   "description": "Ringzeit – build and test tools (the app itself has no runtime dependencies)",
   "scripts": {
     "build": "python3 tools/build_pwa.py",
-    "test": "node --test tests/training.test.mjs tests/core.test.mjs && node tests/baseline.mjs"
+    "test": "node --test tests/training.test.mjs tests/core.test.mjs tests/session-progression.test.mjs tests/release-cache.test.mjs && node tests/baseline.mjs"
   },
   "devDependencies": {
     "esbuild": "0.24.2"

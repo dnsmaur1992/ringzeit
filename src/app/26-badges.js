@@ -133,8 +133,8 @@
       2,
       1,
       "level",
-      ["Fortgeschritten", "Level Fortgeschritten freigeschaltet"],
-      ["Advanced", "Advanced level unlocked"],
+      ["Technik geübt", "Technikniveau Geübt im Profil gewählt"],
+      ["Practised technique", "Practised technical experience selected in your profile"],
     ],
     [
       "l2",
@@ -142,8 +142,8 @@
       3,
       2,
       "level",
-      ["Wettkampfreif", "Level Wettkampf freigeschaltet"],
-      ["Fight ready", "Competition level unlocked"],
+      ["Technik erfahren", "Technikniveau Erfahren im Profil gewählt"],
+      ["Experienced technique", "Experienced technical level selected in your profile"],
     ],
     [
       "b1",

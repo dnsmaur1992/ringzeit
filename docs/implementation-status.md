@@ -307,3 +307,64 @@ Unterteilung (Betreiber, 03.11.2026 22:40, Empfehlungen übernommen): 7a automat
 ## Nächster Vorschlag (ohne Freigabe)
 
 Das Gesamtprojekt ist abgeschlossen. Weitere Arbeit nur auf eigenen Auftrag: Upload des Release-Pakets durch den Betreiber nach `docs/release.md`, Rückmeldungen aus der Trainer-Prüfliste als Korrekturauftrag, Android-Prüfung mit Gerät.
+
+
+## Nachtrag 08.11.2026 – Technikniveau von Fitness trennen
+
+Auftrag nur für `dnsmaur1992/ringzeit-dev`, Basis `b3fd728`. Keine Änderungen an der stabilen App und kein Push.
+Technikniveau je Sportart/WT/ITF ist frei anhand bereits erlernter Techniken wählbar; der gemeinsame Fitnesstest
+steuert unabhängig davon die körperliche Dosierung. Bestehende Auswahl und bisherige Grundeinstellung werden
+übernommen, neue Sportarten erhalten kein fremdes Technikniveau. Begonnene Einheiten behalten ihre Dosierung.
+Profil, Einrichtung, Testauswertung, Ratgeber, Abzeichen-Texte und Trainingsdokumentation angepasst.
+**Manuelle Abnahme durch den Betreiber steht noch aus.** Die frühere Gesamtabnahme gilt für den vorherigen Stand.
+
+Validierung dieses Nachtrags: 246 Tests bestanden; Vergleichsbasis 24 Profile × 9 Einheiten + 2 Abläufe bestanden.
+Gegen die vorherige Vergleichsbasis ausschließlich neue `fitnessLevel`-/`techniqueLevel`-Metadaten,
+keine geänderten Pläne/Dosierungen bei identischen Ausgangseinstellungen. Vollständige Matrix 648 Einheiten
+vor der letzten Mengen-Zuordnung der Kampfsimulation ohne Befund; abschließend 216 Einheiten mit allen
+Zusatzprüfungen einschließlich manueller Technik-/gemeinsamer Fitness-Trennung ohne Befund.
+Browser-/Geräteprüfung hier nicht ausgeführt: Der Chromium-Download war nicht verfügbar.
+Handprüfung und Upload: `docs/technik-fitness-test.md`.
+
+
+## Historisch, ersetzt – Früher Zusatzreiz nach zweimal „Zu leicht“ (09.11.2026)
+
+Nur Dev-Auftrag, Basis `d2dd648`. Freiwillige Rückmeldung im Abschluss und Verlauf ergänzt; kurzer gemeinsamer
+Progressionskern für alle Sportarten; ein Parameter nach zwei passenden Erfolgen, weitere Schritte erst mit
+neuen Belegen und höchstens zwei je Zyklus. Vergleichsbedingungen, Belastung/Erholung und vorhandene
+Periodisierung werden berücksichtigt. Begonnene Einheiten bleiben erhalten.
+
+Validiert: 258 Tests bestanden, darunter Einheitenfolgen 1–5, widersprüchliche/fehlende/abgebrochene Angaben,
+Sport/Stil-/Ausrüstungswechsel, Obergrenze, Körperlast vom Vortag, Speichern/Korrigieren und Sicherungs-Rückladung.
+Ablauf-Matrix 216 Einheiten plus H1–H9 ohne Befund. Bisherige Vergleichspläne/Dosen/Timer bleiben ohne positive neue Rückmeldungen
+identisch; die aktualisierte Vergleichsbasis enthält nur neue Metadaten und präzisierte Hinweise.
+Kein Push/Upload, keine Änderung am stabilen Repository. **Manuelle Abnahme noch offen.**
+Handprüfung und Upload: `docs/einheiten-progression-test.md`.
+
+
+## Nachtrag 09.11.2026 – Pflichtbewertung mit fünf Emojis
+
+Dev-Auftrag, Basis `6a6b4e7`. Ersetzt die vorangegangene Kurzschleife: keine separaten Übungsfragen
+und keine zusätzliche Dreierauswahl beim Abschluss. Pflicht-RPE über fünf Emojis oder genaue Skala.
+Sehr locker +10 %, Locker +5 % automatisch; Fordernd optional +5 %, Hart optional −5 %, Am Limit
+optional −10 %, sonst Beibehalten. Emojiwechsel verwirft die vorherige Zusatzentscheidung.
+Gemeinsamer Kern und sport-/stil-/gattungsspezifischer Adapter; Anpassung über Runden-/Satz-/Zirkelpausen,
+Faktor 0,8–1,2, keine zusätzliche automatische Aufwärtsänderung an Gewichten/Wiederholungen.
+Schutz-/Trend-/Erholungsregeln haben Vorrang. Alte RPE ohne Einverständnismarker bleiben historische Daten.
+Speichern, Verlaufskorrektur, Sicherung, unbegonnene und begonnene Pläne berücksichtigt.
+
+Validiert: 257 Tests bestanden, Vergleichsbasis 24 Profile × 9 Einheiten plus 2 Abläufe bestanden.
+Baseline-Änderungen ausschließlich Metadaten: 216 neue effortDose-Felder, 49 entfernte fast-Felder;
+keine geänderten Übungen oder Dosierungen ohne neue Bewertungen. Ablaufmatrix 216 Einheiten,
+zusätzliche Prüfungen H1–H9 ohne Befund. Produktionsbuild erfolgreich erstellt.
+Keine echte Browser-/Geräteprüfung; **manuelle Abnahme steht aus**.
+Handprüfung: `docs/einheiten-progression-test.md`. Kein Push/Upload, stabiles Repository unberührt.
+
+
+## Prod-Release 4 – Vorbereitung 09.11.2026
+
+Dev 3385b8b gegen Prod e23d121 geprüft. Übernahme der Technik-/Fitness-Trennung und Abschlusssteuerung
+mit Prod-Kennung, NEWS_V 10 (DE/EN) und Übergang für unbegonnene Altpläne. Begonnene/fortsetzbare
+Einheiten bleiben erhalten. 261 Tests, Baseline, vollständige Matrix 648 und H1–H9 bestanden.
+Synthetische Daten des vorherigen Prod-Codes geprüft, keine echten Nutzerdaten im Testfixture.
+Kein Push/Upload und keine neue echte Browser-/Geräteabnahme. Aktueller Prüfbericht: `release-4-pruefung.md`.

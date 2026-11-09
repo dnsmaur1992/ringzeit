@@ -62,7 +62,7 @@
   }
   /* fight endurance: round length, rest and (fixed) number of rounds per week */
   function blockRounds(bi, ds) {
-    const L = S.profile.level,
+    const L = fitnessLevel(),
       m = ageGroup() === "masters" ? 1 : 0,
       dl = weekLoad(ds).deload ? 1 : 0;
     if (bi.st === 0) return { w: bi.wk === 1 ? 240 : 300, b: 60, n: 0, cue: "end0" };

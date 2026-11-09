@@ -88,7 +88,7 @@
     const e = EX[id];
     if (!e) return "";
     const de = S.profile.lang === "de",
-      L = S.profile.level,
+      L = doseLevel(b),
       fix = DOSE_FIX[e.key] ? DOSE_FIX[e.key][de ? 0 : 1] : "",
       side = sideWord(e.key, de),
       reps = de ? " Wdh." : " reps",

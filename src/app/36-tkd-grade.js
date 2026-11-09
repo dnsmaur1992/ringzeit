@@ -36,7 +36,7 @@
     return g ? (g[0] === "k" ? +g.slice(1) : 0) : null;
   };
   /* context of the technique release (sports/taekwondo/techniques.js allowed()) */
-  const tkdCtx = () => ({ level: S.profile.level || 0, kup: tkdKup(), kid: ageGroup() === "kids", young: young(), risky: kneeAnk() });
+  const tkdCtx = () => ({ level: techniqueLevel("taekwondo"), kup: tkdKup(), kid: ageGroup() === "kids", young: young(), risky: kneeAnk() });
   const tkdAge = (p = S.profile) => (ageAt(today(), p) != null ? ageAt(today(), p) : null);
 
   function tkdHistPush(e) {
@@ -153,7 +153,10 @@
       a = ds.tk,
       v = ds.tv;
     if (a === "style") {
+      const levels = (S.profile.techLevels = { ...(S.profile.techLevels || {}) });
+      if (mainSport() === "taekwondo") levels[trainingKey("taekwondo", T.style)] = S.profile.level;
       T.style = v === "itf" ? "itf" : "wt";
+      if (mainSport() === "taekwondo") S.profile.level = levels[trainingKey("taekwondo", T.style)] || 0;
       ui.tkdAsk = null;
     } else if (a === "names") {
       T.names = v === "app" ? "app" : "ko";
@@ -188,6 +191,10 @@
       ui.tkdAsk = null;
     }
     if ((a === "plan" || a === "del" || a === "res") && draft) applyPlan();
+    if (a === "style") {
+      dropOpenSessions(iso(today())); loadCache = {};
+      if (draft) { draft.tkd = JSON.parse(JSON.stringify(S.profile.tkd)); draft.level = S.profile.level; draft.techLevels = { ...S.profile.techLevels }; }
+    }
     store.save();
     render();
   }

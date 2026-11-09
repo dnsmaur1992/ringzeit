@@ -1,3 +1,5 @@
+> **Aktueller Nachtrag 08.11.2026:** Abschnitt 4.6 ersetzt die frühere Fitnesssperre (E7). Frühere Tabellen und Akzeptanzfälle dokumentieren die damalige Entscheidung.
+
 # Ringzeit Dev – Daten- und Belastungskonzept (Teil 3-Q)
 
 Status: **Konzept, abgenommen am 03.11.2026** (Entscheidungen zu Abschnitt 1 und 7 eingearbeitet). 3-U ist umgesetzt, siehe Abschnitt 9. Umsetzung: Historie, Belastung und Auswahl in **3-U**, stabile
@@ -154,14 +156,28 @@ bzw. weniger Schlagvolumen am Sack, Kraftübungen zuerst für die anderen Bereic
 - Rückimport einer eigenen Sicherung ersetzt den Stand vollständig (wie heute) → keine doppelten Einträge; der
   Wiederaufnahme-Stand wird dabei verworfen.
 
-### 4.6 Fitnesstest und Level (E7)
+### 4.6 Technikniveau und körperliche Dosierung (ersetzt E7, 08.11.2026)
 
-- `level(sport, style)` = Einstufung aus dem letzten vollständigen Test: gemeinsame Werte (Kraft, Schnelligkeit,
-  Ausdauer, Beweglichkeit) **plus** Technik-Selbsteinschätzung **dieser** Sportart; Schwellen wie heute
-  (Summe ≥ 20 und Minimum ≥ 3 → 2; ≥ 15 und ≥ 2 → 1).
-- Gemeinsame Werte gelten 42 Tage (heutiger Testrhythmus). Für eine neue Sportart innerhalb dieser Zeit genügt der
-  Technikteil – keine doppelte Durchführung. Originalwerte, Datum und Verfahren bleiben gespeichert.
-- Disziplin/Wettkampfklasse frei wählbar; es gelten nur Altersgrenzen und Regeln (Kickboxen heute: FC/K1 ab 15 Jahren).
+- Technikniveau wird manuell je Sportart/Style nach Vereinserfahrung gewählt (Grundlagen, Geübt, Erfahren).
+- Speicherung: `profile.techLevels` mit `kickboxing`, `boxing`, `taekwondo:wt`, `taekwondo:itf`.
+  `profile.level` bleibt aus Kompatibilitätsgründen der technische Wert des Hauptsports.
+- Der jüngste vollständige körperliche rz-1-Test (vier gültige Scores 1–5: str/spd/end/flx) liefert die
+  Dosierungsstufe: Summe ≥ 16 und Minimum ≥ 3 → 2; ≥ 12 und ≥ 2 → 1; sonst 0. Das sind eigene
+  Planungsgrenzen, keine medizinischen Normen. Technik-Scores ändern diese Stufe nicht.
+- Unvollständige/andersartige Tests ersetzen einen vollständigen vergleichbaren Test nicht. Der jüngste
+  vergleichbare Test bleibt wirksam; nach 42 Tagen erinnert die App wie bisher an einen neuen Test,
+  sie stuft Erfahrung oder Belastbarkeit nicht allein wegen verstrichener Zeit automatisch ab.
+- Altes Profil: gewähltes Niveau bleibt für den Hauptsport erhalten; `fitnessBase` friert einmalig die
+  bisherige physische Grundeinstellung ein. Neue Profile ohne Test starten physisch bei Stufe 0.
+- Fitness steuert Ziel-RPE, bisher levelabhängige Rundenzahl in der Vorbereitung, Kraftumfang/-sätze,
+  Konditionsintervalle, Haltezeiten und die körperliche Progressionssignatur. Technik steuert bekannte
+  Inhalte/Kombinationskomplexität. Verbandsformate und Alters-/Grad-/Einschränkungsregeln bleiben bestehen.
+- Gebaute Einheiten und ihre Blöcke speichern `fitnessLevel`, Einheiten zusätzlich `techniqueLevel`.
+  Darauf beruhende Texte und Timer ändern sich nach einem neuen Test nicht mitten in der Einheit.
+- Änderungen an Erfahrung oder körperlicher Dosierungsstufe verwerfen nur noch nicht begonnene
+  zukünftige/heutige Einheiten; Verlauf, begonnene Einheiten, Gürtel und Turnierziele bleiben erhalten.
+- Historische `levelFor`-Vergleiche bleiben im Kern als Referenz für alte Tests, werden von der App nicht verwendet.
+
 
 ## 5. Akzeptanzfälle für 3-U (prüfbar, mit festen Daten)
 
@@ -283,3 +299,15 @@ eingebauten 5. „langsam (3 s ab)“ steht nur noch in Blöcken mit schweren Wi
 **Vergleichsbasis.** Neu aufgezeichnet (`node tests/baseline.mjs --write`); Abweichungen gegenüber dem Stand 3-U ausschließlich: A11 (Text und 4 Phasen Seil-Intervalle,
 Dosistext Rudergerät/Laufband), A12 („3 × 4 Läufe à 20 m“), A7 (Kick-Halten Text und 87 statt 21 Phasen), A9 (Gesamtzeit), A6 (Nackentext). Die Einheiten selbst (Übungswahl, Blöcke) sind
 unverändert; die Vergleichsdatei führt die Übungen weiter unter der alten Zeilennummer (`legacyIndex`), damit nur echte Änderungen auffallen.
+
+
+## Nachtrag 09.11.2026 – Einmalige Abschlussbewertung
+
+Ersetzt den früheren Zusatzreiz nach zwei leichten Einheiten; Verhalten siehe `trainingslogik.md`.
+`session.effortDose` und der entsprechende Verlaufssnapshot speichern Version, Vergleichsbereich,
+Faktor, Eignung, Ausgangsquelle und die angewandte Runden-/Satzpause. `log.effortControl` speichert
+Version, Emoji-Klasse und `hold`/`change`. Die tatsächliche RPE bleibt die einzige Anstrengungsbewertung.
+Der jüngste passende Snapshot begründet die nächste Anpassung, kein wiederholtes Aufsummieren beim
+Neuladen. Alte Daten bleiben lesbar; `fast`, `difficulty` und frühere Übungsbewertungen werden nicht neu erzeugt.
+Die Lastsignatur berücksichtigt die neuen Felder; unbegonnene Pläne werden nach Änderungen invalidiert.
+Begonnene Pläne behalten ihren Snapshot, Timer verwenden dessen Satz-/Zirkelpause.

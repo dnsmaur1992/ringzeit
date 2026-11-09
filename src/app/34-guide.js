@@ -339,7 +339,7 @@
           ],
           [
             "In Ringzeit",
-            "Ringzeit plant für Light Contact, Kick Light, Full Contact und K1 Style. Die Ring-Disziplinen sind – wie bei der WAKO – erst ab 15 Jahren und mit bestandenem Fitnesstest freigeschaltet.",
+            "Ringzeit plant für Light Contact, Kick Light, Full Contact und K1 Style. Die Ring-Disziplinen sind – wie bei der WAKO – erst ab 15 Jahren wählbar. Technikniveau und körperliche Dosierung werden getrennt eingestellt.",
           ],
         ],
         src: "WAKO-Regelwerke (Tatami allgemein, Ringsport allgemein, Low Kick, K1 Style)",
@@ -378,7 +378,7 @@
           ],
           [
             "In Ringzeit",
-            "Ringzeit plans for light contact, kick light, full contact and K1 style. As at WAKO, the ring disciplines unlock only from age 15 and after passing the fitness test.",
+            "Ringzeit plans for light contact, kick light, full contact and K1 style. As at WAKO, the ring disciplines unlock only from age 15 ; technical experience is selected separately from fitness.",
           ],
         ],
         src: "WAKO rules (tatami general, ring sports general, low kick, K1 style)",
