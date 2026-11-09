@@ -101,6 +101,7 @@ Hauptsport im Profil jederzeit wechselbar; einzelne Einheiten lassen sich auf ei
 - **Einfach oder ausführlich:** In der Einrichtung wählbar (für neue Nutzer ist „Einfach“ vorausgewählt), später unter Profil → App & Daten. Einfach zeigt auf Heute nur das Training; Fitnesstest und Verlauf liegen dann im Profil statt in der Leiste. Auch „Einheit anpassen“ fragt dann nur Trainingsart, Dauer, Ort und Partner/Sandsack – ohne Tagesform, Zusatz-Geräte und Fachbegriffe
 - **Anstrengung mit Gesichtern:** fünf Stufen von 😌 „Sehr locker“ bis 🥵 „Am Limit“; in der ausführlichen Ansicht zusätzlich die genaue Skala 1–10
 - **Wochenplan je Sportart** (Kickboxen nach Disziplin, Boxen, Taekwondo WT oder ITF) – abgestimmt auf Trainingstage, Dauer, Level und Vereinstraining
+- **Winter Arc:** persönliche Wochenziele und Gewohnheiten; geführte Mobility mit passenden Übungsskizzen, Zeitlupen-Kicks und korrekter Restzeitanzeige beim Pausieren.
 - **Einheiten** für Technik, Technik & Kondition, Sparring, Kraft, Kondition und Mobility – zu Hause, in der Halle, draußen oder im Fitnessstudio
 - **Kraft, Kondition und Mobility nach Sportart:** Die Grundübungen bleiben gleich (vergleichbare Kraftwerte), die übrigen Übungen setzen den Schwerpunkt – Boxen Rumpfrotation, Schultern, Griff, Nacken und Schlagausdauer; WT Einbeinkraft, Sprungkraft, Hüfte und aktive Beweglichkeit; ITF Einbein- und Sprungkraft plus Schlag-Explosivität
 - **Kombinationen** passend zu Sportart, Level, Alter und Grad, mit Seite (V/H); eigene Kombis aus dem Verein werden eingebaut
