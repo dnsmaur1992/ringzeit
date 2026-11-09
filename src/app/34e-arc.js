@@ -555,16 +555,24 @@
     mobSay(`${e.name}. ${st.dose ? st.dose + ". " : ""}${st.kind === "reps" ? arcT().mobRepsSay : ""}`);
     renderArc();
   }
+  /* One clock position for live ticks, paused views and redraws after a phase change. */
+  function mobPosition(m) {
+    const st = m?.steps[m.i];
+    if (!st || st.kind !== "timed") return null;
+    let elapsed = ((m.paused ? m.pausedAt : Date.now()) - m.at) / 1000;
+    if (elapsed < 0) return { p: 0, seconds: Math.ceil(-elapsed), lead: true };
+    let p = 0;
+    while (p < st.phases.length && elapsed >= st.phases[p].seconds) elapsed -= st.phases[p++].seconds;
+    return { p, seconds: p < st.phases.length ? Math.ceil(st.phases[p].seconds - elapsed) : 0, done: p >= st.phases.length };
+  }
   function arcMobTick() {
     const m = ui.mob;
     if (!m || !m.run) return clearInterval(arcMobStart.iv);
     const st = m.steps[m.i];
     if (!st || st.kind === "reps") return;
-    let t = (Date.now() - m.at) / 1000;
-    if (t < 0) return mobClock(Math.ceil(-t));
-    let k = 0;
-    while (k < st.phases.length && t >= st.phases[k].seconds) t -= st.phases[k++].seconds;
-    if (k >= st.phases.length) return mobGo(m.i + 1);
+    const pos = mobPosition(m), k = pos.p;
+    if (pos.lead) return mobClock(pos.seconds);
+    if (pos.done) return mobGo(m.i + 1);
     if (k !== m.p || m.spoke !== k) {
       const changed = k !== m.p;
       m.p = k;
@@ -576,7 +584,7 @@
       }
       renderArc();
     }
-    mobClock(Math.ceil(st.phases[k].seconds - t));
+    mobClock(pos.seconds);
   }
   function mobClock(sec) {
     const el = document.getElementById("mobclk");
@@ -647,11 +655,13 @@
         .join("")}</div><button type="button" class="btn" data-arc="mobstart" ${m.steps.length ? "" : "disabled"}>${A.mobStart}</button>`;
     const st = m.steps[Math.max(0, m.i)],
       e = exText(st.id),
-      ph = st.kind === "timed" ? st.phases[m.p || 0] : null,
+      pos = mobPosition(m),
+      ph = st.kind === "timed" ? st.phases[Math.min(pos.p, st.phases.length - 1)] : null,
+      illustration = hasSketch(st.id) ? `<div class="mobdemo skwrap${m.paused ? " is-paused" : ""}">${sketchSvg(EX[st.id].key)}${SKETCH[EX[st.id].key].hold ? `<span class="skhold">${t("skHold")}</span>` : ""}</div>` : "",
       nx = m.steps[m.i + 1] ? exText(m.steps[m.i + 1].id).name : "";
     return `<div class="mobrun"><div class="rxtop"><span>${A.mobH} · ${m.i + 1}/${m.steps.length}</span><span class="num">${esc(A.mobAbout(Math.round(m.sec / 60)))}</span></div>
-      ${st.kind === "timed" ? `<div class="mobclk num" id="mobclk">${fmt(ph.seconds)}</div><p class="mobph">${esc(ph.label)}</p>` : `<div class="mobclk mobreps">${esc(st.dose)}</div><p class="mobph">${A.mobRepsH}</p>`}
-      <h2>${esc(e.name)}</h2><p class="sub">${esc(st.dose)} · ${esc(e.desc)}</p>
+      ${st.kind === "timed" ? `<div class="mobclk num" id="mobclk">${fmt(pos.seconds)}</div><p class="mobph">${esc(ph.label)}</p>` : `<div class="mobclk mobreps">${esc(st.dose)}</div><p class="mobph">${A.mobRepsH}</p>`}
+      ${illustration}<h2>${esc(e.name)}</h2><p class="sub">${esc(st.dose)} · ${esc(e.desc)}</p>
       ${nx ? `<p class="sub">${A.mobNext}: ${esc(nx)}</p>` : ""}
       ${m.paused ? `<p class="mobph">${A.mobPaused}</p><button type="button" class="btn" data-arc="mobresume">${A.resume}</button>` : st.kind === "reps" ? `<button type="button" class="btn" data-arc="mobnext">${A.mobNextBtn}</button>` : ""}
       <div class="inline">${m.paused ? "" : `<button type="button" class="btn ghost" data-arc="mobpause">${A.pause}</button>`}<button type="button" class="btn ghost" data-arc="mobstop">${A.stop}</button></div></div>`;

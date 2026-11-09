@@ -198,7 +198,7 @@
       ka: [-1, -1],
     };
   const cpl = skLine([66, 98], -20);
-  /* Key = German exercise name. a/b = poses, props/pb = props per pose, arrow = movement, hold = static hold */
+  /* Key = stable exercise id. a/b = poses, props/pb = props per pose, arrow = movement, hold = static hold */
   const SKETCH = {
     "str.push_ups": {
       a: { ...pu, w: [119, 147], ea: [-1, 0] },
@@ -1039,7 +1039,7 @@
           .filter((x) => SK_FRONT.has(x[0]))
           .map(skProp)
           .join("")}</g>`;
-    return `<svg class="sketch${k.b ? " moving" : ""}${fast ? " fast" : ""}" viewBox="0 0 240 156" role="img" aria-label="${esc(EX[name] ? (S.profile.lang === "de" ? EX[name].de : EX[name].en) : name)}"><defs><marker id="skHead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${SK.BRASS}"/></marker></defs>${skProp(["floor"])}${layer(k.a, k.props, "fa")}${k.b ? layer(b, k.pb || k.props, "fb") : ""}${k.arrow ? skArrow(...k.arrow) : ""}${k.arc ? skArc(...k.arc) : ""}</svg>`;
+    return `<svg class="sketch${k.b ? " moving" : ""}${fast ? " fast" : ""}${k.slow ? " slow" : ""}" viewBox="0 0 240 156" role="img" aria-label="${esc(EX[name] ? (S.profile.lang === "de" ? EX[name].de : EX[name].en) : name)}"><defs><marker id="skHead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${SK.BRASS}"/></marker></defs>${skProp(["floor"])}${layer(k.a, k.props, "fa")}${k.b ? layer(b, k.pb || k.props, "fb") : ""}${k.arrow ? skArrow(...k.arrow) : ""}${k.arc ? skArc(...k.arc) : ""}</svg>`;
   }
 
   /* ============ Self-defence sketches: you (light) and the attacker (grey), with the key move of the release ============ */
@@ -1669,6 +1669,11 @@
       ],
     },
     /* mobility */
+    "mob.slow_motion_kicks": {
+      a: { ...SKETCH["cond.kick_intervals"].b, f: [142, 108] },
+      b: SKETCH["cond.kick_intervals"].b,
+      slow: true,
+    },
     "mob.quadruped_hip_circles": {
       a: QUAD,
       b: { ...QUAD, f: [86, 112], ka: [-1, 0] },
