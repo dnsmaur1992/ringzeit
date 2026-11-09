@@ -4687,3 +4687,51 @@ test('release 4: upgrade refreshes untouched old previews with the same settings
     assert.equal(a.run("JSON.stringify(S.sessions['2026-11-10'])"),before);
   }
 });
+
+test('Winter Arc mobility: each generated step reuses its exercise illustration across sports and languages',()=>{
+  const a=app();a.run("S.profile.birthYear=1992;S.profile.limits=[];");
+  assert.equal(a.run("EX.filter(e=>(e.cat==='mob'||e.cat==='cool')&&!hasSketch(e.id)).length"),0,'all mobility/cooldown catalogue entries are illustrated');
+  assert.match(a.run("sketchSvg('mob.slow_motion_kicks',true)"),/sketch moving fast slow/);
+  for(const [sport,style] of [['kickboxing','wt'],['boxing','wt'],['taekwondo','wt'],['taekwondo','itf']]){
+    for(const lang of ['de','en']){
+      a.run(`S.profile.sport='${sport}';S.profile.tkd.style='${style}';S.profile.lang='${lang}';arcMobOpen();ui.mob.run=true;`);
+      const n=a.run('ui.mob.steps.length');assert.ok(n>0);
+      for(let i=0;i<n;i++){
+        a.run(`Object.assign(ui.mob,{i:${i},p:0,at:Date.now(),paused:false});`);
+        assert.equal(a.run('hasSketch(ui.mob.steps[ui.mob.i].id)'),true,`${sport}/${style}: ${a.run('ui.mob.steps[ui.mob.i].id')} has no illustration`);
+        const html=a.run('arcMobHtml()');
+        assert.match(html,/class="mobdemo skwrap"/);
+        assert.match(html,/<svg class="sketch/);
+        assert.doesNotMatch(html,/undefined|NaN/);
+        if(a.run('!!SKETCH[EX[ui.mob.steps[ui.mob.i].id].key].hold')) assert.match(html,/class="skhold"/);
+      }
+    }
+  }
+});
+
+test('Winter Arc mobility: paused and resumed views keep the actual remaining phase time',()=>{
+  const a=app();
+  a.run("S.profile.limits=[];globalThis.__now=1e12;Date.now=()=>__now;const arcTestStep=mobStep({blocks:[{key:'mob',min:10,items:[{id:'mob.pigeon_stretch'}]}]},0,0);ui.mob={steps:[arcTestStep],sec:arcTestStep.sec,run:false,paused:false,i:-1};ui.arc={view:'mob'};arcMobStart();__now+=20000;arcMobTick();arcMobPause();");
+  const remaining=a.run('mobPosition(ui.mob).seconds');assert.equal(remaining,43);
+  assert.match(a.run('arcMobHtml()'),/id="mobclk">0:43</);
+  assert.match(a.run('arcMobHtml()'),/mobdemo skwrap is-paused/);
+  a.run('__now+=300000;');
+  assert.equal(a.run('mobPosition(ui.mob).seconds'),remaining);
+  a.run('arcMobResume();');
+  assert.equal(a.run('mobPosition(ui.mob).seconds'),remaining);
+  assert.match(a.run('arcMobHtml()'),/id="mobclk">0:43</);
+  assert.doesNotMatch(a.run('arcMobHtml()'),/mobdemo skwrap is-paused/);
+  a.run('__now+=43000;arcMobTick();');
+  assert.equal(a.run('mobPosition(ui.mob).p'),1,'next phase starts at its actual boundary');
+  assert.equal(a.run('mobPosition(ui.mob).seconds'),a.run('ui.mob.steps[0].phases[1].seconds'));
+});
+
+test('compact round focus: the work phase renders the same exercise sketch as its rest preview',()=>{
+  const a=app();
+  a.run("ui.sel='2026-11-02';ui.tab='session';ui.focus=true;S.sessions[ui.sel]=buildSession(ui.sel,'K','gym',['bag']);const rb=roundBlock(S.sessions[ui.sel]);rb.items=[{k:'ex',id:'mob.cat_cow'},{k:'ex',id:'mob.cat_cow'}];ui.timer=newTimer(ui.sel);ui.timer.phase='work';renderFocus();");
+  assert.match(a.node('focus').innerHTML,/fcur sks/);
+  assert.match(a.node('focus').innerHTML,/<svg class="sketch moving fast"/);
+  a.run("ui.timer.phase='rest';renderFocus();");
+  assert.match(a.node('focus').innerHTML,/fcur skb/);
+  assert.match(a.node('focus').innerHTML,/<svg class="sketch moving fast"/);
+});
