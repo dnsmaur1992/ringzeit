@@ -368,3 +368,12 @@ mit Prod-Kennung, NEWS_V 10 (DE/EN) und Übergang für unbegonnene Altpläne. Be
 Einheiten bleiben erhalten. 261 Tests, Baseline, vollständige Matrix 648 und H1–H9 bestanden.
 Synthetische Daten des vorherigen Prod-Codes geprüft, keine echten Nutzerdaten im Testfixture.
 Kein Push/Upload und keine neue echte Browser-/Geräteabnahme. Aktueller Prüfbericht: `release-4-pruefung.md`.
+
+
+## Prod-Korrektur 09.11.2026 – Mobility-Skizzen und Anzeige
+
+Basis f0048fd. Vorhandene Skizzen im Winter-Arc-Player eingebunden, Haltemarkierung und Pausenstatus;
+fehlende Skizze für Zeitlupen-Kicks ergänzt (langsamer CSS-Zyklus). Gemeinsame Zeitpositionsfunktion
+für laufende/pausierte Anzeige. Falschen deutschen Namensschlüssel bei der kompakten Rundenskizze korrigiert.
+264 Tests, Baseline und 216 Abläufe mit H1–H9 bestanden. Handprüfung steht aus, kein Push/Upload.
+Details: `winterarc-mobility-test.md`. Keine Änderung an Datenspeicher oder Trainingsdosierungen.

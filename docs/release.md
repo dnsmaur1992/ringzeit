@@ -155,3 +155,17 @@ beziehen sich auf frühere Releases. Nichts wurde automatisch hochgeladen oder v
 Falls nötig den vorher gesicherten Code wieder hochladen. Den Service-Worker-Cachebezeichner dabei auf
 einen neuen eindeutigen Wert setzen, damit auch das Zurückspielen zuverlässig als Update erkannt wird.
 Nur falls Nutzerdaten zurückgesetzt werden sollen, die vor dem Update exportierte Ringzeit-Sicherung laden.
+
+
+## 10. Korrektur zu Release 4: Winter-Arc-Mobility (09.11.2026)
+
+Basis Prod `f0048fd`. Paket `NUR-PROD_ringzeit_Winterarc-Mobility_2026-11-09.zip` enthält nur geänderte/neue
+Dateien. Upload in **dnsmaur1992/ringzeit** mit denselben Pfaden, nichts löschen. Root-`index.html` und
+`sw.js` mitnehmen. Datenformat, Datenspeicher und Update-Hinweis-Zähler bleiben erhalten.
+
+Enthält Übungsskizzen im Winter-Arc-Mobility-Player, eine langsame Skizze für Zeitlupen-Kicks,
+korrekte Restzeitanzeige während Pause/Fortsetzen sowie die Reparatur der kleinen Skizze in der
+Arbeitsphase des Rundentimers. Ablauf und Dosierungen bleiben gleich.
+
+Prüfung: 264 Tests und Baseline bestanden, Ablaufmatrix 216 Einheiten plus H1–H9 bestanden.
+Keine neue echte Browser-/Geräteabnahme. Handprüfung und Details: `winterarc-mobility-test.md`.
