@@ -2537,6 +2537,15 @@
     text-align: center;
     flex: 1;
   }
+  .mobdemo {
+    width: 100%;
+    max-width: 320px;
+    flex: none;
+  }
+  .mobdemo.is-paused .sketch.moving .fa,
+  .mobdemo.is-paused .sketch.moving .fb {
+    animation-play-state: paused;
+  }
   .mobclk {
     font: 400 72px/1 var(--display);
     margin-top: 24px;
@@ -4845,6 +4854,10 @@
   }
   .sketch.moving .fb {
     animation: skB 2.8s ease-in-out infinite;
+  }
+  .sketch.moving.slow .fa,
+  .sketch.moving.slow .fb {
+    animation-duration: 8s;
   }
   @keyframes skA {
     0%,
