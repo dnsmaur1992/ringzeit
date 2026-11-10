@@ -377,3 +377,20 @@ fehlende Skizze für Zeitlupen-Kicks ergänzt (langsamer CSS-Zyklus). Gemeinsame
 für laufende/pausierte Anzeige. Falschen deutschen Namensschlüssel bei der kompakten Rundenskizze korrigiert.
 264 Tests, Baseline und 216 Abläufe mit H1–H9 bestanden. Handprüfung steht aus, kein Push/Upload.
 Details: `winterarc-mobility-test.md`. Keine Änderung an Datenspeicher oder Trainingsdosierungen.
+
+
+## Prod-Feinschliff 10.11.2026 – Winter Arc
+
+Basis a8d7169. Nur Darstellung und Texte, keine Änderung an Daten, Plänen oder Dosierungen.
+- Heute: Die Winter-Arc-Karte ist jetzt **eine** Karte. Kopf, Wochenziele, Haken und die Fußzeile mit Serie,
+  Pausieren und Beenden teilen sich Rahmen und Winter-Design. Der Impuls-Satz steht kleiner und kursiv.
+- Fehlende CSS-Klasse `.row.between` ergänzt. Mobility-Vorschau und Bilanz zeigen Dosis und Werte jetzt rechts
+  bündig. Die Bilanz hatte „Fitnesstest vorher → nachherFür den Vergleich …“ ohne Umbruch.
+- Doppelter Punkt nach deutschen Daten entfernt („startet Mo., 16. Nov..“, „pausiert seit Mo., 9. Nov..“).
+- Vor dem Start: „✎“ heißt jetzt „✎ Anpassen“ / „✎ Edit“.
+- Mobility: nummerierte Vorschau, Fortschrittsbalken der Übungen, engere Abstände, Wdh.-Angabe passt in eine
+  Zeile, Bedienknöpfe unten.
+- Angebotskarte im Oktober bis Januar im Winter-Look. „Trainings pro Woche“ in der Einrichtung bündig.
+Prüfung: 264 Tests (zweimal), Baseline gleich, 648 Abläufe ohne Befund, H1–H9, Browser 13/13, Update vom Prod-Stand
+a8d7169 mit echter Sicherung (Daten vollständig; die zusätzliche Einheit ist die heute neu angelegte und tritt
+genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
