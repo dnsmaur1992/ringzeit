@@ -2761,6 +2761,84 @@
   .note.act.arcoffer {
     border-left-color: #9fd3ff;
   }
+  /* compact Today card: slim goal lines, today's ticks, the week on demand */
+  .arcmain .arcgoals {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .arcmain .arcgoals .g {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 12px;
+  }
+  .arcmain .arcgoals .g b {
+    font: 600 17px/1 var(--display);
+    min-width: 34px;
+  }
+  .arcmain .arcgoals .g small {
+    flex: 1;
+    margin: 0;
+  }
+  .arcmain .arcgoals .g .arcdots {
+    margin: 0;
+  }
+  .arcmain .arcgoals .g.ok b {
+    color: var(--wa, var(--ice));
+  }
+  .arcmain .arch {
+    flex-wrap: nowrap;
+    padding: 8px 0;
+  }
+  .arcmain .arch .an {
+    flex: 1;
+    min-width: 0;
+  }
+  .arcmain .arch .btn.ghost {
+    padding: 6px 8px;
+    min-height: 0;
+  }
+  .arcwk {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #ffffff14;
+  }
+  .arcwk .lab {
+    font: 600 11px/1.3 var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--wa, var(--mist));
+    margin: 0;
+  }
+  .awk {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .awk .an small {
+    display: block;
+  }
+  .awk .adays,
+  .awk .arkg {
+    padding-left: 0;
+  }
+  .arcmore {
+    margin-top: 8px;
+    padding: 12px 0 2px;
+    border: 0;
+    border-top: 1px solid #ffffff14;
+    background: none;
+    color: var(--wa, var(--ice));
+    font: 600 13px/1.2 var(--body, inherit);
+    text-align: center;
+    width: 100%;
+  }
   /* 7l: voice list – chip with name and quality, sample button */
   .vlist {
     display: flex;
