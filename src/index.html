@@ -2629,6 +2629,138 @@
     color: #7fdca0;
     font-weight: 700;
   }
+  /* Winter Arc polish (10.11.2026): one card on Today, readable lists, calmer mobility screen */
+  .row.between {
+    justify-content: space-between;
+  }
+  .wapan .lab {
+    display: block;
+    margin-bottom: 4px;
+  }
+  .wapan .row.between > .sub {
+    text-align: right;
+    flex: none;
+    max-width: 50%;
+  }
+  .arcard .big.quote {
+    font: italic 400 20px/1.35 var(--display);
+    margin-top: 2px;
+  }
+  .arcmain .arcticks {
+    margin-top: 12px;
+    padding-top: 6px;
+    border-top: 1px solid #ffffff14;
+  }
+  .arcmain .arch {
+    border-bottom-color: #ffffff12;
+  }
+  .arcmain .arch:last-child {
+    border-bottom: 0;
+  }
+  .arcmain .arcticks .lab {
+    margin-top: 10px;
+    font: 600 11px/1.3 var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--wa, var(--mist));
+  }
+  .arcfoot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #ffffff14;
+  }
+  .arcnote {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #ffffff0d;
+  }
+  .note.arcoffer {
+    background: linear-gradient(160deg, #16243a 0%, #0e1522 80%);
+    border: 1px solid #2a3d5c;
+    color: #e3edf8;
+  }
+  .note.arcoffer .btn.ghost {
+    color: #9fd3ff;
+  }
+  .mobli {
+    gap: 10px;
+  }
+  .mobli .n {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    background: #9fd3ff22;
+    color: #9fd3ff;
+  }
+  .mobli .nm {
+    flex: 1;
+    min-width: 0;
+  }
+  .mobsteps {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+  }
+  .mobsteps i {
+    flex: 1;
+    height: 4px;
+    border-radius: 99px;
+    background: #ffffff1a;
+  }
+  .mobsteps i.on {
+    background: #6fb6ff;
+  }
+  .mobsteps i.cur {
+    background: #cfe9ff;
+  }
+  .mobrun {
+    gap: 8px;
+  }
+  .mobrun p,
+  .mobrun h2 {
+    margin: 0;
+  }
+  .mobrun h2 {
+    margin-top: 6px;
+  }
+  .mobrun > .sub {
+    max-width: 340px;
+  }
+  .mobrun .mobclk {
+    margin-top: 10px;
+  }
+  .mobrun .inline {
+    margin-top: auto;
+    padding-top: 8px;
+  }
+  .mobrun > .btn {
+    width: 100%;
+    max-width: 340px;
+  }
+  .mobrun .mobreps {
+    font-size: 30px;
+    line-height: 1.15;
+    max-width: 340px;
+  }
+  .arcov .field > .row {
+    padding: 6px 0;
+  }
+  .note.act.arcoffer {
+    border-left-color: #9fd3ff;
+  }
   /* 7l: voice list – chip with name and quality, sample button */
   .vlist {
     display: flex;
