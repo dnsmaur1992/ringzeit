@@ -97,7 +97,7 @@
       coldNote: "Kalt duschen langsam steigern; nicht bei Herz-Kreislauf-Problemen oder wenn du krank bist.",
       weightNote: "Nur als Verlauf – ohne Zielgewicht. Ein Gewichtslimit für einen Kampf trägst du bei den Terminen ein.",
       start: "Winter Arc starten",
-      startsOn: (d) => `Dein Winter Arc startet ${d}.`,
+      startsOn: (d) => `Dein Winter Arc startet ${d}${d.endsWith(".") ? "" : "."}`,
       testFirst: "Mach vorher den Fitnesstest – am Ende siehst du, was der Winter gebracht hat.",
       testEnd: "Letzte Woche: Zeit für den Endtest.",
       toTest: "Zum Fitnesstest",
@@ -119,12 +119,13 @@
       rests: "Diese Woche ruht das Ziel (Pause).",
       pause: "Pausieren",
       resume: "Weiter",
-      paused: (d) => `Winter Arc pausiert seit ${d}. Das Ziel ruht, die Serie bleibt.`,
+      paused: (d) => `Winter Arc pausiert seit ${d}${d.endsWith(".") ? "" : "."} Das Ziel ruht, die Serie bleibt.`,
       end: "Beenden",
       endAsk: "Winter Arc wirklich beenden? Dein Fortschritt bleibt in der Bilanz.",
       endYes: "Ja, beenden",
       endNo: "Weitermachen",
       cancel: "Nicht starten",
+      edit: "Anpassen",
       done: "Winter Arc geschafft",
       doneCard: "Dein Winter Arc ist vorbei. Schau dir an, was du geschafft hast.",
       doneBtn: "Bilanz ansehen",
@@ -248,6 +249,7 @@
       endYes: "Yes, end it",
       endNo: "Keep going",
       cancel: "Don't start",
+      edit: "Edit",
       done: "Winter Arc done",
       doneCard: "Your Winter Arc is over. See what you achieved.",
       doneBtn: "See review",
@@ -409,15 +411,15 @@
     if (td > end || a.endedEarly) return `<div class="arcard${win}"><span class="eb">${A.tag}</span><div class="big">${A.done}</div><p class="sub">${A.doneCard}</p><button type="button" class="btn" data-arc="summary">${A.doneBtn}</button></div>`;
     if (td < a.start) {
       const T = arcTests(a);
-      return `<div class="arcard${win}"><span class="eb">${A.tag}</span><div class="big">${esc(A.startsOn(fmtDate(a.start)))}</div>${arcHas(a, "test") && !T.first ? `<p class="sub">${A.testFirst}</p><button type="button" class="btn sec" data-tab="test">${A.toTest}</button>` : ""}<div class="minirow"><button type="button" class="btn ghost" data-arc="setup">✎</button><button type="button" class="btn ghost" data-arc="cancel">${A.cancel}</button></div></div>`;
+      return `<div class="arcard${win}"><span class="eb">${A.tag}</span><div class="big">${esc(A.startsOn(fmtDate(a.start)))}</div>${arcHas(a, "test") && !T.first ? `<p class="sub">${A.testFirst}</p><button type="button" class="btn sec" data-tab="test">${A.toTest}</button>` : ""}<div class="minirow"><button type="button" class="btn ghost" data-arc="setup">✎ ${A.edit}</button><button type="button" class="btn ghost" data-arc="cancel">${A.cancel}</button></div></div>`;
     }
     const day = daysBetween(parse(a.start), today()) + 1,
       n = a.weeks * 7,
       wi = Math.floor((day - 1) / 7),
       w = arcWeek(a, wi),
       pz = (a.paused || []).find((p) => !p.to);
-    let h = `<div class="arcard${win}"><span class="eb">${esc(A.week(wi + 1, a.weeks))}</span>`;
-    h += `<div class="big">${esc(arcHas(a, "impulse") ? A.impulses[wi % A.impulses.length] : A.name)}</div>`;
+    let h = `<div class="arcard arcmain${win}"><span class="eb">${esc(A.week(wi + 1, a.weeks))}</span>`;
+    h += arcHas(a, "impulse") ? `<div class="big quote">${esc(A.impulses[wi % A.impulses.length])}</div>` : `<div class="big">${esc(A.name)}</div>`;
     h += `<div class="arcbar"><i style="width:${Math.round((day / n) * 100)}%"></i></div><span class="sub">${esc(A.day(day, n, n - day))}</span>`;
     if (pz) return h + `<p class="sub">${esc(A.paused(fmtDate(pz.from)))}</p><button type="button" class="btn" data-arc="resume">${A.resume}</button></div>`;
     const dots = (k, of) => `<div class="arcdots">${Array.from({ length: of }, (_, i) => `<span class="${i < k ? "on" : ""}"></span>`).join("")}</div>`;
@@ -426,7 +428,6 @@
     if (arcHas(a, "relax")) goals.push(`<div class="g"><b>${w.relax}/${a.relax}</b><small>${A.relaxWk}</small>${dots(w.relax, a.relax)}</div>`);
     if (goals.length) h += `<div class="arcgoals">${goals.join("")}</div>`;
     if (w.rest) h += `<p class="sub">${A.rests}</p>`;
-    h += `</div>`;
     // ticks of today and of this week
     const daily = a.pick.filter((id) => ARC_KIND[id] === "daily"),
       weekly = a.pick.filter((id) => ARC_KIND[id] === "weekly"),
@@ -439,7 +440,7 @@
         return k;
       };
     if (daily.length || weekly.length) {
-      h += `<div class="panel wapan arcticks">`;
+      h += `<div class="arcticks">`;
       if (daily.length)
         h += `<span class="lab">${A.today}</span>${daily
           .map((id) => {
@@ -471,12 +472,12 @@
           .join("")}`;
       h += `</div>`;
     }
-    if (arcHas(a, "test") && wi === a.weeks - 1 && !arcTests(a).last) h += `<div class="note act"><span>${A.testEnd}</span><button type="button" class="btn ghost" data-tab="test">${A.toTest}</button></div>`;
+    if (arcHas(a, "test") && wi === a.weeks - 1 && !arcTests(a).last) h += `<div class="arcnote"><span>${A.testEnd}</span><button type="button" class="btn ghost" data-tab="test">${A.toTest}</button></div>`;
     const ask = ui.arcEndAsk;
-    h += `<div class="panel"><div class="row between" style="flex-wrap:wrap;gap:8px"><span class="sub">${esc(A.streak(arcStreak(a, wi - 1)))}</span><span class="minirow"><button type="button" class="btn ghost" data-arc="pause">${A.pause}</button><button type="button" class="btn ghost" data-arc="endask">${A.end}</button></span></div>${
-      ask ? `<div class="note"><b>${A.endAsk}</b><div class="inline" style="margin-top:8px"><button type="button" class="btn" data-arc="end">${A.endYes}</button><button type="button" class="btn sec" data-arc="endno">${A.endNo}</button></div></div>` : ""
-    }</div>`;
-    return h;
+    h += `<div class="arcfoot"><span class="sub">${esc(A.streak(arcStreak(a, wi - 1)))}</span><span class="minirow"><button type="button" class="btn ghost" data-arc="pause">${A.pause}</button><button type="button" class="btn ghost" data-arc="endask">${A.end}</button></span></div>${
+      ask ? `<div class="arcnote"><b>${A.endAsk}</b><div class="inline"><button type="button" class="btn" data-arc="end">${A.endYes}</button><button type="button" class="btn sec" data-arc="endno">${A.endNo}</button></div></div>` : ""
+    }`;
+    return h + `</div>`;
   }
 
   /* ---------- 10-minute mobility (7n+, reworked after the external review 05.11.2026) ----------
@@ -651,7 +652,7 @@
     if (!m.run && !m.paused)
       // preview: the exercises with their doses and the actual length
       return `<div class="panel wapan"><span class="lab">${esc(A.mobPrev(Math.round(m.sec / 60)))}</span>${m.steps
-        .map((st) => `<div class="row between" style="gap:10px"><span>${esc(exText(st.id).name)}</span><span class="sub" style="text-align:right">${esc(st.dose)}</span></div>`)
+        .map((st, k) => `<div class="row between mobli"><span class="n num">${k + 1}</span><span class="nm">${esc(exText(st.id).name)}</span><span class="sub">${esc(st.dose)}</span></div>`)
         .join("")}</div><button type="button" class="btn" data-arc="mobstart" ${m.steps.length ? "" : "disabled"}>${A.mobStart}</button>`;
     const st = m.steps[Math.max(0, m.i)],
       e = exText(st.id),
@@ -659,7 +660,8 @@
       ph = st.kind === "timed" ? st.phases[Math.min(pos.p, st.phases.length - 1)] : null,
       illustration = hasSketch(st.id) ? `<div class="mobdemo skwrap${m.paused ? " is-paused" : ""}">${sketchSvg(EX[st.id].key)}${SKETCH[EX[st.id].key].hold ? `<span class="skhold">${t("skHold")}</span>` : ""}</div>` : "",
       nx = m.steps[m.i + 1] ? exText(m.steps[m.i + 1].id).name : "";
-    return `<div class="mobrun"><div class="rxtop"><span>${A.mobH} · ${m.i + 1}/${m.steps.length}</span><span class="num">${esc(A.mobAbout(Math.round(m.sec / 60)))}</span></div>
+    const bar = `<div class="mobsteps" aria-hidden="true">${m.steps.map((_, k) => `<i class="${k < m.i ? "on" : k === m.i ? "cur" : ""}"></i>`).join("")}</div>`;
+    return `<div class="mobrun"><div class="rxtop"><span>${A.mobH} · ${m.i + 1}/${m.steps.length}</span><span class="num">${esc(A.mobAbout(Math.round(m.sec / 60)))}</span></div>${bar}
       ${st.kind === "timed" ? `<div class="mobclk num" id="mobclk">${fmt(pos.seconds)}</div><p class="mobph">${esc(ph.label)}</p>` : `<div class="mobclk mobreps">${esc(st.dose)}</div><p class="mobph">${A.mobRepsH}</p>`}
       ${illustration}<h2>${esc(e.name)}</h2><p class="sub">${esc(st.dose)} · ${esc(e.desc)}</p>
       ${nx ? `<p class="sub">${A.mobNext}: ${esc(nx)}</p>` : ""}
