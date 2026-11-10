@@ -394,3 +394,15 @@ Basis a8d7169. Nur Darstellung und Texte, keine Änderung an Daten, Plänen oder
 Prüfung: 264 Tests (zweimal), Baseline gleich, 648 Abläufe ohne Befund, H1–H9, Browser 13/13, Update vom Prod-Stand
 a8d7169 mit echter Sicherung (Daten vollständig; die zusätzliche Einheit ist die heute neu angelegte und tritt
 genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
+
+## Winter Arc kompakt und Angleich Prod ↔ Dev (10.11.2026)
+
+- **Heute:** Die Winter-Arc-Karte zeigt nur noch die Wochenziele als schlanke Zeilen und die Haken für heute.
+  Die Woche mit den Tages-Knöpfen (Nachtragen bis 2 Tage zurück), die Gewichtseingabe, die Hinweise, die Serie
+  und Pausieren/Beenden öffnen sich über „Woche, Nachtragen & Optionen ▾“. Die Karte ist eingeklappt etwa halb so hoch.
+- **Angleich:** Dev hat jetzt alles, was Codex direkt in Prod gebracht hatte: Release 4 (Übergang alter Planvorschauen,
+  „Was ist neu“ Version 10), Mobility-Skizzen, die stehende Restzeit in der Pause und die Rundentimer-Skizze. Dazu kommt der
+  Feinschliff vom 10.11. Die Release-4-Tests und der Cache-Test gelten jetzt in beiden Apps (eigene Kennung aus `APP_ID`).
+  `tools/release.py` erzeugt aus Dev wieder genau den Prod-Code (geprüft: nur Version und Zeitstempel unterscheiden sich).
+- Prüfung: 264 Tests in Dev und Prod, Baseline gleich, 648 Abläufe ohne Befund, Browser, Isolation, Update vom Prod-Stand
+  a8d7169 mit echter Sicherung.
