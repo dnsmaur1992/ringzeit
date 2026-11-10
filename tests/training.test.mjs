@@ -4303,7 +4303,15 @@ test("7n+ Winter Arc: tick today and the two days before, not earlier or before 
   assert.equal(a.run(`arcTicked(S.profile.arc,'mob','${d(-3)}')`), false, "3 days back is too late");
   await a.click({ dataset: { arcchk: "mob", ad: d(-1) } });
   assert.equal(a.run(`arcTicked(S.profile.arc,'mob','${d(-1)}')`), false, "untick");
-  const h = a.run("renderWeek()");
+  // Today keeps the card short: the week with the day buttons and the notes opens on demand
+  let h = a.run("renderWeek()");
+  assert.doesNotMatch(h, /data-ad=|Zählt für die letzte Nacht|data-arc="pause"/, "week closed by default");
+  assert.match(h, /data-arcchk="mob" aria-pressed/, "today's tick stays visible");
+  assert.match(h, /data-arc="wk" aria-expanded="false">Woche, Nachtragen/);
+  await a.click({ dataset: { arc: "wk" } });
+  h = a.run("renderWeek()");
+  assert.match(h, /aria-expanded="true">Weniger/);
+  assert.match(h, /data-arc="pause"/);
   assert.match(h, new RegExp(`data-arcchk="mob" data-ad="${d(0)}"`));
   assert.doesNotMatch(h, new RegExp(`data-ad="${d(-3)}"`));
   assert.match(h, /Zählt für die letzte Nacht/);
@@ -4626,15 +4634,16 @@ test('emoji control: a worsening trend cannot reuse a positive density correctio
 test('release 4: actual previous-production states migrate without losing profile, history or begun prescriptions',()=>{
   const {fixtures}=JSON.parse(readFileSync(new URL('./fixtures/prod-e23d121.json',import.meta.url),'utf8'));
   for(const f of fixtures){
+    // valid in both apps: the own key is written, the other app's data on the same origin stays untouched
     const a=app();a.setDate('2026-11-09');
-    a.saved.set('ringzeit-dev.v1','dev-sentinel');
-    a.saved.set('ringzeit-dev.resume.v1','dev-resume-sentinel');
+    const own=a.run('APP_ID'),other=own==='ringzeit'?'ringzeit-dev':'ringzeit';
+    a.saved.set(other+'.v1','other-sentinel');
+    a.saved.set(other+'.resume.v1','other-resume-sentinel');
     a.run(`S=hydrate(${JSON.stringify(f.state)});store.save();`);
-    assert.equal(a.run('LS'),'ringzeit.v1');
-    assert.equal(a.run('APP_ID'),'ringzeit');
-    assert.equal(a.saved.get('ringzeit-dev.v1'),'dev-sentinel');
-    assert.equal(a.saved.get('ringzeit-dev.resume.v1'),'dev-resume-sentinel');
-    const migrated=JSON.parse(a.saved.get('ringzeit.v1'));
+    assert.equal(a.run('LS'),own+'.v1');
+    assert.equal(a.saved.get(other+'.v1'),'other-sentinel');
+    assert.equal(a.saved.get(other+'.resume.v1'),'other-resume-sentinel');
+    const migrated=JSON.parse(a.saved.get(own+'.v1'));
     for(const key of ['log','weights','tests','ov','cov','pauses','ko']) assert.deepEqual(migrated[key],f.state[key],`${f.sport}/${f.style}: ${key}`);
     for(const [key,value] of Object.entries(f.state.profile)) assert.deepEqual(migrated.profile[key],value,`${f.sport}/${f.style}: profile.${key}`);
     assert.equal(migrated.profile.fitnessBase,2);
@@ -4649,7 +4658,7 @@ test('release 4: actual previous-production states migrate without losing profil
     assert.equal(a.run('needNews()'),true);
     assert.equal(a.run(`nextEffortDose({entries:S.log,scope:'unseen',date:'2026-11-10',today:'2026-11-09'}).active`),false,'legacy RPE is not interpreted as agreement');
     a.run('S=hydrate(JSON.parse(localStorage.getItem(LS)));store.save();');
-    assert.deepEqual(JSON.parse(a.saved.get('ringzeit.v1')),migrated,'reload is idempotent');
+    assert.deepEqual(JSON.parse(a.saved.get(own+'.v1')),migrated,'reload is idempotent');
   }
 });
 
