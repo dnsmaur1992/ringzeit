@@ -64,7 +64,7 @@
   }
   /* "What's new": shown once per big update to people who already used the app.
      Raise NEWS_V (and update the texts under "news") only for updates worth telling about. */
-  const NEWS_V = 10; // 10: independent technique/fitness and final effort control
+  const NEWS_V = 11; // 10: independent technique/fitness and final effort control; 11: more feasts, Winter Arc catch-up over 3 days
   const needNews = () => !S.profile.example && !!S.profile.toured && (S.profile.newsSeen || 0) < NEWS_V;
   const showNews = () => openSheet({ kind: "news" });
   async function finishOnb(skip, test) {

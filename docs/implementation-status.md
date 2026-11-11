@@ -406,3 +406,24 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   `tools/release.py` erzeugt aus Dev wieder genau den Prod-Code (geprüft: nur Version und Zeitstempel unterscheiden sich).
 - Prüfung: 264 Tests in Dev und Prod, Baseline gleich, 648 Abläufe ohne Befund, Browser, Isolation, Update vom Prod-Stand
   a8d7169 mit echter Sicherung.
+
+## Feste und Winter-Arc-Nachtragen (11.11.2026)
+
+- **Nachtragen:** Heute und die 3 Tage davor lassen sich ändern (vorher 2). Aufgeklappt zeigt die Karte die
+  letzten 7 Tage mit Wochentag und Datum statt Mo–So. Damit sind am Montag auch Samstag und Sonntag erreichbar.
+  Der Fehler war: Die Regel erlaubte 2 Tage zurück, die Knöpfe zeigten aber nur die laufende Woche.
+- **Neue Feste mit eigener Bewegung** (`09-illustrations-seasons.js`):
+  - St. Martin: Laternenzug.
+  - Nikolaus: gefüllter Stiefel, Sterne.
+  - Advent: ab dem 1. Advent, auch im November, Lichterkette und Kranz mit einer Kerze mehr je Sonntag; Gruß an den
+    Adventssonntagen.
+  - Dreikönig: Stern mit Schweif. Pfingsten: fliegende Taube.
+  - Erntedank: Garbe und Kürbisse (1. Sonntag im Oktober). Tag der Deutschen Einheit: Wimpelkette.
+  - 1. Mai: Maibaum. Muttertag: aufsteigende Herzen. Weltfrauentag: Tulpen.
+  - Mondneujahr: rote Laternen und Feuerwerk (chinesischer Kalender vom Gerät). Holi: Farbwolken und Farbpulver
+    (Datumsliste wie Diwali).
+  - Christi Himmelfahrt: nur Gruß.
+- Treffen zwei Feste aufeinander, zeigt die Szene das vorrangige Motiv, die Grüße erscheinen alle. „Bewegung
+  reduzieren“ hält alle neuen Bewegungen an. Ausschaltbar wie bisher über die Darstellung.
+- „Was ist neu“ Version 11.
+- Tests: 266, davon neu der Wochenwechsel beim Nachtragen und alle Feste mit Datum, Gruß, Motiv und Bewegung.

@@ -4287,7 +4287,7 @@ test("7n Winter Arc: season, chosen blocks, weekly goals with club and relax, ti
   assert.equal(a.run("S.profile.relaxLog.length"), 1);
 });
 
-test("7n+ Winter Arc: tick today and the two days before, not earlier or before the start; goal preselected with own + club days", async () => {
+test("7n+ Winter Arc: change today and the three days before, not earlier or before the start; goal preselected with own + club days", async () => {
   const a = app();
   a.run("S.profile.days=[1,3,5];S.profile.club={days:[2],minutes:90};S.profile.arc=null;");
   a.run("arcOpen('setup')");
@@ -4298,9 +4298,11 @@ test("7n+ Winter Arc: tick today and the two days before, not earlier or before 
   await a.click({ dataset: { arcchk: "mob", ad: d(-2) } });
   await a.click({ dataset: { arcchk: "mob", ad: d(-1) } });
   await a.click({ dataset: { arcchk: "mob", ad: d(-3) } });
+  await a.click({ dataset: { arcchk: "mob", ad: d(-4) } });
   assert.equal(a.run(`arcTicked(S.profile.arc,'mob','${d(-2)}')`), true);
   assert.equal(a.run(`arcTicked(S.profile.arc,'mob','${d(-1)}')`), true);
-  assert.equal(a.run(`arcTicked(S.profile.arc,'mob','${d(-3)}')`), false, "3 days back is too late");
+  assert.equal(a.run(`arcTicked(S.profile.arc,'mob','${d(-3)}')`), true, "3 days back still counts");
+  assert.equal(a.run(`arcTicked(S.profile.arc,'mob','${d(-4)}')`), false, "4 days back is too late");
   await a.click({ dataset: { arcchk: "mob", ad: d(-1) } });
   assert.equal(a.run(`arcTicked(S.profile.arc,'mob','${d(-1)}')`), false, "untick");
   // Today keeps the card short: the week with the day buttons and the notes opens on demand
@@ -4313,7 +4315,9 @@ test("7n+ Winter Arc: tick today and the two days before, not earlier or before 
   assert.match(h, /aria-expanded="true">Weniger/);
   assert.match(h, /data-arc="pause"/);
   assert.match(h, new RegExp(`data-arcchk="mob" data-ad="${d(0)}"`));
-  assert.doesNotMatch(h, new RegExp(`data-ad="${d(-3)}"`));
+  assert.match(h, new RegExp(`data-arcchk="mob" data-ad="${d(-3)}"`));
+  assert.doesNotMatch(h, new RegExp(`data-ad="${d(-4)}"`));
+  assert.match(h, /Letzte 7 Tage/);
   assert.match(h, /Zählt für die letzte Nacht/);
   // not before the start
   a.run(`S.profile.arc.start='${d(-1)}';`);
@@ -4663,12 +4667,12 @@ test('release 4: actual previous-production states migrate without losing profil
 });
 
 test('release 4: new information is shown once in both languages and survives a reload',async()=>{
-  const a=app();a.run('S.profile.example=false;S.profile.toured=true;S.profile.newsSeen=9;');
+  const a=app();a.run('S.profile.example=false;S.profile.toured=true;S.profile.newsSeen=NEWS_V-1;');
   assert.equal(a.run('needNews()'),true);
   for(const lang of ['de','en']){
     a.run(`S.profile.lang='${lang}'`);
-    assert.equal(a.run('t("news").pts.length'),4);
-    assert.match(a.run('t("news").pts.join(" ")'),lang==='de'?/fünf Emojis/:/five emojis/);
+    assert.equal(a.run('t("news").pts.length'),2);
+    assert.match(a.run('t("news").pts.join(" ")'),lang==='de'?/Laternenzug[\s\S]*3 Tage davor/:/lantern procession[\s\S]*3 days before/);
   }
   await a.click({dataset:{newsOk:'1'}});
   assert.equal(a.run('needNews()'),false);
@@ -4743,4 +4747,57 @@ test('compact round focus: the work phase renders the same exercise sketch as it
   a.run("ui.timer.phase='rest';renderFocus();");
   assert.match(a.node('focus').innerHTML,/fcur skb/);
   assert.match(a.node('focus').innerHTML,/<svg class="sketch moving fast"/);
+});
+
+
+test("11.11.2026 Winter Arc catch-up across a new week: on a Monday the weekend before is in view and can be changed", async () => {
+  const a = app();
+  a.setDate("2026-11-16"); // Monday
+  a.run("S.profile.arc={start:'2026-11-02',weeks:8,pick:['water'],train:3,relax:2,checks:{},paused:[]};ui.tab='week';ui.arcWk=true;");
+  const h = a.run("renderWeek()");
+  for (const ds of ["2026-11-13", "2026-11-14", "2026-11-15", "2026-11-16"]) assert.match(h, new RegExp(`data-arcchk="water" data-ad="${ds}"`), ds);
+  assert.doesNotMatch(h, /data-ad="2026-11-12"/);
+  assert.match(h, /So<small>15\.<\/small>/, "weekday and date on the button");
+  await a.click({ dataset: { arcchk: "water", ad: "2026-11-15" } });
+  assert.equal(a.run("arcTicked(S.profile.arc,'water','2026-11-15')"), true);
+  assert.equal(a.run("arcWeek(S.profile.arc,1).from"), "2026-11-09", "Sunday belongs to the week before");
+});
+
+test("11.11.2026 feasts: dates, greetings in both languages, the drawn motif and its movement", () => {
+  const a = app();
+  const at = (ds) => JSON.parse(a.run(`ui.seasonDate='${ds}';JSON.stringify(seasonNow())`));
+  const cases = [
+    ["2026-11-11", "martin", /Laterne/, 'class="march"'],
+    ["2026-11-29", "advent", /1\. Advent/, 'class="flame"'],
+    ["2028-12-06", "nikolaus", /Nikolaustag/, 'class="bulb"'],
+    ["2027-01-06", "epiphany", /Drei Könige/, 'class="comet"'],
+    ["2028-01-26", "lunar", /Mondneujahr/, 'class="fw"'],
+    ["2028-03-08", "womens", /Weltfrauentag/, 'class="sway"'],
+    ["2027-03-22", "holi", /Holi/, 'class="puff"'],
+    ["2027-05-01", "mayday", /1\. Mai/, 'class="sway"'],
+    ["2027-05-09", "mothers", /Muttertag/, 'class="floatup"'],
+    ["2028-06-04", "pentecost", /Pfingsten/, 'class="flap"'],
+    ["2026-10-04", "harvest", /Erntedank/, 'class="sway slow"'],
+    ["2026-10-03", "unity", /Deutschen Einheit/, 'class="sway"'],
+  ];
+  for (const [ds, ev, g, mark] of cases) {
+    const s = at(ds);
+    assert.equal(s.ev, ev, ds);
+    assert.match(s.greet.join(" "), g, ds);
+    assert.ok(a.run(`heroScene('guard','T',true).includes('${mark}')`), `${ds}: ${mark}`);
+  }
+  // Ascension: greeting only; Advent: one more candle each Sunday, from the first Sunday even in November
+  assert.match(at("2027-05-06").greet.join(" "), /Himmelfahrt/);
+  assert.deepEqual(["2026-11-28", "2026-11-29", "2026-12-06", "2026-12-13", "2026-12-20", "2026-12-24", "2026-12-25"].map((d) => at(d).candles), [0, 1, 2, 3, 4, 4, 0]);
+  assert.equal(at("2026-11-28").ev, null, "before Advent: no lights yet");
+  // nothing extra on an ordinary day; both greetings when two feasts meet; English texts
+  assert.deepEqual(at("2026-11-12").greet, []);
+  assert.deepEqual(at("2026-12-06").greet.length, 3, "Hanukkah, St Nicholas and 2nd Advent");
+  a.run("S.profile.lang='en'");
+  assert.match(at("2026-11-11").greet[0], /St Martin/);
+  assert.match(at("2026-12-13").greet[0], /3rd Sunday of Advent/);
+  // switched off in the profile: no scene extras at all
+  a.run("S.profile.seasonOff=true;ui.seasonDate='2026-11-11'");
+  assert.equal(a.run("season()"), null);
+  assert.ok(!a.run(`heroScene('guard','T',true).includes('class="march"')`));
 });

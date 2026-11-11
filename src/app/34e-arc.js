@@ -110,7 +110,8 @@
       of7: (n) => `${n} von 7`,
       more: "Woche, Nachtragen & Optionen ▾",
       less: "Weniger ▴",
-      backNote: "Vergessen? Heute und die 2 Tage davor kannst du nachtragen.",
+      last7: "Letzte 7 Tage",
+      backNote: "Vergessen oder vertippt? Heute und die 3 Tage davor kannst du ändern.",
       kgPh: "kg",
       kgSave: "Eintragen",
       kgDone: (kg) => `Eingetragen: ${kg} kg`,
@@ -237,7 +238,8 @@
       of7: (n) => `${n} of 7`,
       more: "Week, catch up & options ▾",
       less: "Less ▴",
-      backNote: "Forgot one? You can add today and the 2 days before.",
+      last7: "Last 7 days",
+      backNote: "Forgot or mistapped? You can change today and the 3 days before.",
       kgPh: "kg",
       kgSave: "Log",
       kgDone: (kg) => `Logged: ${kg} kg`,
@@ -352,8 +354,10 @@
     }
     return !!(a.checks && a.checks[ds] && a.checks[ds].includes(id));
   }
-  /* ticks can be added for today and the two days before (honest, but forgiving) – not before the start */
-  const arcCanTick = (a, ds) => ds <= iso(today()) && ds >= iso(addDays(today(), -2)) && ds >= a.start;
+  /* ticks can be changed for today and the three days before (honest, but forgiving) – also across the start
+     of a new week, but not before the arc's start */
+  const ARC_BACK = 3;
+  const arcCanTick = (a, ds) => ds <= iso(today()) && ds >= iso(addDays(today(), -ARC_BACK)) && ds >= a.start;
   function arcToggle(id, day) {
     const a = arcOf();
     if (!a) return;
@@ -435,7 +439,7 @@
     if (arcHas(a, "relax")) goals.push(`<div class="g${w.relax >= a.relax ? " ok" : ""}"><b class="num">${w.relax}/${a.relax}</b><small>${A.relaxWk}</small>${dots(w.relax, a.relax)}</div>`);
     if (goals.length) h += `<div class="arcgoals">${goals.join("")}</div>`;
     if (w.rest) h += `<p class="sub">${A.rests}</p>`;
-    // Today shows only today's ticks; the week (ticking up to two days back), weight entry, notes, streak,
+    // Today shows only today's ticks; the last 7 days (changes up to three days back), weight entry, notes, streak,
     // pause and end open on demand – so the plan below stays in reach
     const open = !!ui.arcWk,
       daily = a.pick.filter((id) => ARC_KIND[id] === "daily"),
@@ -465,17 +469,20 @@
     if (open) {
       h += `<div class="arcwk">`;
       if (daily.length)
-        h += `<span class="lab">${A.thisWeek}</span><span class="sub">${A.backNote}</span>${daily
+        // the last 7 days up to today (not Mon–Sun), so the days that can still be changed are always in view
+        h += `<span class="lab">${A.last7}</span><span class="sub">${A.backNote}</span>${daily
           .map((id) => {
             const auto = id === "breath",
-              pills = days
-                .map((ds, k) => {
+              pills = Array.from({ length: 7 }, (_, k) => iso(addDays(today(), k - 6)))
+                .map((ds) => {
                   const done = arcTicked(a, id, ds),
                     can = !auto && arcCanTick(a, ds),
-                    cls = `ad${done ? " on" : ""}${ds === td ? " td" : ""}${ds > td || ds < a.start ? " fut" : ""}`;
+                    wd = t("weekday")[(parse(ds).getDay() + 6) % 7].slice(0, 2),
+                    lbl = `${wd}<small>${parse(ds).getDate()}.</small>`,
+                    cls = `ad${done ? " on" : ""}${ds === td ? " td" : ""}${can ? "" : " fut"}`;
                   return can
-                    ? `<button type="button" class="${cls}" data-arcchk="${id}" data-ad="${ds}" aria-pressed="${done}" aria-label="${esc(fmtDate(ds))}">${t("weekday")[k].slice(0, 2)}</button>`
-                    : `<span class="${cls}" aria-hidden="true">${t("weekday")[k].slice(0, 2)}</span>`;
+                    ? `<button type="button" class="${cls}" data-arcchk="${id}" data-ad="${ds}" aria-pressed="${done}" aria-label="${esc(fmtDate(ds))}">${lbl}</button>`
+                    : `<span class="${cls}" aria-hidden="true">${lbl}</span>`;
                 })
                 .join("");
             const note = id === "sleep23" || id === "sleep7" ? A.sleepNote : id === "cold" ? A.coldNote : "";

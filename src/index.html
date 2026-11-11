@@ -2828,6 +2828,22 @@
   .awk .arkg {
     padding-left: 0;
   }
+  /* the last 7 days: weekday and date on each day button (11.11.2026) */
+  .awk .adays .ad {
+    height: 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.15;
+  }
+  .awk .adays .ad small {
+    font: 500 9px/1.1 var(--mono);
+    opacity: 0.85;
+  }
+  .awk .adays span.ad.fut.on {
+    opacity: 0.5;
+  }
   .arcmore {
     margin-top: 8px;
     padding: 12px 0 2px;
@@ -4284,14 +4300,136 @@
       opacity: 0;
     }
   }
+  /* feasts (11.11.2026): lantern procession, swaying, a flying dove, the Epiphany star, rising hearts, Holi colour clouds */
+  .today .march {
+    animation: march 22s linear infinite;
+  }
+  @keyframes march {
+    from {
+      transform: translateX(-40px);
+    }
+    to {
+      transform: translateX(440px);
+    }
+  }
+  .today .sway {
+    animation: sway 1.7s ease-in-out infinite alternate;
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+  }
+  .today .sway.slow {
+    animation-duration: 3.2s;
+    transform-origin: 50% 100%;
+  }
+  @keyframes sway {
+    from {
+      transform: rotate(-5deg);
+    }
+    to {
+      transform: rotate(5deg);
+    }
+  }
+  .today .fly {
+    animation: fly 13s linear infinite;
+  }
+  @keyframes fly {
+    0% {
+      transform: translate(-60px, 20px);
+    }
+    50% {
+      transform: translate(200px, -8px);
+    }
+    100% {
+      transform: translate(470px, 14px);
+    }
+  }
+  .today .flap {
+    animation: flap 0.45s ease-in-out infinite alternate;
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+  }
+  @keyframes flap {
+    from {
+      transform: scaleY(1);
+    }
+    to {
+      transform: scaleY(-0.55);
+    }
+  }
+  .today .comet {
+    animation: comet 16s ease-in-out infinite alternate;
+  }
+  @keyframes comet {
+    from {
+      transform: translate(150px, 34px);
+    }
+    to {
+      transform: translate(330px, 58px);
+    }
+  }
+  .today .floatup {
+    animation: floatup linear infinite;
+  }
+  @keyframes floatup {
+    from {
+      transform: translateY(0) scale(0.8);
+      opacity: 0;
+    }
+    15% {
+      opacity: 0.95;
+    }
+    to {
+      transform: translateY(-230px) scale(1.15);
+      opacity: 0;
+    }
+  }
+  .today .puff {
+    animation: puff 4s ease-out infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+  }
+  @keyframes puff {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .today .fall,
     .today .bulb,
-    .today .fw {
+    .today .fw,
+    .today .march,
+    .today .sway,
+    .today .fly,
+    .today .flap,
+    .today .comet,
+    .today .floatup,
+    .today .puff {
       animation: none !important;
     }
-    .today .fw {
+    .today .fw,
+    .today .puff {
       opacity: 1;
+    }
+    .today .march {
+      transform: translateX(var(--mx, 200px));
+    }
+    .today .fly {
+      transform: translate(300px, 0);
+    }
+    .today .comet {
+      transform: translate(240px, 44px);
+    }
+    .today .floatup {
+      transform: translateY(-110px);
     }
   }
   /* guide, packing list, coach calls */

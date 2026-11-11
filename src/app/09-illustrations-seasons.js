@@ -60,6 +60,23 @@
   }
   /* Diwali follows the Hindu lunisolar calendar – main day (Lakshmi Puja) per year; extend the list in time */
   const DIWALI = ["2026-11-08", "2027-10-29", "2028-10-17", "2029-11-05", "2030-10-26"];
+  /* Holi (Rangwali Holi, the day of colours) – likewise from the Hindu calendar; extend the list in time */
+  const HOLI = ["2027-03-22", "2028-03-11", "2029-03-01", "2030-03-20"];
+  /* Lunar New Year: day 1–2 of the first month in the Chinese calendar (from the phone, like Hijri and Hebrew) */
+  const lunarNY = (d) => {
+    const r = calParts("chinese", { day: "numeric", month: "numeric" }, d);
+    return !!r && r.m === "1" && r.d <= 2;
+  };
+  /* first Sunday of Advent: four Sundays before Christmas Day */
+  function advent1(y) {
+    const x = new Date(y, 11, 25);
+    return addDays(x, -((x.getDay() || 7) + 21));
+  }
+  /* n-th weekday (0 = Sunday) of a month, e.g. Mother's Day = 2nd Sunday in May, harvest festival = 1st Sunday in October */
+  function nthDow(y, mo, dow, n) {
+    const f = new Date(y, mo - 1, 1);
+    return addDays(f, ((dow - f.getDay() + 7) % 7) + (n - 1) * 7);
+  }
   /* All feasts on a date: greetings plus the one motif drawn in the scene (in order of priority) */
   function feastsOn(d) {
     const m = d.getMonth() + 1,
@@ -70,7 +87,10 @@
       add = (k, g) => out.push({ k, g }),
       ea = daysBetween(easterSun(d.getFullYear()), d),
       hj = hijri(d),
-      hk = hanukkahDay(d);
+      hk = hanukkahDay(d),
+      y = d.getFullYear(),
+      adv = daysBetween(advent1(y), d),
+      same = (x) => iso(x) === ds;
     if (hk) add("hanukkah", F.hanukkah(hk));
     if (hj && hj.m === 9) add("ramadan", F.ramadan);
     if (hj && hj.m === 10 && hj.d <= 3) add("eidfitr", F.eidfitr);
@@ -88,6 +108,20 @@
     if (m === 10 && day === 31) add("halloween", F.halloween);
     if (m === 6 && day === 21) add("summer", F.summer);
     if (m === 12 && day === 21) add("winter", F.winter);
+    // German customs and public days (10.11.2026), plus Lunar New Year and Holi
+    if (m === 11 && day === 11) add("martin", F.martin);
+    if (m === 12 && day === 6) add("nikolaus", F.nikolaus);
+    if (adv >= 0 && adv <= 21 && adv % 7 === 0) add("adventsun", F.adventsun(adv / 7 + 1));
+    if (m === 1 && day === 6) add("epiphany", F.epiphany);
+    if (ea === 49 || ea === 50) add("pentecost", F.pentecost);
+    if (ea === 39) add("ascension", F.ascension);
+    if (same(nthDow(y, 10, 0, 1))) add("harvest", F.harvest);
+    if (same(nthDow(y, 5, 0, 2))) add("mothers", F.mothers);
+    if (m === 3 && day === 8) add("womens", F.womens);
+    if (m === 5 && day === 1) add("mayday", F.mayday);
+    if (m === 10 && day === 3) add("unity", F.unity);
+    if (lunarNY(d)) add("lunar", F.lunar);
+    if (HOLI.includes(ds)) add("holi", F.holi);
     return out;
   }
   /* motif keys that are drawn; the first matching one wins */
@@ -98,12 +132,23 @@
     "ramadan",
     "diwali",
     "easter",
+    "pentecost",
     "karneval",
     "valentine",
+    "lunar",
+    "holi",
     "nouruz",
     "newyear",
     "christmas",
+    "nikolaus",
+    "epiphany",
+    "martin",
     "halloween",
+    "harvest",
+    "unity",
+    "mayday",
+    "mothers",
+    "womens",
     "summer",
   ];
   const NO_SANTA = new Set(["hanukkah", "ramadan", "eidfitr", "eidadha", "diwali"]);
@@ -114,7 +159,8 @@
       k = m >= 3 && m <= 5 ? "spring" : m >= 6 && m <= 8 ? "summer" : m >= 9 && m <= 11 ? "autumn" : "winter",
       fe = feastsOn(d),
       has = (x) => fe.some((f) => f.k === x);
-    let ev = MOTIFS.find(has) || (m === 12 ? "advent" : null);
+    const inAdvent = (m === 12 && day <= 24) || daysBetween(advent1(d.getFullYear()), d) >= 0;
+    let ev = MOTIFS.find(has) || (inAdvent || m === 12 ? "advent" : null);
     // Christmas hat in December and up to Epiphany – but not on the days of other religions' feasts;
     // a woolly hat for the rest of the winter, a jester's cap at carnival
     const santa = (m === 12 || (m === 1 && day <= 6)) && !fe.some((f) => NO_SANTA.has(f.k));
@@ -124,6 +170,8 @@
       ev,
       hat,
       greet: [...new Set(fe.map((f) => f.g))],
+      // lit Advent candles (1–4) from the first Sunday of Advent to Christmas Eve, else 0
+      candles: inAdvent && (m < 12 || day <= 24) ? Math.min(4, Math.floor(daysBetween(advent1(d.getFullYear()), d) / 7) + 1) : 0,
     };
   }
   const seasonOn = () => !S.profile.seasonOff;
@@ -418,15 +466,16 @@
     }
     const se = season();
     // seasonal particles: petals, leaves or snow fall through the scene; in summer (and with the design off) dust floats in the light
-    const pk = se ? (se.ev === "valentine" ? "hearts" : se.ev === "karneval" ? "confetti" : se.k) : null;
+    const pk = se ? (se.ev === "valentine" ? "hearts" : se.ev === "karneval" ? "confetti" : se.ev === "holi" ? "holi" : se.k) : null;
     if (pk && pk !== "summer") {
-      const N = pk === "winter" ? 34 : pk === "confetti" ? 40 : 16,
+      const N = pk === "winter" ? 34 : pk === "confetti" || pk === "holi" ? 40 : 16,
         cols = {
           spring: ["#F48FB1", "#F8BBD0", "#FFFFFF"],
           autumn: ["#E0914A", "#C8404A", "#D9A441"],
           winter: ["#FFFFFF"],
           hearts: ["#FF5A7A", "#FF8FA3", "#E8445A"],
           confetti: ["#FF5A5F", "#FFD23F", "#58D68D", "#5DADE2", "#C77DFF"],
+          holi: ["#FF3CAC", "#FFD23F", "#2ED573", "#1E90FF", "#FF6B35", "#A55EEA"],
         }[pk];
       for (let i = 0; i < N; i++) {
         const x = srand() * 420 - 10,
@@ -437,6 +486,8 @@
               ? `<path d="M0 4 C-7 -1 -4 -8 0 -3.5 C4 -8 7 -1 0 4Z" fill="${col}" opacity=".95"/>`
               : pk === "confetti"
                 ? `<rect x="-2.5" y="-1.5" width="5" height="3" fill="${col}"/>`
+                : pk === "holi"
+                  ? `<circle r="${(1.8 + srand() * 2.4).toFixed(2)}" fill="${col}" opacity=".9"/>`
                 : pk === "winter"
                   ? `<circle r="${(0.8 + srand() * 1.6).toFixed(2)}" fill="${col}" opacity="${(0.5 + srand() * 0.5).toFixed(2)}"/>`
                   : se.k === "spring"
@@ -545,7 +596,7 @@
     } else if (ev === "summer") {
       extra += `<circle cx="200" cy="206" r="60" fill="#FFB347" opacity=".18"/><circle cx="200" cy="214" r="24" fill="#FFB347" opacity=".45"/>`;
     }
-    if (ev === "advent" || ev === "christmas") {
+    if (ev === "advent" || ev === "christmas" || ev === "nikolaus") {
       // string of lights across the top
       let bulbs = "";
       for (let i = 0; i <= 14; i++) {
@@ -570,6 +621,116 @@
     } else if (ev === "halloween") {
       // double size, standing on the floor
       extra += `<g transform="translate(200 203) scale(2) translate(0 -13)"><ellipse rx="17" ry="13" fill="#E8761F" stroke="#111318" stroke-width="2.5"/><path d="M-6 -12 Q0 -16 6 -12 M-9 -10 Q-12 0 -8 11 M9 -10 Q12 0 8 11" fill="none" stroke="#B85A12" stroke-width="2"/><path d="M0 -13 q1 -6 5 -8" stroke="#4E7A35" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-9 -3 l4 -4 l4 4z M1 -3 l4 -4 l4 4z" fill="#FFD23F"/><path d="M-8 4 q8 6 16 0 l-3 2 l-2 -2 l-3 2 l-3 -2 l-2 2z" fill="#FFD23F"/></g>`;
+    }
+    /* ---- feasts added 11.11.2026: each with its own movement ---- */
+    const moon = sky.moon ? "" : `<g transform="translate(330 40)"><circle r="14" fill="#F6E7B0"/><circle cx="6" cy="-4" r="13" fill="url(#sky)"/></g>`;
+    const star = (x, y, r, c, cls = "bulb", dl = 0) =>
+      `<path class="${cls}" style="animation-delay:${dl}s" d="M${x} ${y - r} l${(r * 0.3).toFixed(1)} ${(r * 0.7).toFixed(1)} l${(r * 0.7).toFixed(1)} ${(r * 0.3).toFixed(1)} l${(-r * 0.7).toFixed(1)} ${(r * 0.3).toFixed(1)} l${(-r * 0.3).toFixed(1)} ${(r * 0.7).toFixed(1)} l${(-r * 0.3).toFixed(1)} ${(-r * 0.7).toFixed(1)} l${(-r * 0.7).toFixed(1)} ${(-r * 0.3).toFixed(1)} l${(r * 0.7).toFixed(1)} ${(-r * 0.3).toFixed(1)}z" fill="${c}"/>`;
+    if (ev === "martin") {
+      // St. Martin: a lantern procession walks slowly through the back of the scene, the lanterns sway on their sticks
+      const cols = ["#FF8A3D", "#FFD23F", "#FF5A7A", "#7FD1FF", "#9CE37D"];
+      let lz = "";
+      cols.forEach((c, i) => {
+        lz += `<g class="march" style="animation-delay:-${(i * 4.4).toFixed(1)}s;--mx:${48 + i * 76}px"><g class="sway" style="animation-delay:-${(i * 0.7).toFixed(1)}s"><path d="M-14 30 L0 -24 L7 -24" stroke="#8B6A3C" stroke-width="2" fill="none" stroke-linecap="round"/><line x1="7" y1="-24" x2="7" y2="-14" stroke="#6b5a35" stroke-width="1.2"/><circle cx="7" cy="-3" r="16" fill="${c}" opacity=".16"/><circle cx="7" cy="-3" r="9.5" fill="${c}" stroke="#3a2a14" stroke-width="1.4"/><path d="M-2 -7 h18 M-2 1 h18" stroke="#3a2a14" stroke-width=".8" opacity=".45"/><ellipse class="flame" cx="7" cy="-2" rx="2" ry="3.2" fill="#FFF3C4"/></g></g>`;
+      });
+      extra += moon + `<g transform="translate(0 146) scale(1.3)">${lz}</g>`;
+    } else if (ev === "nikolaus") {
+      // St. Nicholas: a filled boot by the ring, stars twinkle above it
+      extra += `<g transform="translate(62 206)"><path d="M-12 0 h30 q7 0 7 -7 q0 -6 -9 -7 l-9 -1 v-19 h-19z" fill="#C8404A" stroke="#111318" stroke-width="2"/><rect x="-14" y="-38" width="23" height="8" rx="2.5" fill="#F2EEE7" stroke="#111318" stroke-width="1.5"/><circle cx="-6" cy="-42" r="5.5" fill="#F39C34" stroke="#111318" stroke-width="1.2"/><path d="M4 -38 v-12 q0 -5 5 -5 q5 0 5 5" stroke="#FFFFFF" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M4 -38 v-12 q0 -5 5 -5 q5 0 5 5" stroke="#E8445A" stroke-width="3.4" fill="none" stroke-dasharray="2 3" stroke-linecap="round"/><rect x="-2" y="-47" width="9" height="7" rx="1.5" fill="#58D68D" stroke="#111318" stroke-width="1.2"/></g>${star(40, 140, 6, "#FFE7A3", "bulb", 0)}${star(92, 126, 4.5, "#FFE7A3", "bulb", 0.6)}${star(70, 104, 5, "#FFE7A3", "bulb", 1.2)}`;
+    } else if (ev === "epiphany") {
+      // Epiphany: the star with its tail glides slowly across the sky
+      extra += `<g class="comet"><path d="M0 0 L-120 -26 L-120 -18 Z" fill="#FFE7A3" opacity=".22"/><path d="M0 0 L-80 -14 L-80 -9 Z" fill="#FFE7A3" opacity=".35"/>${star(0, 0, 11, "#FFE7A3", "")}<circle r="20" fill="#FFE7A3" opacity=".12"/></g>${star(60, 90, 3.5, "#ECE8E1", "bulb", 0.3)}${star(350, 110, 3, "#ECE8E1", "bulb", 1.1)}`;
+    } else if (ev === "pentecost") {
+      // Pentecost: a white dove flies across, beating its wings
+      extra += `<g transform="translate(0 64)"><g class="fly"><g transform="scale(1.4)"><ellipse cx="0" cy="0" rx="13" ry="6.5" fill="#F7F4EE" stroke="#111318" stroke-width="1.4"/><circle cx="11" cy="-4" r="4.6" fill="#F7F4EE" stroke="#111318" stroke-width="1.4"/><path d="M15 -4 l5 1.5 l-5 1.2z" fill="#F2B36B"/><circle cx="12" cy="-5" r=".9" fill="#111318"/><path d="M-12 0 l-9 -5 l2 7 z" fill="#F7F4EE" stroke="#111318" stroke-width="1.2"/><g class="flap"><path d="M-4 -3 Q2 -24 12 -22 Q6 -10 6 -3z" fill="#FFFFFF" stroke="#111318" stroke-width="1.3"/></g><path d="M18 -2 q4 -3 7 0" stroke="#58D68D" stroke-width="1.6" fill="none"/></g></g></g>`;
+    } else if (ev === "harvest") {
+      // harvest festival: a sheaf of wheat sways on the left, pumpkins and apples on the right
+      let st = "";
+      for (let i = 0; i < 11; i++) {
+        const a = (i - 5) * 4.5;
+        st += `<g transform="rotate(${a})"><path d="M0 0 V-46" stroke="#D9A441" stroke-width="2"/><ellipse cx="0" cy="-50" rx="3" ry="7" fill="#E8C16A" stroke="#9C7426" stroke-width="1"/></g>`;
+      }
+      extra += `<g transform="translate(58 206)"><g class="sway slow">${st}<rect x="-9" y="-24" width="18" height="6" rx="2" fill="#C8404A"/></g></g><g transform="translate(336 206)"><ellipse cx="0" cy="-10" rx="16" ry="11" fill="#E8761F" stroke="#111318" stroke-width="2"/><path d="M0 -21 q1 -5 4 -6" stroke="#4E7A35" stroke-width="2.6" fill="none" stroke-linecap="round"/><ellipse cx="26" cy="-7" rx="10" ry="7" fill="#F0A33A" stroke="#111318" stroke-width="2"/><circle cx="-24" cy="-6" r="6" fill="#C8404A" stroke="#111318" stroke-width="1.6"/><circle cx="-34" cy="-5" r="5" fill="#58D68D" stroke="#111318" stroke-width="1.6"/></g>`;
+    } else if (ev === "unity") {
+      // Day of German Unity: a string of pennants in black, red and gold waves across the top
+      let pn = "";
+      for (let i = 0; i < 13; i++) {
+        const x = 18 + i * 28.5,
+          y = 10 + Math.sin((i / 12) * Math.PI) * 18;
+        pn += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><g class="sway" style="animation-delay:-${((i % 5) * 0.3).toFixed(1)}s"><path d="M-9 0 h18 l-9 18z" fill="${["#1C1C1C", "#DD0000", "#FFCE00"][i % 3]}" stroke="#0A0B0D" stroke-width=".8"/></g></g>`;
+      }
+      extra += `<path d="M10 10 Q200 46 390 10" fill="none" stroke="#6b6f78" stroke-width="1.5"/>${pn}`;
+    } else if (ev === "mayday") {
+      // May Day: a maypole with a wreath and fluttering ribbons
+      let rb = "";
+      ["#FF5A5F", "#FFD23F", "#58D68D", "#5DADE2", "#C77DFF"].forEach((c, i) => {
+        rb += `<g class="sway" style="animation-delay:-${(i * 0.35).toFixed(2)}s"><path d="M0 0 q${-14 + i * 7} 30 ${-22 + i * 11} 62" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>`;
+      });
+      extra += `<g transform="translate(52 0)"><path d="M0 206 V36" stroke="#C9A86A" stroke-width="5" stroke-linecap="round"/><g transform="translate(0 44)">${rb}<ellipse rx="16" ry="5" fill="none" stroke="#3E8E4E" stroke-width="5"/><ellipse rx="16" ry="5" fill="none" stroke="#7FD18A" stroke-width="2" stroke-dasharray="3 4"/></g><path d="M0 36 l-5 -9 h10z" fill="#58D68D"/></g>`;
+    } else if (ev === "mothers" || ev === "womens") {
+      // Mother's Day: hearts rise; International Women's Day: tulips sway on both sides (and petals fall in spring)
+      if (ev === "mothers") {
+        seed = 51;
+        for (let i = 0; i < 16; i++) {
+          const x = 20 + srand() * 360,
+            dur = 7 + srand() * 5;
+          extra += `<g transform="translate(${x.toFixed(1)} 228)"><g class="floatup" style="animation-duration:${dur.toFixed(1)}s;animation-delay:-${(srand() * dur).toFixed(1)}s"><path transform="scale(${(1.4 + srand() * 0.8).toFixed(2)})" d="M0 5 C-8 -1 -5 -9 0 -4 C5 -9 8 -1 0 5Z" fill="${["#FF5A7A", "#FF8FA3", "#E8445A"][i % 3]}" stroke="#111318" stroke-width=".6"/></g></g>`;
+        }
+      }
+      const tulips = (x, flip) => {
+        let g = `<g transform="translate(${x} 208) scale(${flip ? -1.3 : 1.3} 1.3)">`;
+        [
+          [-8, 46, "#FF5A7A"],
+          [2, 56, "#FFD23F"],
+          [12, 44, "#C77DFF"],
+        ].forEach(([dx, h, c], i) => {
+          g += `<g class="sway" style="animation-delay:-${(i * 0.5).toFixed(1)}s"><path d="M${dx} 0 q${dx / 2} ${-h / 2} 0 ${-h}" stroke="#3E8E4E" stroke-width="2.4" fill="none"/><path d="M${dx - 6} ${-h} q0 -12 6 -12 q6 0 6 12 q-3 -4 -6 0 q-3 -4 -6 0z" fill="${c}" stroke="#111318" stroke-width="1.2"/></g>`;
+        });
+        return g + `<path d="M-4 -18 q-10 -6 -14 -14 q12 2 16 12z" fill="#58D68D"/></g>`;
+      };
+      if (ev === "womens") extra += tulips(54, false) + tulips(346, true);
+    } else if (ev === "lunar") {
+      // Lunar New Year: red lanterns with tassels, firecracker sparks
+      [
+        [64, 30],
+        [116, 18],
+        [286, 22],
+        [338, 34],
+      ].forEach(([x, l], i) => {
+        extra += `<line x1="${x}" y1="0" x2="${x}" y2="${l}" stroke="#6b5a35" stroke-width="1.5"/><g class="sway" style="animation-delay:-${(i * 0.5).toFixed(1)}s"><g transform="translate(${x} ${l + 12})"><ellipse rx="13" ry="11" fill="#D63031" stroke="#7a1414" stroke-width="1.5"/><path d="M-6 -10 q-4 10 0 20 M6 -10 q4 10 0 20 M0 -11 v22" stroke="#7a1414" stroke-width="1" fill="none"/><rect x="-6" y="-14" width="12" height="4" rx="1" fill="#F2C14E"/><rect x="-6" y="10" width="12" height="4" rx="1" fill="#F2C14E"/><path d="M-2 14 v9 M0 14 v11 M2 14 v9" stroke="#F2C14E" stroke-width="1.2"/></g></g>`;
+      });
+      [
+        [200, 34, "#F2C14E", 0],
+        [160, 60, "#FF5A5F", 0.9],
+      ].forEach(([x, y, c, dl]) => {
+        let rays = "";
+        for (let a = 0; a < 360; a += 36) {
+          const r = (a * Math.PI) / 180;
+          rays += `<line x1="${(Math.cos(r) * 4).toFixed(1)}" y1="${(Math.sin(r) * 4).toFixed(1)}" x2="${(Math.cos(r) * 16).toFixed(1)}" y2="${(Math.sin(r) * 16).toFixed(1)}"/>`;
+        }
+        extra += `<g transform="translate(${x} ${y})"><g class="fw" style="animation-delay:${dl}s" stroke="${c}" stroke-width="2" stroke-linecap="round">${rays}</g></g>`;
+      });
+    } else if (ev === "holi") {
+      // Holi: clouds of colour puff up and fade, coloured powder drifts down
+      [
+        [70, 120, "#FF3CAC", 0],
+        [330, 104, "#1E90FF", 0.8],
+        [150, 70, "#FFD23F", 1.6],
+        [260, 62, "#2ED573", 2.4],
+        [200, 140, "#A55EEA", 3.2],
+      ].forEach(([x, y, c, dl]) => {
+        extra += `<g transform="translate(${x} ${y})"><g class="puff" style="animation-delay:${dl}s"><circle r="30" fill="${c}" opacity=".32"/><circle cx="-14" cy="6" r="18" fill="${c}" opacity=".38"/><circle cx="16" cy="-4" r="20" fill="${c}" opacity=".3"/></g></g>`;
+      });
+    }
+    // Advent: a wreath on the floor with one more candle lit each Sunday (also on St. Nicholas' Day)
+    if ((ev === "advent" || ev === "nikolaus") && se2.candles) {
+      let w = `<g transform="translate(${ev === "nikolaus" ? 340 : 336} 200) scale(1.25)"><ellipse rx="34" ry="8" fill="#2E6B3F" stroke="#1E4A2B" stroke-width="2"/><ellipse rx="34" ry="8" fill="none" stroke="#58D68D" stroke-width="1.4" stroke-dasharray="2 5"/>`;
+      [-21, -7, 7, 21].forEach((x, i) => {
+        w += `<rect x="${x - 3}" y="-20" width="6" height="18" rx="1.5" fill="#C8404A" stroke="#7a1f25" stroke-width="1"/>`;
+        if (i < se2.candles) w += `<ellipse class="flame" cx="${x}" cy="-25" rx="2.2" ry="3.8" fill="#FFC94A"/><circle cx="${x}" cy="-25" r="7" fill="#FFC94A" opacity=".14"/>`;
+      });
+      [-30, 0, 30].forEach((x) => (w += `<circle cx="${x}" cy="4" r="2.6" fill="#E8445A"/>`));
+      extra += w + `</g>`;
     }
     const orb = sky.sun
       ? `<circle cx="70" cy="170" r="90" fill="url(#orb)"/>`
