@@ -475,8 +475,10 @@
             const auto = id === "breath",
               pills = Array.from({ length: 7 }, (_, k) => iso(addDays(today(), k - 6)))
                 .map((ds) => {
+                  // breathing ticks itself on days with a breathing exercise in the app; other days can be ticked by hand
                   const done = arcTicked(a, id, ds),
-                    can = !auto && arcCanTick(a, ds),
+                    byApp = auto && relaxOnDays(ds, ds, (x) => x.m === "breath"),
+                    can = !byApp && arcCanTick(a, ds),
                     wd = t("weekday")[(parse(ds).getDay() + 6) % 7].slice(0, 2),
                     lbl = `${wd}<small>${parse(ds).getDate()}.</small>`,
                     cls = `ad${done ? " on" : ""}${ds === td ? " td" : ""}${can ? "" : " fut"}`;

@@ -4801,3 +4801,19 @@ test("11.11.2026 feasts: dates, greetings in both languages, the drawn motif and
   assert.equal(a.run("season()"), null);
   assert.ok(!a.run(`heroScene('guard','T',true).includes('class="march"')`));
 });
+
+
+test("11.11.2026 Winter Arc breathing: ticked by hand on the days before, a day with a breathing exercise in the app stays ticked", async () => {
+  const a = app();
+  a.setDate("2026-11-11");
+  a.run("S.profile.arc={start:'2026-11-02',weeks:8,pick:['breath'],train:3,relax:2,checks:{},paused:[]};S.profile.relaxLog=[{d:'2026-11-09',m:'breath',k:'calm'}];ui.tab='week';ui.arcWk=true;");
+  let h = a.run("renderWeek()");
+  assert.match(h, /data-arcchk="breath" data-ad="2026-11-10"/, "Tuesday can be ticked by hand");
+  assert.doesNotMatch(h, /data-arcchk="breath" data-ad="2026-11-09"/, "Monday came from the app");
+  await a.click({ dataset: { arcchk: "breath", ad: "2026-11-10" } });
+  assert.equal(a.run("arcTicked(S.profile.arc,'breath','2026-11-10')"), true);
+  await a.click({ dataset: { arcchk: "breath", ad: "2026-11-10" } });
+  assert.equal(a.run("arcTicked(S.profile.arc,'breath','2026-11-10')"), false, "and unticked again");
+  await a.click({ dataset: { arcchk: "breath", ad: "2026-11-09" } });
+  assert.equal(a.run("arcTicked(S.profile.arc,'breath','2026-11-09')"), true, "the app's tick stays");
+});

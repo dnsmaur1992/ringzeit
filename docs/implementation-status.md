@@ -427,3 +427,5 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   reduzieren“ hält alle neuen Bewegungen an. Ausschaltbar wie bisher über die Darstellung.
 - „Was ist neu“ Version 11.
 - Tests: 266, davon neu der Wochenwechsel beim Nachtragen und alle Feste mit Datum, Gruß, Motiv und Bewegung.
+- **Nachtrag 11.11.:** Die Atemübung lässt sich an den änderbaren Vortagen jetzt auch von Hand abhaken (vorher nur heute).
+  Ein Tag mit einer Atemübung in der App bleibt fest abgehakt. Test: 267.
