@@ -429,3 +429,15 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
 - Tests: 266, davon neu der Wochenwechsel beim Nachtragen und alle Feste mit Datum, Gruß, Motiv und Bewegung.
 - **Nachtrag 11.11.:** Die Atemübung lässt sich an den änderbaren Vortagen jetzt auch von Hand abhaken (vorher nur heute).
   Ein Tag mit einer Atemübung in der App bleibt fest abgehakt. Test: 267.
+
+## Übungen nach Platzbedarf (12.11.2026)
+
+- Hip Thrust mit Langhantel nur noch im Fitnessstudio, auch wenn in Halle oder zuhause eine Langhantel gewählt ist.
+- Bear Crawl (etwa 10 m), Sprints (20 m) und Standweitsprung nur noch in der Halle und draußen: nicht zuhause und
+  nicht im Fitnessstudio. Das Fitnessstudio übernimmt sonst jede Hallen-Übung; dafür gibt es in `08-plan.js` die Liste
+  `NO_STUDIO`.
+- Bereits geplante Einheiten bleiben unverändert. Neu erzeugte Einheiten halten sich an die Orte.
+- **Kickbox-Vergleich neu aufgezeichnet (gewollt):** Nur die Fälle „Technik zuhause“ und „Kraft im Fitnessstudio“
+  ändern sich, weil die Übungsauswahl dort kleiner wird. Der alte Vergleich enthielt genau die Fehler: Sprints und
+  Bear Crawl im Fitnessstudio, Bear Crawl zuhause.
+- Test: Einheiten aller Sportarten, Arten und Orte erzeugen und die Orte prüfen (268 Tests).

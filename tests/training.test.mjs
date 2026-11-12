@@ -4817,3 +4817,35 @@ test("11.11.2026 Winter Arc breathing: ticked by hand on the days before, a day 
   await a.click({ dataset: { arcchk: "breath", ad: "2026-11-09" } });
   assert.equal(a.run("arcTicked(S.profile.arc,'breath','2026-11-09')"), true, "the app's tick stays");
 });
+
+test("12.11.2026 places: hip thrust only in the fitness gym (even with a barbell elsewhere); bear crawl, sprints and broad jumps only in the hall and outdoors", () => {
+  const a = app();
+  const seen = JSON.parse(
+    a.run(`(() => {
+      const out = {};
+      const eq = ['bb','weights','kb','bands','bar','rope','bag','studio'];
+      for (const sport of ['kickboxing','boxing','taekwondo'])
+        for (const loc of ['gym','studio','home','out'])
+          for (const type of ['T','S','K','C','M'])
+            for (let i = 0; i < 12; i++) {
+              // the fitness gym is a place for strength and conditioning (S, K); other types there plan as in the hall
+              if (loc === 'studio' && type !== 'S' && type !== 'K') continue;
+              S.profile.sport = sport;
+              let s; try { s = buildSession('2026-11-' + String(2 + (i % 7)).padStart(2, '0'), type, loc, eq, { min: 60 }); } catch (e) { continue; }
+              for (const b of s.blocks || []) for (const it of b.items || []) if (it && it.id) (out[it.id] = out[it.id] || {})[loc] = 1;
+            }
+      return JSON.stringify(out);
+    })()`),
+  );
+  const places = (id) => Object.keys(seen[id] || {}).sort().join(",");
+  assert.equal(places("str.barbell_hip_thrust"), "studio", "hip thrust: fitness gym only");
+  for (const id of ["cond.bear_crawl", "cond.sprints"]) {
+    assert.ok(seen[id], id + " is still planned somewhere");
+    assert.ok(!seen[id].home && !seen[id].studio, `${id}: ${places(id)}`);
+  }
+  // the place rule itself (broad jumps come only at higher levels, so check the rule directly)
+  for (const id of ["cond.bear_crawl", "cond.sprints", "pow.broad_jumps"])
+    assert.deepEqual(["gym", "out", "home", "studio"].map((l) => a.run(`okEx(EX['${id}'],'${l}',['bb','studio'])`)), [true, true, false, false], id);
+  assert.deepEqual(["gym", "out", "home", "studio"].map((l) => a.run(`okEx(EX['str.barbell_hip_thrust'],'${l}',['bb','studio'])`)), [false, false, false, true]);
+  assert.equal(a.run("EX['cond.bear_crawl'].locs + EX['pow.broad_jumps'].locs + EX['str.barbell_hip_thrust'].locs"), "gogof");
+});

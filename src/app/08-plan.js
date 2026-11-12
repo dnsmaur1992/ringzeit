@@ -368,12 +368,15 @@
       lo = Math.min(hi - 1, Math.max(2, Math.floor(r)));
     return { lo, hi, txt: `${lo}–${hi}` };
   }
+  /* exercises that need a lot of free floor (about 10–20 m run or a long jump): hall and outdoors only, never in the
+     fitness gym (12.11.2026); at home they are already excluded by their places */
+  const NO_STUDIO = new Set(["cond.bear_crawl", "cond.sprints", "pow.broad_jumps"]);
   function okEx(e, loc, eq) {
     if (isBox() && BOXT.BOX_NO_EX.has(e.key)) return false; // no kick exercises in boxing
     if (isTkd() && TKDT.NO_EX.has(e.key)) return false; // no kickboxing technique exercises in taekwondo (own plans: 6b/6c)
     const av = S.profile.limits.map((l) => AV[l]).join("");
-    // the fitness gym ("studio") also allows every indoor hall exercise
-    if (loc === "studio" ? !/[gf]/.test(e.locs) : !e.locs.includes(loc[0])) return false;
+    // the fitness gym ("studio") also allows every indoor hall exercise – except those that need a long free run
+    if (loc === "studio" ? !/[gf]/.test(e.locs) || NO_STUDIO.has(e.key) : !e.locs.includes(loc[0])) return false;
     // e.eq may list alternatives, e.g. "weights|kb" = dumbbells or a kettlebell
     if (e.eq && !e.eq.split("|").some((q) => eq.includes(q))) return false;
     for (const c of av) if (e.avoid.includes(c)) return false;

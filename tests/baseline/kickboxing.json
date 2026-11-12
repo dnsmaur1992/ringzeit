@@ -651,19 +651,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 7
-         },
-         {
-          "kind": "ex",
           "id": 13
          },
          {
           "kind": "ex",
-          "id": 50
+          "id": 18
          },
          {
           "kind": "ex",
-          "id": 43
+          "id": 56
+         },
+         {
+          "kind": "ex",
+          "id": 45
          }
         ],
         "sets": "3×",
@@ -690,15 +690,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
           "id": 72
          },
          {
           "kind": "ex",
           "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 0
@@ -841,15 +841,6 @@
       ],
       [
        {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
-        "timer": {
-         "phases": 4,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
         "dose": "4 × (15 s / 15 s Pause)",
         "timer": {
          "phases": 8,
@@ -859,19 +850,15 @@
         }
        },
        {
-        "dose": "20–30 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 20,
-         "choices": [
-          20,
-          30
-         ],
-         "perSet": 20
-        }
+        "dose": "pro Bein 10",
+        "timer": null
        },
        {
         "dose": "8–10 Wdh. pro Bein",
+        "timer": null
+       },
+       {
+        "dose": "8–10 Wdh.",
         "timer": null
        }
       ],
@@ -899,17 +886,6 @@
       ],
       [
        {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
         "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
@@ -929,6 +905,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -2671,17 +2658,7 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 39
+          "id": 9
          },
          {
           "kind": "round",
@@ -2691,7 +2668,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 16
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 39
          }
         ],
         "fitnessLevel": 0
@@ -2702,7 +2689,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fFinger"
          },
          {
           "kind": "hard",
@@ -2717,7 +2704,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
@@ -2725,7 +2712,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 73
          }
         ],
         "fitnessLevel": 0
@@ -2835,15 +2822,7 @@
       ],
       [
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
-        "timer": null
-       },
-       {
-        "dose": "3 × 4 Läufe à 20 m",
-        "timer": null
-       },
-       {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "dose": "30 s Belastung, 30 s Pause",
         "timer": null
        },
        {
@@ -2851,7 +2830,15 @@
         "timer": null
        },
        {
-        "dose": "pro Bein 10",
+        "dose": "3 × (20 s / 10 s Pause)",
+        "timer": null
+       },
+       {
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        }
       ],
@@ -2859,12 +2846,10 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
+         "phases": 39,
+         "seconds": 117,
+         "choices": [],
+         "perSet": 0
         }
        },
        {
@@ -2879,14 +2864,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -2901,14 +2886,15 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 3,
-         "seconds": 65,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          30
+          60,
+          90
          ],
-         "perSet": 30
+         "perSet": 60
         }
        }
       ]
@@ -3751,19 +3737,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 83
-         },
-         {
-          "kind": "ex",
           "id": 8
          },
          {
           "kind": "ex",
-          "id": 47
+          "id": 21
          },
          {
           "kind": "ex",
-          "id": 57
+          "id": 56
+         },
+         {
+          "kind": "ex",
+          "id": 50
          }
         ],
         "sets": "2×",
@@ -3790,7 +3776,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 76
+          "id": 75
          },
          {
           "kind": "ex",
@@ -3798,7 +3784,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 76
          }
         ],
         "fitnessLevel": 0
@@ -3927,25 +3913,35 @@
       ],
       [
        {
-        "dose": "4 × (10 s / 20 s locker)",
-        "timer": {
-         "phases": 8,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
         "dose": "6 Wdh.",
         "timer": null
        },
        {
-        "dose": "8–10 Wdh.",
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [
+          180
+         ],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "8–10 Wdh. pro Bein",
         "timer": null
        },
        {
-        "dose": "8–10 Wdh.",
-        "timer": null
+        "dose": "20–30 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 20,
+         "choices": [
+          20,
+          30
+         ],
+         "perSet": 20
+        }
        }
       ],
       [
@@ -3972,14 +3968,14 @@
       ],
       [
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 30 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          120
+          30
          ],
-         "perSet": 120
+         "perSet": 30
         }
        },
        {
@@ -3994,14 +3990,14 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "2 Min.",
         "timer": {
-         "phases": 3,
-         "seconds": 65,
+         "phases": 1,
+         "seconds": 120,
          "choices": [
-          30
+          120
          ],
-         "perSet": 30
+         "perSet": 120
         }
        }
       ]
@@ -5581,17 +5577,7 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 39
+          "id": 9
          },
          {
           "kind": "round",
@@ -5601,7 +5587,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 16
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 39
          }
         ],
         "fitnessLevel": 0
@@ -5612,7 +5608,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fFinger"
          },
          {
           "kind": "hard",
@@ -5627,7 +5623,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
@@ -5635,7 +5631,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 73
          }
         ],
         "fitnessLevel": 0
@@ -5743,15 +5739,7 @@
       ],
       [
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
-        "timer": null
-       },
-       {
-        "dose": "3 × 4 Läufe à 20 m",
-        "timer": null
-       },
-       {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "dose": "30 s Belastung, 30 s Pause",
         "timer": null
        },
        {
@@ -5759,7 +5747,15 @@
         "timer": null
        },
        {
-        "dose": "pro Bein 10",
+        "dose": "3 × (20 s / 10 s Pause)",
+        "timer": null
+       },
+       {
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        }
       ],
@@ -5767,12 +5763,10 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
+         "phases": 39,
+         "seconds": 117,
+         "choices": [],
+         "perSet": 0
         }
        },
        {
@@ -5787,14 +5781,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -5809,14 +5803,15 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 3,
-         "seconds": 65,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          30
+          60,
+          90
          ],
-         "perSet": 30
+         "perSet": 60
         }
        }
       ]
@@ -6719,19 +6714,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 21
+          "id": 83
          },
          {
           "kind": "ex",
-          "id": 13
+          "id": 14
          },
          {
           "kind": "ex",
-          "id": 22
+          "id": 48
          },
          {
           "kind": "ex",
-          "id": 49
+          "id": 47
          }
         ],
         "sets": "3×",
@@ -6743,11 +6738,11 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWraps"
+          "id": "fGlove"
          },
          {
           "kind": "hard",
-          "id": "shinbag"
+          "id": "bodybag"
          }
         ],
         "fitnessLevel": 1
@@ -6762,11 +6757,11 @@
          },
          {
           "kind": "ex",
-          "id": 74
+          "id": 73
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -6905,18 +6900,7 @@
       ],
       [
        {
-        "dose": "3 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
-        }
-       },
-       {
-        "dose": "4 × (15 s / 15 s Pause)",
+        "dose": "4 × (10 s / 20 s locker)",
         "timer": {
          "phases": 8,
          "seconds": 120,
@@ -6925,43 +6909,54 @@
         }
        },
        {
-        "dose": "10–12 Wdh.",
-        "timer": null
+        "dose": "40 s Belastung, 20 s Pause",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
+         "choices": [],
+         "perSet": 0
+        }
        },
        {
-        "dose": "10–12 Wdh. je Seite",
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": null,
+        "dose": "30–45 s pro Bein halten · ein Satz = erst links, dann rechts",
         "timer": {
          "phases": 3,
          "seconds": 65,
          "choices": [
-          30
+          30,
+          45
          ],
          "perSet": 30
         }
        },
        {
-        "dose": null,
+        "dose": "10–12 Wdh.",
         "timer": null
        }
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": null,
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 5,
+         "seconds": 70,
          "choices": [
-          45
+          20
          ],
-         "perSet": 45
+         "perSet": 20
         }
        },
+       {
+        "dose": null,
+        "timer": {
+         "phases": 11,
+         "seconds": 145,
+         "choices": [],
+         "perSet": 0
+        }
+       }
+      ],
+      [
        {
         "dose": "je Seite 45 s",
         "timer": {
@@ -6983,6 +6978,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -8752,27 +8758,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 1
@@ -8783,7 +8789,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -8798,15 +8804,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -8928,29 +8934,22 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
-        "timer": null
-       },
-       {
         "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": "3 × 4 Läufe à 20 m",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -8964,25 +8963,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -8995,6 +8983,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -9843,15 +9842,15 @@
          },
          {
           "kind": "ex",
-          "id": 21
-         },
-         {
-          "kind": "ex",
-          "id": 41
+          "id": 9
          },
          {
           "kind": "ex",
           "id": 49
+         },
+         {
+          "kind": "ex",
+          "id": 58
          }
         ],
         "sets": "2×",
@@ -9867,7 +9866,7 @@
          },
          {
           "kind": "hard",
-          "id": "bodybag"
+          "id": "shinbag"
          }
         ],
         "fitnessLevel": 1
@@ -9878,15 +9877,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
           "id": 72
          },
          {
           "kind": "ex",
-          "id": 74
+          "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -10021,23 +10020,29 @@
         }
        },
        {
-        "dose": "3 Min.",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
+         "phases": 2,
+         "seconds": 60,
+         "choices": [],
+         "perSet": 0
         }
-       },
-       {
-        "dose": "10–12 Wdh.",
-        "timer": null
        },
        {
         "dose": "10–12 Wdh. je Seite",
         "timer": null
+       },
+       {
+        "dose": "30–45 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 30,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
+        }
        }
       ],
       [
@@ -10054,47 +10059,41 @@
        },
        {
         "dose": null,
-        "timer": {
-         "phases": 11,
-         "seconds": 145,
-         "choices": [],
-         "perSet": 0
-        }
+        "timer": null
        }
       ],
       [
        {
-        "dose": "60–90 s halten",
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 60,
+         "seconds": 120,
          "choices": [
-          60,
-          90
+          120
          ],
-         "perSet": 60
+         "perSet": 120
         }
        },
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 30
         }
        }
       ]
@@ -11676,27 +11675,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 1
@@ -11707,7 +11706,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -11722,15 +11721,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -11850,29 +11849,22 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
-        "timer": null
-       },
-       {
         "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": "3 × 4 Läufe à 20 m",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -11886,25 +11878,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -11917,6 +11898,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -12801,15 +12793,15 @@
          },
          {
           "kind": "ex",
-          "id": 13
-         },
-         {
-          "kind": "ex",
-          "id": 43
+          "id": 21
          },
          {
           "kind": "ex",
           "id": 41
+         },
+         {
+          "kind": "ex",
+          "id": 23
          }
         ],
         "sets": "3×",
@@ -12840,11 +12832,11 @@
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -12972,21 +12964,31 @@
         }
        },
        {
-        "dose": "4 × (15 s / 15 s Pause)",
+        "dose": "3 Min.",
         "timer": {
-         "phases": 8,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 0
+         "phases": 1,
+         "seconds": 180,
+         "choices": [
+          180
+         ],
+         "perSet": 180
         }
-       },
-       {
-        "dose": "10–12 Wdh. pro Bein",
-        "timer": null
        },
        {
         "dose": "10–12 Wdh.",
         "timer": null
+       },
+       {
+        "dose": "30–45 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 30,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
+        }
        }
       ],
       [
@@ -13025,17 +13027,6 @@
         }
        },
        {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
         "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
@@ -13044,6 +13035,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
         }
        }
       ]
@@ -14664,17 +14666,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 18
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 21
+          "id": 20
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 19
+          "id": 12
          },
          {
           "kind": "round",
@@ -14684,7 +14686,7 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 40
          }
         ],
         "fitnessLevel": 1
@@ -14695,11 +14697,11 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fFinger"
+          "id": "fWring"
          },
          {
           "kind": "hard",
-          "id": "brace"
+          "id": "neck"
          }
         ],
         "fitnessLevel": 1
@@ -14710,11 +14712,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
@@ -14816,15 +14818,15 @@
       ],
       [
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "pro Bein 10",
         "timer": null
        },
        {
-        "dose": "3 Min.",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": "40 s (ca. 10 m hin und zurück), 20 s Pause",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
        },
        {
@@ -14832,7 +14834,7 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 × (20 s / 40 s locker)",
         "timer": null
        }
       ],
@@ -14840,29 +14842,25 @@
        {
         "dose": null,
         "timer": {
-         "phases": 39,
-         "seconds": 117,
+         "phases": 5,
+         "seconds": 70,
+         "choices": [
+          20
+         ],
+         "perSet": 20
+        }
+       },
+       {
+        "dose": null,
+        "timer": {
+         "phases": 7,
+         "seconds": 55,
          "choices": [],
          "perSet": 0
         }
-       },
-       {
-        "dose": null,
-        "timer": null
        }
       ],
       [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
        {
         "dose": "je Seite 45 s",
         "timer": {
@@ -14872,6 +14870,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        },
        {
@@ -15718,19 +15727,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 9
+          "id": 21
          },
          {
           "kind": "ex",
-          "id": 19
+          "id": 18
          },
          {
           "kind": "ex",
-          "id": 45
+          "id": 58
          },
          {
           "kind": "ex",
-          "id": 41
+          "id": 23
          }
         ],
         "sets": "2×",
@@ -15757,11 +15766,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
+          "id": 76
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 73
          },
          {
           "kind": "ex",
@@ -15878,30 +15887,43 @@
       ],
       [
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "3 Min.",
         "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
+         "phases": 1,
+         "seconds": 180,
+         "choices": [
+          180
+         ],
+         "perSet": 180
         }
        },
        {
-        "dose": "40 s (ca. 10 m hin und zurück), 20 s Pause",
+        "dose": "pro Bein 10",
+        "timer": null
+       },
+       {
+        "dose": "30–45 s halten",
         "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
+         "phases": 1,
+         "seconds": 30,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
         }
        },
        {
-        "dose": "10–12 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "10–12 Wdh.",
-        "timer": null
+        "dose": "30–45 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 30,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
+        }
        }
       ],
       [
@@ -15928,6 +15950,17 @@
       ],
       [
        {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
         "dose": "60–90 s halten",
         "timer": {
          "phases": 1,
@@ -15937,17 +15970,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        },
        {
@@ -17516,17 +17538,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 18
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 21
+          "id": 20
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 19
+          "id": 12
          },
          {
           "kind": "round",
@@ -17536,7 +17558,7 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 40
          }
         ],
         "fitnessLevel": 1
@@ -17547,11 +17569,11 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fFinger"
+          "id": "fWring"
          },
          {
           "kind": "hard",
-          "id": "brace"
+          "id": "neck"
          }
         ],
         "fitnessLevel": 1
@@ -17562,11 +17584,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
@@ -17669,15 +17691,15 @@
       ],
       [
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "pro Bein 10",
         "timer": null
        },
        {
-        "dose": "3 Min.",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": "40 s (ca. 10 m hin und zurück), 20 s Pause",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
        },
        {
@@ -17685,7 +17707,7 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 × (20 s / 40 s locker)",
         "timer": null
        }
       ],
@@ -17693,29 +17715,25 @@
        {
         "dose": null,
         "timer": {
-         "phases": 39,
-         "seconds": 117,
+         "phases": 5,
+         "seconds": 70,
+         "choices": [
+          20
+         ],
+         "perSet": 20
+        }
+       },
+       {
+        "dose": null,
+        "timer": {
+         "phases": 7,
+         "seconds": 55,
          "choices": [],
          "perSet": 0
         }
-       },
-       {
-        "dose": null,
-        "timer": null
        }
       ],
       [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
        {
         "dose": "je Seite 45 s",
         "timer": {
@@ -17725,6 +17743,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        },
        {
@@ -18789,19 +18818,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 21
+          "id": 83
          },
          {
           "kind": "ex",
-          "id": 13
+          "id": 14
          },
          {
           "kind": "ex",
-          "id": 22
+          "id": 48
          },
          {
           "kind": "ex",
-          "id": 49
+          "id": 47
          }
         ],
         "sets": "3×",
@@ -18813,7 +18842,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWraps",
+          "id": "fGlove",
           "h": 1
          },
          {
@@ -18834,7 +18863,7 @@
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 76
          },
          {
           "kind": "ex",
@@ -18980,18 +19009,7 @@
       ],
       [
        {
-        "dose": "3 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
-        }
-       },
-       {
-        "dose": "4 × (15 s / 15 s Pause)",
+        "dose": "4 × (10 s / 20 s locker)",
         "timer": {
          "phases": 8,
          "seconds": 120,
@@ -19000,11 +19018,28 @@
         }
        },
        {
-        "dose": "12–15 Wdh.",
-        "timer": null
+        "dose": "45 s Belastung, 15 s Pause",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
+         "choices": [],
+         "perSet": 0
+        }
        },
        {
-        "dose": "12–15 Wdh. je Seite",
+        "dose": "45–60 s pro Bein halten · ein Satz = erst links, dann rechts",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45,
+          60
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "12–15 Wdh.",
         "timer": null
        }
       ],
@@ -19013,11 +19048,11 @@
         "dose": null,
         "timer": {
          "phases": 5,
-         "seconds": 100,
+         "seconds": 70,
          "choices": [
-          30
+          20
          ],
-         "perSet": 30
+         "perSet": 20
         }
        },
        {
@@ -19043,15 +19078,14 @@
         }
        },
        {
-        "dose": "60–90 s halten",
+        "dose": "2 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 60,
+         "seconds": 120,
          "choices": [
-          60,
-          90
+          120
          ],
-         "perSet": 60
+         "perSet": 120
         }
        },
        {
@@ -20848,27 +20882,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 2
@@ -20879,7 +20913,8 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush",
+          "h": 1
          },
          {
           "kind": "hard",
@@ -20895,15 +20930,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
           "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 76
          }
         ],
         "fitnessLevel": 2
@@ -21019,36 +21054,51 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "45 s Belastung, 15 s Pause",
+        "timer": null
+       },
+       {
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
        },
        {
         "dose": "45 s Belastung, 15 s Pause",
         "timer": null
-       },
-       {
-        "dose": "3 × 4 Läufe à 20 m",
-        "timer": null
        }
       ],
       [
        {
         "dose": null,
+        "timer": null
+       },
+       {
+        "dose": null,
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          20
+          45
          ],
-         "perSet": 20
+         "perSet": 45
         }
        },
        {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
        {
         "dose": "je Seite 30 s",
         "timer": {
@@ -21058,29 +21108,6 @@
           30
          ],
          "perSet": 30
-        }
-       },
-       {
-        "dose": "60–90 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        }
       ]
@@ -22034,7 +22061,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 21
+          "id": 18
          },
          {
           "kind": "ex",
@@ -22042,11 +22069,11 @@
          },
          {
           "kind": "ex",
-          "id": 49
+          "id": 50
          },
          {
           "kind": "ex",
-          "id": 58
+          "id": 55
          }
         ],
         "sets": "2×",
@@ -22058,7 +22085,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fGlove",
+          "id": "fBare",
           "h": 1
          },
          {
@@ -22075,15 +22102,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
-         },
-         {
-          "kind": "ex",
           "id": 74
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 72
          }
         ],
         "fitnessLevel": 2
@@ -22214,15 +22241,8 @@
       ],
       [
        {
-        "dose": "3 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
-        }
+        "dose": "pro Bein 10",
+        "timer": null
        },
        {
         "dose": "45 s Belastung, 15 s Pause",
@@ -22234,14 +22254,22 @@
         }
        },
        {
-        "dose": "12–15 Wdh. je Seite",
-        "timer": null
-       },
-       {
         "dose": "45–60 s halten",
         "timer": {
          "phases": 1,
          "seconds": 45,
+         "choices": [
+          45,
+          60
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "45–60 s je Seite halten",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
          "choices": [
           45,
           60
@@ -22285,6 +22313,18 @@
         }
        },
        {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
+        }
+       },
+       {
         "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
@@ -22293,17 +22333,6 @@
           45
          ],
          "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
         }
        }
       ]
@@ -23941,27 +23970,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 2
@@ -23972,7 +24001,8 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush",
+          "h": 1
          },
          {
           "kind": "hard",
@@ -23988,15 +24018,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
           "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 76
          }
         ],
         "fitnessLevel": 2
@@ -24113,36 +24143,51 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "45 s Belastung, 15 s Pause",
+        "timer": null
+       },
+       {
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
        },
        {
         "dose": "45 s Belastung, 15 s Pause",
         "timer": null
-       },
-       {
-        "dose": "3 × 4 Läufe à 20 m",
-        "timer": null
        }
       ],
       [
        {
         "dose": null,
+        "timer": null
+       },
+       {
+        "dose": null,
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          20
+          45
          ],
-         "perSet": 20
+         "perSet": 45
         }
        },
        {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
        {
         "dose": "je Seite 30 s",
         "timer": {
@@ -24152,29 +24197,6 @@
           30
          ],
          "perSet": 30
-        }
-       },
-       {
-        "dose": "60–90 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        }
       ]
@@ -25104,19 +25126,19 @@
         "items": [
          {
           "kind": "ex",
+          "id": 14
+         },
+         {
+          "kind": "ex",
           "id": 21
          },
          {
           "kind": "ex",
-          "id": 19
-         },
-         {
-          "kind": "ex",
-          "id": 56
-         },
-         {
-          "kind": "ex",
           "id": 22
+         },
+         {
+          "kind": "ex",
+          "id": 58
          }
         ],
         "sets": "3×",
@@ -25128,7 +25150,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWraps",
+          "id": "fBare",
           "h": 1
          },
          {
@@ -25145,15 +25167,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
           "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 75
          }
         ],
         "fitnessLevel": 2
@@ -25294,6 +25316,15 @@
       ],
       [
        {
+        "dose": "45 s Belastung, 15 s Pause",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
+         "choices": [],
+         "perSet": 0
+        }
+       },
+       {
         "dose": "3 Min.",
         "timer": {
          "phases": 1,
@@ -25305,21 +25336,20 @@
         }
        },
        {
-        "dose": "45 s (ca. 10 m hin und zurück), 15 s Pause",
-        "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": "12–15 Wdh. pro Bein",
-        "timer": null
-       },
-       {
         "dose": "12–15 Wdh.",
         "timer": null
+       },
+       {
+        "dose": "45–60 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 45,
+         "choices": [
+          45,
+          60
+         ],
+         "perSet": 45
+        }
        }
       ],
       [
@@ -25327,11 +25357,11 @@
         "dose": null,
         "timer": {
          "phases": 5,
-         "seconds": 100,
+         "seconds": 70,
          "choices": [
-          30
+          20
          ],
-         "perSet": 30
+         "perSet": 20
         }
        },
        {
@@ -25340,17 +25370,6 @@
        }
       ],
       [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -25371,6 +25390,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
         }
        }
       ]
@@ -27282,17 +27312,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 19
+          "id": 12
          },
          {
           "kind": "round",
@@ -27303,6 +27328,11 @@
           "kind": "round",
           "k": "ex",
           "id": 83
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 40
          }
         ],
         "fitnessLevel": 2
@@ -27313,7 +27343,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fTap",
+          "id": "fPlank",
           "h": 1
          },
          {
@@ -27330,7 +27360,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
+          "id": 75
          },
          {
           "kind": "ex",
@@ -27338,7 +27368,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 74
          }
         ],
         "fitnessLevel": 2
@@ -27453,15 +27483,11 @@
       ],
       [
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
-        "timer": null
-       },
-       {
         "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "45 s (ca. 10 m hin und zurück), 15 s Pause",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
        },
        {
@@ -27471,16 +27497,23 @@
        {
         "dose": "4 × (10 s / 20 s locker)",
         "timer": null
+       },
+       {
+        "dose": "2 × (20 s / 40 s locker)",
+        "timer": null
        }
       ],
       [
        {
         "dose": null,
         "timer": {
-         "phases": 11,
-         "seconds": 295,
-         "choices": [],
-         "perSet": 0
+         "phases": 5,
+         "seconds": 100,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
         }
        },
        {
@@ -27495,14 +27528,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -27517,14 +27550,14 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
         }
        }
       ]
@@ -28411,19 +28444,19 @@
         "items": [
          {
           "kind": "ex",
+          "id": 12
+         },
+         {
+          "kind": "ex",
           "id": 21
          },
          {
           "kind": "ex",
-          "id": 83
+          "id": 41
          },
          {
           "kind": "ex",
-          "id": 56
-         },
-         {
-          "kind": "ex",
-          "id": 49
+          "id": 47
          }
         ],
         "sets": "2×",
@@ -28435,7 +28468,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fGlove",
+          "id": "fBare",
           "h": 1
          },
          {
@@ -28452,15 +28485,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 76
-         },
-         {
-          "kind": "ex",
           "id": 75
          },
          {
           "kind": "ex",
           "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 2
@@ -28588,6 +28621,15 @@
       ],
       [
        {
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": {
+         "phases": 6,
+         "seconds": 90,
+         "choices": [],
+         "perSet": 0
+        }
+       },
+       {
         "dose": "3 Min.",
         "timer": {
          "phases": 1,
@@ -28599,20 +28641,11 @@
         }
        },
        {
-        "dose": "4 × (10 s / 20 s locker)",
-        "timer": {
-         "phases": 8,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": "12–15 Wdh. pro Bein",
+        "dose": "12–15 Wdh.",
         "timer": null
        },
        {
-        "dose": "12–15 Wdh. je Seite",
+        "dose": "12–15 Wdh.",
         "timer": null
        }
       ],
@@ -28635,17 +28668,6 @@
       ],
       [
        {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
         "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
@@ -28665,6 +28687,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -30403,17 +30436,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 19
+          "id": 12
          },
          {
           "kind": "round",
@@ -30424,6 +30452,11 @@
           "kind": "round",
           "k": "ex",
           "id": 83
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 40
          }
         ],
         "fitnessLevel": 2
@@ -30434,7 +30467,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fTap",
+          "id": "fPlank",
           "h": 1
          },
          {
@@ -30451,7 +30484,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
+          "id": 75
          },
          {
           "kind": "ex",
@@ -30459,7 +30492,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 74
          }
         ],
         "fitnessLevel": 2
@@ -30572,15 +30605,11 @@
       ],
       [
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
-        "timer": null
-       },
-       {
         "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "45 s (ca. 10 m hin und zurück), 15 s Pause",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
        },
        {
@@ -30590,16 +30619,23 @@
        {
         "dose": "4 × (10 s / 20 s locker)",
         "timer": null
+       },
+       {
+        "dose": "2 × (20 s / 40 s locker)",
+        "timer": null
        }
       ],
       [
        {
         "dose": null,
         "timer": {
-         "phases": 11,
-         "seconds": 295,
-         "choices": [],
-         "perSet": 0
+         "phases": 5,
+         "seconds": 100,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
         }
        },
        {
@@ -30614,14 +30650,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -30636,14 +30672,14 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
         }
        }
       ]
@@ -31477,19 +31513,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 18
+          "id": 16
          },
          {
           "kind": "ex",
-          "id": 9
+          "id": 7
          },
          {
           "kind": "ex",
-          "id": 50
+          "id": 49
          },
          {
           "kind": "ex",
-          "id": 55
+          "id": 43
          }
         ],
         "sets": "3×",
@@ -31501,7 +31537,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
@@ -31628,53 +31664,42 @@
       ],
       [
        {
-        "dose": "pro Bein 10",
-        "timer": null
-       },
-       {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "3 × (20 s / 10 s Pause)",
         "timer": {
-         "phases": 2,
-         "seconds": 60,
+         "phases": 6,
+         "seconds": 90,
          "choices": [],
          "perSet": 0
         }
        },
        {
-        "dose": "30–45 s halten",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": {
-         "phases": 1,
-         "seconds": 30,
-         "choices": [
-          30,
-          45
-         ],
-         "perSet": 30
+         "phases": 4,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
         }
        },
        {
-        "dose": "30–45 s je Seite halten",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30,
-          45
-         ],
-         "perSet": 30
-        }
+        "dose": "10–12 Wdh. je Seite",
+        "timer": null
+       },
+       {
+        "dose": "10–12 Wdh. pro Bein",
+        "timer": null
        }
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -33110,12 +33135,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 40
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 10
+          "id": 38
          }
         ],
         "fitnessLevel": 1
@@ -33126,7 +33151,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
+          "id": 73
          },
          {
           "kind": "ex",
@@ -33134,7 +33159,7 @@
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -33236,24 +33261,25 @@
         "timer": null
        },
        {
-        "dose": "pro Bein 10",
+        "dose": "2 × (20 s / 40 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × 4 Läufe à 20 m",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        }
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          45
+          60,
+          90
          ],
-         "perSet": 45
+         "perSet": 60
         }
        },
        {
@@ -33268,15 +33294,14 @@
         }
        },
        {
-        "dose": "60–90 s halten",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 60,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          60,
-          90
+          45
          ],
-         "perSet": 60
+         "perSet": 45
         }
        }
       ]
@@ -34065,19 +34090,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 21
+          "id": 14
          },
          {
           "kind": "ex",
-          "id": 16
+          "id": 18
          },
          {
           "kind": "ex",
-          "id": 57
+          "id": 47
          },
          {
           "kind": "ex",
-          "id": 54
+          "id": 48
          }
         ],
         "sets": "2×",
@@ -34089,15 +34114,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
           "id": 75
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -34210,46 +34235,36 @@
       ],
       [
        {
-        "dose": "3 Min.",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
-        }
-       },
-       {
-        "dose": "3 × (20 s / 10 s Pause)",
-        "timer": {
-         "phases": 6,
-         "seconds": 90,
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
+       },
+       {
+        "dose": "pro Bein 10",
+        "timer": null
        },
        {
         "dose": "10–12 Wdh.",
         "timer": null
        },
        {
-        "dose": "10–12 Wdh. pro Bein",
-        "timer": null
+        "dose": "30–45 s pro Bein halten · ein Satz = erst links, dann rechts",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
+        }
        }
       ],
       [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "je Seite 30 s",
         "timer": {
@@ -34270,6 +34285,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -35620,12 +35646,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 40
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 10
+          "id": 38
          }
         ],
         "fitnessLevel": 1
@@ -35636,7 +35662,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
+          "id": 73
          },
          {
           "kind": "ex",
@@ -35644,7 +35670,7 @@
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -35747,24 +35773,25 @@
         "timer": null
        },
        {
-        "dose": "pro Bein 10",
+        "dose": "2 × (20 s / 40 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × 4 Läufe à 20 m",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        }
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          45
+          60,
+          90
          ],
-         "perSet": 45
+         "perSet": 60
         }
        },
        {
@@ -35779,15 +35806,14 @@
         }
        },
        {
-        "dose": "60–90 s halten",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 60,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          60,
-          90
+          45
          ],
-         "perSet": 60
+         "perSet": 45
         }
        }
       ]
@@ -36656,15 +36682,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 14
-         },
-         {
-          "kind": "ex",
           "id": 21
          },
          {
           "kind": "ex",
-          "id": 54
+          "id": 83
+         },
+         {
+          "kind": "ex",
+          "id": 52
          },
          {
           "kind": "ex",
@@ -36680,7 +36706,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fBare"
+          "id": "fWraps"
          },
          {
           "kind": "hard",
@@ -36699,11 +36725,11 @@
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -36838,15 +36864,6 @@
       ],
       [
        {
-        "dose": "40 s work, 20 s rest",
-        "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
         "dose": "3 min",
         "timer": {
          "phases": 1,
@@ -36858,8 +36875,22 @@
         }
        },
        {
-        "dose": "10–12 reps per leg",
-        "timer": null
+        "dose": "4 × (10 s / 20 s easy)",
+        "timer": {
+         "phases": 8,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
+        }
+       },
+       {
+        "dose": "10 s each direction (forehead, back of head, left, right)",
+        "timer": {
+         "phases": 7,
+         "seconds": 55,
+         "choices": [],
+         "perSet": 10
+        }
        },
        {
         "dose": "30–45 s hold",
@@ -36879,11 +36910,11 @@
         "dose": null,
         "timer": {
          "phases": 3,
-         "seconds": 45,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        },
        {
@@ -36905,17 +36936,6 @@
         }
        },
        {
-        "dose": "2 min",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
         "dose": "45 s per side",
         "timer": {
          "phases": 3,
@@ -36924,6 +36944,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "30 s per side",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
         }
        }
       ]
@@ -38660,27 +38691,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 1
@@ -38691,7 +38722,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -38706,15 +38737,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -38837,29 +38868,22 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s rest)",
-        "timer": null
-       },
-       {
         "dose": "40 s work, 20 s rest",
         "timer": null
        },
        {
-        "dose": "3 × 4 runs of 20 m",
+        "dose": "3 × (20 s all-out / 10 s easy)",
+        "timer": null
+       },
+       {
+        "dose": "40 s work, 20 s rest",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -38873,25 +38897,14 @@
       ],
       [
        {
-        "dose": "45 s per side",
+        "dose": "30 s per side",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "45 s per side",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -38904,6 +38917,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "2 min",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -39732,11 +39756,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 19
+          "id": 12
          },
          {
           "kind": "ex",
-          "id": 13
+          "id": 7
          },
          {
           "kind": "ex",
@@ -39744,7 +39768,7 @@
          },
          {
           "kind": "ex",
-          "id": 50
+          "id": 23
          }
         ],
         "sets": "2×",
@@ -39756,7 +39780,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fBare"
+          "id": "fWraps"
          },
          {
           "kind": "hard",
@@ -39771,11 +39795,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
+          "id": 76
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 73
          },
          {
           "kind": "ex",
@@ -39901,18 +39925,18 @@
       ],
       [
        {
-        "dose": "40 s (about 10 m out and back), 20 s rest",
+        "dose": "3 × (20 s all-out / 10 s easy)",
         "timer": {
-         "phases": 2,
-         "seconds": 60,
+         "phases": 6,
+         "seconds": 90,
          "choices": [],
          "perSet": 0
         }
        },
        {
-        "dose": "4 × (15 s / 15 s rest)",
+        "dose": "2 min alternating (30 s fast / 30 s easy)",
         "timer": {
-         "phases": 8,
+         "phases": 4,
          "seconds": 120,
          "choices": [],
          "perSet": 0
@@ -39940,11 +39964,11 @@
         "dose": null,
         "timer": {
          "phases": 3,
-         "seconds": 45,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        },
        {
@@ -39953,6 +39977,17 @@
        }
       ],
       [
+       {
+        "dose": "2 min",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
        {
         "dose": "hold 60–90 s",
         "timer": {
@@ -39963,17 +39998,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "2 min",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        },
        {
@@ -41557,27 +41581,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 1
@@ -41588,7 +41612,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -41603,15 +41627,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -41731,29 +41755,22 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s rest)",
-        "timer": null
-       },
-       {
         "dose": "40 s work, 20 s rest",
         "timer": null
        },
        {
-        "dose": "3 × 4 runs of 20 m",
+        "dose": "3 × (20 s all-out / 10 s easy)",
+        "timer": null
+       },
+       {
+        "dose": "40 s work, 20 s rest",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -41767,25 +41784,14 @@
       ],
       [
        {
-        "dose": "45 s per side",
+        "dose": "30 s per side",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "45 s per side",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -41798,6 +41804,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "2 min",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -42685,7 +42702,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 13
+          "id": 12
          },
          {
           "kind": "ex",
@@ -42693,11 +42710,11 @@
          },
          {
           "kind": "ex",
-          "id": 45
+          "id": 49
          },
          {
           "kind": "ex",
-          "id": 50
+          "id": 52
          }
         ],
         "sets": "3×",
@@ -42709,7 +42726,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fGlove"
+          "id": "fBare"
          },
          {
           "kind": "hard",
@@ -42875,10 +42892,10 @@
       ],
       [
        {
-        "dose": "4 × (15 s / 15 s Pause)",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": {
-         "phases": 8,
-         "seconds": 120,
+         "phases": 6,
+         "seconds": 90,
          "choices": [],
          "perSet": 0
         }
@@ -42895,19 +42912,16 @@
         }
        },
        {
-        "dose": "10–12 Wdh.",
+        "dose": "10–12 Wdh. je Seite",
         "timer": null
        },
        {
-        "dose": "30–45 s halten",
+        "dose": "je Richtung 10 s (Stirn, Hinterkopf, links, rechts)",
         "timer": {
-         "phases": 1,
-         "seconds": 30,
-         "choices": [
-          30,
-          45
-         ],
-         "perSet": 30
+         "phases": 7,
+         "seconds": 55,
+         "choices": [],
+         "perSet": 10
         }
        }
       ],
@@ -42915,8 +42929,8 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 45,
          "choices": [
           20
          ],
@@ -44728,22 +44742,22 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          }
         ],
         "fitnessLevel": 1
@@ -44754,7 +44768,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -44769,19 +44783,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 61
-         },
-         {
-          "kind": "ex",
           "id": 60
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 62
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -44908,25 +44922,18 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -44940,23 +44947,12 @@
       ],
       [
        {
-        "dose": "je Seite 6",
-        "timer": null
-       },
-       {
         "dose": "10 Wechsel",
         "timer": null
        },
        {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
+        "dose": "je Seite 5",
+        "timer": null
        },
        {
         "dose": "60–90 s halten",
@@ -44968,6 +44964,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -45816,19 +45823,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 21
+          "id": 14
          },
          {
           "kind": "ex",
-          "id": 16
+          "id": 18
          },
          {
           "kind": "ex",
-          "id": 57
+          "id": 47
          },
          {
           "kind": "ex",
-          "id": 54
+          "id": 48
          }
         ],
         "sets": "2×",
@@ -45994,32 +46001,33 @@
       ],
       [
        {
-        "dose": "3 Min.",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
-        }
-       },
-       {
-        "dose": "3 × (20 s / 10 s Pause)",
-        "timer": {
-         "phases": 6,
-         "seconds": 90,
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
+       },
+       {
+        "dose": "pro Bein 10",
+        "timer": null
        },
        {
         "dose": "10–12 Wdh.",
         "timer": null
        },
        {
-        "dose": "10–12 Wdh. pro Bein",
-        "timer": null
+        "dose": "30–45 s pro Bein halten · ein Satz = erst links, dann rechts",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
+        }
        }
       ],
       [
@@ -47664,22 +47672,22 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          }
         ],
         "fitnessLevel": 1
@@ -47690,7 +47698,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -47705,19 +47713,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 61
-         },
-         {
-          "kind": "ex",
           "id": 60
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 62
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -47842,25 +47850,18 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -47874,23 +47875,12 @@
       ],
       [
        {
-        "dose": "je Seite 6",
-        "timer": null
-       },
-       {
         "dose": "10 Wechsel",
         "timer": null
        },
        {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
+        "dose": "je Seite 5",
+        "timer": null
        },
        {
         "dose": "60–90 s halten",
@@ -47902,6 +47892,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -50819,12 +50820,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 83
+          "id": 18
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 83
          },
          {
           "kind": "round",
@@ -50834,7 +50835,7 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 16
          }
         ],
         "fitnessLevel": 1
@@ -50845,11 +50846,11 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fPlank"
+          "id": "fWring"
          },
          {
           "kind": "hard",
-          "id": "brace"
+          "id": "neck"
          }
         ],
         "fitnessLevel": 1
@@ -50860,7 +50861,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 76
+          "id": 75
          },
          {
           "kind": "ex",
@@ -50868,7 +50869,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -50991,11 +50992,11 @@
         "timer": null
        },
        {
-        "dose": "4 × (10 s / 20 s locker)",
+        "dose": "pro Bein 10",
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "4 × (10 s / 20 s locker)",
         "timer": null
        },
        {
@@ -51003,7 +51004,7 @@
         "timer": null
        },
        {
-        "dose": "pro Bein 10",
+        "dose": "3 × (20 s / 10 s Pause)",
         "timer": null
        }
       ],
@@ -51014,27 +51015,31 @@
          "phases": 5,
          "seconds": 70,
          "choices": [
-          20,
-          30
+          20
          ],
          "perSet": 20
         }
        },
        {
         "dose": null,
-        "timer": null
+        "timer": {
+         "phases": 7,
+         "seconds": 55,
+         "choices": [],
+         "perSet": 0
+        }
        }
       ],
       [
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 30 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          120
+          30
          ],
-         "perSet": 120
+         "perSet": 30
         }
        },
        {
@@ -51050,14 +51055,14 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
         }
        }
       ]
@@ -53735,12 +53740,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 83
+          "id": 18
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 83
          },
          {
           "kind": "round",
@@ -53750,7 +53755,7 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 16
          }
         ],
         "fitnessLevel": 1
@@ -53761,11 +53766,11 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fPlank"
+          "id": "fWring"
          },
          {
           "kind": "hard",
-          "id": "brace"
+          "id": "neck"
          }
         ],
         "fitnessLevel": 1
@@ -53776,7 +53781,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 76
+          "id": 75
          },
          {
           "kind": "ex",
@@ -53784,7 +53789,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -53905,11 +53910,11 @@
         "timer": null
        },
        {
-        "dose": "4 × (10 s / 20 s locker)",
+        "dose": "pro Bein 10",
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "4 × (10 s / 20 s locker)",
         "timer": null
        },
        {
@@ -53917,7 +53922,7 @@
         "timer": null
        },
        {
-        "dose": "pro Bein 10",
+        "dose": "3 × (20 s / 10 s Pause)",
         "timer": null
        }
       ],
@@ -53928,27 +53933,31 @@
          "phases": 5,
          "seconds": 70,
          "choices": [
-          20,
-          30
+          20
          ],
          "perSet": 20
         }
        },
        {
         "dose": null,
-        "timer": null
+        "timer": {
+         "phases": 7,
+         "seconds": 55,
+         "choices": [],
+         "perSet": 0
+        }
        }
       ],
       [
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 30 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          120
+          30
          ],
-         "perSet": 120
+         "perSet": 30
         }
        },
        {
@@ -53964,14 +53973,14 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
         }
        }
       ]
@@ -54700,19 +54709,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 9
+          "id": 18
          },
          {
           "kind": "ex",
-          "id": 14
+          "id": 8
          },
          {
           "kind": "ex",
-          "id": 50
+          "id": 52
          },
          {
           "kind": "ex",
-          "id": 43
+          "id": 56
          }
         ],
         "sets": "3×",
@@ -54724,15 +54733,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
           "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -54848,33 +54857,20 @@
       ],
       [
        {
-        "dose": "40 s Belastung, 20 s Pause",
-        "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
-        }
+        "dose": "pro Bein 10",
+        "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
-        "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
-        }
+        "dose": "10 Wdh.",
+        "timer": null
        },
        {
-        "dose": "30–45 s halten",
+        "dose": "je Richtung 10 s (Stirn, Hinterkopf, links, rechts)",
         "timer": {
-         "phases": 1,
-         "seconds": 30,
-         "choices": [
-          30,
-          45
-         ],
-         "perSet": 30
+         "phases": 7,
+         "seconds": 55,
+         "choices": [],
+         "perSet": 10
         }
        },
        {
@@ -54884,6 +54880,28 @@
       ],
       [
        {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
         "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
@@ -54892,28 +54910,6 @@
           30
          ],
          "perSet": 30
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
         }
        }
       ]
@@ -56336,12 +56332,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          }
         ],
         "fitnessLevel": 1
@@ -56352,11 +56348,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
@@ -56485,17 +56481,6 @@
       ],
       [
        {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
         "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
@@ -56504,6 +56489,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        },
        {
@@ -57198,19 +57194,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 9
+          "id": 18
          },
          {
           "kind": "ex",
-          "id": 14
+          "id": 8
          },
          {
           "kind": "ex",
-          "id": 50
+          "id": 52
          },
          {
           "kind": "ex",
-          "id": 43
+          "id": 56
          }
         ],
         "sets": "2×",
@@ -57222,15 +57218,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
           "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -57341,33 +57337,20 @@
       ],
       [
        {
-        "dose": "40 s Belastung, 20 s Pause",
-        "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
-        }
+        "dose": "pro Bein 10",
+        "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
-        "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
-        }
+        "dose": "10 Wdh.",
+        "timer": null
        },
        {
-        "dose": "30–45 s halten",
+        "dose": "je Richtung 10 s (Stirn, Hinterkopf, links, rechts)",
         "timer": {
-         "phases": 1,
-         "seconds": 30,
-         "choices": [
-          30,
-          45
-         ],
-         "perSet": 30
+         "phases": 7,
+         "seconds": 55,
+         "choices": [],
+         "perSet": 10
         }
        },
        {
@@ -57377,6 +57360,28 @@
       ],
       [
        {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
         "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
@@ -57385,28 +57390,6 @@
           30
          ],
          "perSet": 30
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
         }
        }
       ]
@@ -58708,12 +58691,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          }
         ],
         "fitnessLevel": 1
@@ -58724,11 +58707,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
@@ -58855,17 +58838,6 @@
       ],
       [
        {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
         "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
@@ -58874,6 +58846,17 @@
           45
          ],
          "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        },
        {
@@ -59798,15 +59781,15 @@
          },
          {
           "kind": "ex",
-          "id": 13
-         },
-         {
-          "kind": "ex",
-          "id": 43
+          "id": 21
          },
          {
           "kind": "ex",
           "id": 41
+         },
+         {
+          "kind": "ex",
+          "id": 23
          }
         ],
         "sets": "3×",
@@ -59822,7 +59805,7 @@
          },
          {
           "kind": "hard",
-          "id": "bodybag"
+          "id": "shinbag"
          }
         ],
         "fitnessLevel": 2
@@ -59833,7 +59816,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
+          "id": 76
          },
          {
           "kind": "ex",
@@ -59989,21 +59972,31 @@
         }
        },
        {
-        "dose": "4 × (15 s / 15 s Pause)",
+        "dose": "3 Min.",
         "timer": {
-         "phases": 8,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 0
+         "phases": 1,
+         "seconds": 180,
+         "choices": [
+          180
+         ],
+         "perSet": 180
         }
-       },
-       {
-        "dose": "12–15 Wdh. pro Bein",
-        "timer": null
        },
        {
         "dose": "12–15 Wdh.",
         "timer": null
+       },
+       {
+        "dose": "45–60 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 45,
+         "choices": [
+          45,
+          60
+         ],
+         "perSet": 45
+        }
        }
       ],
       [
@@ -60020,25 +60013,19 @@
        },
        {
         "dose": null,
-        "timer": {
-         "phases": 11,
-         "seconds": 145,
-         "choices": [],
-         "perSet": 0
-        }
+        "timer": null
        }
       ],
       [
        {
-        "dose": "60–90 s halten",
+        "dose": "2 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 60,
+         "seconds": 120,
          "choices": [
-          60,
-          90
+          120
          ],
-         "perSet": 60
+         "perSet": 120
         }
        },
        {
@@ -61848,27 +61835,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 2
@@ -61879,7 +61866,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -61894,15 +61881,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 2
@@ -62025,29 +62012,22 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
-        "timer": null
-       },
-       {
         "dose": "45 s Belastung, 15 s Pause",
         "timer": null
        },
        {
-        "dose": "3 × 4 Läufe à 20 m",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "45 s Belastung, 15 s Pause",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -62061,25 +62041,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -62092,6 +62061,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -62941,19 +62921,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 9
+          "id": 21
          },
          {
           "kind": "ex",
-          "id": 19
+          "id": 18
          },
          {
           "kind": "ex",
-          "id": 45
+          "id": 58
          },
          {
           "kind": "ex",
-          "id": 41
+          "id": 23
          }
         ],
         "sets": "2×",
@@ -62965,7 +62945,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fBare"
+          "id": "fWraps"
          },
          {
           "kind": "hard",
@@ -62984,11 +62964,11 @@
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 74
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 73
          }
         ],
         "fitnessLevel": 2
@@ -63114,30 +63094,43 @@
       ],
       [
        {
-        "dose": "45 s Belastung, 15 s Pause",
+        "dose": "3 Min.",
         "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
+         "phases": 1,
+         "seconds": 180,
+         "choices": [
+          180
+         ],
+         "perSet": 180
         }
        },
        {
-        "dose": "45 s (ca. 10 m hin und zurück), 15 s Pause",
+        "dose": "pro Bein 10",
+        "timer": null
+       },
+       {
+        "dose": "45–60 s halten",
         "timer": {
-         "phases": 2,
-         "seconds": 60,
-         "choices": [],
-         "perSet": 0
+         "phases": 1,
+         "seconds": 45,
+         "choices": [
+          45,
+          60
+         ],
+         "perSet": 45
         }
        },
        {
-        "dose": "12–15 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "12–15 Wdh.",
-        "timer": null
+        "dose": "45–60 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 45,
+         "choices": [
+          45,
+          60
+         ],
+         "perSet": 45
+        }
        }
       ],
       [
@@ -63145,11 +63138,11 @@
         "dose": null,
         "timer": {
          "phases": 3,
-         "seconds": 45,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        },
        {
@@ -63170,6 +63163,17 @@
         }
        },
        {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
         "dose": "60–90 s halten",
         "timer": {
          "phases": 1,
@@ -63179,17 +63183,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
         }
        }
       ]
@@ -64784,27 +64777,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 2
@@ -64815,7 +64808,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -64830,15 +64823,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 2
@@ -64958,29 +64951,22 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
-        "timer": null
-       },
-       {
         "dose": "45 s Belastung, 15 s Pause",
         "timer": null
        },
        {
-        "dose": "3 × 4 Läufe à 20 m",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "45 s Belastung, 15 s Pause",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -64994,25 +64980,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -65025,6 +65000,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -65932,19 +65918,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 21
+          "id": 83
          },
          {
           "kind": "ex",
-          "id": 13
+          "id": 14
          },
          {
           "kind": "ex",
-          "id": 22
+          "id": 48
          },
          {
           "kind": "ex",
-          "id": 49
+          "id": 47
          }
         ],
         "sets": "3×",
@@ -65956,11 +65942,11 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWraps"
+          "id": "fGlove"
          },
          {
           "kind": "hard",
-          "id": "shinbag"
+          "id": "bodybag"
          }
         ],
         "fitnessLevel": 1
@@ -65975,11 +65961,11 @@
          },
          {
           "kind": "ex",
-          "id": 74
+          "id": 73
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -66122,18 +66108,7 @@
       ],
       [
        {
-        "dose": "3 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
-        }
-       },
-       {
-        "dose": "4 × (15 s / 15 s Pause)",
+        "dose": "4 × (10 s / 20 s locker)",
         "timer": {
          "phases": 8,
          "seconds": 120,
@@ -66142,43 +66117,54 @@
         }
        },
        {
-        "dose": "10–12 Wdh.",
-        "timer": null
+        "dose": "40 s Belastung, 20 s Pause",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
+         "choices": [],
+         "perSet": 0
+        }
        },
        {
-        "dose": "10–12 Wdh. je Seite",
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": null,
+        "dose": "30–45 s pro Bein halten · ein Satz = erst links, dann rechts",
         "timer": {
          "phases": 3,
          "seconds": 65,
          "choices": [
-          30
+          30,
+          45
          ],
          "perSet": 30
         }
        },
        {
-        "dose": null,
+        "dose": "10–12 Wdh.",
         "timer": null
        }
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": null,
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 5,
+         "seconds": 70,
          "choices": [
-          45
+          20
          ],
-         "perSet": 45
+         "perSet": 20
         }
        },
+       {
+        "dose": null,
+        "timer": {
+         "phases": 11,
+         "seconds": 145,
+         "choices": [],
+         "perSet": 0
+        }
+       }
+      ],
+      [
        {
         "dose": "je Seite 45 s",
         "timer": {
@@ -66200,6 +66186,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -67931,27 +67928,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 1
@@ -67962,7 +67959,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -67977,15 +67974,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -68103,29 +68100,22 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
-        "timer": null
-       },
-       {
         "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": "3 × 4 Läufe à 20 m",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -68139,25 +68129,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -68170,6 +68149,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
@@ -69035,7 +69025,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 21
+          "id": 18
          },
          {
           "kind": "ex",
@@ -69043,11 +69033,11 @@
          },
          {
           "kind": "ex",
-          "id": 49
+          "id": 50
          },
          {
           "kind": "ex",
-          "id": 58
+          "id": 55
          }
         ],
         "sets": "2×",
@@ -69059,7 +69049,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fGlove"
+          "id": "fBare"
          },
          {
           "kind": "hard",
@@ -69078,7 +69068,7 @@
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 74
          },
          {
           "kind": "ex",
@@ -69218,15 +69208,8 @@
       ],
       [
        {
-        "dose": "3 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
-        }
+        "dose": "pro Bein 10",
+        "timer": null
        },
        {
         "dose": "40 s Belastung, 20 s Pause",
@@ -69236,10 +69219,6 @@
          "choices": [],
          "perSet": 0
         }
-       },
-       {
-        "dose": "10–12 Wdh. je Seite",
-        "timer": null
        },
        {
         "dose": "30–45 s halten",
@@ -69252,14 +69231,26 @@
          ],
          "perSet": 30
         }
+       },
+       {
+        "dose": "30–45 s je Seite halten",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
+        }
        }
       ],
       [
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 45,
          "choices": [
           20
          ],
@@ -69284,14 +69275,14 @@
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          120
+          45
          ],
-         "perSet": 120
+         "perSet": 45
         }
        },
        {
@@ -70925,27 +70916,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
           "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 20
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 10
          }
         ],
         "fitnessLevel": 1
@@ -70956,7 +70947,7 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fWring"
+          "id": "fPush"
          },
          {
           "kind": "hard",
@@ -70971,15 +70962,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -71098,29 +71089,22 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
-        "timer": null
-       },
-       {
         "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": "3 × 4 Läufe à 20 m",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        }
       ],
       [
        {
         "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "timer": null
        },
        {
         "dose": null,
@@ -71134,25 +71118,14 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -71165,6 +71138,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        }
       ]
