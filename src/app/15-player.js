@@ -1055,6 +1055,28 @@
       )}</div><div class="grid">${cells}</div>${used.length ? `<div class="heatlg">${used.map((x) => `<span><i style="--tc:var(--c-${x})"></i>${t("types")[x]}</span>`).join("")}</div>` : ""}<div class="heatlg" style="margin-top:-2px">${t("heatSub")}</div></div></div>`;
   }
   /* Best set per exercise: heaviest weight (with its reps), otherwise most reps or longest hold */
+  /* a set as text: "80 kg × 5", "45 s" or "12 Wdh." */
+  const setText = (id, x) => (x.kg ? `${x.kg} kg × ${x.r ?? "–"}` : TIMED.has(id) ? `${x.r} s` : `${x.r} ${t("reps")}`);
+  const setScore = (x) => (x.kg ? x.kg * 1000 + (x.r || 0) : x.r || 0);
+  /* new bests per log entry: sets that beat every earlier entry of the same exercise (the very first entry of an
+     exercise is no best yet) – { entryId: ["Kniebeuge 80 kg × 5", …] } */
+  function entryPrs() {
+    const best = {},
+      out = {};
+    S.log
+      .map((e, i) => [e, i])
+      .sort((x, y) => x[0].date.localeCompare(y[0].date) || x[1] - y[1])
+      .forEach(([e]) =>
+        (e.perf || []).forEach((p) => {
+          if (!EX[p.id]) return;
+          const top = p.sets.reduce((m, x) => (setScore(x) > (m ? setScore(m) : 0) ? x : m), null);
+          if (!top) return;
+          if (best[p.id] != null && setScore(top) > best[p.id]) (out[e.id] = out[e.id] || []).push(`${exText(p.id).name} ${setText(p.id, top)}`);
+          best[p.id] = Math.max(best[p.id] || 0, setScore(top));
+        }),
+      );
+    return out;
+  }
   function bestSets() {
     const best = {};
     S.log.forEach((e) =>
@@ -1067,7 +1089,6 @@
       ),
     );
     return Object.keys(best)
-      .map(Number)
       .filter((id) => EX[id])
       .sort((a, b) => best[b].date.localeCompare(best[a].date))
       .map((id) => {
@@ -1076,11 +1097,7 @@
           id,
           date: b.date,
           name: exText(id).name,
-          v: b.set.kg
-            ? `${b.set.kg} kg × ${b.set.r ?? "–"}`
-            : TIMED.has(id)
-              ? `${b.set.r} s`
-              : `${b.set.r} ${t("reps")}`,
+          v: setText(id, b.set),
         };
       });
   }

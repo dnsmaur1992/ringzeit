@@ -99,21 +99,50 @@
     };
     r.readAsText(file);
   }
-  /* The last 4 weeks in numbers – shared by the history tab, the text and the image summary */
+  /* The last 4 calendar weeks (this one included) – shared by the history tab, the text and the image summary.
+     For the trainer: every session per calendar week with day, duration, content and new bests (13.11.2026). */
+  function sumDay(ds) {
+    const d = parse(ds),
+      wd = t("weekday")[(d.getDay() + 6) % 7];
+    return S.profile.lang === "de" ? `${wd.slice(0, 2)} ${d.getDate()}.${d.getMonth() + 1}.` : `${wd.slice(0, 3)} ${d.getDate()} ${monShort(d)}`;
+  }
+  /* what was trained: type (with club kind and sport tag); for own sessions the day's plan without warm-up and
+     cool-down – rounds with their kinds ("6 Runden: Schattenboxen, Sandsack"), then up to 5 exercises – or, without a
+     plan, the exercises with logged sets; then the run or the own note */
+  function sumContent(e) {
+    const lg = S.profile.lang === "de" ? 0 : 1, // round titles are [de, en, …]
+      label = `${t("types")[e.type] || ""}${e.ck ? ` · ${t("clubKinds")[e.ck] || ""}` : ""}${logTag(e)}`,
+      sess = own(e) && S.sessions[e.date],
+      plan = sess && sess.blocks && (!sess.type || sess.type === e.type) ? sess.blocks.filter((bl) => bl.key !== "warm" && bl.key !== "cool") : null,
+      items = plan ? plan.flatMap((bl) => bl.items || []) : [],
+      // combination rounds (no exercise of their own); interval rounds with an exercise count as exercises
+      rounds = items.filter((it) => it && it.kind === "round" && !EX[it.id]),
+      kinds = [...new Set(rounds.map((it) => (rtOf(it) || {})[lg]).filter(Boolean))],
+      ids = plan ? items.filter((it) => it && EX[it.id]).map((it) => it.id) : (e.perf || []).map((p) => p.id),
+      names = [...new Set(ids.filter((id) => id && EX[id]))].map((id) => exText(id).name),
+      parts = [];
+    if (rounds.length) parts.push(`${rounds.length} ${t("sum").rounds}${kinds.length ? `: ${kinds.join(", ")}` : ""}`);
+    if (names.length) parts.push(names.slice(0, 5).join(", ") + (names.length > 5 ? ` +${names.length - 5}` : ""));
+    return { label, list: parts.join(" · "), extra: `${runInfo(e)}${e.note ? ` · ${e.note}` : ""}`.replace(/^ · /, "") };
+  }
   function summaryData() {
     const to = today(),
-      a = iso(addDays(to, -27)),
+      m0 = addDays(monday(to), -21),
+      a = iso(m0),
       b = iso(to),
       L4 = S.log.filter((e) => e.date >= a && e.date <= b),
-      weeks = [0, 1, 2, 3].map((k) => {
-        const m = monday(addDays(to, -7 * (3 - k))),
+      prs = entryPrs(),
+      kws = [0, 1, 2, 3].map((k) => {
+        const m = addDays(m0, 7 * k),
           s0 = iso(m),
-          s1 = iso(addDays(m, 6)),
-          ws = S.log.filter((e) => e.date >= s0 && e.date <= s1);
+          s1 = iso(addDays(m, 6));
         return {
           m,
-          own: ws.filter(own).reduce((x, e) => x + (e.minutes || 0), 0),
-          club: ws.filter((e) => !own(e)).reduce((x, e) => x + (e.minutes || 0), 0),
+          kw: isoWeekNo(m),
+          range: weekRangeText(m),
+          entries: L4.filter((e) => e.date >= s0 && e.date <= s1)
+            .sort((x, y) => x.date.localeCompare(y.date))
+            .map((e) => ({ e, day: sumDay(e.date), c: sumContent(e), prs: prs[e.id] || [] })),
         };
       });
     return {
@@ -122,14 +151,11 @@
       own: L4.filter(own).length,
       club: L4.filter((e) => !own(e)).length,
       mins: L4.reduce((x, e) => x + (e.minutes || 0), 0),
-      rpe: L4.length ? (L4.reduce((x, e) => x + (e.rpe || 0), 0) / L4.length).toFixed(1) : "–",
-      weeks,
+      rpe: L4.length ? numF(Math.round((L4.reduce((x, e) => x + (e.rpe || 0), 0) / L4.length) * 10) / 10) : "–",
+      kws,
       test: S.tests[S.tests.length - 1],
       nc: nextComp(),
-      lastC: (S.profile.comps || [])
-        .filter((c) => c.result && parse(c.date) < to)
-        .sort((x, y) => y.date.localeCompare(x.date))[0],
-      lw: S.weights[S.weights.length - 1],
+      lw: S.weights.slice().sort((x, y) => x.date.localeCompare(y.date))[S.weights.length - 1],
       prs: bestSets().slice(0, 3),
     };
   }
@@ -139,85 +165,132 @@
       T = t("sum"),
       age = ageAt();
     const out = {
-      head: `${T.period(fmtDate(d.from), fmtDate(d.to))} · ${discLabel(p)} · ${t("levels")[p.level]}${age != null ? ` · ${age} ${T.years}` : ""}`,
+      head: `${T.kwSpan(d.kws[0].kw, d.kws[3].kw)} · ${T.period(sumDay(d.from).replace(/^\S+ /, ""), sumDay(d.to).replace(/^\S+ /, ""))} · ${discLabel(p)} · ${t("levels")[p.level]}${age != null ? ` · ${age} ${T.years}` : ""}`,
       test: d.test
         ? `${d.test.total}/25 · ${TCATS.map((k) => `${t("cats")[k]} ${d.test.scores[k] ?? "–"}`).join(", ")} (${fmtDate(d.test.date)})`
         : T.none,
       next: T.none,
-      last: d.lastC
-        ? `${fmtDate(d.lastC.date)} · ${resText(d.lastC)}${d.lastC.result.bad ? ` · ${d.lastC.result.bad}` : ""}`
-        : T.none,
+      weight: d.lw ? `${numF(d.lw.kg)} kg (${fmtDate(d.lw.date)})` : T.none,
       prs: d.prs.length ? d.prs.map((x) => `${x.name} ${x.v}`).join(" · ") : T.none,
     };
     if (d.nc) {
       const f = sportFor(p.sport).rules.format(p.disc, ageAt(parse(d.nc.date)));
-      out.next = `${fmtDate(d.nc.date)}${f ? ` · ${fmtText(f)}` : ""}${d.nc.wc ? ` · −${numF(d.nc.wc)} kg` : ""}${d.lw ? ` · ${T.weightNow} ${numF(d.lw.kg)} kg` : ""}`;
+      out.next = `${fmtDate(d.nc.date)}${f ? ` · ${fmtText(f)}` : ""}${d.nc.wc ? ` · −${numF(d.nc.wc)} kg` : ""}`;
     }
     return { d, out };
   }
+  /* one entry as a line: "Mo 9.11. · 60 min · Kraft: Kniebeuge, Liegestütze · Notiz" */
+  const sumEntryLine = (x) =>
+    `${x.day} · ${x.e.minutes} ${t("min")} · ${x.c.label}${x.c.list ? `: ${x.c.list}` : ""}${x.c.extra ? ` · ${x.c.extra}` : ""}`;
   function summaryText() {
     const { d, out } = summaryLines(),
       T = t("sum");
-    const lines = [
-      `Ringzeit · ${T.title}`,
-      out.head,
-      "",
-      `${T.own}: ${d.own}`,
-      `${T.clubN}: ${d.club}`,
-      `${T.mins}: ${d.mins}`,
-      `${T.rpe}: ${d.rpe}`,
-      "",
-      `${T.weeks}:`,
-      ...d.weeks.map(
-        (w) => `  ${fmtDate(iso(w.m))}: ${w.own + w.club} (${T.ownShort} ${w.own} · ${T.clubShort} ${w.club})`,
-      ),
-      "",
-      `${T.test}: ${out.test}`,
-      `${T.next}: ${out.next}`,
-      `${T.last}: ${out.last}`,
-      `${T.prs}: ${out.prs}`,
-    ];
+    const lines = [`Ringzeit · ${T.title}`, out.head, "", `${T.own}: ${d.own} · ${T.clubN}: ${d.club} · ${T.mins}: ${d.mins} · ${T.rpe}: ${d.rpe}`];
+    d.kws.forEach((w) => {
+      lines.push("", T.kw(w.kw, w.range));
+      if (!w.entries.length) lines.push(`• ${T.noneWeek}`);
+      w.entries.forEach((x) => {
+        lines.push(`• ${sumEntryLine(x)}`);
+        if (x.prs.length) lines.push(`  ${T.pr}: ${x.prs.join(" · ")}`);
+      });
+    });
+    lines.push("", `${T.test}: ${out.test}`, `${T.next}: ${out.next}`, `${T.weight}: ${out.weight}`, `${T.prs}: ${out.prs}`);
     return lines.join("\n");
   }
-  /* 1080×1350 summary card drawn on a canvas (system font, app colours) */
+  /* summary card drawn on a canvas, 1080 px wide, as high as the list needs; long lines wrap onto a second line
+     (system font, app colours) */
   function summaryCanvas() {
     const { d, out } = summaryLines(),
       T = t("sum"),
       W = 1080,
-      H = 1350,
-      c = document.createElement("canvas");
-    c.width = W;
-    c.height = H;
-    const x = c.getContext("2d"),
+      c = document.createElement("canvas"),
+      x = c.getContext("2d"),
       F = '-apple-system, "SF Pro Display", "Segoe UI", Roboto, sans-serif';
-    const text = (str, X, Y, size, col = "#ECE8E1", w = 600, al = "left", maxW = W - 144) => {
-      x.font = `${w} ${size}px ${F}`;
-      x.fillStyle = col;
-      x.textAlign = al;
-      let s0 = String(str);
-      while (s0.length > 4 && x.measureText(s0).width > maxW) s0 = s0.slice(0, -2);
-      if (s0 !== String(str)) s0 = s0.slice(0, -1) + "…";
-      x.fillText(s0, X, Y);
+    const font = (size, w) => (x.font = `${w} ${size}px ${F}`);
+    // split into at most n lines of width maxW (the last one ends with … if it is still too long)
+    const wrap = (str, size, w, maxW, n = 2) => {
+      font(size, w);
+      const words = String(str).split(" "),
+        lines = [];
+      let cur = "";
+      for (const wd of words) {
+        const tryL = cur ? cur + " " + wd : wd;
+        if (x.measureText(tryL).width <= maxW || !cur) cur = tryL;
+        else {
+          lines.push(cur);
+          cur = wd;
+        }
+      }
+      if (cur) lines.push(cur);
+      if (lines.length > n) {
+        let last = lines.slice(n - 1).join(" ");
+        while (last.length > 4 && x.measureText(last + "…").width > maxW) last = last.slice(0, -1);
+        lines.splice(n - 1, lines.length, last + "…");
+      }
+      return lines;
     };
-    const box = (X, Y, w, h, r) => {
+    // layout first (measuring needs no final size), then size the canvas and draw
+    const ops = [],
+      LW = W - 176;
+    let Y = 490;
+    const put = (str, X, size, col, w, maxW, n, gap) => {
+      wrap(str, size, w, maxW, n).forEach((ln) => {
+        ops.push([ln, X, Y, size, col, w]);
+        Y += gap;
+      });
+    };
+    d.kws.forEach((wk) => {
+      put(T.kw(wk.kw, wk.range), 72, 30, "#ECE8E1", 700, W - 144, 1, 50);
+      if (!wk.entries.length) put(T.noneWeek, 96, 26, "#8C9099", 500, LW, 1, 44);
+      wk.entries.forEach((it) => {
+        ops.push(["•dot", own(it.e) ? "#D9545C" : "#6F9FE0", Y]);
+        put(`${it.day} · ${it.e.minutes} ${t("min")} · ${it.c.label}`, 104, 27, "#ECE8E1", 600, LW, 1, 40);
+        const more = [it.c.list, it.c.extra].filter(Boolean).join(" · ");
+        if (more) put(more, 104, 23, "#8C9099", 500, LW, 2, 34);
+        if (it.prs.length) put(`${T.pr}: ${it.prs.join(" · ")}`, 104, 23, "#C9A86A", 600, LW, 2, 34);
+        Y += 10;
+      });
+      Y += 30;
+    });
+    const legendY = Y;
+    Y += 60;
+    [
+      [T.test, out.test],
+      [T.next, out.next],
+      [T.weight, out.weight],
+      [T.prs, out.prs],
+    ].forEach(([k, v]) => {
+      put(k, 72, 24, "#8C9099", 500, W - 144, 1, 40);
+      put(v, 72, 30, "#ECE8E1", 600, W - 144, 2, 40);
+      Y += 22;
+    });
+    c.width = W;
+    c.height = Y + 40;
+    const text = (str, X, Yy, size, col, w) => {
+      font(size, w);
+      x.fillStyle = col;
+      x.textAlign = "left";
+      x.fillText(str, X, Yy);
+    };
+    const box = (X, Yy, w, h, r) => {
       x.beginPath();
-      x.moveTo(X + r, Y);
-      x.arcTo(X + w, Y, X + w, Y + h, r);
-      x.arcTo(X + w, Y + h, X, Y + h, r);
-      x.arcTo(X, Y + h, X, Y, r);
-      x.arcTo(X, Y, X + w, Y, r);
+      x.moveTo(X + r, Yy);
+      x.arcTo(X + w, Yy, X + w, Yy + h, r);
+      x.arcTo(X + w, Yy + h, X, Yy + h, r);
+      x.arcTo(X, Yy + h, X, Yy, r);
+      x.arcTo(X, Yy, X + w, Yy, r);
       x.closePath();
     };
     x.fillStyle = "#0A0B0D";
-    x.fillRect(0, 0, W, H);
+    x.fillRect(0, 0, W, c.height);
     const g = x.createRadialGradient(W / 2, -40, 40, W / 2, -40, 900);
     g.addColorStop(0, "rgba(201,168,106,.24)");
     g.addColorStop(1, "rgba(201,168,106,0)");
     x.fillStyle = g;
-    x.fillRect(0, 0, W, H);
+    x.fillRect(0, 0, W, c.height);
     text("Ringzeit", 72, 108, 34, "#C9A86A", 700);
     text(T.title, 72, 178, 66, "#ECE8E1", 800);
-    text(out.head, 72, 230, 30, "#8C9099", 500);
+    wrap(out.head, 26, 500, W - 144, 1).forEach((ln) => text(ln, 72, 228, 26, "#8C9099", 500));
     [
       [d.own, T.own, "#D9545C"],
       [d.club, T.clubN, "#6F9FE0"],
@@ -226,44 +299,28 @@
     ].forEach(([v, k, col], i) => {
       const X = 72 + i * 240;
       x.fillStyle = "#15171C";
-      box(X, 272, 216, 172, 28);
+      box(X, 272, 216, 150, 28);
       x.fill();
-      text(String(v), X + 26, 372, 66, col, 700, "left", 170);
-      text(k, X + 26, 412, 19, "#8C9099", 500, "left", 176);
+      text(String(v), X + 26, 360, 60, col, 700);
+      text(k, X + 26, 400, 19, "#8C9099", 500);
     });
-    text(T.weeks, 72, 520, 32, "#ECE8E1", 700);
-    const mx = Math.max(60, ...d.weeks.map((w) => w.own + w.club)),
-      base = 790,
-      bh = 220;
-    d.weeks.forEach((w, i) => {
-      const X = 72 + i * 240 + 40,
-        ho = (w.own / mx) * bh,
-        hc = (w.club / mx) * bh;
-      x.fillStyle = "#D9545C";
-      x.fillRect(X, base - ho, 136, ho);
-      x.fillStyle = "#6F9FE0";
-      x.fillRect(X, base - ho - hc, 136, hc);
-      text(String(w.own + w.club), X + 68, base - ho - hc - 14, 28, "#ECE8E1", 700, "center", 200);
-      text(fmtDate(iso(w.m)), X + 68, base + 38, 22, "#8C9099", 500, "center", 220);
+    ops.forEach((o) => {
+      if (o[0] === "•dot") {
+        x.fillStyle = o[1];
+        x.beginPath();
+        x.arc(84, o[2] - 9, 6, 0, 7);
+        x.fill();
+      } else text(o[0], o[1], o[2], o[3], o[4], o[5]);
     });
     [
       ["#D9545C", T.ownShort],
       ["#6F9FE0", T.clubShort],
     ].forEach(([col, k], i) => {
       x.fillStyle = col;
-      x.fillRect(72 + i * 200, 858, 22, 22);
-      text(k, 104 + i * 200, 878, 24, "#8C9099", 500);
-    });
-    let Y = 950;
-    [
-      [T.test, out.test],
-      [T.next, out.next],
-      [T.last, out.last],
-      [T.prs, out.prs],
-    ].forEach(([k, v]) => {
-      text(k, 72, Y, 24, "#8C9099", 500);
-      text(v, 72, Y + 40, 31, "#ECE8E1", 600);
-      Y += 96;
+      x.beginPath();
+      x.arc(84 + i * 200, legendY - 8, 7, 0, 7);
+      x.fill();
+      text(k, 100 + i * 200, legendY, 22, "#8C9099", 500);
     });
     return c;
   }

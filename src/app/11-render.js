@@ -62,22 +62,25 @@
       first = [S.profile.planStart, ...S.log.map((e) => e.date)].filter(Boolean).sort()[0];
     return { min: first ? Math.min(0, -Math.round(daysBetween(monday(parse(first)), m0) / 7)) : 0, max: 6 };
   }
+  /* "9.–15. Nov" / "30. Nov – 6. Dez" for the week starting on Monday a (year only when it is not this year) */
+  function weekRangeText(a) {
+    const b = addDays(a, 6),
+      de = S.profile.lang === "de",
+      yr = b.getFullYear() !== today().getFullYear() ? " " + b.getFullYear() : "";
+    return a.getMonth() === b.getMonth()
+      ? de
+        ? `${a.getDate()}.–${b.getDate()}. ${monShort(b)}${yr}`
+        : `${a.getDate()}–${b.getDate()} ${monShort(b)}${yr}`
+      : de
+        ? `${a.getDate()}. ${monShort(a)} – ${b.getDate()}. ${monShort(b)}${yr}`
+        : `${a.getDate()} ${monShort(a)} – ${b.getDate()} ${monShort(b)}${yr}`;
+  }
   function weekNavHtml() {
     const W = t("wkNav"),
       wk = ui.wk || 0,
       r = wkRange(),
       a = weekMon(),
-      b = addDays(a, 6),
-      de = S.profile.lang === "de",
-      yr = b.getFullYear() !== today().getFullYear() ? " " + b.getFullYear() : "",
-      range =
-        a.getMonth() === b.getMonth()
-          ? de
-            ? `${a.getDate()}.–${b.getDate()}. ${monShort(b)}${yr}`
-            : `${a.getDate()}–${b.getDate()} ${monShort(b)}${yr}`
-          : de
-            ? `${a.getDate()}. ${monShort(a)} – ${b.getDate()}. ${monShort(b)}${yr}`
-            : `${a.getDate()} ${monShort(a)} – ${b.getDate()} ${monShort(b)}${yr}`,
+      range = weekRangeText(a),
       lbl = wk === 0 ? t("thisWeekH") : wk === -1 ? W.last : wk === 1 ? W.next : W.kw(isoWeekNo(a));
     return `<div class="wknav"><button type="button" class="x" data-wk="-1" aria-label="${W.prev}" ${wk <= r.min ? "disabled" : ""}>‹</button><div class="wkt"><b>${esc(lbl)}</b><small>${esc((wk === 0 || Math.abs(wk) === 1 ? W.kw(isoWeekNo(a)) + " · " : "") + range)}</small></div>${wk ? `<button type="button" class="btn ghost wktoday" data-wk="0">${W.today}</button>` : ""}<button type="button" class="x" data-wk="1" aria-label="${W.nextA}" ${wk >= r.max ? "disabled" : ""}>›</button></div>`;
   }
