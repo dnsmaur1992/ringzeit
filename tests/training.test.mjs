@@ -11,7 +11,7 @@ const script = html.slice(
   html.lastIndexOf("<script>") + 8,
   html.lastIndexOf("</script>"),
 );
-function app() {
+function app(opts = {}) {
   let calendar = [2026, 10, 2],
     nowMs = new Date(2026, 10, 2).getTime(),
     jobId = 0;
@@ -79,7 +79,7 @@ function app() {
     clearTimeout(id) {
       jobs.delete(id);
     },
-    navigator: {},
+    navigator: opts.navigator || {},
     window: { addEventListener() {}, scrollTo() {} },
     document: {
       visibilityState: "visible",
@@ -103,7 +103,7 @@ function app() {
       setItem: (k, v) => saved.set(k, v),
       removeItem: (k) => saved.delete(k),
     },
-    matchMedia: () => ({ matches: true }),
+    matchMedia: opts.matchMedia || (() => ({ matches: true })),
   });
   new vm.Script(unbooted).runInContext(context, {
     timeout: 2000,
@@ -4848,4 +4848,53 @@ test("12.11.2026 places: hip thrust only in the fitness gym (even with a barbell
     assert.deepEqual(["gym", "out", "home", "studio"].map((l) => a.run(`okEx(EX['${id}'],'${l}',['bb','studio'])`)), [true, true, false, false], id);
   assert.deepEqual(["gym", "out", "home", "studio"].map((l) => a.run(`okEx(EX['str.barbell_hip_thrust'],'${l}',['bb','studio'])`)), [false, false, false, true]);
   assert.equal(a.run("EX['cond.bear_crawl'].locs + EX['pow.broad_jumps'].locs + EX['str.barbell_hip_thrust'].locs"), "gogof");
+});
+
+
+test("13.11.2026 storage: the installed app asks once per start to keep its data; a normal tab or a missing API asks nothing", async () => {
+  const mk = (persisted) => {
+    const calls = [];
+    return { calls, navigator: { storage: { persisted: () => (calls.push("persisted"), Promise.resolve(persisted)), persist: () => (calls.push("persist"), Promise.resolve(true)) } } };
+  };
+  const run = async (n, standalone) => {
+    const a = app({ navigator: n.navigator, matchMedia: () => ({ matches: standalone }) });
+    await a.run("askPersist()");
+    return n.calls;
+  };
+  assert.deepEqual(await run(mk(false), true), ["persisted", "persist"], "installed, not yet persistent: asks");
+  assert.deepEqual(await run(mk(true), true), ["persisted"], "already persistent: no second request");
+  assert.deepEqual(await run(mk(false), false), [], "browser tab: nothing (no permission prompt)");
+  const bare = app({ navigator: {}, matchMedia: () => ({ matches: true }) });
+  assert.equal(bare.run("askPersist()"), null, "no storage API: no error");
+  assert.match(readFileSync(new URL("../src/app/39-boot.js", import.meta.url), "utf8"), /\(function boot\(\) \{[\s\S]*askPersist\(\);/, "boot calls it");
+});
+
+test("13.11.2026 coach summary: one list per calendar week with day, duration, content and new bests; next tournament and last weight, no past tournaments", () => {
+  const a = app();
+  a.setDate("2026-11-13");
+  a.run(`S.profile.lang='de';S.log=[];S.weights=[];S.tests=[];
+    S.profile.comps=[{id:'old',date:'2026-10-03',kind:'comp',result:{place:1}},{id:'nx',date:'2027-02-27',kind:'comp',wc:67}];
+    S.sessions['2026-11-02']={type:'T',blocks:[{key:'warm',items:[{kind:'ex',id:'warm.easy_jump_rope'}]},{key:'main',rounds:true,items:[{kind:'round',k:'shadow',combo:['jab','cross']},{kind:'round',k:'bag',combo:['jab']}]},{key:'str',items:[{kind:'ex',id:'str.push_ups'}]},{key:'cool',items:[{kind:'ex',id:'cool.hamstrings'}]}]};
+    S.log.push({id:'e1',date:'2026-10-27',src:'own',type:'S',minutes:60,rpe:6,perf:[{id:'str.push_ups',sets:[{r:12},{r:14}]}]});
+    S.log.push({id:'e2',date:'2026-11-02',src:'own',type:'T',minutes:55,rpe:5,perf:[{id:'str.push_ups',sets:[{r:16}]}]});
+    S.log.push({id:'e3',date:'2026-11-04',src:'club',type:'V',minutes:90,rpe:7,note:'Sparring, Fokus Konter'});
+    S.log.push({id:'e4',date:'2026-10-01',src:'own',type:'S',minutes:60,rpe:6});
+    S.weights.push({date:'2026-11-03',kg:77.9},{date:'2026-11-10',kg:77.4});`);
+  const txt = a.run("summaryText()");
+  assert.match(txt, /KW 43–46 · 19\.10\. – 13\.11\./);
+  assert.match(txt, /KW 43 · 19\.–25\. Okt\n• keine Einheit/);
+  assert.match(txt, /KW 44 · 26\. Okt – 1\. Nov\n• Di 27\.10\. · 60 min · Kraft: Liegestütze\n\nKW 45/, "first entry of an exercise is no new best");
+  assert.match(txt, /• Mo 2\.11\. · 55 min · Technik: 2 Runden: Schattenboxen, Sandsack · Liegestütze\n  Neue Bestleistung: Liegestütze 16 Wdh\./, "plan content without warm-up/cool-down, new best");
+  assert.match(txt, /• Mi 4\.11\. · 90 min · Verein · Sparring, Fokus Konter/);
+  assert.doesNotMatch(txt, /1\.10\./, "older than 4 calendar weeks");
+  assert.doesNotMatch(txt, /Letztes Turnier|3\. Okt/, "no past tournaments");
+  assert.match(txt, /Nächstes Turnier: Sa\., 27\. Feb\.[^\n]*−67 kg/);
+  assert.match(txt, /Letztes Gewicht: 77,4 kg \(Di\., 10\. Nov\.\)/);
+  assert.match(txt, /Bestleistungen: Liegestütze 16 Wdh\./, "best sets work with text exercise ids again");
+  assert.match(txt, /Eigene Einheiten: 2 · Vereinstrainings: 1 · Minuten: 205 · Ø RPE: 6/);
+  a.run("S.profile.lang='en'");
+  const en = a.run("summaryText()");
+  assert.match(en, /Week 45 · 2–8 Nov\n• Mon 2 Nov · 55 min · Technique/);
+  assert.match(en, /New best: Push-ups 16 reps/);
+  assert.match(en, /Last weight: 77\.4 kg/);
 });
