@@ -57,6 +57,13 @@ const seed = (sport, style, lang) => ({ v: 2, profile: { lang, sport, disc: "lc"
         if (pick) { pick.click(); return "sport " + txt; }
         // choose the first option in unanswered segments, then the primary button
         o.querySelectorAll(".seg").forEach((sg) => { if (!sg.querySelector('[aria-pressed="true"]')) { const bt = sg.querySelector("button"); if (bt) bt.click(); } });
+        // the date of birth is required (13.11.2026): "next" stays disabled until it is complete
+        const dt = o.querySelector('input[type="date"]');
+        if (dt && !dt.value) {
+          const nx = o.querySelector('[data-onb="next"]');
+          if (nx && !nx.disabled) return "next enabled without date of birth";
+          dt.value = "1995-03-14"; dt.dispatchEvent(new Event("input", { bubbles: true })); dt.dispatchEvent(new Event("change", { bubbles: true }));
+        }
         const inp = o.querySelector('input[type="number"], input#oBy, input[inputmode="numeric"]'); if (inp && !inp.value) { inp.value = "1995"; inp.dispatchEvent(new Event("input", { bubbles: true })); inp.dispatchEvent(new Event("change", { bubbles: true })); }
         const btn = [...o.querySelectorAll("button.btn:not(.sec):not(.ghost)")].pop();
         if (!btn) return "no button: " + txt;
@@ -68,8 +75,8 @@ const seed = (sport, style, lang) => ({ v: 2, profile: { lang, sport, disc: "lc"
       if (st === "done" || st.startsWith("no button")) break;
       await p.waitForTimeout(900);
     }
-    const res = await p.evaluate(() => ({ sport: S.profile.sport, onb: !!S.profile.onboarded, txt: /undefined|NaN/.test(document.body.innerText), sess: Object.keys(S.sessions).length, keys: Object.keys(S.profile).filter(k=>/onb|ack|tour/i.test(k)).map(k=>k+'='+S.profile[k]).join(','), uionb: !!ui.onb, tour: !document.getElementById('tour')?.hidden }));
-    ok(`Inbetriebnahme frisches Profil ${sport}`, res.sport === sport && !res.uionb && !res.txt && res.sess > 0 && !errs.length, `${steps.length} Schritte${errs.length ? "; JS: " + [...new Set(errs)].join(" | ") : ""}`);
+    const res = await p.evaluate(() => ({ birth: S.profile.birth, sport: S.profile.sport, onb: !!S.profile.onboarded, txt: /undefined|NaN/.test(document.body.innerText), sess: Object.keys(S.sessions).length, keys: Object.keys(S.profile).filter(k=>/onb|ack|tour/i.test(k)).map(k=>k+'='+S.profile[k]).join(','), uionb: !!ui.onb, tour: !document.getElementById('tour')?.hidden }));
+    ok(`Inbetriebnahme frisches Profil ${sport}`, res.sport === sport && res.birth === "1995-03-14" && !res.uionb && !res.txt && res.sess > 0 && !errs.length, `${steps.length} Schritte${errs.length ? "; JS: " + [...new Set(errs)].join(" | ") : ""}`);
     await ctx.close();
   }
   }

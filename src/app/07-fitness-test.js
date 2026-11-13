@@ -90,7 +90,7 @@
   const defaultEq = () => (simpleView() ? ["bag"] : ["bag", "rope"]);
   /* under 15 (or a child without year of birth): no weight reminders */
   const under15 = () => {
-    const a = ageAt();
+    const a = ageExact();
     return a != null ? a < 15 : ageGroup() === "kids";
   };
   /* average of the weigh-ins of the last 14 days (needs two), so single-day swings don't count */

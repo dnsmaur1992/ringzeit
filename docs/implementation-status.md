@@ -473,3 +473,21 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   immer „keine Bestleistungen“, in der Übersicht „–“. Mit der echten Sicherung geprüft: jetzt 7 Bestleistungen.
 - Die Wochenbeschriftung („9.–15. Nov“) kommt aus derselben Funktion wie im Kalender (`weekRangeText`).
 - Tests: 270.
+
+## Geburtsdatum vollständig und Geburtstag (13.11.2026)
+
+- **Pflichtangabe:** Statt nur des Geburtsjahrs gibt man das vollständige Geburtsdatum ein (`profile.birth`, YYYY-MM-DD,
+  ab 1950, mindestens 8 Jahre zurück). `birthYear` bleibt und folgt dem Datum, Sicherungen und Regeln arbeiten weiter
+  damit.
+  - Einrichtung: Datumsfeld, „Weiter“ erst mit gültigem Datum.
+  - Profil → Über mich: Datumsfeld. Ein unvollständiger Wert wird nicht übernommen, das Feld lässt sich nicht leeren.
+  - **Bestehende Profile** mit nur dem Jahr, oder nach übersprungener Einrichtung: Beim Start erscheint nach dem
+    Sicherheitshinweis eine Abfrage im Vollbild, die sich erst mit einem gültigen Datum schließt. Danach folgen
+    „Was ist neu“ und die Tour wie gewohnt. Das Beispielprofil wird nicht gefragt.
+- **Alter:** Angezeigtes Alter (Profil, Übersicht für den Trainer) und die Schutzregeln unter 15 (keine
+  Gewichtserinnerungen, Jugendhinweis im Training) nutzen das genaue Alter (`ageExact`). Altersklassen, Kampfformate und
+  Gradfolgen zählen wie in den Regelwerken weiter nach Jahrgang (`ageAt`).
+- **Geburtstag** als Fest mit höchstem Vorrang: Gruß, Partyhüte, Torte mit flackernden Kerzen, aufsteigende Ballons und
+  Konfetti. Am 29. Februar Geborene feiern in anderen Jahren am 28. Februar. Ausschaltbar wie alle Feste.
+- Browser-Prüfung der Einrichtung füllt das Datumsfeld und prüft, dass „Weiter“ ohne Datum gesperrt ist.
+- Tests: 272.

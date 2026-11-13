@@ -180,7 +180,22 @@
     return n;
   }
   /* Age on a given date (by year of birth); null when no year of birth is set */
+  /* age by calendar year (year of the date − year of birth): the rules' age classes, bout formats and grade lines */
   const ageAt = (d = today(), prof = S.profile) => (prof.birthYear ? d.getFullYear() - +prof.birthYear : null);
+  /* a full date of birth: a real day, from 1950, at least 8 years ago */
+  function validBirth(s) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s || "")) return false;
+    const d = parse(s);
+    return iso(d) === s && d.getFullYear() >= 1950 && s <= iso(addDays(today(), -365 * 8 - 2));
+  }
+  /* exact age in years on day d (shown age, under-15 safety); without a full date the age by calendar year */
+  function ageExact(d = today(), prof = S.profile) {
+    if (!prof.birth) return ageAt(d, prof);
+    const b = parse(prof.birth),
+      before = d.getMonth() < b.getMonth() || (d.getMonth() === b.getMonth() && d.getDate() < b.getDate());
+    return d.getFullYear() - b.getFullYear() - (before ? 1 : 0);
+  }
+  const birthMax = () => iso(addDays(today(), -365 * 8 - 2));
   /* Youth / adult / masters – from the year of birth when known, otherwise from the stored age group */
   function ageGroup(prof = S.profile) {
     const a = ageAt(today(), prof);

@@ -436,7 +436,7 @@
     }
     if (sp === "kickboxing") {
       const cur = setup.disc || S.profile.disc,
-        young = ageAt(today()) != null && ageAt(today()) < 15;
+        young = ageExact(today()) != null && ageExact(today()) < 15;
       return `<div class="field"><span class="lab">${t("unitDiscL")}</span><div class="seg g2">${["lc", "kl", "fc", "k1"].filter((k) => !(young && (k === "fc" || k === "k1"))).map((k) => `<button type="button" data-udisc="${k}" aria-pressed="${cur === k}">${t("disc")[k]}</button>`).join("")}</div></div>`;
     }
     return "";

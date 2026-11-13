@@ -710,6 +710,19 @@
       return showTour();
     }
     if (ds.restartTour) return startTour();
+    if (ds.onb === "birth") {
+      const inp = document.getElementById("bdIn");
+      if (!ui.onb || !ui.onb.birthOnly || !inp || !validBirth(inp.value)) return;
+      const after = ui.onb.after;
+      S.profile.birth = inp.value;
+      S.profile.birthYear = +inp.value.slice(0, 4);
+      ui.onb = null;
+      store.save();
+      renderOnb();
+      render();
+      if (after) after();
+      return;
+    }
     if (ds.onb === "ack") {
       // a second tap while the plan is being set up does nothing (7b B5)
       if (!ui.onb || (!ui.onb.ack && !ui.onb.ackOnly)) return;
@@ -719,6 +732,11 @@
         ui.onb = null;
         store.save();
         renderOnb();
+        if (needBirth())
+          return askBirth(() => {
+            if (needNews()) return showNews();
+            if (!S.profile.toured) startTour();
+          });
         if (needNews()) return showNews();
         if (!S.profile.toured) startTour();
         return;
@@ -1050,7 +1068,7 @@
     }
   });
   /* Profile changes take effect at once: the plan settings are copied over and planned sessions from today on are rebuilt */
-  const PLAN_KEYS = ["techLevels", "fitnessBase", "level", "sport", "disc", "focus", "birthYear", "sex", "days", "minutes", "club", "comps", "limits"];
+  const PLAN_KEYS = ["techLevels", "fitnessBase", "level", "sport", "disc", "focus", "birthYear", "birth", "sex", "days", "minutes", "club", "comps", "limits"];
   /* Open sessions from `from` on are dropped and rebuilt with the new settings when they are next shown.
      A session that was already started (player progress, ticks or logged sets) is kept with its entries. */
   function dropOpenSessions(from) {
@@ -1114,6 +1132,13 @@
     );
   document.addEventListener("input", (ev) => {
     const el = ev.target;
+    if ((el.id === "oBirth" || el.id === "bdIn") && ui.onb) {
+      ui.onb.birth = validBirth(el.value) ? el.value : "";
+      if (el.id === "oBirth") ui.onb.birthYear = ui.onb.birth ? +ui.onb.birth.slice(0, 4) : "";
+      const btn = document.querySelector(el.id === "oBirth" ? '[data-onb="next"]' : '[data-onb="birth"]');
+      if (btn) btn.disabled = !ui.onb.birth;
+      return;
+    }
     if (el.classList && el.classList.contains("si")) {
       const sess = S.sessions[ui.sel];
       if (!sess || !sess.perf) return;
@@ -1175,8 +1200,13 @@
       return;
     }
     if (ev.target.id === "pBirth") {
-      const y = parseInt(ev.target.value);
-      draft.birthYear = y >= 1950 && y <= today().getFullYear() - 8 ? y : "";
+      const v = ev.target.value;
+      if (!validBirth(v)) {
+        ev.target.value = draft.birth || "";
+        return;
+      }
+      draft.birth = v;
+      draft.birthYear = +v.slice(0, 4);
       // WAKO ring disciplines only from 15
       if (draft.birthYear && ageAt(today(), draft) < 15 && (draft.disc === "fc" || draft.disc === "k1"))
         draft.disc = "kl";

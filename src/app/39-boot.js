@@ -51,6 +51,7 @@
         days: [0, 2, 4],
         minutes: 75,
         birthYear: "",
+        birth: "",
         comp: "",
         clubDays: [],
         clubMin: 90,
@@ -65,6 +66,13 @@
         ui.onb = { ack: {}, ackOnly: true };
         renderOnb();
         return;
+      }
+      if (!ui.onb && needBirth()) {
+        resumeReady = true;
+        return askBirth(() => {
+          if (needNews()) return showNews();
+          if (!S.profile.toured) startTour();
+        });
       }
       const next = () => {
         if (!ui.onb && needNews()) return showNews();

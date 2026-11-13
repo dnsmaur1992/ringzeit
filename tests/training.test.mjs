@@ -4898,3 +4898,61 @@ test("13.11.2026 coach summary: one list per calendar week with day, duration, c
   assert.match(en, /New best: Push-ups 16 reps/);
   assert.match(en, /Last weight: 77\.4 kg/);
 });
+
+test("13.11.2026 date of birth: full date required, exact age for display and safety, age classes still by calendar year; asked once at start", async () => {
+  const a = app();
+  a.setDate("2026-11-13");
+  // validity and age
+  assert.deepEqual(
+    ["1992-05-20", "1992-02-30", "1949-12-31", "2019-01-01", "1992-5-20", ""].map((s) => a.run(`validBirth('${s}')`)),
+    [true, false, false, false, false, false],
+  );
+  a.run("S.profile.birth='1992-11-20';S.profile.birthYear=1992;");
+  assert.equal(a.run("ageExact()"), 33, "birthday not yet this year");
+  assert.equal(a.run("ageAt()"), 34, "rules: age by calendar year stays");
+  assert.equal(a.run("ageExact(parse('2026-11-20'))"), 34);
+  // storage keeps the year in step and drops an invalid date
+  assert.equal(a.run("hydrate({profile:{birth:'1990-07-01',birthYear:1985}}).profile.birthYear"), 1990);
+  assert.equal(a.run("hydrate({profile:{birth:'kaputt',birthYear:1985}}).profile.birth"), "");
+  assert.equal(a.run("hydrate({profile:{birthYear:1985}}).profile.birthYear"), 1985, "old profiles keep their year");
+  // start prompt: only the year → asked; the save button only takes a complete date; then it goes on
+  a.run("S.profile.birth='';S.profile.birthYear=1992;S.profile.example=false;globalThis.went=0;");
+  assert.equal(a.run("needBirth()"), true);
+  a.run("askBirth(()=>{went++})");
+  assert.match(a.run("document.getElementById('onb').innerHTML"), /Wann bist du geboren\?[\s\S]*Bisher eingetragen: Jahrgang 1992[\s\S]*data-onb="birth" disabled/);
+  assert.doesNotMatch(a.run("document.getElementById('onb').innerHTML"), /data-onb="skip"/, "no way around it");
+  a.run("document.getElementById('bdIn').value='1992-13-01'");
+  await a.click({ dataset: { onb: "birth" } });
+  assert.equal(a.run("!!ui.onb"), true, "invalid date: stays open");
+  await a.emit("input", { id: "bdIn", value: "1992-03-14" });
+  assert.equal(a.run("ui.onb.birth"), "1992-03-14");
+  a.run("document.getElementById('bdIn').value='1992-03-14'");
+  await a.click({ dataset: { onb: "birth" } });
+  assert.equal(a.run("S.profile.birth + '|' + S.profile.birthYear + '|' + (ui.onb === null) + '|' + went"), "1992-03-14|1992|true|1");
+  assert.equal(a.run("needBirth()"), false);
+  assert.equal(JSON.parse(a.saved.get(a.run("LS"))).profile.birth, "1992-03-14", "saved");
+  // the example profile is never asked
+  a.run("S.profile.example=true;S.profile.birth=''");
+  assert.equal(a.run("needBirth()"), false);
+});
+
+test("13.11.2026 birthday: greeting, party hat, cake and balloons on the day; 29 Feb in other years on 28 Feb; off with the seasons", () => {
+  const a = app();
+  a.run("S.profile.lang='de';S.profile.birth='1992-03-14';S.profile.birthYear=1992;S.profile.seasonOff=false;");
+  const at = (ds) => JSON.parse(a.run(`ui.seasonDate='${ds}';JSON.stringify(seasonNow())`));
+  const bd = at("2027-03-14");
+  assert.equal(bd.ev, "birthday");
+  assert.equal(bd.hat, "party");
+  assert.match(bd.greet[0], /Alles Gute zum Geburtstag/);
+  const svg = a.run("heroScene('guard','T',true)");
+  assert.ok(svg.includes("#C77DFF") && svg.includes('class="floatup"') && svg.includes('class="flame"'), "party hat, balloons, candles");
+  assert.equal(at("2027-04-20").ev, null, "an ordinary day");
+  a.run("S.profile.birth='2000-02-29'");
+  assert.equal(at("2027-02-28").ev, "birthday", "no 29 Feb in 2027");
+  assert.ok(!at("2028-02-28").greet.some((g) => /Geburtstag/.test(g)), "leap year: not on 28 Feb");
+  assert.equal(at("2028-02-29").ev, "birthday");
+  a.run("S.profile.lang='en'");
+  assert.match(at("2028-02-29").greet[0], /Happy birthday/);
+  a.run("S.profile.seasonOff=true");
+  assert.equal(a.run("season()"), null);
+});

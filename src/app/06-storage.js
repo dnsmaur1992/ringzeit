@@ -74,6 +74,8 @@
     if (p.comp) p.comps.push({ id: "c" + Date.now().toString(36), date: p.comp });
     delete p.comp;
     if (p.birthYear == null) p.birthYear = "";
+    if (typeof p.birth !== "string" || !validBirth(p.birth)) p.birth = "";
+    if (p.birth) p.birthYear = +p.birth.slice(0, 4);
     if (p.belt == null) p.belt = 0;
     if (!p.gp || typeof p.gp !== "object") p.gp = {};
     if (!p.club) p.club = { days: [], minutes: 90 };

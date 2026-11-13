@@ -5,6 +5,13 @@
       el.hidden = true;
       return;
     }
+    if (ui.onb.birthOnly) {
+      const B = t("bday"),
+        old = S.profile.birthYear;
+      el.innerHTML = `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center;flex-shrink:0" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair("box", 14, outfitFor(mainSport(), S.profile))}</svg><h1>${B.q}</h1><div class="sub">${B.why}</div><label class="lab" for="bdIn">${t("birth")}</label><input id="bdIn" type="date" min="1950-01-01" max="${birthMax()}" required value="${ui.onb.birth || ""}">${old ? `<span class="sub">${B.old(old)}</span>` : ""}<div class="acts"><button type="button" class="btn" data-onb="birth" ${validBirth(ui.onb.birth) ? "" : "disabled"}>${t("save")}</button></div>`;
+      el.hidden = false;
+      return;
+    }
     if (ui.onb.ack) {
       const A = t("ack");
       el.innerHTML = `<svg viewBox="0 0 400 220" style="width:100%;max-width:420px;height:auto;align-self:center;flex-shrink:0" aria-hidden="true"><ellipse cx="200" cy="208" rx="150" ry="10" fill="#C9A86A" opacity=".18"/>${fightPair("box", 14, outfitFor(ui.onb.sport || mainSport(), ui.onb))}</svg><h1>${A.h}</h1><ul class="ackl">${A.pts.map((x) => `<li>${x}</li>`).join("")}</ul><div class="sub">${A.priv}</div><div class="acts"><button type="button" class="btn" data-onb="ack">${A.ok}</button></div>`;
@@ -35,7 +42,7 @@
       const B = t("blk");
       h += `<h1>${B.onbT}</h1><div class="sub">${B.onbS}</div><div class="onbpts">${B.onbPts.map((x) => `<span>${x}</span>`).join("")}</div>`;
     } else {
-      h += `<h1>${t("onbQ3")}</h1><div class="sub">${t("onbQ3s")}</div><input id="oBirth" type="number" inputmode="numeric" min="1950" max="${today().getFullYear() - 8}" placeholder="2001" value="${o.birthYear || ""}"><span class="lab">${t("sex")}</span><div class="seg g3">${["m", "f", "d"].map((k) => `<button type="button" data-osex="${k}" aria-pressed="${o.sex === k}">${t("sexes")[k]}</button>`).join("")}</div><span class="sub">${t("sexHint")}</span><label class="lab" for="oComp">${t("onbComp")}</label><input id="oComp" type="date" min="${iso(today())}" value="${o.comp || ""}">`;
+      h += `<h1>${t("onbQ3")}</h1><div class="sub">${t("onbQ3s")}</div><input id="oBirth" type="date" min="1950-01-01" max="${birthMax()}" required value="${o.birth || ""}"><span class="lab">${t("sex")}</span><div class="seg g3">${["m", "f", "d"].map((k) => `<button type="button" data-osex="${k}" aria-pressed="${o.sex === k}">${t("sexes")[k]}</button>`).join("")}</div><span class="sub">${t("sexHint")}</span><label class="lab" for="oComp">${t("onbComp")}</label><input id="oComp" type="date" min="${iso(today())}" value="${o.comp || ""}">`;
     }
     if (step === 0) {
       const sp = o.sport || mainSport(), st = sp === "taekwondo" ? o.tstyle || "wt" : undefined;
@@ -49,7 +56,7 @@
     if (step === 4)
       h += `<div class="acts"><button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button><button type="button" class="btn" data-onb="test">${t("blk").onbTest}</button></div><button type="button" class="btn ghost later" data-onb="done">${t("blk").onbLater}</button>`;
     else
-      h += `<div class="acts">${step ? `<button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button>` : ""}<button type="button" class="btn" data-onb="next" ${step === 2 && !o.days.length ? "disabled" : ""}>${t("onbNext")}</button></div>`;
+      h += `<div class="acts">${step ? `<button type="button" class="btn sec" data-onb="back">${t("onbBack")}</button>` : ""}<button type="button" class="btn" data-onb="next" ${(step === 2 && !o.days.length) || (step === 3 && !validBirth(o.birth)) ? "disabled" : ""}>${t("onbNext")}</button></div>`;
     el.innerHTML = h;
     el.hidden = false;
   }
@@ -57,8 +64,8 @@
     const b = document.getElementById("oBirth"),
       c = document.getElementById("oComp");
     if (b) {
-      const y = parseInt(b.value);
-      ui.onb.birthYear = y >= 1950 && y <= today().getFullYear() - 8 ? y : "";
+      ui.onb.birth = validBirth(b.value) ? b.value : "";
+      ui.onb.birthYear = ui.onb.birth ? +ui.onb.birth.slice(0, 4) : "";
     }
     if (c) ui.onb.comp = c.value;
   }
@@ -67,6 +74,12 @@
   const NEWS_V = 11; // 10: independent technique/fitness and final effort control; 11: more feasts, Winter Arc catch-up over 3 days
   const needNews = () => !S.profile.example && !!S.profile.toured && (S.profile.newsSeen || 0) < NEWS_V;
   const showNews = () => openSheet({ kind: "news" });
+  /* an existing profile without a full date of birth (only the year, or skipped setup) is asked for it once */
+  const needBirth = () => !S.profile.example && !validBirth(S.profile.birth);
+  function askBirth(after) {
+    ui.onb = { birthOnly: true, birth: "", after };
+    renderOnb();
+  }
   async function finishOnb(skip, test) {
     // new users get setup and tour instead
     S.profile.newsSeen = NEWS_V;
@@ -100,6 +113,7 @@
         club: { days: (o.clubDays || []).slice(), minutes: o.clubMin || 90 },
         simple: o.simple !== false,
         birthYear: o.birthYear || "",
+        birth: o.birth || "",
         sex: o.sex || "",
         comps: o.comp ? [{ id: "c" + Date.now().toString(36), date: o.comp }] : [],
         example: false,
@@ -112,7 +126,11 @@
     } else {
       S.profile.example = false;
       store.save();
+      if (needBirth()) return askBirth(() => finishAfter(test));
     }
+    finishAfter(test);
+  }
+  function finishAfter(test) {
     ui.tab = "week";
     // optional entry test: the tour follows once the test is saved or closed
     if (test) {

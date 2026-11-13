@@ -12,6 +12,7 @@
     comps: [],
     club: { days: [], minutes: 90 },
     birthYear: "",
+    birth: "", // full date of birth (YYYY-MM-DD) since 13.11.2026; birthYear follows it
     limits: [],
     example: true,
     planStart: "",

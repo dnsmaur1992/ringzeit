@@ -91,6 +91,13 @@
       y = d.getFullYear(),
       adv = daysBetween(advent1(y), d),
       same = (x) => iso(x) === ds;
+    const bd = S.profile.birth;
+    if (bd) {
+      const bm = +bd.slice(5, 7),
+        bdd = +bd.slice(8, 10),
+        leap = new Date(y, 1, 29).getMonth() === 1;
+      if (m === bm && (day === bdd || (bm === 2 && bdd === 29 && !leap && day === 28))) add("birthday", F.birthday);
+    }
     if (hk) add("hanukkah", F.hanukkah(hk));
     if (hj && hj.m === 9) add("ramadan", F.ramadan);
     if (hj && hj.m === 10 && hj.d <= 3) add("eidfitr", F.eidfitr);
@@ -126,6 +133,7 @@
   }
   /* motif keys that are drawn; the first matching one wins */
   const MOTIFS = [
+    "birthday",
     "hanukkah",
     "eidfitr",
     "eidadha",
@@ -164,7 +172,7 @@
     // Christmas hat in December and up to Epiphany – but not on the days of other religions' feasts;
     // a woolly hat for the rest of the winter, a jester's cap at carnival
     const santa = (m === 12 || (m === 1 && day <= 6)) && !fe.some((f) => NO_SANTA.has(f.k));
-    const hat = has("karneval") ? "jester" : santa ? "santa" : k === "winter" ? "beanie" : null;
+    const hat = has("birthday") ? "party" : has("karneval") ? "jester" : santa ? "santa" : k === "winter" ? "beanie" : null;
     return {
       k,
       ev,
@@ -235,6 +243,8 @@
     return { legs, body };
   }
   function hatSvg(kind, x, y) {
+    if (kind === "party")
+      return `<path d="M${x - 17} ${y - 12} L${x} ${y - 56} L${x + 17} ${y - 12} Z" fill="#C77DFF" stroke="${FIG.BG}" stroke-width="3.5" stroke-linejoin="round"/><path d="M${x - 11} ${y - 27} L${x + 11} ${y - 27} M${x - 5.5} ${y - 41} L${x + 5.5} ${y - 41}" stroke="#FFD23F" stroke-width="4" stroke-linecap="round"/><circle cx="${x}" cy="${y - 58}" r="6.5" fill="#FF5A7A" stroke="${FIG.BG}" stroke-width="3"/>`;
     if (kind === "jester")
       return `<path d="M${x - 20} ${y - 12} Q${x - 30} ${y - 40} ${x - 40} ${y - 30} Q${x - 22} ${y - 30} ${x - 12} ${y - 14} Z" fill="#2E86DE" stroke="${FIG.BG}" stroke-width="3" stroke-linejoin="round"/><path d="M${x - 12} ${y - 15} Q${x} ${y - 52} ${x + 10} ${y - 15} Z" fill="#FFD23F" stroke="${FIG.BG}" stroke-width="3" stroke-linejoin="round"/><path d="M${x + 12} ${y - 14} Q${x + 22} ${y - 30} ${x + 40} ${y - 30} Q${x + 30} ${y - 40} ${x + 20} ${y - 12} Z" fill="#E8445A" stroke="${FIG.BG}" stroke-width="3" stroke-linejoin="round"/><rect x="${x - 23}" y="${y - 19}" width="46" height="9" rx="4" fill="#58D68D" stroke="${FIG.BG}" stroke-width="3"/><circle cx="${x - 41}" cy="${y - 30}" r="4.5" fill="#FFD23F" stroke="${FIG.BG}" stroke-width="2"/><circle cx="${x}" cy="${y - 50}" r="4.5" fill="#E8445A" stroke="${FIG.BG}" stroke-width="2"/><circle cx="${x + 41}" cy="${y - 30}" r="4.5" fill="#2E86DE" stroke="${FIG.BG}" stroke-width="2"/>`;
     if (kind === "santa")
@@ -466,7 +476,7 @@
     }
     const se = season();
     // seasonal particles: petals, leaves or snow fall through the scene; in summer (and with the design off) dust floats in the light
-    const pk = se ? (se.ev === "valentine" ? "hearts" : se.ev === "karneval" ? "confetti" : se.ev === "holi" ? "holi" : se.k) : null;
+    const pk = se ? (se.ev === "valentine" ? "hearts" : se.ev === "karneval" || se.ev === "birthday" ? "confetti" : se.ev === "holi" ? "holi" : se.k) : null;
     if (pk && pk !== "summer") {
       const N = pk === "winter" ? 34 : pk === "confetti" || pk === "holi" ? 40 : 16,
         cols = {
@@ -626,7 +636,20 @@
     const moon = sky.moon ? "" : `<g transform="translate(330 40)"><circle r="14" fill="#F6E7B0"/><circle cx="6" cy="-4" r="13" fill="url(#sky)"/></g>`;
     const star = (x, y, r, c, cls = "bulb", dl = 0) =>
       `<path class="${cls}" style="animation-delay:${dl}s" d="M${x} ${y - r} l${(r * 0.3).toFixed(1)} ${(r * 0.7).toFixed(1)} l${(r * 0.7).toFixed(1)} ${(r * 0.3).toFixed(1)} l${(-r * 0.7).toFixed(1)} ${(r * 0.3).toFixed(1)} l${(-r * 0.3).toFixed(1)} ${(r * 0.7).toFixed(1)} l${(-r * 0.3).toFixed(1)} ${(-r * 0.7).toFixed(1)} l${(-r * 0.7).toFixed(1)} ${(-r * 0.3).toFixed(1)} l${(r * 0.7).toFixed(1)} ${(-r * 0.3).toFixed(1)}z" fill="${c}"/>`;
-    if (ev === "martin") {
+    if (ev === "birthday") {
+      // birthday: a cake with flickering candles on the right, balloons drift up on the left
+      let bl = "";
+      [
+        [34, "#FF5A7A", 0],
+        [62, "#5DADE2", 2.6],
+        [88, "#FFD23F", 5.1],
+      ].forEach(([x, c, dl]) => {
+        bl += `<g transform="translate(${x} 214)"><g class="floatup" style="animation-duration:9s;animation-delay:-${dl}s"><path d="M0 0 q-6 14 3 26" stroke="#8C9099" stroke-width="1.2" fill="none"/><ellipse cx="0" cy="-12" rx="12" ry="14" fill="${c}" stroke="#111318" stroke-width="1.6"/><path d="M-2 1 l2 -2 l2 2z" fill="${c}"/><ellipse cx="-4" cy="-17" rx="3" ry="4.5" fill="#FFFFFF" opacity=".35"/></g></g>`;
+      });
+      let cd = "";
+      [-14, 0, 14].forEach((x) => (cd += `<rect x="${x - 2}" y="-44" width="4" height="13" rx="1" fill="#F7F4EE" stroke="#111318" stroke-width="1"/><ellipse class="flame" cx="${x}" cy="-48" rx="2.2" ry="3.8" fill="#FFC94A"/><circle cx="${x}" cy="-48" r="7" fill="#FFC94A" opacity=".14"/>`));
+      extra += `${bl}<g transform="translate(338 208)"><rect x="-34" y="-32" width="68" height="30" rx="5" fill="#F2C9A0" stroke="#111318" stroke-width="2"/><path d="M-34 -24 q8.5 9 17 0 q8.5 9 17 0 q8.5 9 17 0 q8.5 9 17 0 v-8 h-68z" fill="#FFF3F6" stroke="#111318" stroke-width="1.6"/><rect x="-34" y="-12" width="68" height="4" fill="#E8445A" opacity=".8"/><ellipse cx="0" cy="-1" rx="44" ry="5" fill="#C9CDD4" stroke="#111318" stroke-width="1.6"/>${cd}</g>`;
+    } else if (ev === "martin") {
       // St. Martin: a lantern procession walks slowly through the back of the scene, the lanterns sway on their sticks
       const cols = ["#FF8A3D", "#FFD23F", "#FF5A7A", "#7FD1FF", "#9CE37D"];
       let lz = "";

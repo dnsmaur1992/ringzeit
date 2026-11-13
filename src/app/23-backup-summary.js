@@ -163,7 +163,7 @@
     const d = summaryData(),
       p = S.profile,
       T = t("sum"),
-      age = ageAt();
+      age = ageExact();
     const out = {
       head: `${T.kwSpan(d.kws[0].kw, d.kws[3].kw)} · ${T.period(sumDay(d.from).replace(/^\S+ /, ""), sumDay(d.to).replace(/^\S+ /, ""))} · ${discLabel(p)} · ${t("levels")[p.level]}${age != null ? ` · ${age} ${T.years}` : ""}`,
       test: d.test

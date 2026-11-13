@@ -366,6 +366,7 @@
         christmas: "Frohe Weihnachten!",
         kwanzaa: "Happy Kwanzaa",
         halloween: "Happy Halloween!",
+        birthday: "Alles Gute zum Geburtstag!",
         martin: "Sankt Martin – Laterne, Laterne!",
         nikolaus: "Schönen Nikolaustag!",
         adventsun: (n) => `Einen schönen ${n}. Advent!`,
@@ -965,7 +966,7 @@
       onbClubMin: "So lange dauert ein Vereinstraining",
       onbQ3: "Ein paar Angaben zu dir",
       onbQ3s:
-        "Aus dem Geburtsjahr berechnet die App deine WAKO-Altersklasse und dein Kampfformat. Alles kannst du auch später eintragen.",
+        "Aus deinem Geburtsdatum berechnet die App deine Altersklasse und dein Kampfformat – und an deinem Geburtstag wird gefeiert. Das Turnier kannst du auch später eintragen.",
       onbComp: "Nächstes Turnier (optional)",
       tabSession: "Einheit",
       tabTest: "Test",
@@ -1253,7 +1254,7 @@
       },
       kidsNote:
         "Kinder-Modus: kürzere Einheiten (bis 30 Min. bis 9 Jahre, bis 45 Min. ab 10) und Runden, nur Körpergewicht, keine Abhärtung, kein Sparring, Kombinationen mit höchstens 3 Techniken. Neben dem Verein reichen 1–2 Tage. Bitte mit Eltern oder Trainer abstimmen.",
-      birth: "Geburtsjahr",
+      birth: "Geburtsdatum",
       sex: "Geschlecht (optional)",
       sexes: { m: "Männlich", f: "Weiblich", d: "Divers" },
       sexHint: "Nur für die Auswertung des Fitnesstests. Training, Runden und Umfang sind für alle gleich.",
@@ -1280,7 +1281,12 @@
       fmtTxt: (r, w, b) => `${r} × ${fmt(w)} min · ${fmt(b)} Pause`,
       noFormat:
         "Für dein Alter gibt es in dieser Disziplin bei der WAKO keine Kategorie – die Vorbereitung nutzt deshalb das Standardformat.",
-      needBirth: "Trag im Profil dein Geburtsjahr ein, damit das Kampfformat deiner Altersklasse berechnet wird.",
+      needBirth: "Trag im Profil dein Geburtsdatum ein, damit das Kampfformat deiner Altersklasse berechnet wird.",
+      bday: {
+        q: "Wann bist du geboren?",
+        why: "Ringzeit braucht jetzt dein vollständiges Geburtsdatum: für dein genaues Alter – und damit die App deinen Geburtstag feiern kann. Altersklassen und Kampfformat richten sich weiter nach deinem Jahrgang.",
+        old: (y) => `Bisher eingetragen: Jahrgang ${y}`,
+      },
       prep: {
         build: (w, y, f) =>
           `Turniervorbereitung · Woche ${w} von ${y}: Runden im Kampfformat (${f}) mit Intervallen im Kampftempo.`,
@@ -1738,6 +1744,7 @@
         christmas: "Merry Christmas!",
         kwanzaa: "Happy Kwanzaa",
         halloween: "Happy Halloween!",
+        birthday: "Happy birthday!",
         martin: "St Martin's Day – lanterns out!",
         nikolaus: "Happy St Nicholas' Day!",
         adventsun: (n) => `Happy ${["1st", "2nd", "3rd", "4th"][n - 1]} Sunday of Advent!`,
@@ -2322,7 +2329,7 @@
       onbClubS: "Pick your fixed club days – Ringzeit plans your own sessions around them. No club? Just continue.",
       onbClubMin: "A club session lasts",
       onbQ3: "A few details about you",
-      onbQ3s: "Your year of birth sets your WAKO age category and bout format. You can add everything later too.",
+      onbQ3s: "Your date of birth sets your age category and bout format – and on your birthday there's a celebration. You can add the tournament later too.",
       onbComp: "Next tournament (optional)",
       tabSession: "Session",
       tabTest: "Test",
@@ -2610,7 +2617,7 @@
       },
       kidsNote:
         "Kids mode: shorter sessions (up to 30 min until age 9, up to 45 min from 10) and rounds, bodyweight only, no conditioning drills, no sparring, combinations with at most 3 techniques. Next to the club, 1–2 days are enough. Please agree on it with parents or the coach.",
-      birth: "Year of birth",
+      birth: "Date of birth",
       sex: "Sex (optional)",
       sexes: { m: "Male", f: "Female", d: "Diverse" },
       sexHint: "Only used to score the fitness test. Training, rounds and volume are the same for everyone.",
@@ -2637,7 +2644,12 @@
       fmtTxt: (r, w, b) => `${r} × ${fmt(w)} min · ${fmt(b)} rest`,
       noFormat:
         "WAKO has no category for your age in this discipline – the preparation uses the standard format instead.",
-      needBirth: "Add your year of birth in the profile so the bout format for your age category can be worked out.",
+      needBirth: "Add your date of birth in the profile so the bout format for your age category can be worked out.",
+      bday: {
+        q: "When were you born?",
+        why: "Ringzeit now needs your full date of birth: for your exact age – and so the app can celebrate your birthday. Age categories and bout format still follow your year of birth.",
+        old: (y) => `So far: born in ${y}`,
+      },
       prep: {
         build: (w, y, f) =>
           `Tournament prep · week ${w} of ${y}: rounds in your bout format (${f}) with fight-pace intervals.`,
