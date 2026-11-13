@@ -441,3 +441,35 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   ändern sich, weil die Übungsauswahl dort kleiner wird. Der alte Vergleich enthielt genau die Fehler: Sprints und
   Bear Crawl im Fitnessstudio, Bear Crawl zuhause.
 - Test: Einheiten aller Sportarten, Arten und Orte erzeugen und die Orte prüfen (268 Tests).
+
+## Pflege (13.11.2026)
+
+- **Arbeitsregel** in README und `docs/release.md`: Änderungen nur in Dev, Prod nur über `tools/release.py`.
+- **Release-Werkzeug:** Die Test-Anleitungen `technik-fitness-test.md` und `einheiten-progression-test.md` bleiben je Repo
+  eigen und werden nicht mehr übertragen. Die README-Notiz der stabilen App ist jetzt dauerhaft gültig statt an ein
+  einzelnes Release gebunden. `docs/release.md` listet die Updates vom 10. bis 13.11.
+- **Test-Build wie die App:** Die Regel „ausgeblendet heißt unsichtbar“ (`[hidden]`) steht jetzt im App-CSS, nicht nur in
+  der Hülle der installierbaren App. Browser-Prüfungen und Bildschirmfotos aus `build/ringzeit.html` sehen damit aus wie
+  die echte App.
+- **Dauerhafter Speicher:** Die installierte App bittet den Browser bei jedem Start einmal, ihre Daten nicht bei
+  Speichermangel zu löschen (`navigator.storage.persist`). Ist das schon gewährt, fragt sie nicht erneut. Im normalen
+  Browser-Tab fragt sie nicht, dort erscheint also keine Nachfrage.
+- Tests: 269 (neu: Speicher-Bitte; Testrahmen kann `navigator` und `matchMedia` vorgeben).
+
+## Übersicht für den Trainer je Kalenderwoche (13.11.2026)
+
+- Die verschickbare Übersicht (Profil → App & Daten → Übersicht für den Trainer, als Bild oder Text) listet die letzten
+  4 Kalenderwochen einschließlich der laufenden. Je Woche steht jede Einheit mit Tag, Dauer und Inhalt:
+  - Art (Verein mit Trainingsart), bei eigenen Einheiten der Plan des Tages ohne Auf- und Abwärmen, also Runden mit
+    ihren Arten und bis zu 5 Übungen; ohne Plan die Übungen mit eingetragenen Sätzen; dazu Lauf oder Notiz.
+  - **Neue Bestleistungen** dieser Einheit: Sätze, die alle früheren Einträge derselben Übung übertreffen. Der erste
+    Eintrag einer Übung zählt nicht als Bestleistung.
+  - Wochen ohne Training stehen als „keine Einheit“ da.
+- Oben bleiben die Summen. Unten stehen letzter Fitnesstest, nächstes Turnier, **letztes eingetragenes Gewicht** und
+  Bestleistungen. Vergangene Turniere stehen nicht mehr drin.
+- Das Bild ist so hoch wie nötig, lange Zeilen brechen auf zwei Zeilen um. Ø RPE auf Deutsch mit Komma.
+- „Letzte 4 Wochen“ im Verlauf zählt jetzt dieselben 4 Kalenderwochen wie die Übersicht.
+- **Fehler behoben:** Seit die Übungen Text-IDs haben, fand `bestSets()` keine Bestleistung mehr. Im Verlauf stand
+  immer „keine Bestleistungen“, in der Übersicht „–“. Mit der echten Sicherung geprüft: jetzt 7 Bestleistungen.
+- Die Wochenbeschriftung („9.–15. Nov“) kommt aus derselben Funktion wie im Kalender (`weekRangeText`).
+- Tests: 270.

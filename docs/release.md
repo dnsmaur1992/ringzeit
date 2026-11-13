@@ -4,6 +4,14 @@ Diese Anleitung bringt den abgenommenen Stand von **Ringzeit Dev** in die stabil
 (`dnsmaur1992/ringzeit`, `dnsmaur1992.github.io/ringzeit/`). Die Nutzer behalten Link, Home-Bildschirm-Symbol und alle
 Daten. Den Hintergrund und den Rückweg beschreibt [abloesung.md](abloesung.md) (Weg 1).
 
+**Arbeitsregel:** Jede Änderung entsteht zuerst in Ringzeit Dev. Prod bekommt sie nur über `tools/release.py`, nie durch
+direkte Änderungen im Repo `ringzeit`. Vor jedem Release prüfen, dass der Code aus `tools/release.py` und der Code in
+Prod sich nur in den gewollten Änderungen unterscheiden.
+
+**Dateien, die je Repo eigen sind** und beim Release nicht übertragen werden: `docs/technik-fitness-test.md` und
+`docs/einheiten-progression-test.md` (Test-Anleitungen mit Upload-Hinweisen für das jeweilige Repo; das Werkzeug lässt sie
+weg) sowie `docs/todo-bedienung-akku.md` (gibt es nur in Prod). Die Notiz oben in der README setzt das Werkzeug selbst.
+
 ## 1. Was das Release-Paket enthält
 
 Das Paket entsteht mit `python3 tools/release.py <leerer Ordner>` aus dem Dev-Repo. Es ist eine Kopie des Dev-Stands mit
@@ -169,3 +177,17 @@ Arbeitsphase des Rundentimers. Ablauf und Dosierungen bleiben gleich.
 
 Prüfung: 264 Tests und Baseline bestanden, Ablaufmatrix 216 Einheiten plus H1–H9 bestanden.
 Keine neue echte Browser-/Geräteabnahme. Handprüfung und Details: `winterarc-mobility-test.md`.
+
+## 11. Updates 10.–13.11.2026 (aus Ringzeit Dev über `tools/release.py`)
+
+Jeweils nur die geänderten Dateien, Upload mit denselben Pfaden, nichts löschen. Jedes Update wurde im Release-Stand mit
+Testsuite, Kickbox-Vergleich, Gesamtprüfung (648 Abläufe), Browser (13), Isolation (12) und einem Update vom jeweiligen
+Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.md](implementation-status.md).
+
+| Datum | Inhalt | Tests |
+|---|---|---|
+| 10.11. | Winter Arc: Feinschliff, kompakte Karte auf „Heute“ mit aufklappbarer Woche; Dev an Prod angeglichen (Codex-Änderungen aus Release 4 übernommen) | 264 |
+| 11.11. | Neue Feste mit eigener Bewegung (St. Martin, Nikolaus, Advent, Dreikönig, Pfingsten, Erntedank, 1. Mai, Tag der Deutschen Einheit, Mutter- und Weltfrauentag, Mondneujahr, Holi); Winter Arc: heute und 3 Tage davor änderbar, letzte 7 Tage sichtbar; „Was ist neu“ 11 | 266 |
+| 11.11. | Atemübung im Winter Arc auch an Vortagen von Hand abhakbar | 267 |
+| 12.11. | Übungen nach Platzbedarf: Hip Thrust nur Fitnessstudio; Bear Crawl, Sprints, Standweitsprung nur Halle und draußen; Kickbox-Vergleich gewollt neu aufgezeichnet | 268 |
+| 13.11. | Pflege: Arbeitsregel und Release-Doku, je Repo eigene Test-Anleitungen, Test-Build mit derselben Ausblende-Regel wie die App, Bitte um dauerhaften Speicher | 269 |
