@@ -1,6 +1,10 @@
 <title>Ringzeit</title>
 <meta name="claude:viewport-fit-sides" content="cover" />
 <style>
+  /* hidden really hides – also in build/ringzeit.html, which the browser tests use (the PWA shell has the same rule) */
+  [hidden] {
+    display: none !important;
+  }
   /* Layout: quiet premium sports app — near-black ground, hairline panels with soft radius, thin condensed numerals, brass for state and focus, crimson only for kicks. Deliberately dark-only. */
   :root {
     --night: #0a0b0d;
