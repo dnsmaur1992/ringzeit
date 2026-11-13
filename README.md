@@ -20,7 +20,7 @@
 
 **Ringzeit** plant dein Training im **Kickboxen, Boxen oder Taekwondo** neben dem Verein – passend zu Disziplin bzw. Stil, Level, Alter und Trainingstagen. Runden, Kombinationen und Übungen kommen fertig dosiert aufs Handy, der Rundentimer läutet die Glocke, eine Ansage ruft die Kombis, und am Ende siehst du, was du geschafft hast. Jede Sportart folgt den Regeln ihres Verbands und hat ihren eigenen Trainingsschwerpunkt.
 
-> **Update 09.11.2026:** Technikniveau und körperliche Dosierung sind unabhängig. Eine abschließende Emoji-Bewertung steuert die nächste passende Einheit; die zusätzlichen Übungsfragen entfallen. Daten bleiben in der bestehenden Ringzeit-App. Upload und Prüfung: [Release 4](docs/release.md#9-release-4-09112026).
+> **Ringzeit** plant dein Training für Kickboxen, Boxen und Taekwondo. Wer Ringzeit nutzt, behält bei jedem Update alle Daten. Entwickelt wird in [ringzeit-dev](https://github.com/dnsmaur1992/ringzeit-dev); diese App wird nur über ein Release von dort aktualisiert. Stand und Prüfungen: [Umsetzungsstand](docs/implementation-status.md) · [Gesamtprüfung](docs/final-check.md) · [Release](docs/release.md).
 
 ## Drei Sportarten auf einen Blick
 
@@ -255,6 +255,12 @@ Der Build setzt die App aus `src/` zusammen (siehe Technik) und schreibt die les
 Die Tests führen die echte Trainingslogik und Ereignisbehandlung in Node aus. Timer-Signale, Musik und die Bildschirmsperre sollten zusätzlich auf echten iPhones und Android-Geräten geprüft werden.
 
 ## Updates veröffentlichen
+
+> **Arbeitsregel: Änderungen immer zuerst in [Ringzeit Dev](https://github.com/dnsmaur1992/ringzeit-dev).** Die stabile
+> App (`ringzeit`) wird nur über ein Release aus `ringzeit-dev` aktualisiert (`python3 tools/release.py`, siehe
+> [Release](docs/release.md)), nie direkt –
+> auch nicht durch andere Werkzeuge wie Codex. Sonst laufen die beiden Repos auseinander und das nächste Release
+> überschreibt Änderungen, die nur in Prod stehen.
 
 Für den Betreiber des Repositorys:
 
