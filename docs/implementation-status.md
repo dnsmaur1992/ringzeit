@@ -491,3 +491,21 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   Konfetti. Am 29. Februar Geborene feiern in anderen Jahren am 28. Februar. Ausschaltbar wie alle Feste.
 - Browser-Prüfung der Einrichtung füllt das Datumsfeld und prüft, dass „Weiter“ ohne Datum gesperrt ist.
 - Tests: 272.
+
+## Technik-Einheiten mit Schwerpunkt (14.11.2026)
+
+- Auftrag: „Bei Technik soll es um Technik gehen. Am Ende nur die Kräftigungen zur Ausführung der Technik der
+  Trainingseinheit. Außerdem bei einer Technik-Einheit immer ein Schwerpunkt, automatisch generiert.“ Antworten: nur
+  automatisch, sichtbar; etwa 10 Min.; dazu breitere Schwerpunkte; auch Taekwondo; gibt es keine passende Kräftigung,
+  lieber mehr Technik. Nachtrag: Der Schwerpunkt wird nicht als eigener Text angezeigt – er gibt der Einheit ihren Sinn,
+  sichtbar wird er über Runden und Kraftblock.
+- `08-plan.js`: `chooseFocus()` (immer ein Schwerpunkt für T, gespeichert in `session.theme`), `FOCUS_STR` (Übungen je
+  Schwerpunkt), `focusEx()`, `focusKinds()` (Beinarbeit-/Konterrunden), `KB_COUNTER` (Konterrunden Kickboxen), `tkdCombo()` mit
+  Schwerpunkt-Tritt. C- und P-Einheiten behalten die versteckten Themen (`chooseTheme`).
+- Anzeige: nur der Blockname „Kraft für die Technik“; kein eigener Schwerpunkt-Text.
+- Die beiden Kick-Halte-Übungen sind Sidekick-Positionen und stehen daher nur bei Seitwärts- und Rückwärtstritt.
+- Kein neues „Was ist neu“, Zähler bleibt 11.
+- Test „7b B6“ (WT-Technik Kraft 8 + aktive Beweglichkeit 6) ersetzt durch zwei Tests zum Schwerpunkt; Kickbox-Vergleich
+  gewollt neu aufgezeichnet (nur T-Einheiten geändert).
+- Tests: 273.
+

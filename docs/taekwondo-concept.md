@@ -229,6 +229,9 @@ Kickboxen und Boxen aus `docs/boxing-concept.md` § 5. WT und ITF sind Vorschlä
 | P | 9 · Partner 27 · Kraft 12 · Abhärtung 6 · 6 | 9 · Pratze + Aufgabensparring 27 · 12 · 6 · 6 | 9 · Tritt-Pratze + Step/Situations-Sparring 27 · Kraft 12 · Abhärtung 6 · 6 | 9 · Pratze + Matsogi-Drills 27 · 12 · 6 · 6 |
 | M | 8 · Mobility 30 · 7 | 8 · 22 · Beinarbeit 8 · 7 | 8 · aktive Beweglichkeit/Tritthaltepositionen 34 · 3 (locker) | 8 · Mobility 28 · lockere Hand-Fuß-Verbindungen 4 · 5 |
 
+
+**Seit 14.11.2026 gilt für T in allen Sportarten:** Aufwärmen · Technik · höchstens etwa 10 Min. „Kraft für die Technik“ (nur Übungen zur Technik des Schwerpunkts, sonst mehr Technikrunden) · Abhärtung bzw. Handgelenk · Cool-down. Kondition und die WT-Zeile „Kraft 8 + aktive Beweglichkeit 6“ fallen in T weg. Siehe `trainingslogik.md`, „Technik-Einheiten mit Schwerpunkt“.
+
 Wochenmuster: WT plant bei 3+ Tagen eine M-Einheit mehr als Kickboxen (statt einer K-Einheit), ITF wie Kickboxen.
 **Trainerfrage F1.**
 

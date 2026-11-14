@@ -178,7 +178,7 @@ Arbeitsphase des Rundentimers. Ablauf und Dosierungen bleiben gleich.
 Prüfung: 264 Tests und Baseline bestanden, Ablaufmatrix 216 Einheiten plus H1–H9 bestanden.
 Keine neue echte Browser-/Geräteabnahme. Handprüfung und Details: `winterarc-mobility-test.md`.
 
-## 11. Updates 10.–13.11.2026 (aus Ringzeit Dev über `tools/release.py`)
+## 11. Updates 10.–14.11.2026 (aus Ringzeit Dev über `tools/release.py`)
 
 Jeweils nur die geänderten Dateien, Upload mit denselben Pfaden, nichts löschen. Jedes Update wurde im Release-Stand mit
 Testsuite, Kickbox-Vergleich, Gesamtprüfung (648 Abläufe), Browser (13), Isolation (12) und einem Update vom jeweiligen
@@ -191,3 +191,6 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 11.11. | Atemübung im Winter Arc auch an Vortagen von Hand abhakbar | 267 |
 | 12.11. | Übungen nach Platzbedarf: Hip Thrust nur Fitnessstudio; Bear Crawl, Sprints, Standweitsprung nur Halle und draußen; Kickbox-Vergleich gewollt neu aufgezeichnet | 268 |
 | 13.11. | Pflege: Arbeitsregel und Release-Doku, je Repo eigene Test-Anleitungen, Test-Build mit derselben Ausblende-Regel wie die App, Bitte um dauerhaften Speicher | 269 |
+| 13.11. | Übersicht für den Trainer je Kalenderwoche (Tag, Dauer, Inhalt, neue Bestleistungen), nächstes Turnier und letztes Gewicht; Fehler „keine Bestleistungen“ behoben | 270 |
+| 13.11. | Vollständiges Geburtsdatum als Pflichtangabe (Abfrage beim Start für bestehende Profile), genaues Alter für Anzeige und Schutzregeln, Geburtstag als Fest | 272 |
+| 14.11. | Technik-Einheiten mit automatischem Schwerpunkt (auch Beinarbeit, Verteidigung & Konter, Taekwondo-Tritte); am Ende nur bis zu 10 Min. Kraft für diese Technik, sonst mehr Technikrunden; Kickbox-Vergleich gewollt neu aufgezeichnet | 273 |

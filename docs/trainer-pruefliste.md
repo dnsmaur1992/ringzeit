@@ -21,7 +21,7 @@ Antwort bitte je Punkt: **passt** / **ändern: …** / **unklar**.
 | B1 | **F2**: WT-Freigabe von Dreh- und Sprungtritten | Rückwärtstritt (Dwi-chagi) ab Fortgeschritten; Drehhakentritt ab Fortgeschritten **oder** 6. Kup (grün); Sprungtritte ab Fortgeschritten **oder** 4. Kup (blau) (seit 7g: Level oder Gürtel genügt); alle nicht unter 19 Jahren und nicht bei Knie-/Sprunggelenk-Einschränkung (Trainingsempfehlung, keine Verbandsregel) | |
 | B2 | **F3**: ITF-Technikrunde Hand/Fuß ≈ 40/60 | Hand etwa 20–50 % der Elemente | |
 | B3 | **ITF-Spektakel**: ab Level 1 etwa jede zweite Kombination mit Sprung- oder Drehtritt (soweit Grad, Alter, Einschränkungen erlauben) | seit 7b | |
-| B4 | **WT-Beweglichkeit**: Technik = Kraft 8 + aktive Beweglichkeit 6 Min.; Mobility = 34 Min. aktive Beweglichkeit; ab 4 Tagen Mobility statt Kondition | seit 7b (F1 = ja) | |
+| B4 | **WT-Beweglichkeit**: ~~Technik = Kraft 8 + aktive Beweglichkeit 6 Min.~~ (seit 14.11.2026: Technik endet mit bis zu 10 Min. Kraft für den Schwerpunkt-Tritt); Mobility = 34 Min. aktive Beweglichkeit; ab 4 Tagen Mobility statt Kondition | seit 7b (F1 = ja) | |
 | B5 | **Boxen, Ausdauer und Zähigkeit**: Kondition ≈ 33 Min. in 3-Min.-Runden; Kraft 24 + Kraftausdauer 15; Körperabhärtung (Bauch mit Partner, Rumpf an den Sack, Spannung & Ausatmen) ab Level 1 und 16 Jahren | seit 7b | |
 | B6 | **Boxen, Touch-Sparring**: höchstens eine Runde, 30–40 % Schlaghärte, nach Absprache mit dem Trainer | seit 4a-U | |
 | B7 | **Abhärtung Taekwondo** (Faust, Handkante, Finger, Schienbein, Fuß), Kinder nur sanft | seit 6b | |

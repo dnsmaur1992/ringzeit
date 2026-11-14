@@ -150,6 +150,8 @@ Plänen (`buildSessionCore`, Light Contact, 03.11.2026); Boxen = Vorschlag für 
 | C | 9 · Technik 18 · Kondition 21 · Abhärtung 6 · 6 | 9 · Sackrunden 18 · Intervalle 21 · Handgelenk 6 · 6 |
 | P | 9 · Partner 27 · Kraft 12 · Abhärtung 6 · 6 | 9 · Pratzen + Aufgabensparring 27 · Kraft 12 · Handgelenk 6 · 6 |
 | S | 9 · Kraft 27 · Kondition 12 · Abhärtung 6 · 6 | 9 · Kraft 27 · Kondition 12 · Handgelenk 6 · 6 |
+
+**Seit 14.11.2026 gilt für T in allen Sportarten:** Aufwärmen · Technik · höchstens etwa 10 Min. „Kraft für die Technik“ (nur Übungen zur Technik des Schwerpunkts, sonst mehr Technikrunden) · Abhärtung bzw. Handgelenk · Cool-down. Kondition und die WT-Zeile „Kraft 8 + aktive Beweglichkeit 6“ fallen in T weg. Siehe `trainingslogik.md`, „Technik-Einheiten mit Schwerpunkt“.
 | K | 9 · Kondition 29 · Rumpf 10 · Abhärtung 6 · 6 | 9 · Kondition 29 · Rumpf 10 · Handgelenk 6 · 6 |
 | M | 8 · Mobility 30 · 7 | 8 · Mobility 22 · lockere Beinarbeit/Schatten 8 · 7 |
 

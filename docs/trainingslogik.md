@@ -78,3 +78,29 @@ Dreierauswahl entfallen. Die genaue RPE-Skala bleibt alternativ nutzbar (1–2, 
 - Neuaufbau wendet dieselbe Antwort nicht mehrfach an. Begonnene Einheiten bleiben unverändert;
   unbegonnene werden nach relevanten Verlaufskorrekturen neu erzeugt. Zukünftige Einträge zählen nicht.
 - Kern: `src/core/session-progression.js`; Adapter: `effortDoseState` und `applyStrengthRestDose`.
+
+## Technik-Einheiten mit Schwerpunkt (14.11.2026)
+
+Bei Technik geht es um Technik. Jede Technik-Einheit (T) hat deshalb einen **Schwerpunkt**, den die App beim Erstellen
+automatisch wählt. Er gibt der Einheit ihren Sinn – Ergebnis ist, dass man diese Technik geübt hat. Er steht nicht als
+eigener Text in der Einheit; man erkennt ihn an den Runden und am Kraftblock (Betreiber 14.11.2026).
+
+- **Auswahl:** über die letzten 12 Einheiten ausgeglichen, mit etwas Zufall. Das Profil „Mehr Boxen / Mehr Kicks“ zieht
+  Hand- bzw. Kick-Schwerpunkte vor. Knie-/Sprunggelenk-Einschränkung, Disziplin und Level sperren wie bisher
+  (z. B. kein Feger mit Sprunggelenk, Knie nur K1).
+- **Kickboxen:** Jab als Eröffnung, Doppel-Jab, Erst Körper dann Kopf, Frontkick oder Sidekick als Eröffnung, Kopfkick,
+  Feger, Lowkick (KL/K1) oder Knie (K1) zum Abschluss.
+- **Boxen:** Jab als Eröffnung, Doppel-Jab, Erst Körper dann Kopf, Haken oder Aufwärtshaken (ab Level 1) zum Abschluss.
+- **Taekwondo (WT und ITF):** ein Tritt – Halbkreistritt, Frontkick, Seitwärtstritt, Axttritt, Rückwärtstritt,
+  Schiebetritt oder Sicheltritt –, soweit Level, Grad und Einschränkungen ihn freigeben. Etwa drei von vier
+  Kombinationen enthalten ihn.
+- **Breite Schwerpunkte in allen Sportarten:** *Beinarbeit* (etwa die Hälfte der Runden nach dem Einstieg sind
+  Beinarbeit-Runden) und *Verteidigung & Konter* (Ausweich- und Konterrunden; im Kickboxen mit Partner bekommt jede
+  Partnerrunde nach der ersten eine Gegenaktion). Kinder bekommen nur Doppeldeckung, Rausgehen und Block.
+- **Am Ende nur Kraft für die Technik:** statt Kondition plus Kraft (bisher ≈ 14–17 Min.) höchstens etwa 10 Min. mit bis
+  zu drei Übungen, die genau die Technik des Schwerpunkts stützen (z. B. Lowkick: einbeiniges Wadenheben, Bulgarian
+  Split Squats; Sidekick: Einbeinstand mit Kick-Hold, Kick-Halten; Beinarbeit: Wadenheben, seitliche Sprünge;
+  Verteidigung: Nackenkräftigung, Dead Bugs). Es gelten Ort, Ausrüstung, Level und Einschränkungen. Drei passende
+  Übungen = 10 Min., zwei = 7, eine = 4, keine = kein Block: **die Minuten gehen dann in zusätzliche Technikrunden.**
+- Abhärtung bzw. Handgelenk & Griff bleiben, Kondition (C), Sparring (P), Kraft (S) und Mobility (M) sind unverändert.
+
