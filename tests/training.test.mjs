@@ -3630,20 +3630,95 @@ test("6d-3: free round timer – presets and default by main sport and style; co
 const sess7 = (a, sport, type, o = {}) =>
   JSON.parse(a.run(`(()=>{S.profile.sport='${sport}';S.profile.birthYear=${o.by ?? 1995};S.profile.level=${o.lvl ?? 1};S.profile.limits=${JSON.stringify(o.lim || [])};S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'${o.st || "wt"}',wt:'${o.grade || "k1"}',itf:'${o.grade || "k1"}'});return JSON.stringify(buildSession('2026-11-02','${type}','${o.loc || "gym"}',${JSON.stringify(o.eq || ["bag", "rope", "weights"])},{sport:'${sport}',min:${o.min ?? 60}${sport === "taekwondo" ? `,tstyle:'${o.st || "wt"}'` : ""}}))})()`));
 const blk = (s, f) => s.blocks.find(f);
-test("7b B6: WT technique = strength 8 + active flexibility 6; ITF, kickboxing and boxing keep strength 14", () => {
+test("14.11.2026 technique units (replaces 7b B6): no fitness add-on – a visible focus and at most about 10 min strength for its technique", () => {
   const a = app();
-  const wt = sess7(a, "taekwondo", "T");
-  const am = blk(wt, (b) => b.lbl === "amob");
-  assert.ok(am && am.key === "mob" && am.min === 6, JSON.stringify(wt.blocks.map((b) => [b.key, b.lbl, b.min])));
-  assert.equal(blk(wt, (b) => b.key === "str").min, 8);
-  assert.ok(am.items.every((it) => ["mob.kick_holds", "mob.slow_motion_kicks", "mob.controlled_leg_swings", "mob.active_leg_raises"].includes(it.id)), "active items");
-  for (const [sp, st] of [["taekwondo", "itf"], ["kickboxing"], ["boxing"]]) {
-    const s = sess7(a, sp, "T", { st });
-    assert.equal(blk(s, (b) => b.key === "str").min, 14, sp + st);
-    assert.ok(!blk(s, (b) => b.lbl === "amob"), sp);
+  const STR = JSON.parse(a.run("JSON.stringify(FOCUS_STR)"));
+  for (const [sp, st, disc] of [["taekwondo", "wt"], ["taekwondo", "itf"], ["kickboxing", null, "lc"], ["kickboxing", null, "k1"], ["boxing"]])
+    for (const loc of ["gym", "home", "out", "studio"])
+      for (let i = 0; i < 6; i++) {
+        if (disc) a.run(`S.profile.disc='${disc}'`);
+        const s = sess7(a, sp, "T", { st, loc, eq: i % 2 ? ["partner"] : ["bag", "rope", "weights", "bands", "bar"] });
+        const tag = `${sp}/${st || disc || ""}/${loc}: ${JSON.stringify(s.blocks.map((b) => [b.key, b.lbl, b.min]))}`;
+        assert.ok(s.theme && STR[s.theme] || ["foot", "def"].includes(s.theme), "focus " + s.theme + " " + tag);
+        assert.ok(!blk(s, (b) => b.key === "cond" || b.lbl === "amob"), "no conditioning/flexibility add-on " + tag);
+        const str = s.blocks.filter((b) => b.key === "str");
+        assert.ok(str.length <= 1, tag);
+        if (str.length) {
+          assert.equal(str[0].lbl, "tstr", tag);
+          assert.ok(str[0].min >= 4 && str[0].min <= 10, tag);
+          assert.ok(str[0].items.length >= 1 && str[0].items.every((it) => STR[s.theme].includes(it.id)), "only strength for the focus technique " + tag);
+        }
+        assert.equal(s.blocks.reduce((n, b) => n + b.min, 0), s.min, "minutes add up " + tag);
+      }
+  // nothing fits: the time goes to technique rounds
+  a.run("var _fx = focusEx; focusEx = () => [{ kind: 'ex', id: 'str.dead_bugs' }, { kind: 'ex', id: 'str.hollow_hold' }, { kind: 'ex', id: 'str.plank' }];");
+  const ref = sess7(a, "kickboxing", "T", { eq: ["bag"] });
+  assert.equal(blk(ref, (b) => b.key === "str").min, 10);
+  a.run("focusEx = () => [];");
+  const none = sess7(a, "kickboxing", "T", { eq: ["bag"] });
+  a.run("focusEx = _fx;");
+  assert.ok(!blk(none, (b) => b.key === "str"), JSON.stringify(none.blocks.map((b) => [b.key, b.min])));
+  const main = (s) => blk(s, (b) => b.key === "main");
+  assert.equal(main(none).min, main(ref).min + 10);
+  assert.ok(main(none).items.length > main(ref).items.length, "more rounds instead " + main(ref).min + "/" + main(ref).items.length + " " + main(none).min + "/" + main(none).items.length + " " + JSON.stringify(none.blocks.map((b) => [b.key, b.min])));
+  // conditioning units keep their conditioning block and show no focus
+  const c = sess7(a, "kickboxing", "C");
+  assert.ok(blk(c, (b) => b.key === "cond"));
+});
+test("14.11.2026 technique focus: always one, not shown as extra text, balanced over the sessions, also broad (footwork, defence & counter) and in taekwondo", () => {
+  const a = app();
+  // the focus gives the unit its point, but is no extra text on the screen
+  a.run("S.profile.sport='taekwondo';S.profile.lang='de';ui.sel='2026-11-02';ui.tab='session';window._cf=chooseFocus;chooseFocus=()=>({id:'k_dol',tag:'kick',kick:'dol'});S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{sport:'taekwondo',tstyle:'wt'});ui.setup=null;");
+  assert.equal(a.run("S.sessions[ui.sel].theme"), "k_dol");
+  assert.doesNotMatch(a.run("renderSession()"), /Schwerpunkt der Einheit|focusln/);
+  // the focus kick shows up in most combo rounds
+  for (let i = 0; i < 10; i++) {
+    const s = JSON.parse(a.run("JSON.stringify(buildSession('2026-11-02','T','gym',['bag'],{sport:'taekwondo',tstyle:'wt',min:60}))"));
+    const rounds = blk(s, (b) => b.key === "main").items.filter((r) => ["shadow", "bag", "partner"].includes(r.k) && r.combo);
+    const withK = rounds.filter((r) => r.combo.some((x) => x === "dol" || x === "dolh" || /^sr/.test(x)));
+    assert.ok(withK.length >= rounds.length / 2, JSON.stringify(rounds.map((r) => r.combo)));
   }
-  a.run("S.profile.sport='taekwondo';S.profile.lang='de';ui.sel='2026-11-02';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{sport:'taekwondo',tstyle:'wt'});ui.setup=null;");
-  assert.match(a.run("renderSession()"), /Aktive Beweglichkeit/);
+  a.run("chooseFocus=window._cf;S.profile.lang='de'");
+  // broad foci change the rounds: footwork rounds, evade & counter rounds (solo), counter actions on every later partner round
+  const force = (id) => a.run(`window._cf2=window._cf2||chooseFocus;chooseFocus=()=>BROAD.find(x=>x.id==='${id}')`);
+  const back = () => a.run("chooseFocus=window._cf2");
+  for (const sp of ["kickboxing", "boxing", "taekwondo"]) {
+    force("foot");
+    let s = sess7(a, sp, "T", { eq: ["bag"] }),
+      it = blk(s, (b) => b.key === "main").items;
+    assert.ok(it.filter((r) => r.k === "foot").length >= Math.floor((it.length - 1) / 2), sp + " foot " + it.map((r) => r.k));
+    assert.ok(blk(s, (b) => b.key === "str")?.items.every((x) => ["str.single_leg_calf_raises", "pow.lateral_bounds", "str.bulgarian_split_squats", "str.lunges"].includes(x.id)) ?? true);
+    force("def");
+    s = sess7(a, sp, "T", { eq: ["bag"] });
+    it = blk(s, (b) => b.key === "main").items;
+    const ev = it.filter((r) => r.k === "evade");
+    assert.ok(ev.length >= Math.floor((it.length - 1) / 2), sp + " def " + it.map((r) => r.k));
+    assert.ok(ev.every((r) => r.evade && r.evade.d && r.combo && r.combo.length >= 1), sp);
+    back();
+  }
+  force("def");
+  a.run("S.profile.disc='kl'");
+  const ps = sess7(a, "kickboxing", "T", { eq: ["partner"], lvl: 1 }),
+    pr = blk(ps, (b) => b.key === "main").items.filter((r) => ["partner", "pads", "counter"].includes(r.k) && r.combo);
+  assert.ok(pr.slice(1).every((r) => r.react), "every partner round after the first with a counter action");
+  back();
+  // children: only simple defences
+  force("def");
+  const kid = sess7(a, "kickboxing", "T", { eq: ["bag"], by: 2016, lvl: 0 });
+  assert.ok(blk(kid, (b) => b.key === "main").items.filter((r) => r.k === "evade").every((r) => ["cover", "step", "block"].includes(r.evade.d) && r.combo.length <= 3));
+  back();
+  // balanced: 48 technique units in a row – every focus of the sport comes up, none dominates, the broad ones too
+  for (const sp of ["kickboxing", "boxing", "taekwondo"]) {
+    const ids = JSON.parse(
+      a.run(`(()=>{S.profile.sport='${sp}';S.profile.level=1;S.profile.limits=[];S.profile.disc='k1';S.profile.birthYear=1995;S.sessions={};const out=[];for(let i=0;i<48;i++){const d='2027-01-'+String(1+(i%28)).padStart(2,'0');const s=buildSession(d,'T','gym',['bag'],{sport:'${sp}',min:60${sp === "taekwondo" ? ",tstyle:'wt'" : ""}});s.created=i+1;S.sessions['x'+i]=s;out.push(s.theme)}return JSON.stringify(out)})()`),
+    );
+    const cnt = {};
+    ids.forEach((x) => (cnt[x] = (cnt[x] || 0) + 1));
+    assert.ok(ids.every(Boolean), sp);
+    assert.ok(cnt.foot >= 2 && cnt.def >= 2, sp + JSON.stringify(cnt));
+    assert.ok(Object.keys(cnt).length >= 5, sp + JSON.stringify(cnt));
+    assert.ok(Math.max(...Object.values(cnt)) <= 10, sp + JSON.stringify(cnt));
+  }
 });
 test("7b B6: WT mobility = active flexibility 34 (about half active items) + easy cool-down 3; WT week pattern", () => {
   const a = app();
