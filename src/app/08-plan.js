@@ -510,9 +510,123 @@
       Math.random() * 0.5;
     return ok.sort((a, b) => sc(a) - sc(b))[0] || null;
   }
+  /* Technique units (type T) always have a focus (Schwerpunkt, Betreiber 14.11.2026) that gives the unit its point: chosen
+     automatically and balanced over the last sessions, not shown as an extra text – the rounds and the closing block carry it. The technique themes above plus two broad ones – footwork and defence & counter –
+     and in taekwondo one kick per unit. The closing block holds only strength work for the technique of the focus
+     (FOCUS_STR); when nothing fits the place, equipment or limits, its minutes go to more technique rounds. */
+  // the two kick holds are side-kick positions: only with side and back kicks
+  const KF_STR = ["str.copenhagen_plank", "mob.active_leg_raises", "str.single_leg_calf_raises", "str.hanging_knee_raises"],
+    KF_FRONT = ["str.hanging_knee_raises", "mob.active_leg_raises", "str.dead_bugs", "str.hollow_hold"],
+    KF_SIDE = ["str.single_leg_kick_hold", "str.glute_bridges", "str.copenhagen_plank", "mob.kick_holds"],
+    ROT_STR = ["str.russian_twists", "str.pallof_press", "str.cable_woodchop", "str.plank_shoulder_taps"],
+    HAND_STR = ["str.push_ups", "str.plank_shoulder_taps", "str.band_face_pulls", "str.cable_face_pulls", "pow.explosive_push_ups"];
+  const FOCUS_STR = {
+    startJab: HAND_STR,
+    doubleJab: HAND_STR,
+    hookFinish: ROT_STR,
+    upperFinish: [...ROT_STR, "str.push_ups"],
+    bodyHead: ["str.russian_twists", "str.pallof_press", "str.copenhagen_plank", "str.cable_woodchop"],
+    frontStart: [...KF_FRONT, "str.glute_bridges"],
+    sideOpener: KF_SIDE,
+    headFinish: KF_STR,
+    sweepFinish: ["str.copenhagen_plank", "str.single_leg_calf_raises", "str.bulgarian_split_squats"],
+    lowFinish: ["str.single_leg_calf_raises", "str.russian_twists", "str.bulgarian_split_squats", "str.pallof_press"],
+    kneeFinish: ["str.hanging_knee_raises", "str.dead_bugs", "str.hollow_hold", "str.bulgarian_split_squats"],
+    foot: ["str.single_leg_calf_raises", "pow.lateral_bounds", "str.bulgarian_split_squats", "str.lunges"],
+    def: ["str.neck_iso_hold", "str.dead_bugs", "str.hollow_hold", "str.pallof_press", "str.plank"],
+    k_dol: KF_STR,
+    k_ban: KF_STR,
+    k_ap: KF_FRONT,
+    k_mireo: KF_FRONT,
+    k_nae: KF_FRONT,
+    k_yeop: KF_SIDE,
+    k_dwi: KF_SIDE,
+  };
+  // the broad foci change the round kinds: more footwork rounds or more evade & counter rounds
+  const BROAD = [
+    { id: "foot", tag: "mix", kinds: "foot" },
+    { id: "def", tag: "mix", kinds: "evade" },
+  ];
+  // taekwondo: one kick per unit; it shows up in most combos of the unit (tkdCombo)
+  const TKD_KF = ["dol", "ap", "yeop", "nae", "dwi", "mireo", "ban"];
+  const hasKick = (c, k, M) => c.some((x) => x === k || (k === "dol" && x === "dolh") || (M.SERIES && M.SERIES[x] && M.SERIES[x].p.some(([y]) => y === k)));
+  function tkdFoci() {
+    const M = tkm(),
+      ctx = tkdCtx(),
+      pool = M.COMBOS.slice(0, (techniqueLevel() || 0) + 1).flat().filter((c) => c.every((x) => M.allowed(x, ctx)));
+    return TKD_KF.filter((k) => M.allowed(k, ctx) && pool.filter((c) => hasKick(c, k, M)).length >= 2).map((k) => ({ id: "k_" + k, tag: "kick", kick: k }));
+  }
+  function chooseFocus() {
+    let base;
+    if (isTkd()) base = tkdFoci();
+    else if (isBox()) base = BOXT.BOX_THEMES.filter((th) => !th.lvl || techniqueLevel() >= th.lvl);
+    else {
+      const p = S.profile,
+        ka = kneeAnk();
+      base = THEMES.filter(
+        (th) => (!th.disc || th.disc.includes(discOf())) && (!th.lvl || techniqueLevel() >= th.lvl) && !(ka && th.risky) && !(th.id === "sweepFinish" && p.limits.includes("ankle")),
+      );
+    }
+    const ok = [...base, ...BROAD],
+      p = S.profile,
+      focus = techniqueLevel() === 0 || isTkd() ? "bal" : p.focus,
+      recent = Object.values(S.sessions)
+        .sort((a, b) => (a.created || 0) - (b.created || 0))
+        .slice(-12)
+        .map((s) => s.theme);
+    // the broad foci come about as often as one theme of the sport (not one in three)
+    const sc = (th) =>
+      recent.filter((x) => x === th.id).length +
+      (th.kinds ? 0.6 : 0) -
+      ((focus === "box" && th.tag === "hand") || (focus === "kick" && th.tag === "kick") ? FOCUS_THEME : 0) +
+      ((focus === "box" && th.tag === "kick") || (focus === "kick" && th.tag === "hand") ? FOCUS_THEME : 0) +
+      Math.random() * 0.5;
+    return ok.sort((a, b) => sc(a) - sc(b))[0];
+  }
+  const focusOf = (id) => [...THEMES, ...BOXT.BOX_THEMES, ...BROAD].find((x) => x.id === id) || (id && id.startsWith("k_") ? { id, kick: id.slice(2) } : null);
+  /* strength for the technique of the focus: only catalogue exercises of its list that fit place, equipment and limits */
+  function focusEx(theme, loc, eq, used, n = 3) {
+    const keys = FOCUS_STR[theme && theme.id] || [],
+      pool = shuffle(EX.filter((e) => keys.includes(e.key) && okEx(e, loc, eq) && !used.has(e.id)));
+    const out = pool.slice(0, n);
+    out.forEach((e) => used.add(e.id));
+    return out.map((e) => ({ kind: "ex", id: e.id }));
+  }
+  /* broad focus: about half of the rounds after the easy start become footwork or evade & counter rounds (the kinds
+     with a combo give way, shadow first) */
+  function focusKinds(kinds, theme, easy) {
+    if (!theme || !theme.kinds) return kinds;
+    const k = theme.kinds,
+      from = Math.min(Math.max(1, easy), kinds.length - 1),
+      want = Math.ceil((kinds.length - from) / 2);
+    let have = kinds.filter((x, i) => i >= from && x === k).length;
+    for (const kind of ["shadow", "bag", "partner"])
+      for (let i = kinds.length - 1; i >= from && have < want; i--)
+        if (kinds[i] === kind && (i === kinds.length - 1 || kinds[i + 1] !== k) && (i === from || kinds[i - 1] !== k)) {
+          kinds[i] = k;
+          have++;
+        }
+    for (let i = kinds.length - 1; i >= from && have < want; i--)
+      if (["shadow", "bag", "partner"].includes(kinds[i])) {
+        kinds[i] = k;
+        have++;
+      }
+    return kinds;
+  }
+  /* kickboxing evade & counter rounds (broad focus "Verteidigung & Konter"): a defence, then the counter */
+  const KB_COUNTER = [
+    { d: "cover", att: "jab", c: ["jab", "cross"], lvl: 0 },
+    { d: "step", att: "cross", c: ["jab", "cross", "round"], lvl: 0 },
+    { d: "block", att: "round", c: ["cross", "round"], lvl: 0 },
+    { d: "parry", att: "jab", c: ["cross", "hook", "round"], lvl: 1 },
+    { d: "deflect", att: "front", c: ["cross", "roundh"], lvl: 1 },
+    { d: "slip", att: "cross", c: ["hookb", "hook", "round"], lvl: 1 },
+    { d: "check", att: "lowk", c: ["cross", "lowk"], lvl: 1, low: true },
+    { d: "duck", att: "hook", c: ["cross", "hook", "roundh"], lvl: 2 },
+  ];
   function combo(kind, theme) {
     if (isBox()) return boxCombo(kind, theme);
-    if (isTkd()) return tkdCombo(kind);
+    if (isTkd()) return tkdCombo(kind, false, theme);
     const p = S.profile,
       lim = p.limits,
       ka = kneeAnk(),
@@ -544,7 +658,7 @@
       if (ch.length) return partnerClean(rnd(ch).slice());
     }
     let c = weightedPick(pool, focus).slice();
-    if (theme && (!kickOnly || theme.kick)) {
+    if (theme && theme.ap && (!kickOnly || theme.kick)) {
       c = theme.ap(c, p);
       const maxLen = ageGroup() === "kids" ? 3 : techniqueLevel() + 3;
       while (c.length > maxLen) c.splice(1, 1);
@@ -565,7 +679,7 @@
     if (ageGroup() === "kids") pool = pool.filter((c) => c.length <= 3);
     if (!pool.length) pool = BOXT.BOX_LIGHT;
     let c = rnd(pool).slice();
-    if (theme && pool !== BOXT.BOX_LIGHT) {
+    if (theme && theme.ap && pool !== BOXT.BOX_LIGHT) {
       c = theme.ap(c, p);
       const maxLen = ageGroup() === "kids" ? 3 : techniqueLevel() + 3;
       while (c.length > maxLen) c.splice(1, 1);
@@ -1066,7 +1180,7 @@
   const ITF_SPECT = new Set(["ttdol", "ttyeop", "dwi", "dhu"]);
   /* active flexibility in the full range of motion (WT focus, 7b) */
   const ACTIVE_MOB = ["mob.kick_holds", "mob.slow_motion_kicks", "mob.controlled_leg_swings", "mob.active_leg_raises"];
-  function tkdCombo(kind, noHead) {
+  function tkdCombo(kind, noHead, theme) {
     const p = S.profile,
       ctx = tkdCtx(),
       lim = p.limits;
@@ -1096,10 +1210,15 @@
     }
     if (!pool.length) pool = M.LIGHT.filter((c) => c.every((x) => M.allowed(x, ctx)));
     if (!pool.length) pool = [["ap", "dol"]];
+    // focus kick of the unit: about three in four combos carry it
+    if (theme && theme.kick && Math.random() < 0.75) {
+      const fk = pool.filter((c) => hasKick(c, theme.kick, M));
+      if (fk.length) pool = fk;
+    }
     return rnd(pool).slice();
   }
   /* taekwondo technique and conditioning rounds: shadow kicks, bag, pad drills, footwork and evade & counter rounds */
-  function tkdRounds(type, n, loc, eq, easy) {
+  function tkdRounds(type, n, loc, eq, easy, theme) {
     const p = S.profile,
       partner = eq.includes("partner"),
       ka = kneeAnk(),
@@ -1120,13 +1239,14 @@
       if (type === "C" && eq.includes("rope") && i === n - 1 && !ka) k = "rope";
       kinds.push(k);
     }
+    focusKinds(kinds, theme, easy);
     const M = tkm(),
       counters = M.COUNTER.filter((c) => c.lvl <= lvl && c.c.every((x) => M.allowed(x, ctx)) && (!kid || (M.KID_DEFS.has(c.d) && c.c.length <= 2)));
     const used = new Set(),
       warm = Math.max(1, easy);
     const out = kinds.map((k, i) => {
       const r = { kind: "round", k, sp: "t" };
-      if (k === "shadow" || k === "bag" || k === "partner") r.combo = tkdCombo(k === "partner" ? "pads" : k, i < warm);
+      if (k === "shadow" || k === "bag" || k === "partner") r.combo = tkdCombo(k === "partner" ? "pads" : k, i < warm, theme);
       if (k === "evade") {
         const fresh = counters.filter((c) => !used.has(c.d + c.att)),
           pickC = rnd(fresh.length ? fresh : counters.length ? counters : M.COUNTER.slice(0, 2));
@@ -1145,7 +1265,7 @@
     const seen = new Set();
     for (const r of out) {
       if (!r.combo || r.k === "evade") continue;
-      for (let t = 0; t < 6 && seen.has(r.combo.join()); t++) r.combo = tkdCombo(r.k === "partner" ? "pads" : r.k, out.indexOf(r) < warm);
+      for (let t = 0; t < 6 && seen.has(r.combo.join()); t++) r.combo = tkdCombo(r.k === "partner" ? "pads" : r.k, out.indexOf(r) < warm, theme);
       seen.add(r.combo.join());
     }
     // partner rounds build up from short to long
@@ -1172,6 +1292,7 @@
       if (type === "C" && eq.includes("rope") && i === n - 1 && !ka) k = "rope";
       kinds.push(k);
     }
+    focusKinds(kinds, theme, easy);
     const counters = BOXT.BOX_COUNTER.filter((c) => c.lvl <= lvl && (!kid || ["cover", "parry", "step"].includes(c.d)) && (!kid || c.c.length <= 2));
     const used = new Set();
     const out = kinds.map((k) => {
@@ -1218,7 +1339,7 @@
     if (partner) {
       const idx = out.map((r, i) => i).filter((i) => out[i].k === "partner" && out[i].combo),
         pool = idx.length > 1 ? idx.slice(1) : idx,
-        want = reactCount(pool.length),
+        want = theme && theme.id === "def" ? pool.length : reactCount(pool.length),
         order = pool.map((i) => ({ i, w: i + Math.random() * pool.length * 0.6 })).sort((a, b) => b.w - a.w);
       usedAtt.clear();
       order.slice(0, want).forEach(({ i }) => (out[i].react = partnerReact(out[i].combo)));
@@ -1227,7 +1348,7 @@
   }
   function fightRounds(type, n, loc, eq, theme, easy = 1) {
     if (isBox()) return boxRounds(type, n, loc, eq, theme, easy);
-    if (isTkd()) return tkdRounds(type, n, loc, eq, easy);
+    if (isTkd()) return tkdRounds(type, n, loc, eq, easy, theme);
     const p = S.profile,
       partner = eq.includes("partner"),
       ka = kneeAnk();
@@ -1245,15 +1366,27 @@
       if (type === "C" && eq.includes("rope") && i === n - 1 && !ka) k = "rope";
       kinds.push(k);
     }
+    // broad focus: footwork rounds; evade & counter rounds solo (with a partner the partner's counter actions do it)
+    if (theme && theme.kinds && !(partner && theme.kinds === "evade")) focusKinds(kinds, theme, easy);
     if (discOf() === "fc" && n >= 3 && !ka) {
       const idx = Math.min(2, n - 1);
       if (["shadow", "bag"].includes(kinds[idx]) || !partner) kinds[idx] = "sixkick";
     }
+    const lvlK = techniqueLevel() || 0,
+      kbCounters = KB_COUNTER.filter((c) => c.lvl <= lvlK && !(c.low && (ka || !EXTRA[discOf()])) && !(ageGroup() === "kids" && (c.lvl > 0 || c.c.length > 2))),
+      usedC = new Set();
     // my combos from club training: the first suitable round always, later ones now and then
     let mi = Math.floor(Math.random() * 8),
       gotMine = false;
     const out = kinds.map((k) => {
       const r = { kind: "round", k };
+      if (k === "evade") {
+        const fresh = kbCounters.filter((c) => !usedC.has(c.d + c.att)),
+          c = rnd(fresh.length ? fresh : kbCounters);
+        usedC.add(c.d + c.att);
+        r.combo = c.c.slice();
+        r.evade = { d: c.d };
+      }
       if (["shadow", "bag", "pads", "counter", "partner"].includes(k)) {
         const kk = k === "bag" || k === "shadow" ? k : "pads",
           mine = myCombos(kk);
@@ -1273,7 +1406,7 @@
     // no combo twice in one session (a repeat gets a fresh one, a few tries)
     const seen = new Set();
     for (const r of out) {
-      if (!r.combo || r.mine || r.k === "sixkick") continue;
+      if (!r.combo || r.mine || r.k === "sixkick" || r.k === "evade") continue;
       r.combo = lcShort(r.combo);
       if (PARTNER_K.has(r.k)) r.combo = partnerClean(r.combo);
       for (let t = 0; t < 6 && seen.has(r.combo.join()); t++) {
@@ -1289,6 +1422,7 @@
       (r) =>
         r.combo &&
         r.k !== "sixkick" &&
+        r.k !== "evade" &&
         !r.mine &&
         !(r.k === "bag" && (ka || p.limits.includes("wrist") || p.limits.includes("shoulder"))),
     );
@@ -1378,7 +1512,7 @@
       const idx = out.map((r, i) => i).filter((i) => PARTNER_K.has(out[i].k) && out[i].combo),
         // the opening round never gets one – the count is capped by the rounds after it (short sessions: fewer)
         pool = idx.length > 1 ? idx.slice(1) : idx,
-        want = reactCount(pool.length),
+        want = theme && theme.id === "def" ? pool.length : reactCount(pool.length),
         order = pool.map((i) => ({ i, w: i + Math.random() * pool.length * 0.6 })).sort((a, b) => b.w - a.w);
       lowTurn = Math.random() < 0.5 ? 0 : 1;
       usedAtt.clear();
@@ -2133,7 +2267,7 @@
           sets: supSets,
         });
     } else {
-      theme = chooseTheme();
+      theme = type === "T" ? chooseFocus() : chooseTheme();
       // grading prep: part of the session drills the belt programme
       const exMin0 = ph.phase === "grade" && targetStage() ? Math.max(10, Math.min(20, Math.round(rest * 0.25))) : 0,
         exItems = exMin0 ? examPick(Math.max(3, Math.round(exMin0 / 3)), loc, eq) : [],
@@ -2142,7 +2276,11 @@
         br = bk === "end" && type === "C" ? blockRounds(bi, dateStr) : null,
         fw = br ? br.w : fightW,
         rb = br ? br.b : restB;
-      let main = Math.round((rest - exMin) * share),
+      // technique: about 10 min strength for the technique of the focus at the end – fewer fitting exercises, fewer minutes,
+      // none at all: the whole time goes to technique rounds (Betreiber 14.11.2026)
+      const tItems = type === "T" ? focusEx(theme, loc, eq, used, 3) : null,
+        tMin = tItems ? Math.min([0, 4, 7, 10][tItems.length], Math.round((rest - exMin) * 0.3)) : 0;
+      let main = type === "T" ? rest - exMin - tMin : Math.round((rest - exMin) * share),
         nR = roundsFor(main, (fw + rb) / 60);
       // fixed fight-pace rounds at the end of the round block, technique rounds before them
       if (br && br.n) {
@@ -2210,6 +2348,9 @@
         const pr = examProgress(targetStage());
         notes.push(t("examNote")(beltName(stageBelt(targetStage())), pr.ok, pr.n));
       }
+      if (type === "T") {
+        if (tItems.length && sup > 0) blocks.push({ key: "str", lbl: "tstr", min: sup, items: tItems.slice(0, sup >= 7 ? 3 : sup >= 4 ? 2 : 1), sets: supSets });
+      } else {
       const supItems =
         type === "C"
           ? pickEx("cond", 4, loc, eq, used, bk === "end" ? byName(BLK_END) : null)
@@ -2225,6 +2366,7 @@
         sets: supSets,
       });
       if (amob) blocks.push({ key: "mob", lbl: "amob", min: amob, items: pickEx("mob", 2, loc, eq, used, byName(ACTIVE_MOB)), sets: t("holdNote") });
+      }
     }
     if (hardMin) blocks.push(hardBlock(eq, loc, soft, blocks));
     blocks.push({
@@ -2261,9 +2403,10 @@
       if (type === "P" && eq.includes("partner")) notes.push(t("boxGear"));
     }
     if (load.deload) notes.push(t("deloadNote"));
-    if (p.limits.includes("wrist") && theme) notes.push(t("wrNote"));
+    // the hidden theme notes concern kickboxing/boxing combos only (taekwondo focus kicks are no such theme)
+    if (p.limits.includes("wrist") && theme && !isTkd()) notes.push(t("wrNote"));
     if (kneeAnk()) notes.push(t("knNote"));
-    if (kneeAnk() && EXTRA[discOf()] && theme) notes.push(t("noLowNote")(discOf()));
+    if (kneeAnk() && EXTRA[discOf()] && theme && !isTkd()) notes.push(t("noLowNote")(discOf()));
     return progressSession({
       date: dateStr,
       type,
