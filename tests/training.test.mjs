@@ -478,7 +478,7 @@ test("15.11.2026 step 2: a fitness test that changes the rep range carries the l
   a.setDate("2026-11-02");
   a.run(`globalThis._wl=weekLoad;weekLoad=(ds)=>({..._wl(ds),deload:false});S.profile.lang='de';S.profile.birthYear=1992;S.profile.birth='1992-03-14';
     globalThis.SID=exKey(e=>e.cat==='str' && /weights/.test(e.eq) && !DOSE_FIX[e.de] && !TIMED.has(e.key));
-    globalThis.mkSess=(o={})=>({date:'2026-11-02',type:'S',loc:'gym',eq:o.eq||['weights'],progression:{id:'c1',reason:'repeat',week:2,data:{level:'sufficient',worsening:false}}});
+    globalThis.mkSess=(o={})=>({date:'2026-11-02',type:'S',loc:'gym',eq:o.eq||['weights'],progression:{id:'c1',reason:o.reason||'repeat',week:2,data:{level:'sufficient',worsening:!!o.worse}}});
     // the former range 10–15 (lower fitness level): last session 14/14/15 × 14 kg
     globalThis.mkOld=(o={})=>{S.log=[{id:'o1',date:'2026-10-27',src:'own',type:'S',completed:o.done??true,inputConfirmed:true,minutes:60,rpe:o.rpe??6,tHi:7,
       perf:[{id:o.id||SID,sets:o.sets||[{r:14,kg:14},{r:14,kg:14},{r:15,kg:14}],target:{kind:'x',cycle:'c0',n:3,lo:10,hi:15,eq:'weights',r:12,baseR:12,kg:14,timed:false,reason:'repeat'}}]}]};
@@ -518,6 +518,31 @@ test("15.11.2026 step 2: a fitness test that changes the rep range carries the l
       const b={key:'str',sets:'3× 10–15',items:[{id:PID}]};JSON.stringify(strengthTarget(mkSess({eq:[]}),b,b.items[0]))`),
   );
   assert.deepEqual([bw.reason, bw.baseR, bw.kg], ["carry", 13, null]);
+  // Prüfung 15.11.2026 (1): the carry-over obeys the same locks as an increase – worsening trend, reduction signal
+  t = T({}, "3× 8–12", { worse: true });
+  assert.deepEqual([t.reason, t.kg], ["carry", 14]);
+  t = T({}, "3× 8–12", { reason: "down" });
+  assert.deepEqual([t.reason, t.kg], ["carry", 14]);
+  // (2) a carry-over that raises the weight is the one lever of the day: set rest 60 s, rating back to factor 1
+  t = T();
+  assert.equal(t.loadUp, true);
+  a.run(`globalThis.RC={...mkSess(),effortDose:{v:1,active:true,eligible:true,factor:1.2},notes:[],blocks:[{key:'str',sets:'3× 8–12',items:[{id:SID,target:${JSON.stringify(t)}}]}]};applyStrengthRestDose(RC);`);
+  assert.deepEqual([a.run("RC.setRest"), a.run("RC.effortDose.factor")], [60, 1]);
+  t = T({ rpe: 8 });
+  assert.equal(t.loadUp, undefined, "no rise, no lever");
+  a.run(`globalThis.RC2={...mkSess(),effortDose:{v:1,active:true,eligible:true,factor:1.2},notes:[],blocks:[{key:'str',sets:'3× 8–12',items:[{id:SID,target:${JSON.stringify(t)}}]}]};applyStrengthRestDose(RC2);`);
+  assert.equal(a.run("RC2.setRest"), 50);
+  // (3) time order: an older target in the new range does not beat a newer complete performance in the other range
+  const mixed = (oldDate) =>
+    JSON.parse(
+      a.run(`mkOld();S.log.push({id:'n0',date:'${oldDate}',src:'own',type:'S',completed:true,inputConfirmed:true,minutes:60,rpe:6,tHi:7,
+        perf:[{id:SID,sets:[{r:9,kg:10},{r:9,kg:10},{r:9,kg:10}],target:{kind:'y',cycle:'c-1',n:3,lo:8,hi:12,eq:'weights',r:9,baseR:9,kg:10,timed:false,reason:'repeat'}}]});
+        JSON.stringify(tg2('3× 8–12'))`),
+    );
+  t = mixed("2026-09-20");
+  assert.deepEqual([t.reason, t.kg], ["carry", 15.4], "newer performance in the other range wins");
+  t = mixed("2026-10-30");
+  assert.deepEqual([t.reason, t.kg], ["repeat", 10], "newer entry in the new range wins");
   // derived from the log: building again gives the same, nothing adds up
   const again = a.run(`mkOld();JSON.stringify([tg2('3× 8–12'),tg2('3× 8–12'),tg2('3× 8–12')].map(x=>[x.reason,x.baseR,x.kg]))`);
   assert.equal(again, JSON.stringify([["carry", 8, 15.4], ["carry", 8, 15.4], ["carry", 8, 15.4]]));
