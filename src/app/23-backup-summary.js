@@ -177,6 +177,12 @@
       const f = sportFor(p.sport).rules.format(p.disc, ageAt(parse(d.nc.date)));
       out.next = `${fmtDate(d.nc.date)}${f ? ` · ${fmtText(f)}` : ""}${d.nc.wc ? ` · −${numF(d.nc.wc)} kg` : ""}`;
     }
+    // what is left to the class and the pace per week (Betreiber 15.11.2026)
+    const wp = wcPath();
+    if (wp && d.lw) {
+      const P = t("wcp");
+      out.weight += ` · ${wp.diff > 0 ? P.left(numF(wp.diff), wp.perWeek != null ? numF(wp.perWeek) : null) : wp.diff < 0 ? P.under(numF(-wp.diff)) : P.at}`;
+    }
     return { d, out };
   }
   /* one entry as a line: "Mo 9.11. · 60 min · Kraft: Kniebeuge, Liegestütze · Notiz" */

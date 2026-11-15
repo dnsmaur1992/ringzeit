@@ -214,14 +214,15 @@
         );
     });
     // weight class of the next tournament: weekly weigh-in and factual notes only, never weight-cutting advice;
-    // under 15 there are no reminders at all (logging stays possible in History)
+    // under 15 there are no reminders at all (logging stays possible in History). The weekly reminder holds as soon as
+    // the class is set (Betreiber 15.11.2026), the over-class notes from 8 weeks before.
     const nc = nextComp(),
       ncDays = nc ? daysBetween(today(), parse(nc.date)) : 99;
-    if (nc && nc.wc && ncDays <= 56 && !under15()) {
+    if (nc && nc.wc && !under15()) {
       const lw = S.weights[S.weights.length - 1];
       if (!lw || daysBetween(parse(lw.date), today()) >= 7)
         h += `<div class="note act wq"><span>${esc(t("wcWeekly")(fmtDate(nc.date)))}<br><small class="sub">${esc(t("wTip"))}</small></span><span class="minirow"><input id="wQuick" type="text" inputmode="decimal" placeholder="${t("weightPh")}" aria-label="${t("weightAdd")}"><button type="button" class="btn ghost" id="wQuickAdd">${t("add")}</button></span></div>`;
-      else {
+      else if (ncDays <= 56) {
         const ref = weightTrend() ?? lw.kg;
         if (ref > nc.wc) {
           const diff = Math.round((ref - nc.wc) * 10) / 10,

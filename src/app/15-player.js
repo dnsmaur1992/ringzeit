@@ -1176,12 +1176,14 @@
       h += `<div><h2>${t("chartWeeks")}</h2><div class="chart">${barChart(weeks, planned)}</div></div>`;
     }
     h += `<div><h2>${t("chartWeight")}</h2><div class="panel"><div class="field"><label class="lab" for="wIn">${t("weightAdd")}</label><div class="inline"><input id="wIn" type="text" inputmode="decimal" placeholder="${t("weightPh")}"><button type="button" class="btn" id="wAdd">${t("add")}</button></div><span class="sub">${t("wTip")}${weightTrend() != null ? ` · ${t("wTrend")(numF(weightTrend()))}` : ""}</span></div></div></div>`;
-    const ncw = nextComp();
+    const ncw = nextComp(),
+      wp = wcPath();
     if (S.weights.length >= 2)
-      h += `<div class="chart">${lineChart(S.weights.slice(-20), ncw && ncw.wc ? ncw.wc : null)}</div>`;
+      h += `<div class="chart">${lineChart(S.weights.slice(-20), ncw && ncw.wc ? ncw.wc : null, wp)}</div>`;
     else if (S.weights.length === 1)
       h += `<div class="empty">${S.weights[0].kg.toFixed(1)} kg · ${fmtDate(S.weights[0].date)}</div>`;
     else h += `<div class="empty">${t("emptyW")}</div>`;
+    if (wp) h += `<div class="note wcpath">${esc(wcText(wp))}${wp.steep ? `<br><small class="sub">${esc(t("wcp").steep)}</small>` : ""}</div>`;
     h += prsHtml();
     h += resultsHtml();
     if (S.log.length)
@@ -1220,7 +1222,12 @@
       `<line x1="${pl}" x2="${W}" y1="${y(goal)}" y2="${y(goal)}" stroke="var(--frost)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="${W - 2}" y="${y(goal) - 4}" font-size="10" font-family="DM Mono,monospace" text-anchor="end" fill="var(--frost)">${t("goal")}</text></svg>`
     );
   }
-  function lineChart(ws, limit) {
+  /* the way to the class in words: "Aktuell 79,7 kg · Nächstes Turnier 27.02.2027 · −67 kg · noch 12,7 kg (≈ 0,85 kg/Woche)" */
+  function wcText(wp) {
+    const P = t("wcp");
+    return `${P.now(numF(wp.cur.kg))} · ${P.next(fmtDate(wp.nc.date))} · −${numF(wp.nc.wc)} kg · ${wp.diff > 0 ? P.left(numF(wp.diff), wp.perWeek != null ? numF(wp.perWeek) : null) : wp.diff < 0 ? P.under(numF(-wp.diff)) : P.at}`;
+  }
+  function lineChart(ws, limit, wp) {
     const W = 340,
       H = 150,
       pl = 34,
@@ -1236,7 +1243,12 @@
     }
     lo = Math.floor(lo);
     hi = Math.ceil(hi);
-    const x = (i) => pl + (W - pl - pr) * (i / (ws.length - 1)),
+    // with a guide to the class the x axis runs by date up to the tournament, otherwise one step per weigh-in
+    const g = wp && wp.diff > 0 && wp.from && wp.from.kg > wp.nc.wc ? wp : null,
+      d0 = g && g.from.date < ws[0].date ? g.from.date : ws[0].date,
+      span = g ? Math.max(1, daysBetween(parse(d0), parse(g.nc.date))) : 1,
+      xd = (d) => pl + (W - pl - pr) * (daysBetween(parse(d0), parse(d)) / span),
+      x = (i) => (g ? xd(ws[i].date) : pl + (W - pl - pr) * (i / (ws.length - 1))),
       y = (v) => pt + (H - pt - pb) * (1 - (v - lo) / (hi - lo)),
       step = Math.max(1, Math.round((hi - lo) / 3));
     let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${t("chartWeight")}">`;
@@ -1245,13 +1257,15 @@
     const pts = ws.map((w, i) => `${x(i)},${y(w.kg)}`).join(" "),
       last = ws.length - 1;
     s += `<polygon points="${x(0)},${H - pb} ${pts} ${x(last)},${H - pb}" fill="var(--ice-dim)"/><polyline points="${pts}" fill="none" stroke="var(--ice)" stroke-width="2"/>`;
+    // guide: straight from the start weight to the class on the tournament day
+    if (g) s += `<line class="wguide" x1="${xd(g.from.date)}" y1="${y(g.from.kg)}" x2="${xd(g.nc.date)}" y2="${y(g.nc.wc)}" stroke="var(--mist)" stroke-width="1.4" stroke-dasharray="2 4"/>`;
     // class line on top of the filled area, otherwise it hides exactly when you are above it
     if (limit)
       s += `<line x1="${pl}" x2="${W - pr}" y1="${y(limit)}" y2="${y(limit)}" stroke="var(--ember)" stroke-width="1.4" stroke-dasharray="5 4"/><text x="${pl + 4}" y="${y(limit) - 5}" font-size="10.5" fill="var(--ember)">${t("wcLine")(numF(limit))}</text>`;
     s += `<circle cx="${x(last)}" cy="${y(ws[last].kg)}" r="4.5" fill="var(--ember)"/><text x="${x(last) - 6}" y="${y(ws[last].kg) - 9}" font-size="11" font-weight="700" text-anchor="end" fill="var(--frost)">${ws[last].kg.toFixed(1)}</text>`;
     return (
       s +
-      `<text x="${pl}" y="${H - 6}" font-size="10" fill="var(--mist)">${fmtDate(ws[0].date)}</text><text x="${W - pr}" y="${H - 6}" font-size="10" text-anchor="end" fill="var(--mist)">${fmtDate(ws[last].date)}</text></svg>`
+      `<text x="${pl}" y="${H - 6}" font-size="10" fill="var(--mist)">${fmtDate(g ? d0 : ws[0].date)}</text><text x="${W - pr}" y="${H - 6}" font-size="10" text-anchor="end" fill="var(--mist)">${fmtDate(g ? g.nc.date : ws[last].date)}</text></svg>`
     );
   }
   let draft = null;

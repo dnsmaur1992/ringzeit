@@ -1195,7 +1195,12 @@
     if (ev.target.dataset && ev.target.dataset.wc && draft) {
       const c = draft.comps.find((x) => x.id === ev.target.dataset.wc),
         v = parseFloat(ev.target.value.replace(",", "."));
-      if (c) c.wc = v >= 20 && v <= 150 ? v : null;
+      if (c) {
+        const wc = v >= 20 && v <= 150 ? v : null;
+        // the day the class was set: start of the guide in the weight chart
+        if (wc !== c.wc) c.wcSet = wc ? iso(today()) : undefined;
+        c.wc = wc;
+      }
       applyPlan();
       return;
     }

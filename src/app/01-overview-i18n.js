@@ -859,6 +859,14 @@
       wcLine: (kg) => `Klasse −${kg} kg`,
       wcWeekly: (d) => `Turnier am ${d} mit Gewichtsklasse: Trag einmal pro Woche dein Gewicht ein.`,
       wTip: "Immer gleich wiegen: morgens, nach dem Toilettengang, vor dem Frühstück.",
+      wcp: {
+        now: (kg) => `Aktuell ${kg} kg`,
+        next: (d) => `Nächstes Turnier ${d}`,
+        left: (kg, pw) => `noch ${kg} kg${pw ? ` (≈ ${pw} kg/Woche)` : ""}`,
+        under: (kg) => `${kg} kg unter der Klasse`,
+        at: "genau in der Klasse",
+        steep: "Mehr als 1 % des Körpergewichts pro Woche – sehr ambitioniert, mit dem Trainer besprechen.",
+      },
       wTrend: (kg) => `Schnitt der letzten 2 Wochen: ${kg} kg`,
       wcBig: (diff, wc, n) =>
         `Du liegst ${diff} kg über deiner Gewichtsklasse (−${wc} kg), das Turnier ist in ${n} Tagen. Sprich mit deinem Trainer, ob die Klasse passt.`,
@@ -2224,6 +2232,14 @@
       wcLine: (kg) => `Class −${kg} kg`,
       wcWeekly: (d) => `Tournament on ${d} with a weight class: log your weight once a week.`,
       wTip: "Always weigh the same way: in the morning, after the toilet, before breakfast.",
+      wcp: {
+        now: (kg) => `Now ${kg} kg`,
+        next: (d) => `Next tournament ${d}`,
+        left: (kg, pw) => `${kg} kg to go${pw ? ` (≈ ${pw} kg/week)` : ""}`,
+        under: (kg) => `${kg} kg under the class`,
+        at: "right at the class",
+        steep: "More than 1 % of body weight per week – very ambitious, talk it through with your coach.",
+      },
       wTrend: (kg) => `Average of the last 2 weeks: ${kg} kg`,
       wcBig: (diff, wc, n) =>
         `You are ${diff} kg above your weight class (−${wc} kg) and the tournament is in ${n} days. Talk to your coach about whether the class fits.`,

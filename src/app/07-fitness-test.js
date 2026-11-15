@@ -99,6 +99,22 @@
       w = S.weights.filter((x) => x.date >= cut);
     return w.length >= 2 ? Math.round((w.reduce((a, x) => a + x.kg, 0) / w.length) * 10) / 10 : null;
   }
+  /* way to the weight class of the next tournament (Betreiber 15.11.2026): last logged weight, the class, what is left
+     and the pace per week up to the tournament – facts only, no cutting advice; nothing under 15 or without a class.
+     The guide in the weight chart starts at the weight logged when the class was set (wcSet), else at the first
+     weight shown. */
+  function wcPath(shown) {
+    const nc = nextComp(),
+      cur = S.weights[S.weights.length - 1];
+    if (!nc || !nc.wc || !cur || under15()) return null;
+    const days = daysBetween(today(), parse(nc.date)),
+      diff = Math.round((cur.kg - nc.wc) * 10) / 10,
+      perWeek = diff > 0 && days >= 7 ? Math.round((diff / (days / 7)) * 100) / 100 : null,
+      ws = shown || S.weights.slice(-20);
+    let from = ws[0];
+    if (nc.wcSet) from = [...S.weights].reverse().find((w) => w.date <= nc.wcSet) || S.weights.find((w) => w.date >= nc.wcSet) || from;
+    return { nc, cur, diff, days, perWeek, steep: perWeek != null && perWeek > cur.kg * 0.01, from };
+  }
   function saveWeight(raw) {
     const v = parseFloat(String(raw || "").replace(",", "."));
     if (!(v >= 25 && v <= 200)) return false;
