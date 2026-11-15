@@ -473,6 +473,57 @@ test("15.11.2026 strength targets follow logged performance – also with the ef
   a.run("weekLoad=_wl");
 });
 
+test("15.11.2026 step 2: a fitness test that changes the rep range carries the last performance over instead of starting again", () => {
+  const a = app();
+  a.setDate("2026-11-02");
+  a.run(`globalThis._wl=weekLoad;weekLoad=(ds)=>({..._wl(ds),deload:false});S.profile.lang='de';S.profile.birthYear=1992;S.profile.birth='1992-03-14';
+    globalThis.SID=exKey(e=>e.cat==='str' && /weights/.test(e.eq) && !DOSE_FIX[e.de] && !TIMED.has(e.key));
+    globalThis.mkSess=(o={})=>({date:'2026-11-02',type:'S',loc:'gym',eq:o.eq||['weights'],progression:{id:'c1',reason:'repeat',week:2,data:{level:'sufficient',worsening:false}}});
+    // the former range 10–15 (lower fitness level): last session 14/14/15 × 14 kg
+    globalThis.mkOld=(o={})=>{S.log=[{id:'o1',date:'2026-10-27',src:'own',type:'S',completed:o.done??true,inputConfirmed:true,minutes:60,rpe:o.rpe??6,tHi:7,
+      perf:[{id:o.id||SID,sets:o.sets||[{r:14,kg:14},{r:14,kg:14},{r:15,kg:14}],target:{kind:'x',cycle:'c0',n:3,lo:10,hi:15,eq:'weights',r:12,baseR:12,kg:14,timed:false,reason:'repeat'}}]}]};
+    globalThis.tg2=(sets,o)=>{const b={key:'str',sets,items:[{id:SID}]};return strengthTarget(mkSess(o),b,b.items[0])};`);
+  const T = (o, sets = "3× 8–12", so) => JSON.parse(a.run(`mkOld(${JSON.stringify(o || {})});JSON.stringify(tg2(${JSON.stringify(sets)},${JSON.stringify(so || {})}))`));
+  // new range 8–12 after a better test: weight from the estimated max (14 × (1+14/30) / (1+8/30) = 16.2), capped at +10 % = 15.4
+  let t = T();
+  assert.deepEqual([t.reason, t.baseR, t.kg, t.from.lo, t.from.hi], ["carry", 8, 15.4, 10, 15]);
+  assert.match(a.run(`targetText(${JSON.stringify(t)},SID)`), /Neuer Wiederholungsbereich: aus deiner letzten Leistung umgerechnet/);
+  // a smaller jump stays below the cap: 10/10/10 × 14 kg → 14 × 1.333 / 1.267 = 14.7
+  t = T({ sets: [{ r: 10, kg: 14 }, { r: 10, kg: 14 }, { r: 11, kg: 14 }] });
+  assert.equal(t.kg, 14.7);
+  // a worse test (higher reps): the weight goes down accordingly
+  t = T({ sets: [{ r: 14, kg: 14 }, { r: 14, kg: 14 }, { r: 14, kg: 14 }] }, "3× 15–20");
+  assert.deepEqual([t.reason, t.baseR, t.kg], ["carry", 15, 13.6]);
+  // above the effort target or on a protected day: no rise over the former weight
+  t = T({ rpe: 8 });
+  assert.equal(t.kg, 14);
+  a.run("weekLoad=_wl");
+  t = T();
+  assert.equal(t.kg, 14);
+  a.run("weekLoad=(ds)=>({..._wl(ds),deload:false})");
+  // no complete performance (unfinished, missing weight) or other equipment: start as before, no invented weight
+  t = T({ done: false });
+  assert.deepEqual([t.reason, t.kg], ["initial", null]);
+  t = T({ sets: [{ r: 14, kg: 14 }, { r: 14 }, { r: 14, kg: 14 }] });
+  assert.deepEqual([t.reason, t.kg], ["initial", null]);
+  t = T({}, "3× 8–12", { eq: ["bands"] });
+  assert.notEqual(t.reason, "carry");
+  // the same range again: the normal way (no carry)
+  t = T({}, "3× 10–15");
+  assert.equal(t.reason, "repeat");
+  // without weight: the reps reached, inside the new range
+  const bw = JSON.parse(
+    a.run(`const PID='str.push_ups';S.log=[{id:'b1',date:'2026-10-27',src:'own',type:'S',completed:true,inputConfirmed:true,minutes:60,rpe:6,tHi:7,
+      perf:[{id:PID,sets:[{r:14},{r:13},{r:15}],target:{kind:'x',cycle:'c0',n:3,lo:8,hi:12,eq:'',r:12,baseR:12,kg:null,timed:false,reason:'repeat'}}]}];
+      const b={key:'str',sets:'3× 10–15',items:[{id:PID}]};JSON.stringify(strengthTarget(mkSess({eq:[]}),b,b.items[0]))`),
+  );
+  assert.deepEqual([bw.reason, bw.baseR, bw.kg], ["carry", 13, null]);
+  // derived from the log: building again gives the same, nothing adds up
+  const again = a.run(`mkOld();JSON.stringify([tg2('3× 8–12'),tg2('3× 8–12'),tg2('3× 8–12')].map(x=>[x.reason,x.baseR,x.kg]))`);
+  assert.equal(again, JSON.stringify([["carry", 8, 15.4], ["carry", 8, 15.4], ["carry", 8, 15.4]]));
+  a.run("weekLoad=_wl");
+});
+
 test("old backups load, preserve logs and exercise values, and do not fabricate completions", () => {
   const a = app();
   a.run(
