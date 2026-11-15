@@ -1210,12 +1210,18 @@
     }
     if (!pool.length) pool = M.LIGHT.filter((c) => c.every((x) => M.allowed(x, ctx)));
     if (!pool.length) pool = [["ap", "dol"]];
-    // focus kick of the unit: about three in four combos carry it
-    if (theme && theme.kick && Math.random() < 0.75) {
-      const fk = pool.filter((c) => hasKick(c, theme.kick, M));
-      if (fk.length) pool = fk;
+    // focus kick of the unit: about three in four combos carry it – swapped for a focus combo of about the same
+    // length, so the chain lengths (and the kick counts per level) stay as they were
+    let pick = rnd(pool);
+    if (theme && theme.kick && !hasKick(pick, theme.kick, M) && Math.random() < 0.75) {
+      const len = M.kickCount ? M.kickCount(pick) : pick.length,
+        size = (c) => (M.kickCount ? M.kickCount(c) : c.length),
+        fk = pool.filter((c) => hasKick(c, theme.kick, M)),
+        same = fk.filter((c) => size(c) === len),
+        near = same.length ? same : fk.filter((c) => Math.abs(size(c) - len) <= 1);
+      if (near.length) pick = rnd(near);
     }
-    return rnd(pool).slice();
+    return pick.slice();
   }
   /* taekwondo technique and conditioning rounds: shadow kicks, bag, pad drills, footwork and evade & counter rounds */
   function tkdRounds(type, n, loc, eq, easy, theme) {

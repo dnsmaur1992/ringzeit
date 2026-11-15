@@ -36,8 +36,9 @@
           density: (old, next) =>
             `Gleiche Rundenzeit, angepasste Pausen: ${old} → ${next} s; innerhalb deiner Trainingszeit.`,
           targetWhy: {
-            up: "Ziel regelmäßig erreicht: leicht erhöht.",
+            up: "Mehrmals mehr geschafft: Ziel angehoben.",
             down: "Wiederholt zu schwer: Ziel reduziert.",
+            hold: "Mehr geschafft, aber die Anstrengung war hoch: Ziel bleibt.",
             repeat: "Bisheriges Ziel wiederholen.",
             initial: "Ausgangsziel; Gewicht selbst wählen.",
           },
@@ -74,8 +75,9 @@
           density: (old, next) =>
             `Same work time, adjusted rests: ${old} → ${next} s; within your session time.`,
           targetWhy: {
-            up: "Target met regularly: slightly increased.",
+            up: "Did more several times: target raised.",
             down: "Repeatedly too hard: target reduced.",
+            hold: "Did more, but the effort was high: target stays.",
             repeat: "Repeat the previous target.",
             initial: "Starting target; choose your own weight.",
           },
@@ -403,6 +405,19 @@
     const m = (b.sets || "").match(/^\d+×\s*(\d+)[–-](\d+)/);
     return !!m && +m[2] <= 8 && !hasKg(id) && !TIMED.has(id) && !isExplSets(b.sets);
   };
+  /* Strength targets from the logged sets (Codeprüfung 15.11.2026, Betreiber: alle Empfehlungen).
+     Three sources, three jobs: the logged sets give the performance per exercise, the final effort rating only steers
+     rest density and blocks increases when it was too hard, the fitness test sets the rep ranges.
+     - comparable: same exercise, same relevant equipment, same rep range and timed/reps – place, session type and
+       discipline don't matter; a performance counts if the session was finished, effort entered and all target sets
+       logged (with weight for weighted exercises); per session the weakest of the target sets counts, so a single
+       outstanding set changes nothing
+     - an increase needs 2 of the last 3 comparable sessions (6 weeks), none of them above the effort target, and a
+       session that may progress (base phase, no deload/ramp/KO/bad form, no worsening trend, no heavy load yesterday);
+       at most one change per exercise in 14 days
+     - one lever: more reps up to the top of the range; at the top +2.5 % weight and back to the bottom of the range;
+       a heavier weight done in all sets in 2 of 3 is taken over (at most +10 %), also back to the bottom of the range
+     - everything is derived from the log on each build: opening or rebuilding never adds the same performance twice */
   function strengthTarget(sess, b, it) {
     const pr = sess.progression,
       timed = TIMED.has(it.id),
@@ -420,23 +435,24 @@
     if (!range || isCirc(b) || EX[it.id]?.cat !== "str" || (DOSE_FIX[EX[it.id].key] && !timed)) return null;
     const n = blockSets(b),
       [lo, hi] = range,
-      kind = `${pr.signature}:${sess.loc}:${relevantEquipment(it.id, sess.eq)}:${lo}-${hi}:${n}:${timed ? "s" : "r"}`,
-      history = S.log
-        .filter(
-          (e) =>
-            e.date < sess.date &&
-            e.date >= iso(addDays(parse(sess.date), -84)) &&
-            e.date <= iso(today()) &&
-            e.progression?.eligible &&
-            validEffort(e),
-        )
-        .sort((a, b) => b.date.localeCompare(a.date)),
-      matches = [];
-    for (const e of history) {
-      const perf = e.perf?.find((x) => x.id === it.id && normalizeExerciseKind(x.target?.kind, it.id) === kind);
-      if (perf) matches.push({ e, perf });
+      eq = relevantEquipment(it.id, sess.eq),
+      kgEx = hasKg(it.id),
+      kind = `${pr.signature}:${sess.loc}:${eq}:${lo}-${hi}:${n}:${timed ? "s" : "r"}`,
+      day = (k) => iso(addDays(parse(sess.date), -k)),
+      eqOf = (tg) => {
+        if (tg.eq != null) return tg.eq;
+        const parts = String(tg.kind || "").split(":");
+        return parts.length >= 9 ? relevantEquipment(it.id, parts[parts.length - 4].split(",")) : null;
+      },
+      same = (tg) => tg && tg.lo === lo && tg.hi === hi && !!tg.timed === timed && eqOf(tg) === eq,
+      byDate = new Map();
+    for (const e of S.log) {
+      if (e.src === "club" || !Array.isArray(e.perf) || e.date >= sess.date || e.date > iso(today()) || e.date < day(84)) continue;
+      const perf = e.perf.find((x) => x.id === it.id && same(x.target));
+      if (perf && !byDate.has(e.date)) byDate.set(e.date, { e, perf });
     }
-    const last = matches[0],
+    const comp = [...byDate.values()].sort((a, b2) => b2.e.date.localeCompare(a.e.date)),
+      last = comp[0],
       old = last?.perf.target,
       target = {
         kind,
@@ -444,102 +460,127 @@
         n,
         lo,
         hi,
-        r: old?.baseR ?? old?.r ?? lo,
+        eq,
+        r: Math.max(lo, Math.min(hi, old?.baseR ?? old?.r ?? lo)),
         kg: old?.kg ?? null,
         timed,
         slow: bwHeavy(b, it.id) || undefined,
         reason: old ? "repeat" : "initial",
       };
-    const exerciseEvidence = matches.filter(
-        (x) =>
-          x.e.progression.end < sess.date &&
-          x.e.progression.end < iso(today()) &&
-          progressionRecordComplete(x.e),
-      ),
-      exerciseReady =
-        new Set(exerciseEvidence.map((x) => x.e.date)).size >= 4 &&
-        new Set(exerciseEvidence.map((x) => iso(monday(parse(x.e.date))))).size >= 3;
-    const waveTarget = () => ({
-      ...target,
-      baseR: target.r,
-      r: Math.max(
-        lo,
-        Math.min(
-          hi,
-          target.r +
-            (pr.block || !exerciseReady || pr.data?.level === "collecting"
-              ? 0
-              : [-1, 0, 1, 2, 0][pr.week - 1] * (timed ? 5 : 1)),
-        ),
-      ),
-    });
-    if (sess.effortDose?.active && sess.effortDose.eligible) {
-      if (hasKg(it.id) && target.kg == null && last?.perf?.sets?.length >= n) {
-        const weights = last.perf.sets.slice(0,n).map(r => r.kg);
-        if (weights.every(w => Number.isFinite(w) && w > 0 && w === weights[0])) target.kg = weights[0];
-      }
-      return {...target,baseR:target.r};
-    }
-    if (!last) return waveTarget();
     // A load is only suggested once it was actually entered for all sets; never invent a starting weight.
-    if (hasKg(it.id) && target.kg == null) {
+    if (kgEx && target.kg == null && last) {
       const weights = last.perf.sets.slice(0, n).map((r) => r.kg);
-      if (weights.length === n && weights.every((w) => Number.isFinite(w) && w > 0 && w === weights[0]))
-        target.kg = weights[0];
+      if (weights.length === n && weights.every((w) => Number.isFinite(w) && w > 0 && w === weights[0])) target.kg = weights[0];
     }
-    const same = matches.filter(
-        (x) =>
-          x.perf.target.cycle === old.cycle &&
-          (x.perf.target.baseR ?? x.perf.target.r) === (old.baseR ?? old.r) &&
-          (x.perf.target.kg === old.kg ||
-            (x.perf.target.kg == null &&
-              old.kg != null &&
-              x.perf.sets.length >= n &&
-              x.perf.sets.slice(0, n).every((r) => r.kg === old.kg))),
-      ),
-      entries = [...new Map(same.map((x) => [x.e.date, x])).values()],
-      met = (x) =>
-        x.e.completed === true &&
-        x.perf.effort !== "hard" &&
-        x.e.rpe <= x.e.tHi &&
-        x.perf.sets.length >= n &&
-        x.perf.sets
-          .slice(0, n)
-          .every(
-            (r) =>
-              Number.isFinite(r.r) &&
-              r.r >= x.perf.target.r &&
-              (!hasKg(it.id) || (target.kg != null && Number.isFinite(r.kg) && r.kg >= target.kg)),
-          );
-    // At most one adjustment per closed cycle, and only when that cycle supports the decision.
-    if (old.cycle === pr.id || last.e.progression.end >= sess.date || last.e.progression.end >= iso(today()))
-      return waveTarget();
-    if (
-      entries.filter((x) => x.perf.effort === "hard").length >= 2 ||
-      (pr.reason === "down" && entries.filter((x) => x.e.rpe >= x.e.tHi + 2).length >= 2)
-    ) {
+    // one performance per session: complete, the weakest of the target sets
+    const perfOf = (x) => {
+      const sets = (x.perf.sets || []).slice(0, n),
+        ok =
+          x.e.completed === true &&
+          x.e.inputConfirmed === true &&
+          validEffort(x.e) &&
+          sets.length === n &&
+          sets.every((r) => Number.isFinite(r.r) && r.r >= 0 && (!kgEx || (Number.isFinite(r.kg) && r.kg > 0)));
+      return ok
+        ? {
+            x,
+            minR: Math.min(...sets.map((r) => r.r)),
+            minKg: kgEx ? Math.min(...sets.map((r) => r.kg)) : null,
+            hard: x.e.rpe > x.e.tHi || x.perf.effort === "hard",
+            tooHard: x.e.rpe >= x.e.tHi + 2 || x.perf.effort === "hard",
+          }
+        : null;
+    };
+    const recent = comp.filter((x) => x.e.date >= day(42)).slice(0, 3),
+      evid = recent.map(perfOf).filter(Boolean),
+      allEvid = comp.map(perfOf).filter(Boolean),
+      exerciseReady =
+        allEvid.length >= 4 && new Set(allEvid.map((v) => iso(monday(parse(v.x.e.date))))).size >= 3,
+      changedLately = comp.some((x) => x.e.date >= day(13) && ["up", "down"].includes(x.perf.target.reason)),
+      atLoad = (v) => !kgEx || target.kg == null || v.minKg >= target.kg;
+    const waveTarget = () => {
+      let off = pr.block || !exerciseReady || pr.data?.level === "collecting" ? 0 : [-1, 0, 1, 2, 0][pr.week - 1] * (timed ? 5 : 1);
+      // the planned wave never adds to an increase of the same day
+      if (target.reason === "up") off = Math.min(0, off);
+      return { ...target, baseR: target.r, r: Math.max(lo, Math.min(hi, target.r + off)) };
+    };
+    if (!old) return waveTarget();
+    // repeatedly far too hard: lighter (also outside the base phase – safety first)
+    if (!changedLately && evid.filter((v) => v.tooHard).length >= 2) {
       if (target.kg != null) target.kg = Math.round(target.kg * 0.95 * 10) / 10;
       else target.r = Math.max(lo, target.r - (timed ? 5 : 1));
       target.reason = "down";
-    } else if (
-      ["up", "cap"].includes(pr.reason) &&
-      exerciseReady &&
-      entries.length >= 4 &&
-      entries.filter(met).length / entries.length >= 0.8
-    ) {
-      if (target.r < hi) target.r = Math.min(hi, target.r + (timed ? 5 : 1));
-      else if (hasKg(it.id) && target.kg != null) {
-        target.kg = Math.floor(target.kg * 1.025 * 10) / 10;
-        // Increase weight alone; retain repetitions until the new load has been completed.
-      }
-      target.reason = "up";
+      return waveTarget();
     }
+    // no increase in protected days: deload week, gentle return, KO lock, poor form, fasting, a hard week, taper and
+    // recovery before/after a tournament, under 15; build phases may still progress strength (as before)
+    const ds = sess.date,
+      protectedDay =
+        young() ||
+        weekLoad(ds).deload ||
+        rampOn(ds) ||
+        koLock(ds) ||
+        ramadanOn(ds) ||
+        weekMood(ds) === "hard" ||
+        formOn(ds) !== 2 ||
+        ["taper", "recover"].includes(phaseInfo(ds).phase);
+    const mayUp =
+      !protectedDay &&
+      pr.reason !== "down" &&
+      !pr.data?.worsening &&
+      !changedLately &&
+      lightRegions({ log: S.log, date: sess.date }).length === 0;
+    if (!mayUp) return waveTarget();
+    const good = evid.filter((v) => !v.hard && atLoad(v)),
+      second = (vals) => vals.sort((a, c) => c - a)[1],
+      up = (r, kg) => {
+        target.r = r;
+        if (kg != null) target.kg = kg;
+        target.reason = "up";
+      };
+    if (kgEx && target.kg != null) {
+      const heavier = good.filter((v) => v.minKg > target.kg && v.minR >= lo);
+      if (heavier.length >= 2) {
+        const kg = Math.min(second(heavier.map((v) => v.minKg)), Math.floor(target.kg * 1.1 * 10) / 10);
+        if (kg > target.kg) {
+          up(lo, kg);
+          return waveTarget();
+        }
+      }
+      if (good.filter((v) => v.minR >= hi).length >= 2 && target.r >= hi) {
+        up(lo, Math.max(Math.floor(target.kg * 1.025 * 10) / 10, Math.round((target.kg + 0.1) * 10) / 10));
+        return waveTarget();
+      }
+    }
+    const better = good.filter((v) => v.minR > target.r);
+    if (better.length >= 2 && target.r < hi) {
+      up(Math.min(hi, second(better.map((v) => v.minR))));
+      return waveTarget();
+    }
+    // the steady way (as before): the target itself met in a closed load cycle – at least 4 sessions in 3 weeks,
+    // 80 % of them with all sets at target and the effort in range – gives one step per cycle
+    const cycleClosed = old.cycle !== pr.id && last.e.progression?.end < sess.date && last.e.progression?.end < iso(today()),
+      atTarget = allEvid.filter(
+        (v) =>
+          v.x.perf.target.cycle === old.cycle &&
+          (v.x.perf.target.baseR ?? v.x.perf.target.r) === (old.baseR ?? old.r) &&
+          (!kgEx || target.kg == null || v.minKg >= target.kg),
+      ),
+      met = atTarget.filter((v) => !v.hard && v.x.e.completed === true && v.minR >= (old.baseR ?? old.r));
+    if (cycleClosed && ["up", "cap"].includes(pr.reason) && exerciseReady && atTarget.length >= 4 && met.length / atTarget.length >= 0.8) {
+      if (target.r < hi) up(Math.min(hi, target.r + (timed ? 5 : 1)));
+      else if (kgEx && target.kg != null) up(lo, Math.max(Math.floor(target.kg * 1.025 * 10) / 10, Math.round((target.kg + 0.1) * 10) / 10));
+      if (target.reason === "up") return waveTarget();
+    }
+    // more was logged, but the effort was too high: the target stays, and the line says why
+    const overdone = evid.filter((v) => v.hard && atLoad(v) && (v.minR > target.r || (kgEx && target.kg != null && v.minKg > target.kg)));
+    if (overdone.length >= 2 || (overdone.length >= 1 && better.length + overdone.length >= 2)) target.reason = "hold";
     return waveTarget();
   }
   /* short target line; the reason only when the target actually changed, the weight hint only for weighted exercises */
   function targetText(target, id) {
     const T = trainingText(),
-      why = target.reason === "up" || target.reason === "down" ? ` · ${T.targetWhy[target.reason]}` : "",
+      why = ["up", "down", "hold"].includes(target.reason) ? ` · ${T.targetWhy[target.reason]}` : "",
       kgHint = target.kg == null && id != null && hasKg(id) ? ` · ${T.ownWeight}` : "";
     const slow = target.slow ? (S.profile.lang === "de" ? ", langsam (3 s ab)" : ", slow (3 s down)") : "";
     const per = id != null && EX[id] ? sideWord(EX[id].key) : "";
@@ -604,10 +645,23 @@
   function applyStrengthRestDose(sess) {
     const d = sess.effortDose;
     if (!d?.active || !d.eligible || sess.type !== "S") return;
+    // one lever at a time: on a day with higher reps or weight the set rest goes back to 60 s and the rating starts
+    // from there again (factor 1); otherwise the rating shortens or lengthens the rests
+    if (sess.blocks.some((b) => b.items.some((it) => it.target?.reason === "up"))) {
+      sess.setRest = 60;
+      sess.lapRest = 90;
+      d.setRest = 60;
+      d.factor = 1;
+      d.loadUp = true;
+      sess.notes.push(S.profile.lang === "de"
+        ? "Heute steigen Wiederholungen oder Gewicht – die Satzpause bleibt dafür bei 60 s."
+        : "Reps or weight go up today – the set rest stays at 60 s for it.");
+      return;
+    }
     sess.setRest = Math.max(45, Math.min(90, Math.round(60 / d.factor)));
     sess.lapRest = Math.max(60, Math.min(135, Math.round(90 / d.factor)));
     d.setRest = sess.setRest;
     if (sess.setRest !== 60) sess.notes.push(S.profile.lang === "de"
-      ? `Abschlussbewertung: Satzpause 60 → ${sess.setRest} s. Gewichte und Wiederholungen bleiben unverändert.`
-      : `Final effort rating: set rest 60 → ${sess.setRest} s. Weights and reps stay unchanged.`);
+      ? `Abschlussbewertung: Satzpause 60 → ${sess.setRest} s. Gewichte und Wiederholungen richten sich nach deinen eingetragenen Sätzen.`
+      : `Final effort rating: set rest 60 → ${sess.setRest} s. Weights and reps follow your logged sets.`);
   }
