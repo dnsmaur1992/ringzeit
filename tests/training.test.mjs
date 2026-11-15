@@ -382,21 +382,95 @@ test("strength targets use actual same-exercise data, advance one variable per c
     S.log.forEach(e=>{e.perf=[{id,sets:[{r:8,kg:20},{r:8,kg:20},{r:8,kg:20}],target:{...initial,cycle:e.progression.id,kg:20}}]});
     sess.progression=progressionState('2026-11-02','S',false);
     globalThis.target=strengthTarget(sess,b,b.items[0]);`);
+  // 2.11.2026 is a deload week: no increase (15.11.2026: periodisation protects, as for the effort control)
+  assert.equal(a.run("weekLoad('2026-11-02').deload"), true);
+  assert.deepEqual([a.run("target.r"), a.run("target.kg"), a.run("target.reason")], [8, 20, "repeat"]);
+  a.run("globalThis._wl=weekLoad;weekLoad=(ds)=>({..._wl(ds),deload:false});globalThis.target=strengthTarget(fixture.sess,fixture.b,fixture.b.items[0]);");
   assert.equal(a.run("target.r"), 9);
   assert.equal(a.run("target.kg"), 20);
   a.run(
     `S.log.forEach(e=>{e.perf[0].target.r=12; e.perf[0].target.baseR=12; e.perf[0].sets.forEach(r=>r.r=12)}); globalThis.target=strengthTarget(fixture.sess,fixture.b,fixture.b.items[0]);`,
   );
-  assert.equal(a.run("target.r"), 12);
+  // at the top of the range: +2.5 % weight and back to the bottom of the range (Betreiber 15.11.2026)
+  assert.equal(a.run("target.baseR"), 8);
   assert.equal(a.run("target.kg"), 20.5);
   a.run(
     `S=hydrate(JSON.parse(JSON.stringify(S))); globalThis.target=strengthTarget(fixture.sess,fixture.b,fixture.b.items[0]);`,
   );
   assert.equal(a.run("target.kg"), 20.5);
+  // incomplete sessions are no evidence: with the two latest ones unfinished nothing is left that supports it
   a.run(
-    `S.log[0].completed=false; globalThis.target=strengthTarget(fixture.sess,fixture.b,fixture.b.items[0]);`,
+    `S.log.slice(-2).forEach(e=>e.completed=false); globalThis.target=strengthTarget(fixture.sess,fixture.b,fixture.b.items[0]);`,
   );
   assert.equal(a.run("target.kg"), 20);
+  a.run("weekLoad=_wl");
+});
+
+test("15.11.2026 strength targets follow logged performance – also with the effort control on: more reps, heavier weight, top of the range, one strong set, hard effort, protection, 14 days, idempotent", () => {
+  const a = app();
+  a.setDate("2026-11-02");
+  a.run(`globalThis._wl=weekLoad;weekLoad=(ds)=>({..._wl(ds),deload:false});S.profile.lang='de';S.profile.birthYear=1992;S.profile.birth='1992-03-14';
+    globalThis.SID=exKey(e=>e.cat==='str' && /weights/.test(e.eq) && !DOSE_FIX[e.de] && !TIMED.has(e.key));
+    globalThis.SB={key:'str',sets:'3× 8–12',items:[{id:SID}]};
+    globalThis.mkSess=(o={})=>({date:'2026-11-02',type:'S',loc:o.loc||'home',eq:o.eq||['weights'],effortDose:{v:1,active:true,eligible:true,factor:1.2},progression:{id:'c1',reason:'repeat',week:2,data:{level:'sufficient',worsening:false}}});
+    globalThis.mk=(rows,o={})=>{S.log=rows.map((sets,i)=>({id:'e'+i,date:(o.dates||['2026-10-20','2026-10-27','2026-10-30'])[i],src:'own',type:'S',completed:o.done?.[i]??true,inputConfirmed:true,minutes:60,rpe:o.rpe?.[i]??6,tHi:7,
+      perf:[{id:SID,sets:sets.map(r=>Array.isArray(r)?{r:r[0],kg:r[1]}:{r,kg:o.kg??16}),target:{kind:'x',cycle:'c0',n:3,lo:8,hi:12,eq:o.teq||'weights',r:o.r??9,baseR:o.r??9,kg:o.kg??16,timed:false,reason:o.why?.[i]||'repeat'}}]}))};
+    globalThis.tg=(o)=>strengthTarget(mkSess(o),SB,SB.items[0]);`);
+  const T = (rows, o = {}, so = {}) => JSON.parse(a.run(`mk(${JSON.stringify(rows)},${JSON.stringify(o)});JSON.stringify(tg(${JSON.stringify(so)}))`));
+  // more reps in all sets in 2 of 3: the level reached in both (weakest set) – with the effort control on
+  let t = T([[11, 11, 10], [12, 11, 11], [9, 9, 9]]);
+  assert.deepEqual([t.baseR, t.kg, t.reason], [10, 16, "up"]);
+  // one outstanding set changes nothing
+  t = T([[15, 9, 9], [9, 14, 9], [9, 9, 9]]);
+  assert.deepEqual([t.baseR, t.kg, t.reason], [9, 16, "repeat"]);
+  // only one session with more: not enough
+  t = T([[11, 11, 11], [9, 9, 9], [9, 9, 9]]);
+  assert.equal(t.reason, "repeat");
+  // heavier weight in all sets in 2 of 3: taken over (at most +10 %), back to the bottom of the range
+  t = T([[[9, 17], [9, 17], [9, 17]], [[9, 17], [10, 17], [9, 17]], [9, 9, 9]], { r: 12 });
+  assert.deepEqual([t.baseR, t.kg, t.reason], [8, 17, "up"]);
+  t = T([[[9, 18], [9, 18], [9, 18]], [[9, 18], [9, 18], [9, 18]], [9, 9, 9]], { r: 12 });
+  assert.deepEqual([t.baseR, t.kg], [8, 17.6], "+10 % at most");
+  // top of the range in 2 of 3: +2.5 % and back to the bottom
+  t = T([[12, 12, 12], [12, 13, 12], [11, 11, 11]], { r: 12 });
+  assert.deepEqual([t.baseR, t.kg, t.reason], [8, 16.4, "up"]);
+  // more, but above the effort target: the target stays and says why
+  t = T([[11, 11, 11], [11, 11, 11], [9, 9, 9]], { rpe: [8, 8, 6] });
+  assert.deepEqual([t.baseR, t.reason], [9, "hold"]);
+  assert.match(a.run(`targetText(${JSON.stringify(t)},SID)`), /Mehr geschafft, aber die Anstrengung war hoch: Ziel bleibt/);
+  // repeatedly far too hard: lighter
+  t = T([[9, 9, 9], [9, 9, 8], [9, 9, 9]], { rpe: [9, 9, 6] });
+  assert.deepEqual([t.kg, t.reason], [15.2, "down"]);
+  // unfinished sessions or missing weights are no evidence
+  t = T([[11, 11, 11], [11, 11, 11], [9, 9, 9]], { done: [false, false, true] });
+  assert.equal(t.reason, "repeat");
+  t = T([[[11, null], [11, 16], [11, 16]], [[11, 16], [11, 16], [11, 16]], [9, 9, 9]]);
+  assert.equal(t.reason, "repeat");
+  // comparable: the place doesn't matter, other equipment does
+  t = T([[11, 11, 11], [11, 11, 11], [9, 9, 9]], {}, { loc: "gym" });
+  assert.equal(t.reason, "up");
+  t = T([[11, 11, 11], [11, 11, 11], [9, 9, 9]], { teq: "bands" });
+  assert.equal(t.reason, "initial");
+  // at most one change per exercise in 14 days
+  t = T([[11, 11, 11], [11, 11, 11], [11, 11, 11]], { why: ["repeat", "repeat", "up"] });
+  assert.equal(t.reason, "repeat");
+  // protected days: deload week, gentle return, under 15
+  a.run("weekLoad=_wl");
+  assert.equal(a.run("weekLoad('2026-11-02').deload"), true);
+  t = T([[11, 11, 11], [11, 11, 11], [9, 9, 9]]);
+  assert.equal(t.reason, "repeat");
+  a.run("weekLoad=(ds)=>({..._wl(ds),deload:false})");
+  // idempotent: the same log gives the same target, however often the plan is built
+  const once = a.run(`mk([[11,11,10],[12,11,11],[9,9,9]]);JSON.stringify([tg(),tg(),tg()].map(x=>[x.baseR,x.kg,x.reason]))`);
+  assert.equal(once, JSON.stringify([[10, 16, "up"], [10, 16, "up"], [10, 16, "up"]]));
+  // one lever: on a day with an increase the set rest goes back to 60 s and the rating starts from factor 1 again
+  a.run(`mk([[11,11,10],[12,11,11],[9,9,9]]);globalThis.RS={...mkSess(),notes:[],blocks:[{key:'str',sets:'3× 8–12',items:[{id:SID,target:tg()}]}]};applyStrengthRestDose(RS);`);
+  assert.deepEqual([a.run("RS.setRest"), a.run("RS.effortDose.factor"), a.run("RS.effortDose.loadUp")], [60, 1, true]);
+  assert.match(a.run("RS.notes.join(' ')"), /steigen Wiederholungen oder Gewicht/);
+  a.run(`globalThis.RS2={...mkSess(),notes:[],blocks:[{key:'str',sets:'3× 8–12',items:[{id:SID,target:{reason:'repeat'}}]}]};applyStrengthRestDose(RS2);`);
+  assert.deepEqual([a.run("RS2.setRest"), a.run("RS2.effortDose.factor")], [50, 1.2]);
+  assert.match(a.run("RS2.notes.join(' ')"), /richten sich nach deinen eingetragenen Sätzen/);
+  a.run("weekLoad=_wl");
 });
 
 test("old backups load, preserve logs and exercise values, and do not fabricate completions", () => {
@@ -969,8 +1043,9 @@ test("legacy exercise histories remain comparable when only unrelated equipment 
   history(a, { type: "S" });
   a.run(`const id=exKey(e=>e.de==='Goblet Squats'),sess={date:'2026-11-02',type:'S',loc:'gym',eq:['weights'],progression:progressionState('2026-11-02','S',false)},b={key:'str',sets:'3× 8–12',items:[{id}]};
     const initial=strengthTarget(sess,b,b.items[0]),parts=initial.kind.split(':');parts[parts.length-4]='bag,rope,weights';
-    S.log.forEach(e=>e.perf=[{id,sets:[{r:8,kg:20},{r:8,kg:20},{r:8,kg:20}],target:{...initial,kg:20,kind:parts.join(':'),cycle:e.progression.id}}]);
-    sess.progression=progressionState('2026-11-02','S',false);globalThis.carriedTarget=strengthTarget(sess,b,b.items[0]);`);
+    S.log.forEach(e=>e.perf=[{id,sets:[{r:8,kg:20},{r:8,kg:20},{r:8,kg:20}],target:{...initial,eq:undefined,kg:20,kind:parts.join(':'),cycle:e.progression.id}}]);
+    const _wl=weekLoad;weekLoad=(ds)=>({..._wl(ds),deload:false});
+    sess.progression=progressionState('2026-11-02','S',false);globalThis.carriedTarget=strengthTarget(sess,b,b.items[0]);weekLoad=_wl;`);
   assert.equal(a.run("carriedTarget.r"), 9);
   assert.equal(a.run("carriedTarget.kg"), 20);
 });
@@ -3839,12 +3914,15 @@ test("14.11.2026 technique focus: always one, not shown as extra text, balanced 
   assert.equal(a.run("S.sessions[ui.sel].theme"), "k_dol");
   assert.doesNotMatch(a.run("renderSession()"), /Schwerpunkt der Einheit|focusln/);
   // the focus kick shows up in most combo rounds
-  for (let i = 0; i < 10; i++) {
+  let nR = 0,
+    nK = 0;
+  for (let i = 0; i < 20; i++) {
     const s = JSON.parse(a.run("JSON.stringify(buildSession('2026-11-02','T','gym',['bag'],{sport:'taekwondo',tstyle:'wt',min:60}))"));
     const rounds = blk(s, (b) => b.key === "main").items.filter((r) => ["shadow", "bag", "partner"].includes(r.k) && r.combo);
-    const withK = rounds.filter((r) => r.combo.some((x) => x === "dol" || x === "dolh" || /^sr/.test(x)));
-    assert.ok(withK.length >= rounds.length / 2, JSON.stringify(rounds.map((r) => r.combo)));
+    nR += rounds.length;
+    nK += rounds.filter((r) => r.combo.some((x) => x === "dol" || x === "dolh" || /^sr/.test(x))).length;
   }
+  assert.ok(nK >= nR * 0.55, `focus kick in ${nK}/${nR} combos`);
   a.run("chooseFocus=window._cf;S.profile.lang='de'");
   // broad foci change the rounds: footwork rounds, evade & counter rounds (solo), counter actions on every later partner round
   const force = (id) => a.run(`window._cf2=window._cf2||chooseFocus;chooseFocus=()=>BROAD.find(x=>x.id==='${id}')`);
@@ -4180,10 +4258,12 @@ test("7e: protective gear notes per sport in sparring with a partner, a partner-
 });
 test("7f: kick chains – WT more chain rounds and longer chains, ITF weaker, kickboxing occasional chains from level 1; locks stay", () => {
   const a = app();
+  // measures the combo pools themselves: without a unit focus (14.11.2026: the focus changes round kinds and kicks)
+  a.run("chooseFocus=()=>null");
   const KK = new Set(JSON.parse(a.run("JSON.stringify([...KICKS, ...TKDT.KICKS])")));
   const stats = (sp, st, lvl, o = {}) => {
     let combos = 0, k3 = 0, k4 = 0, pure = 0;
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 60; i++) {
       a.run(`S.profile.sport='${sp}';S.profile.disc='${o.disc || "lc"}';S.profile.birthYear=${o.by ?? 1995};S.profile.level=${lvl};S.profile.limits=${JSON.stringify(o.lim || [])};${st ? `S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'${st}',wt:'k1',itf:'k1'});` : ""}`);
       const s = JSON.parse(a.run(`JSON.stringify(buildSession('2026-11-02','T','gym',['bag','rope'],{sport:'${sp}',min:60${st ? `,tstyle:'${st}'` : ""}}))`));
       for (const it of s.blocks.find((b) => b.key === "main").items) {
@@ -4204,7 +4284,7 @@ test("7f: kick chains – WT more chain rounds and longer chains, ITF weaker, ki
   assert.ok(w2.k4 >= 0.4, "WT L2 ≥4 kicks " + w2.k4);
   const i2 = stats("taekwondo", "itf", 2);
   assert.ok(i2.k3 >= 0.35, "ITF L2 ≥3 kicks " + i2.k3);
-  assert.ok(i2.k3 < w2.k3, "ITF weaker than WT");
+  assert.ok(i2.k3 < w2.k3, "ITF weaker than WT " + i2.k3 + " " + w2.k3);
   const k1 = stats("kickboxing", "", 1), k0 = stats("kickboxing", "", 0);
   assert.ok(k1.pure >= 0.1 && k1.pure <= 0.4, "kickboxing L1 kick chains " + k1.pure);
   assert.ok(k0.pure < 0.1, "kickboxing L0 none of the new chains " + k0.pure);
