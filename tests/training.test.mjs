@@ -2120,6 +2120,32 @@ test("15.11.2026 onboarding: nothing important can be skipped by accident – no
   assert.match(html(), /Do you have any pain or limitations right now\?[\s\S]*data-olim="none"/);
 });
 
+test("15.11.2026 iOS: a tab bar left mid-screen after scrolling is laid out again; at the bottom nothing happens", () => {
+  const a = app();
+  a.run("window.innerHeight=844;");
+  const n = a.node("tabs");
+  n.hidden = false;
+  n.style = { display: "" };
+  let shown = [];
+  Object.defineProperty(n.style, "display", { get: () => shown[shown.length - 1] ?? "", set: (v) => shown.push(v), configurable: true });
+  n.getBoundingClientRect = () => ({ bottom: 520 });
+  assert.equal(a.run("tabsReanchor()"), true);
+  assert.deepEqual(shown, ["none", ""], "hidden for one layout pass, then shown again");
+  shown = [];
+  n.getBoundingClientRect = () => ({ bottom: 844 });
+  assert.equal(a.run("tabsReanchor()"), false);
+  assert.deepEqual(shown, []);
+  // while typing (keyboard open) it is left alone
+  a.run("globalThis._ae=document.activeElement;document.activeElement={tagName:'INPUT'}");
+  n.getBoundingClientRect = () => ({ bottom: 400 });
+  assert.equal(a.run("tabsReanchor()"), false);
+  a.run("document.activeElement=_ae");
+  // hidden during a workout: left alone
+  n.hidden = true;
+  n.getBoundingClientRect = () => ({ bottom: 100 });
+  assert.equal(a.run("tabsReanchor()"), false);
+});
+
 test("simple view, session screen: no day form, no 'why', no RPE tag, no extra equipment – partner/bag stays", () => {
   const a = app();
   a.run(`S.profile.simple=true;S.profile.example=false;const d=iso(today());ui.sel=d;ui.tab='session';ui.setup=null;
