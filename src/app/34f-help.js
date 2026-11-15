@@ -20,8 +20,9 @@
     relax: { tab: "profile", sec: "life", sel: "[data-rx]" },
     adjust: { tab: "session", sel: "details.session-settings" },
     move: { tab: "session", sel: "[data-move]" },
-    start: { tab: "session", sel: '[data-workout="start"]' },
-    finish: { tab: "session", sel: '#sessionFinish, [data-workout="start"]' },
+    // a planned day without a prepared session shows "Create session" instead – that is marked then
+    start: { tab: "session", sel: '[data-workout="start"], #buildSess' },
+    finish: { tab: "session", sel: '#sessionFinish, [data-workout="start"], #buildSess' },
     plan: { tab: "week", sel: ".strip, .wkstrip, [data-wk]" },
     clublog: { tab: "week", sel: "[data-clublog], .clubbox" },
     ftimer: { run: () => openFt() },
@@ -96,6 +97,15 @@
       go: "Hinführen",
       tour: "App-Tour noch einmal ansehen",
       guide: "Ratgeber öffnen",
+      busy: ["Training läuft", "Beende oder pausiere zuerst dein Training bzw. den Rundentimer – danach führt dich die Hilfe dorthin."],
+      noTrain: {
+        h: "Gerade keine Einheit geplant",
+        pause: (d) => (d ? `Deine Pause läuft bis ${d}. Danach plant Ringzeit wieder Einheiten.` : "Deine Pause läuft noch. Beende sie, wenn du wieder trainieren willst."),
+        pauseBtn: "Zur Pause",
+        noDays: "Du hast noch keine Ringzeit-Tage gewählt. Trag sie ein, dann plant Ringzeit deine Einheiten.",
+        daysBtn: "Trainingstage eintragen",
+        done: (d) => (d ? `Alles erledigt. Deine nächste Einheit ist am ${d}.` : "Alles erledigt – in den nächsten Wochen ist keine Einheit geplant."),
+      },
       topics: {
         start: "Loslegen",
         plan: "Planen & Woche",
@@ -160,6 +170,15 @@
       go: "Take me there",
       tour: "Watch the app tour again",
       guide: "Open the guide",
+      busy: ["Training in progress", "Finish or pause your training or the round timer first – then the help takes you there."],
+      noTrain: {
+        h: "No session planned right now",
+        pause: (d) => (d ? `Your break lasts until ${d}. After that Ringzeit plans sessions again.` : "Your break is still on. End it when you want to train again."),
+        pauseBtn: "Go to the break",
+        noDays: "You haven't chosen any Ringzeit days yet. Add them and Ringzeit plans your sessions.",
+        daysBtn: "Add training days",
+        done: (d) => (d ? `All done. Your next session is on ${d}.` : "All done – no session planned in the coming weeks."),
+      },
       topics: {
         start: "Getting started",
         plan: "Planning & week",
@@ -260,26 +279,84 @@
     if (none) none.hidden = !q || n > 0;
   }
   /* go to the function: the right page or profile section, the spot scrolled into view and marked for a moment */
+  /* targets that need a session: the help leads to one that is really there (Codeprüfung 15.11.2026) */
+  const HELP_SESS = new Set(["start", "finish", "adjust", "move"]);
+  // the day for a session target: a chosen day that fits, else the next planned and not yet done session (14 days);
+  // "finish" looks at today first
+  function helpDay(key) {
+    const td = iso(today()),
+      fits = (ds) => !!ds && ds >= td && !!planOn(ds) && !doneOn(ds);
+    if (key === "finish" && fits(td)) return td;
+    if (fits(ui.sel)) return ui.sel;
+    for (let i = 0; i < 14; i++) {
+      const ds = iso(addDays(today(), i));
+      if (fits(ds)) return ds;
+    }
+    return null;
+  }
+  // no session to lead to: say why, with the button that helps
+  function helpNoTrain() {
+    const N = helpT().noTrain,
+      td = iso(today()),
+      pz = pausedOn(td) || (S.pauses || []).find((x) => x.from > td && x.from <= iso(addDays(today(), 13)));
+    let msg, btn;
+    if (pz) {
+      msg = N.pause(pz.to ? fmtDate(pz.to) : "");
+      btn = ["pause", N.pauseBtn];
+    } else if (!(S.profile.days || []).length) {
+      msg = N.noDays;
+      btn = ["days", N.daysBtn];
+    } else {
+      let next = "";
+      for (let i = 14; i < 70 && !next; i++) {
+        const ds = iso(addDays(today(), i));
+        if (planOn(ds) && !doneOn(ds)) next = ds;
+      }
+      msg = N.done(next ? fmtDate(next) : "");
+    }
+    ui.tab = "week";
+    render(true);
+    openSheet({ kind: "show", title: N.h, html: `<p class="sub">${esc(msg)}</p>${btn ? `<div class="acts2"><button type="button" class="btn sec" data-help-go="${btn[0]}">${esc(btn[1])} ›</button></div>` : ""}` });
+  }
   function helpGo(key) {
     const g = HELP_GO[key];
     if (!g) return;
     closeSheet();
-    // a running workout or the free timer stays where it is; only an idle timer screen is closed
-    if (ui.ft && ui.ft.phase === "setup" && !g.run) closeFt();
+    // a begun training or a running round timer is kept: only its own session can be shown, nothing else
+    const ftBusy = ui.ft && ui.ft.phase !== "setup";
+    if (key === "ftimer" && ui.ft) return openFt();
+    if (ui.workout || ftBusy) {
+      if (!(ui.workout && !ftBusy && HELP_SESS.has(key))) {
+        const B = helpT().busy;
+        return openSheet({ kind: "show", title: B[0], html: `<p class="sub">${esc(B[1])}</p>` });
+      }
+      ui.tab = "session";
+      ui.sel = ui.workout.ds;
+      render(true);
+      return setTimeout(() => helpMark(g.sel), 80);
+    }
+    // an idle timer screen is closed
+    if (ui.ft) closeFt();
     if (g.run) return g.run();
+    if (HELP_SESS.has(key)) {
+      const ds = helpDay(key);
+      if (!ds) return helpNoTrain();
+      ui.sel = ds;
+    }
     if (g.tab) {
       ui.tab = g.tab;
       if (g.tab === "profile") ui.profSec = g.sec || null;
       if (g.view) ui.testView = g.view;
       if (g.tab === "test") ui.testOpen = false;
-      if (g.tab === "session" && !ui.sel) ui.sel = iso(today());
       render(true);
     }
     // after the page has settled (render may still swap parts in)
     setTimeout(() => helpMark(g.sel), 80);
   }
   function helpMark(sel) {
-    const el = sel && document.querySelector(sel);
+    // the alternatives in the order given (the first one that exists), not in page order
+    let el = null;
+    for (const part of (sel || "").split(/,\s*/)) if (part && !el) el = document.querySelector(part);
     if (!el) {
       if (typeof scrollTo === "function") scrollTo(0, 0);
       return;
@@ -287,7 +364,8 @@
     const d = el.closest("details");
     if (d) d.open = true;
     if (el.tagName === "DETAILS") el.open = true;
-    const box = el.closest(".panel") || el.closest(".field, details") || el;
+    // a button is marked itself (in a long open panel the frame would be off screen), other spots with their panel
+    const box = el.tagName === "BUTTON" ? el : el.closest(".panel") || el.closest(".field, details") || el;
     if (box.scrollIntoView) box.scrollIntoView({ block: "center", behavior: "smooth" });
     box.classList.add("hlp");
     setTimeout(() => box.classList.remove("hlp"), 2600);
