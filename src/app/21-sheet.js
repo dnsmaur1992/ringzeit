@@ -105,6 +105,8 @@
       h += allBadgesHtml();
     } else if (o.kind === "raw") {
       h += `<h3>${esc(o.title)}</h3>${o.html}`;
+    } else if (o.kind === "help") {
+      h += helpHtml();
     } else if (o.kind === "news") {
       const N = t("news");
       h += `<h3>${N.h}</h3><ul class="ackl">${N.pts.map((x) => `<li>${x}</li>`).join("")}</ul><div class="acts2"><button type="button" class="btn" data-news-ok="1">${N.ok}</button></div>`;

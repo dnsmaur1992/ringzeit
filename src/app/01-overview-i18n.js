@@ -802,7 +802,7 @@
         ],
         end: [
           "Bereit",
-          "Das war's. Die Tour findest du jederzeit im Profil unter „App-Tour“. Viel Spaß beim Training!",
+          "Das war's. Bei Fragen hilft dir das „?“ oben auf jeder Seite – dort findest du auch die Tour wieder. Viel Spaß beim Training!",
         ],
       },
       afterLbl: "Danach",
@@ -2177,7 +2177,7 @@
           "Profile",
           "Set everything up here: club and Ringzeit days, tournaments and gradings, breaks and everyday life – plus guide, backup and this tour. Changes apply at once. Fitness test and history are in the bar at the bottom.",
         ],
-        end: ["Ready", "That's it. You can find the tour any time in the profile under “App tour”. Enjoy training!"],
+        end: ["Ready", "That's it. If you have questions, tap the “?” at the top of every page – the tour is there too. Enjoy training!"],
       },
       afterLbl: "After that",
       skHold: "Hold",

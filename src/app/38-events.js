@@ -710,6 +710,8 @@
       return showTour();
     }
     if (ds.restartTour) return startTour();
+    if (ds.help) return openHelp();
+    if (ds.helpGo) return helpGo(ds.helpGo);
     if (ds.onb === "birth") {
       const inp = document.getElementById("bdIn");
       if (!ui.onb || !ui.onb.birthOnly || !inp || !validBirth(inp.value)) return;
@@ -1132,6 +1134,7 @@
     );
   document.addEventListener("input", (ev) => {
     const el = ev.target;
+    if (el.id === "helpQ") return helpFilter(el.value);
     if ((el.id === "oBirth" || el.id === "bdIn") && ui.onb) {
       ui.onb.birth = validBirth(el.value) ? el.value : "";
       if (el.id === "oBirth") ui.onb.birthYear = ui.onb.birth ? +ui.onb.birth.slice(0, 4) : "";

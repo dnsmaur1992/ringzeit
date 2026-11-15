@@ -15,7 +15,7 @@
   function header(title) {
     const lg = S.profile.lang;
     return `<div class="top"><div>${eyebrow()}<h1>${esc(title)}</h1></div>
- <div class="lang" role="group" aria-label="${t("lang")}"><button type="button" data-lang="de" aria-pressed="${lg === "de"}">DE</button><button type="button" data-lang="en" aria-pressed="${lg === "en"}">EN</button></div></div>`;
+ <div class="topr">${helpBtn()}<div class="lang" role="group" aria-label="${t("lang")}"><button type="button" data-lang="de" aria-pressed="${lg === "de"}">DE</button><button type="button" data-lang="en" aria-pressed="${lg === "en"}">EN</button></div></div></div>`;
   }
   function ruleTags() {
     const p = S.profile;
