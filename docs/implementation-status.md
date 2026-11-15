@@ -550,3 +550,15 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   eigene Training wird gezeigt; „Rundentimer“ zeigt den laufenden Timer. Ein leerer Timer-Bildschirm wird geschlossen.
 - Tests: 276.
 
+## Kraftziele aus eingetragenen Sätzen, Schritt 1 (15.11.2026)
+
+- Prüfung bestätigt: Bei aktiver Emoji-Steuerung kehrte `strengthTarget()` früh zurück – Wiederholungen und Gewicht
+  blieben dauerhaft gleich, die Wochenwelle entfiel. Zusätzlich: Mehrleistung wurde ignoriert (nur „Ziel erreicht“
+  zählte), höchstens ein Schritt pro 5-Wochen-Zyklus, die Übungs-„hart“-Bewertung wird nirgends eingegeben.
+- Umgesetzt nach Betreiber-Entscheid („alle Empfehlungen“): siehe `trainingslogik.md`, „Kraftziele aus eingetragenen
+  Sätzen“. Ziele tragen jetzt `eq` (relevante Ausrüstung); alte Ziele werden über ihren Schlüssel gelesen.
+- Nebenbei: Der Schwerpunkt-Tritt im Taekwondo tauscht eine Kombination nur gegen eine gleich lange
+  (Kettenlängen bleiben); der Ketten-Test misst ohne Schwerpunkt und mit größerer Stichprobe (vorher selten wackelig).
+- Kickbox-Vergleich neu aufgezeichnet: einziger Unterschied ist das neue Feld `target.eq`.
+- Tests: 277.
+

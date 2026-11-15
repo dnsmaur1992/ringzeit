@@ -66,9 +66,10 @@ Dreierauswahl entfallen. Die genaue RPE-Skala bleibt alternativ nutzbar (1–2, 
   Prozentwerte sind Planungsimpulse für die Dichte, keine gemessenen physiologischen Belastungsprozente.
   Rundenpause = Grundpause / Faktor / Periodisierungswelle, mindestens 30 Sekunden.
   Kraft: Satzpause = 60 / Faktor (45–90 s), Zirkelpause = 90 / Faktor (60–135 s), gerundet.
-- Sobald die neue Steuerung aktiv ist, ersetzt sie die unabhängige bisherige Aufwärtskorrektur;
-  Gewichte und Wiederholungen werden dadurch nicht zusätzlich erhöht. Bekannte protokollierte Gewichte
-  können weiter übernommen werden. Bestehende Reduktionsregeln bleiben wirksam.
+- Sobald die neue Steuerung aktiv ist, ersetzt sie die unabhängige bisherige Aufwärtskorrektur der
+  Pausendichte. Gewichte und Wiederholungen werden nie um Emoji-Prozente erhöht – sie folgen seit
+  15.11.2026 den eingetragenen Sätzen (siehe „Kraftziele aus eingetragenen Sätzen“). Bestehende
+  Reduktionsregeln bleiben wirksam.
 - Automatische Erhöhung nur nach vollständiger, bestätigter Einheit mit positiver Dauer und RPE nicht
   über deren Ziel, außerhalb der Schutzphasen. Abbrüche erlauben ausdrücklich gewünschte Reduktionen.
 - Tagesform, Vorbelastung, Entlastung, Wiedereinstieg, Kinder/Jugend, Wettkampfvorbereitung und andere
@@ -103,4 +104,30 @@ eigener Text in der Einheit; man erkennt ihn an den Runden und am Kraftblock (Be
   Verteidigung: Nackenkräftigung, Dead Bugs). Es gelten Ort, Ausrüstung, Level und Einschränkungen. Drei passende
   Übungen = 10 Min., zwei = 7, eine = 4, keine = kein Block: **die Minuten gehen dann in zusätzliche Technikrunden.**
 - Abhärtung bzw. Handgelenk & Griff bleiben, Kondition (C), Sparring (P), Kraft (S) und Mobility (M) sind unverändert.
+
+## Kraftziele aus eingetragenen Sätzen (15.11.2026)
+
+Drei Quellen, drei Aufgaben: **eingetragene Sätze** ergeben den Leistungsstand je Übung, die
+**Abschlussbewertung** steuert die Pausendichte und sperrt Steigerungen, wenn es zu hart war, der **Fitnesstest**
+legt die Wiederholungsbereiche fest. Das Technikniveau bleibt davon getrennt.
+
+- **Vergleichbar:** gleiche Übung, gleiche relevante Ausrüstung, gleicher Wiederholungsbereich – Ort, Einheitstyp und
+  Disziplin egal. Gilt auch, wenn die Emoji-Steuerung aktiv ist (bisher fror sie die Ziele ein).
+- **Nachweis:** Einheit abgeschlossen, Anstrengung eingetragen, alle Zielsätze mit Wiederholungen (und Gewicht bei
+  Gewichtsübungen). Pro Einheit zählt der schwächste Satz – ein einzelner starker Satz löst nichts aus. Eine Steigerung
+  braucht 2 der letzten 3 vergleichbaren Einheiten (höchstens 6 Wochen alt), keine davon über dem Anstrengungsziel.
+- **Schritte, immer nur einer:** mehr Wiederholungen bis zur Obergrenze (auf das in beiden Einheiten erreichte Niveau);
+  an der Obergrenze +2,5 % Gewicht und zurück an die Untergrenze; ein in allen Sätzen nachgewiesenes höheres Gewicht
+  wird übernommen (höchstens +10 % pro Schritt), ebenfalls zurück an die Untergrenze. Höchstens eine Änderung je Übung
+  in 14 Tagen. Der bisherige stetige Weg (Ziel im abgeschlossenen Zyklus erreicht → ein Schritt) bleibt bestehen.
+- **Ein Hebel:** In einer Krafteinheit mit Steigerung bleibt die Satzpause bei 60 s, der Emoji-Faktor startet wieder
+  bei 1; danach darf die Bewertung die Pausen wieder anpassen.
+- **Mehrleistung, aber zu hart:** Ziel bleibt, mit Hinweis „Mehr geschafft, aber die Anstrengung war hoch: Ziel bleibt.“
+  Zweimal deutlich zu hart (RPE ≥ Ziel + 2) senkt das Ziel (−5 % Gewicht bzw. −1 Wiederholung) – auch in Schutzphasen.
+- **Keine Steigerung an geschützten Tagen:** Entlastungswoche, Wiedereinstieg, K.-o.-Sperre, schlechte Tagesform,
+  Fastenzeit, harte Woche, Tapering und Erholung, unter 15, Leistungsabfall im Trend, schwere Vorbelastung am Vortag.
+  Aufbauphasen dürfen Kraft weiter steigern (wie bisher).
+- **Nachvollziehbar und ohne Doppelzählung:** Alles wird bei jedem Planen neu aus dem Protokoll berechnet, nichts
+  wird aufaddiert. Begonnene Einheiten behalten ihre Ziele. Code: `strengthTarget`, `applyStrengthRestDose`.
+- Offen (Schritt 2): Übernahme des Leistungsstands, wenn ein Fitnesstest den Wiederholungsbereich ändert.
 
