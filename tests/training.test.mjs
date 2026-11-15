@@ -1620,6 +1620,50 @@ test("15.11.2026 weight class: weekly reminder as soon as the class is set, the 
   assert.equal(a.run("wcPath()"), null);
   assert.doesNotMatch(a.run("renderLog()") + a.run("promptsHtml()"), /wcpath|wguide|wQuick/);
 });
+test("15.11.2026 help: a \"?\" on every page, the questions for the page first, the same questions in German and English, every answer leads to its function", () => {
+  const a = app();
+  a.run("S.profile.lang='de'");
+  const qs = JSON.parse(a.run("JSON.stringify(HELP_Q)")),
+    go = JSON.parse(a.run("JSON.stringify(Object.fromEntries(Object.entries(HELP_GO).map(([k,v])=>[k,{...v,run:!!v.run}])))")),
+    de = JSON.parse(a.run("JSON.stringify(HELP_TXT.de)")),
+    en = JSON.parse(a.run("JSON.stringify(HELP_TXT.en)"));
+  assert.ok(qs.length >= 40, "about 40 questions");
+  assert.deepEqual(Object.keys(de.q).sort(), Object.keys(en.q).sort());
+  assert.deepEqual(Object.keys(de.q).sort(), qs.map((q) => q[0]).sort(), "every question has words, no words without a question");
+  assert.deepEqual(Object.keys(de).sort(), Object.keys(en).sort());
+  for (const q of qs) {
+    assert.ok(de.topics[q[1]] && en.topics[q[1]], q[0]);
+    assert.ok(q[3] === null || go[q[3]], "target " + q[0]);
+    for (const L of [de, en]) assert.ok(L.q[q[0]][0].length > 8 && L.q[q[0]][1].length > 30, q[0]);
+  }
+  for (const [k, g] of Object.entries(go)) {
+    assert.ok(g.run || !g.tab || ["week", "session", "test", "log", "profile"].includes(g.tab), k);
+    assert.ok(!g.sec || ["me", "train", "goals", "life", "guide", "app"].includes(g.sec), k);
+  }
+  for (const tab of ["week", "session", "test", "log", "profile"]) {
+    a.run(`ui.tab='${tab}';ui.profSec=null;draft=null`);
+    const page = a.run({ week: "renderWeek()", session: "renderSession()", test: "renderTest()", log: "renderLog()", profile: "renderProfile()" }[tab]);
+    assert.match(page, /class="helpbtn" data-help="1" aria-label="Hilfe &amp; Fragen"|class="helpbtn" data-help="1" aria-label="Hilfe & Fragen"/, tab);
+    const h = a.run("helpHtml()"),
+      here = h.slice(h.indexOf('class="hsec hhere"'), h.indexOf('class="hgrp"'));
+    assert.ok(qs.filter((q) => q[2].includes(tab)).every((q) => here.includes(`data-hq="${q[0]}"`)), tab);
+    assert.ok(qs.every((q) => h.includes(`data-hq="${q[0]}"`)), "all questions in the topics");
+  }
+  assert.match(a.run("helpHtml()"), /data-help-go="tour"[\s\S]*data-help-go="guide"/);
+  // going there: page, profile section, test view
+  a.run("ui.tab='week';helpGo('wc')");
+  assert.deepEqual([a.run("ui.tab"), a.run("ui.profSec")], ["profile", "goals"]);
+  a.run("helpGo('exam')");
+  assert.deepEqual([a.run("ui.tab"), a.run("ui.testView")], ["test", "exam"]);
+  a.run("helpGo('weight')");
+  assert.equal(a.run("ui.tab"), "log");
+  a.run("helpGo('backup')");
+  assert.deepEqual([a.run("ui.tab"), a.run("ui.profSec")], ["profile", "app"]);
+  // English
+  a.run("S.profile.lang='en'");
+  assert.match(a.run("helpHtml()"), /Help &amp; questions|Help & questions/);
+  assert.match(a.run("helpHtml()"), /Take me there/);
+});
 test("guide: ten articles in German and English, each opens and leads to the next", async () => {
   const a = app();
   const info = JSON.parse(a.run("JSON.stringify(READS.map(r=>[r.k,r.de.secs.length,r.en.secs.length,!!r.de.src&&!!r.en.src,!!r.de.sub&&!!r.en.sub]))"));
