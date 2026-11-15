@@ -509,3 +509,19 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   gewollt neu aufgezeichnet (nur T-Einheiten geändert).
 - Tests: 273.
 
+## Weg zur Gewichtsklasse (15.11.2026)
+
+- Auftrag: Hinweise zur Gewichtsklasse greifen immer, nicht erst 8 Wochen vorher; gezeigt werden das aktuell
+  eingetragene Gewicht und das nächste Turnier mit Klasse – unter Verlauf, nicht auf der Heute-Seite; dazu eine
+  Richtlinie in der Gewichtskurve und die Angaben in der Trainer-Übersicht. Kein Turnier oder keine Klasse: nichts.
+- `07-fitness-test.js`: `wcPath()` – letztes Gewicht, Klasse, Rest, Tage bis zum Turnier, Tempo pro Woche, Hinweis ab
+  mehr als 1 % des Körpergewichts pro Woche. Unter 15 nichts (wie die übrigen Gewichtshinweise).
+- Heute-Seite: die wöchentliche Wiege-Erinnerung gilt, sobald eine Klasse eingetragen ist; die Hinweise „über der
+  Klasse“ bleiben bei 8 Wochen.
+- Verlauf: Zeile „Aktuell 79,7 kg · Nächstes Turnier … · −67 kg · noch 12,7 kg (≈ 0,85 kg/Woche)“ unter der Kurve. Die
+  Kurve läuft dann nach Datum bis zum Turniertag, eine gepunktete Linie führt vom Gewicht am Tag der Klassenwahl
+  (`comp.wcSet`, sonst dem ersten gezeigten Gewicht) zur Klasse am Turniertag.
+- Trainer-Übersicht: hinter dem letzten Gewicht „noch … kg (≈ … kg/Woche)“.
+- Weiterhin keine Anleitung zum Gewichtmachen, keine Kalorien- oder Ernährungspläne.
+- Tests: 274.
+
