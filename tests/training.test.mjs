@@ -1566,6 +1566,60 @@ test("weight class: weekly weigh-in with quick entry, trend, a neutral coach not
   assert.doesNotMatch(a.run("promptsHtml()"), /wQuick|Gewichtsklasse/);
 });
 
+test("15.11.2026 weight class: weekly reminder as soon as the class is set, the way to the class under History, a guide in the chart and in the coach summary – nothing without a tournament or under 15", async () => {
+  const a = app();
+  a.setDate("2026-11-15");
+  a.run("S.profile.lang='de';S.profile.birthYear=1992;S.profile.birth='1992-03-14';S.log=[];S.weights=[{date:'2026-11-01',kg:80.6},{date:'2026-11-08',kg:80.1}];S.profile.comps=[{id:'nx',date:'2027-02-27',kind:'comp'}];ui.tab='log';");
+  // no class: nothing new
+  assert.equal(a.run("wcPath()"), null);
+  assert.doesNotMatch(a.run("renderLog()"), /wcpath|wguide/);
+  // set the class in the profile: the day is kept as the start of the guide
+  a.run("draft=JSON.parse(JSON.stringify(S.profile))");
+  await a.emit("change", { dataset: { wc: "nx" }, value: "67" });
+  assert.equal(a.run("draft.comps[0].wc"), 67);
+  assert.equal(a.run("draft.comps[0].wcSet"), "2026-11-15");
+  a.run("S.profile.comps=draft.comps;draft=null");
+  // 104 days ahead: weekly reminder already (was 8 weeks), no over-class warning yet
+  a.run("S.weights=S.weights.filter(w=>w.date<'2026-11-09')");
+  let p = a.run("promptsHtml()");
+  assert.match(p, /id="wQuick"/);
+  a.run("S.weights.push({date:'2026-11-15',kg:79.7})");
+  p = a.run("promptsHtml()");
+  assert.doesNotMatch(p, /wQuick|über deiner Gewichtsklasse/);
+  // the way to the class: last weight, next tournament, class, what is left and the pace
+  const wp = JSON.parse(a.run("JSON.stringify(wcPath())"));
+  assert.deepEqual([wp.diff, wp.days, wp.perWeek, wp.steep, wp.from.kg], [12.7, 104, 0.85, true, 79.7], "guide starts at the weight of the day the class was set");
+  let h = a.run("renderLog()");
+  assert.match(h, /Aktuell 79,7 kg · Nächstes Turnier [^·]*27\. Feb[^·]* · −67 kg · noch 12,7 kg \(≈ 0,85 kg\/Woche\)/);
+  assert.match(h, /1 % des Körpergewichts pro Woche – sehr ambitioniert, mit dem Trainer besprechen/);
+  assert.match(h, /class="wguide"/);
+  // the guide runs by date to the tournament: it ends on the class line at the right edge
+  const g = h.match(/class="wguide" x1="([\d.]+)" y1="([\d.]+)" x2="([\d.]+)" y2="([\d.]+)"/);
+  assert.ok(+g[3] > +g[1] && +g[4] > +g[2], g[0]);
+  assert.equal(+g[3], 330);
+  assert.match(h, /text-anchor="end" fill="var\(--mist\)">Sa\., 27\. Feb\./, "right edge = tournament day");
+  // coach summary: what is left next to the last weight
+  assert.match(a.run("summaryText()"), /Letztes Gewicht: 79,7 kg \([^)]*\) · noch 12,7 kg \(≈ 0,85 kg\/Woche\)/);
+  // a calm pace: no hint
+  a.run("S.profile.comps[0].wc=75");
+  assert.doesNotMatch(a.run("renderLog()"), /sehr ambitioniert/);
+  // under the class: no guide, a plain line
+  a.run("S.profile.comps[0].wc=81");
+  h = a.run("renderLog()");
+  assert.match(h, /1,3 kg unter der Klasse/);
+  assert.doesNotMatch(h, /wguide|kg\/Woche/);
+  // English
+  a.run("S.profile.comps[0].wc=67;S.profile.lang='en'");
+  assert.match(a.run("renderLog()"), /Now 79\.7 kg · Next tournament [^·]* · −67 kg · 12\.7 kg to go \(≈ 0\.85 kg\/week\)/);
+  // no tournament: nothing
+  a.run("S.profile.lang='de';S.profile.comps=[]");
+  assert.equal(a.run("wcPath()"), null);
+  assert.doesNotMatch(a.run("renderLog()"), /wcpath|wguide/);
+  // under 15: no reminder, no line, no guide (the class line in the chart stays)
+  a.run("S.profile.comps=[{id:'nx',date:'2027-02-27',kind:'comp',wc:45}];S.profile.birth='2013-01-01';S.profile.birthYear=2013;S.weights=[{date:'2026-11-01',kg:50},{date:'2026-11-02',kg:49.8}]");
+  assert.equal(a.run("wcPath()"), null);
+  assert.doesNotMatch(a.run("renderLog()") + a.run("promptsHtml()"), /wcpath|wguide|wQuick/);
+});
 test("guide: ten articles in German and English, each opens and leads to the next", async () => {
   const a = app();
   const info = JSON.parse(a.run("JSON.stringify(READS.map(r=>[r.k,r.de.secs.length,r.en.secs.length,!!r.de.src&&!!r.en.src,!!r.de.sub&&!!r.en.sub]))"));
