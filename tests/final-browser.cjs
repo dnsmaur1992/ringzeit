@@ -65,6 +65,21 @@ const seed = (sport, style, lang) => ({ v: 2, profile: { lang, sport, disc: "lc"
           dt.value = "1995-03-14"; dt.dispatchEvent(new Event("input", { bubbles: true })); dt.dispatchEvent(new Event("change", { bubbles: true }));
         }
         const inp = o.querySelector('input[type="number"], input#oBy, input[inputmode="numeric"]'); if (inp && !inp.value) { inp.value = "1995"; inp.dispatchEvent(new Event("input", { bubbles: true })); inp.dispatchEvent(new Event("change", { bubbles: true })); }
+        // required answers since 15.11.2026: club days or "no fixed club training", limitations or "none" –
+        // "next" must stay locked until they are given
+        const need = [
+          ['[data-oclubnone]', '[data-ocday][aria-pressed="true"], [data-oclubnone][aria-pressed="true"]'],
+          ['[data-olim="none"]', '[data-olim][aria-pressed="true"]'],
+        ];
+        for (const [b, any] of need) {
+          const el = o.querySelector(b);
+          if (el && !o.querySelector(any)) {
+            const nx = o.querySelector('[data-onb="next"]');
+            if (nx && !nx.disabled && o.querySelector('input[type="date"]')?.value !== "" ) return "next enabled without required answer " + b;
+            el.click();
+            return "answer " + b;
+          }
+        }
         const btn = [...o.querySelectorAll("button.btn:not(.sec):not(.ghost)")].pop();
         if (!btn) return "no button: " + txt;
         if (window.__last === btn) return "same button " + txt;

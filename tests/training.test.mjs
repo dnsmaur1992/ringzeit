@@ -2048,6 +2048,78 @@ test("onboarding: the simple view is preselected for new users and can be switch
   assert.equal(b.run("S.profile.simple"), false);
 });
 
+test("15.11.2026 onboarding: nothing important can be skipped by accident – no skip, discipline/style, club days or none, limitations or none; default place with explanation", async () => {
+  const a = app();
+  const html = () => a.run("document.getElementById('onb').innerHTML");
+  const next = () => /data-onb="next" disabled/.test(html());
+  a.run("S.profile.lang='de';ui.onb={step:0,disc:'',days:[0,2,4],minutes:75,birthYear:'',birth:'',comp:'',clubDays:[],clubMin:90};renderOnb();");
+  // no skip any more
+  assert.doesNotMatch(html(), /data-onb="skip"/);
+  // kickboxing: no discipline preselected, "next" only after choosing
+  assert.doesNotMatch(html(), /data-od="lc" aria-pressed="true"/);
+  assert.ok(next(), "next locked without discipline");
+  assert.match(html(), /Bitte wähle deine Disziplin/);
+  await a.click({ dataset: { od: "k1" } });
+  assert.ok(!next());
+  // taekwondo: the style has to be chosen too
+  a.run("ui.onb.sport='taekwondo';ui.onb.tstyle='';renderOnb();");
+  assert.ok(next(), "next locked without style");
+  await a.click({ dataset: { otstyle: "itf" } });
+  assert.ok(!next());
+  a.run("ui.onb.sport='kickboxing';ui.onb.step=1;renderOnb();");
+  // club days: days or "no fixed club training"
+  assert.ok(next(), "next locked without an answer on club days");
+  await a.click({ dataset: { oclubnone: "1" } });
+  assert.ok(!next());
+  await a.click({ dataset: { ocday: "1" } });
+  assert.deepEqual([a.run("ui.onb.clubNone"), a.run("ui.onb.clubDays.length")], [false, 1]);
+  assert.ok(!next());
+  await a.click({ dataset: { oclubnone: "1" } });
+  assert.deepEqual([a.run("ui.onb.clubNone"), a.run("ui.onb.clubDays.length")], [true, 0], "none clears the days");
+  // own days: place is optional, "it varies" preselected, every place explained
+  a.run("ui.onb.step=2;renderOnb();");
+  assert.ok(!next());
+  assert.match(html(), /data-oloc="" aria-pressed="true"/);
+  assert.match(html(), /Unterschiedlich: Neue Einheiten starten mit der Halle/);
+  await a.click({ dataset: { oloc: "home" } });
+  assert.match(html(), /Zuhause: wenig Platz/);
+  assert.match(html(), /unter „Einheit anpassen“ ändern/);
+  // about you: date of birth and limitations or "none"
+  a.run("ui.onb.step=3;renderOnb();");
+  assert.ok(next());
+  a.run("ui.onb.birth='1992-03-14';renderOnb();");
+  a.node("oBirth").value = "1992-03-14"; // what the date field holds (read again before each re-render)
+  assert.ok(next(), "birth alone is not enough");
+  await a.click({ dataset: { olim: "knee" } });
+  assert.ok(!next());
+  await a.click({ dataset: { olim: "none" } });
+  assert.deepEqual([a.run("ui.onb.limNone"), a.run("ui.onb.limits.length")], [true, 0]);
+  assert.ok(!next());
+  await a.click({ dataset: { olim: "knee" } });
+  await a.click({ dataset: { olim: "wrist" } });
+  assert.equal(a.run("ui.onb.limNone"), false);
+  // finished: limitations and place are in the profile, the first plan uses the place
+  a.run("S.profile.ackSafe='2026-11-02';S.profile.toured=true;loading=async()=>{};ui.onb.step=4;");
+  await a.click({ dataset: { onb: "done" } });
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify([S.profile.limits,S.profile.loc,S.profile.disc,S.profile.club.days])")), [["knee", "wrist"], "home", "k1", []]);
+  const nd = a.run("nextTrainingDate()");
+  assert.equal(a.run(`S.sessions['${nd}'].loc`), "home");
+  // the default place: fitness gym only for strength/conditioning, "it varies" = hall
+  a.run("S.profile.loc='studio'");
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify([defLoc('S'),defLoc('K'),defLoc('T')])")), ["studio", "studio", "gym"]);
+  a.run("S.profile.loc=''");
+  assert.equal(a.run("defLoc('T')"), "gym");
+  // profile: training week shows the default place with its explanation and changes it
+  a.run("S.profile.loc='out';draft=null;ui.tab='profile';ui.profSec='train';");
+  let p = a.run("renderProfile()");
+  assert.match(p, /Standard-Trainingsort[\s\S]*data-ploc="out" aria-pressed="true"[\s\S]*Draußen: viel Platz/);
+  await a.click({ dataset: { ploc: "gym" } });
+  assert.equal(a.run("S.profile.loc"), "gym");
+  // English
+  a.run("S.profile.lang='en';ui.onb={step:3,disc:'lc',days:[0],minutes:60,birth:'',clubDays:[],clubMin:90};renderOnb();");
+  assert.match(html(), /Do you have any pain or limitations right now\?[\s\S]*data-olim="none"/);
+});
+
 test("simple view, session screen: no day form, no 'why', no RPE tag, no extra equipment – partner/bag stays", () => {
   const a = app();
   a.run(`S.profile.simple=true;S.profile.example=false;const d=iso(today());ui.sel=d;ui.tab='session';ui.setup=null;
