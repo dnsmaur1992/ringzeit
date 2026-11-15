@@ -2,7 +2,7 @@
   function ensureExample() {
     const nd = nextTrainingDate(),
       ty = planOn(nd);
-    if (ty && !S.sessions[nd]) S.sessions[nd] = buildSession(nd, ty, "gym", defaultEq());
+    if (ty && !S.sessions[nd]) S.sessions[nd] = buildSession(nd, ty, defLoc(ty), defaultEq());
   }
   /* Release transition: refresh only untouched legacy previews, keeping their chosen settings.
      Started/done/resumable sessions retain the exact prescriptions the user already saw in training. */
@@ -47,7 +47,7 @@
     if (!local && S.profile.example)
       ui.onb = {
         step: 0,
-        disc: "lc",
+        disc: "",
         days: [0, 2, 4],
         minutes: 75,
         birthYear: "",

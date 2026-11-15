@@ -798,7 +798,34 @@
       renderOnb();
       return;
     }
+    if (ds.oclubnone) {
+      ui.onb.clubNone = !ui.onb.clubNone;
+      if (ui.onb.clubNone) ui.onb.clubDays = [];
+      renderOnb();
+      return;
+    }
+    if (ds.oloc != null && ui.onb && !ui.onb.birthOnly) {
+      ui.onb.loc = ds.oloc;
+      renderOnb();
+      return;
+    }
+    if (ds.olim) {
+      readOnb();
+      const o = ui.onb;
+      o.limits = o.limits || [];
+      if (ds.olim === "none") {
+        o.limNone = !o.limNone;
+        if (o.limNone) o.limits = [];
+      } else {
+        const j = o.limits.indexOf(ds.olim);
+        j >= 0 ? o.limits.splice(j, 1) : o.limits.push(ds.olim);
+        if (o.limits.length) o.limNone = false;
+      }
+      renderOnb();
+      return;
+    }
     if (ds.ocday) {
+      ui.onb.clubNone = false;
       const a = ui.onb.clubDays,
         i = +ds.ocday,
         j = a.indexOf(i);
@@ -1040,6 +1067,14 @@
       render();
       return;
     }
+    // the default place only applies to sessions made from now on – existing previews and their settings stay
+    if (ds.ploc != null && draft) {
+      draft.loc = ds.ploc;
+      S.profile.loc = ds.ploc;
+      store.save();
+      render();
+      return;
+    }
     if (ds.lim) {
       const a = draft.limits,
         j = a.indexOf(ds.lim);
@@ -1139,7 +1174,8 @@
       ui.onb.birth = validBirth(el.value) ? el.value : "";
       if (el.id === "oBirth") ui.onb.birthYear = ui.onb.birth ? +ui.onb.birth.slice(0, 4) : "";
       const btn = document.querySelector(el.id === "oBirth" ? '[data-onb="next"]' : '[data-onb="birth"]');
-      if (btn) btn.disabled = !ui.onb.birth;
+      // the setup step also needs the answer on limitations (15.11.2026)
+      if (btn) btn.disabled = el.id === "oBirth" ? onbMissing(ui.onb) !== "" : !ui.onb.birth;
       return;
     }
     if (el.classList && el.classList.contains("si")) {

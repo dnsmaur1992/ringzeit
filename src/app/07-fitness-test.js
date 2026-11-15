@@ -88,6 +88,13 @@
   const simpleView = () => S.profile.simple === true;
   // the simple view doesn't ask for extra equipment, so it plans without any (only the partner/bag answer counts)
   const defaultEq = () => (simpleView() ? ["bag"] : ["bag", "rope"]);
+  /* default place for new sessions (onboarding/profile, 15.11.2026); "" = it varies → hall as before.
+     The fitness gym only for strength and conditioning, otherwise the hall. Every session can still change it. */
+  const defLoc = (type) => {
+    const l = S.profile.loc;
+    if (!["gym", "home", "out", "studio"].includes(l)) return "gym";
+    return l === "studio" && type !== "S" && type !== "K" ? "gym" : l;
+  };
   /* under 15 (or a child without year of birth): no weight reminders */
   const under15 = () => {
     const a = ageExact();

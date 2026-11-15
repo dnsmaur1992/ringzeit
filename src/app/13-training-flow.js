@@ -527,7 +527,7 @@
           ? setupOf(sess, ds)
           : {
               ds,
-              loc: "gym",
+              loc: defLoc(planned),
               eq: defaultEq(),
               type: planned,
               run: false,

@@ -1291,6 +1291,10 @@
     train += `<div class="panel"><div class="field"><span class="lab">${t("days")} · ${p.days.length}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip${(p.club || { days: [] }).days.includes(i) ? " clubday" : ""}" data-day="${i}" aria-pressed="${p.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><span class="sub">${t("ownHint")}</span></div>
  <div class="field"><label class="lab" for="pMin">${t("minutes")}: <span id="pMinV">${mv}</span></label><input id="pMin" type="range" min="30" max="${cap}" step="15" value="${mv}"><span class="sub">${t("minCap")}</span></div>
  </div>`;
+    {
+      const X = t("onbx");
+      train += `<div class="panel"><div class="field"><span class="lab">${X.locLbl}</span><div class="seg g2">${["gym", "studio", "home", "out", ""].map((k) => `<button type="button" data-ploc="${k}" aria-pressed="${(p.loc || "") === k}">${k ? t("locs")[k] : X.locAny}</button>`).join("")}</div><span class="sub">${X.locDesc[p.loc || ""]} ${X.locHint}</span></div></div>`;
+    }
     train += blockProfHtml();
     goals += profGoalsHtml(p) + arcProfileHtml();
     const note = `<p class="sub" style="text-align:center;margin:-4px 0 0">${p.days.length ? t("autoSave") : t("needDay")}</p>`;
