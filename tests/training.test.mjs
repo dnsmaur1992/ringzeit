@@ -1664,6 +1664,75 @@ test("15.11.2026 help: a \"?\" on every page, the questions for the page first, 
   assert.match(a.run("helpHtml()"), /Help &amp; questions|Help & questions/);
   assert.match(a.run("helpHtml()"), /Take me there/);
 });
+test("15.11.2026 help leads to a session that is really there (Codeprüfung): rest day, chosen day, done day, break, no days, begun training and running timer", () => {
+  const a = app();
+  a.setDate("2026-11-15"); // Sunday
+  a.run("S.profile.lang='de';S.profile.days=[0,2,4];S.profile.club={days:[],minutes:90};S.log=[];S.pauses=[];S.ov={};S.sessions={};ensureExample();ui.sel=null;ui.tab='week';ui.sheet=null");
+  const go = (k) => a.run(`helpGo('${k}')`);
+  // rest day today, nothing chosen: the next session (Monday) – with "Start training"
+  go("start");
+  assert.deepEqual([a.run("ui.tab"), a.run("ui.sel")], ["session", "2026-11-16"]);
+  assert.match(a.run("renderSession()"), /data-workout="start"/);
+  assert.ok(a.run("HELP_GO.start.sel").startsWith('[data-workout="start"]'));
+  // a planned day without a prepared session: the way is "Create session" (nothing is built behind your back)
+  a.run("ui.sel='2026-11-18';ui.tab='week'");
+  go("start");
+  assert.equal(a.run("ui.sel"), "2026-11-18");
+  assert.equal(a.run("!!S.sessions['2026-11-18']"), false);
+  assert.match(a.run("renderSession()"), /id="buildSess"/);
+  // a chosen day that fits is kept, a chosen rest day is not
+  a.run("ui.sel='2026-11-18';ui.tab='week'");
+  go("adjust");
+  assert.equal(a.run("ui.sel"), "2026-11-18");
+  a.run("ui.sel='2026-11-17'");
+  go("move");
+  assert.equal(a.run("ui.sel"), "2026-11-16");
+  // a done day is skipped
+  a.run("S.log.push({id:'d16',date:'2026-11-16',src:'own',type:'T',minutes:60,rpe:6});ui.sel=null");
+  go("start");
+  assert.equal(a.run("ui.sel"), "2026-11-18");
+  // finish: today first
+  a.setDate("2026-11-18");
+  a.run("ui.sel='2026-11-20'");
+  go("finish");
+  assert.equal(a.run("ui.sel"), "2026-11-18");
+  a.setDate("2026-11-15");
+  // a break: no session, a note with the way to the break
+  a.run("S.log=[];S.pauses=[{id:'p1',from:'2026-11-10',to:'2026-12-31',why:'ill'}];ui.sel=null;ui.sheet=null");
+  go("start");
+  assert.equal(a.run("ui.tab"), "week");
+  assert.equal(a.run("ui.sheet.kind"), "show");
+  assert.match(a.run("ui.sheet.html"), /Pause läuft bis[\s\S]*data-help-go="pause"/);
+  // no Ringzeit days: the way to the training days
+  a.run("S.pauses=[];S.profile.days=[];ui.sheet=null");
+  go("start");
+  assert.match(a.run("ui.sheet.html"), /noch keine Ringzeit-Tage[\s\S]*data-help-go="days"/);
+  // everything in the next 14 days done: the next date
+  a.run("S.profile.days=[0];S.log=[{id:'a',date:'2026-11-16',src:'own',type:'T',minutes:60,rpe:6},{id:'b',date:'2026-11-23',src:'own',type:'T',minutes:60,rpe:6}];ui.sheet=null");
+  go("start");
+  assert.match(a.run("ui.sheet.html"), /Alles erledigt\. Deine nächste Einheit ist am [^<]*30\. Nov/);
+  // a begun training is kept: other targets only get a note, its own session is shown
+  a.run("S.profile.days=[0,2,4];S.log=[];ui.sheet=null;ui.tab='session';ui.sel='2026-11-16';renderSession();ui.workout={ds:'2026-11-16',block:0,step:0,player:true};ui.tab='week'");
+  go("weight");
+  assert.deepEqual([a.run("ui.tab"), a.run("ui.sheet.title"), a.run("!!ui.workout")], ["week", "Training läuft", true]);
+  a.run("ui.sel='2026-11-18'");
+  go("start");
+  assert.deepEqual([a.run("ui.tab"), a.run("ui.sel"), a.run("!!ui.workout")], ["session", "2026-11-16", true]);
+  a.run("ui.workout=null;ui.sheet=null");
+  // a running round timer is kept; an idle timer screen is closed
+  a.run("openFt();ui.ft.phase='work';ui.tab='week'");
+  go("comp");
+  assert.deepEqual([a.run("ui.tab"), a.run("ui.ft.phase"), a.run("ui.sheet.title")], ["week", "work", "Training läuft"]);
+  go("ftimer");
+  assert.equal(a.run("ui.ft.phase"), "work");
+  a.run("ui.ft.phase='setup';ui.sheet=null");
+  go("comp");
+  assert.deepEqual([a.run("ui.tab"), a.run("ui.profSec"), a.run("ui.ft")], ["profile", "goals", null]);
+  // English
+  a.run("S.profile.lang='en';S.profile.days=[];ui.sheet=null");
+  go("start");
+  assert.match(a.run("ui.sheet.html"), /chosen any Ringzeit days/);
+});
 test("guide: ten articles in German and English, each opens and leads to the next", async () => {
   const a = app();
   const info = JSON.parse(a.run("JSON.stringify(READS.map(r=>[r.k,r.de.secs.length,r.en.secs.length,!!r.de.src&&!!r.en.src,!!r.de.sub&&!!r.en.sub]))"));
