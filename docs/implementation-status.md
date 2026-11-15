@@ -573,3 +573,19 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   (3) neuere Leistung im anderen Bereich schlägt ein älteres Ziel im neuen Bereich. Je ein Regressionstest
   (schlägt auf f57f464 fehl, jetzt grün).
 
+## Onboarding: nichts Wichtiges unbemerkt überspringen (15.11.2026)
+
+- Auftrag: Vereinstage als bewusste Antwort und „alles unter diesem Gesichtspunkt prüfen“; umgesetzt 1–4 plus
+  Standard-Trainingsort als freiwillige Frage mit Erklärung zu Platz und Ausstattung.
+- (1) „Überspringen“ entfernt – der Plan lief sonst still mit Standardwerten. (2) Vereinstage: Tage **oder**
+  „Kein festes Vereinstraining“, sonst bleibt „Weiter“ gesperrt. (3) Kickbox-Disziplin und Taekwondo-Stil ohne
+  Vorauswahl. (4) Beschwerden/Einschränkungen (Knie, Schulter, Handgelenk, Rücken, Sprunggelenk) oder „Keine“ im
+  Schritt „Ein paar Angaben zu dir“ – vorher nur im Profil. Fehlt eine Antwort, steht „Bitte wähle …“ über „Weiter“.
+- (5) „Gibt es einen Ort, an dem du meistens trainierst?“ – Halle, Fitnessstudio, Zuhause, Draußen oder
+  Unterschiedlich (vorausgewählt); je ein Satz zu Platz und Ausstattung, Hinweis „in jeder Einheit änderbar“.
+  Profilfeld `loc`, `defLoc(type)` (Fitnessstudio nur für Kraft/Kondition, sonst Halle; leer = Halle wie bisher).
+  Auch im Profil unter Trainingswoche; eine Änderung gilt für neue Einheiten, bestehende Vorschauen bleiben.
+- Bestehende Profile unverändert. Browser-Inbetriebnahme beantwortet die Pflichtfragen und prüft, dass „Weiter“
+  ohne sie gesperrt ist.
+- Tests: 279.
+
