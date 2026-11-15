@@ -39,6 +39,7 @@
             up: "Mehrmals mehr geschafft: Ziel angehoben.",
             down: "Wiederholt zu schwer: Ziel reduziert.",
             hold: "Mehr geschafft, aber die Anstrengung war hoch: Ziel bleibt.",
+            carry: "Neuer Wiederholungsbereich: aus deiner letzten Leistung umgerechnet.",
             repeat: "Bisheriges Ziel wiederholen.",
             initial: "Ausgangsziel; Gewicht selbst wählen.",
           },
@@ -78,6 +79,7 @@
             up: "Did more several times: target raised.",
             down: "Repeatedly too hard: target reduced.",
             hold: "Did more, but the effort was high: target stays.",
+            carry: "New rep range: converted from your last performance.",
             repeat: "Repeat the previous target.",
             initial: "Starting target; choose your own weight.",
           },
@@ -498,20 +500,49 @@
         allEvid.length >= 4 && new Set(allEvid.map((v) => iso(monday(parse(v.x.e.date))))).size >= 3,
       changedLately = comp.some((x) => x.e.date >= day(13) && ["up", "down"].includes(x.perf.target.reason)),
       atLoad = (v) => !kgEx || target.kg == null || v.minKg >= target.kg;
+    /* Step 2 (15.11.2026): the fitness test changed the rep range (or the number of sets). The last complete performance
+       of the same exercise with the same equipment is carried into the new range instead of starting over:
+       weight via the estimated one-rep max (Epley, weakest set), rounded down, reps at the bottom of the new range;
+       without weight the reps reached, inside the new range. At most +10 % on the former weight, and no rise at all
+       on a protected day or after a session above the effort target. Derived from the log, so it never adds up. */
+    const carryOver = () => {
+      const prev = [];
+      for (const e of S.log) {
+        if (e.src === "club" || !Array.isArray(e.perf) || e.date >= sess.date || e.date > iso(today()) || e.date < day(84)) continue;
+        const p = e.perf.find((x) => x.id === it.id && x.target && !!x.target.timed === timed && eqOf(x.target) === eq && !same(x.target));
+        if (p) prev.push({ e, perf: p });
+      }
+      prev.sort((a, c) => c.e.date.localeCompare(a.e.date));
+      for (const x of prev) {
+        const pn = x.perf.target.n || n,
+          sets = (x.perf.sets || []).slice(0, pn),
+          ok =
+            x.e.completed === true &&
+            x.e.inputConfirmed === true &&
+            validEffort(x.e) &&
+            sets.length === pn &&
+            sets.every((r) => Number.isFinite(r.r) && r.r > 0 && (!kgEx || (Number.isFinite(r.kg) && r.kg > 0)));
+        if (!ok) continue;
+        const minR = Math.min(...sets.map((r) => r.r)),
+          calm = !(x.e.rpe > x.e.tHi || x.perf.effort === "hard") && !protectedDay;
+        if (kgEx) {
+          const minKg = Math.min(...sets.map((r) => r.kg)),
+            est = minKg * (1 + minR / 30),
+            cap = calm ? minKg * 1.1 : minKg;
+          target.kg = Math.floor(Math.min(est / (1 + lo / 30), cap) * 10) / 10;
+          target.r = lo;
+        } else target.r = Math.max(lo, Math.min(hi, calm ? minR : Math.min(minR, x.perf.target.baseR ?? x.perf.target.r ?? minR)));
+        target.reason = "carry";
+        target.from = { lo: x.perf.target.lo, hi: x.perf.target.hi, date: x.e.date };
+        return;
+      }
+    };
     const waveTarget = () => {
       let off = pr.block || !exerciseReady || pr.data?.level === "collecting" ? 0 : [-1, 0, 1, 2, 0][pr.week - 1] * (timed ? 5 : 1);
       // the planned wave never adds to an increase of the same day
       if (target.reason === "up") off = Math.min(0, off);
       return { ...target, baseR: target.r, r: Math.max(lo, Math.min(hi, target.r + off)) };
     };
-    if (!old) return waveTarget();
-    // repeatedly far too hard: lighter (also outside the base phase – safety first)
-    if (!changedLately && evid.filter((v) => v.tooHard).length >= 2) {
-      if (target.kg != null) target.kg = Math.round(target.kg * 0.95 * 10) / 10;
-      else target.r = Math.max(lo, target.r - (timed ? 5 : 1));
-      target.reason = "down";
-      return waveTarget();
-    }
     // no increase in protected days: deload week, gentle return, KO lock, poor form, fasting, a hard week, taper and
     // recovery before/after a tournament, under 15; build phases may still progress strength (as before)
     const ds = sess.date,
@@ -524,6 +555,17 @@
         weekMood(ds) === "hard" ||
         formOn(ds) !== 2 ||
         ["taper", "recover"].includes(phaseInfo(ds).phase);
+    if (!old) {
+      carryOver();
+      return waveTarget();
+    }
+    // repeatedly far too hard: lighter (also outside the base phase – safety first)
+    if (!changedLately && evid.filter((v) => v.tooHard).length >= 2) {
+      if (target.kg != null) target.kg = Math.round(target.kg * 0.95 * 10) / 10;
+      else target.r = Math.max(lo, target.r - (timed ? 5 : 1));
+      target.reason = "down";
+      return waveTarget();
+    }
     const mayUp =
       !protectedDay &&
       pr.reason !== "down" &&
@@ -580,7 +622,7 @@
   /* short target line; the reason only when the target actually changed, the weight hint only for weighted exercises */
   function targetText(target, id) {
     const T = trainingText(),
-      why = ["up", "down", "hold"].includes(target.reason) ? ` · ${T.targetWhy[target.reason]}` : "",
+      why = ["up", "down", "hold", "carry"].includes(target.reason) ? ` · ${T.targetWhy[target.reason]}` : "",
       kgHint = target.kg == null && id != null && hasKg(id) ? ` · ${T.ownWeight}` : "";
     const slow = target.slow ? (S.profile.lang === "de" ? ", langsam (3 s ab)" : ", slow (3 s down)") : "";
     const per = id != null && EX[id] ? sideWord(EX[id].key) : "";
