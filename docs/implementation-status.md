@@ -525,3 +525,16 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
 - Weiterhin keine Anleitung zum Gewichtmachen, keine Kalorien- oder Ernährungspläne.
 - Tests: 274.
 
+## Hilfe & Fragen (15.11.2026)
+
+- Auftrag: Die App im Vereinskontext für jeden verständlich machen; wer eine Frage hat, soll die gewünschte Funktion
+  trotzdem erreichen. Baustein 1 von 3 (danach Onboarding, dann Entschlacken). Ohne Kontakt-/Trainerfunktion und ohne
+  Vereinslink (Betreiber).
+- `34f-help.js`: „?“ oben auf jeder Seite (neben DE/EN) öffnet „Hilfe & Fragen“: zuerst die Fragen zur aktuellen Seite,
+  darunter alle 43 Fragen nach 7 Themen, Suche ohne Neuaufbau (Tastatur bleibt offen), dazu App-Tour und Ratgeber.
+- Jede Antwort zu einer Funktion hat „Hinführen“: öffnet Seite, Profilbereich oder Testansicht, scrollt zur Stelle und
+  markiert sie kurz (`HELP_GO`, `helpGo`, `helpMark`). Ein leerer Rundentimer wird dabei geschlossen, ein laufender nicht.
+- Texte DE/EN direkt im Modul; ein Test prüft gleiche Fragen in beiden Sprachen und gültige Ziele.
+- Tour-Ende verweist auf das „?“.
+- Tests: 275.
+
