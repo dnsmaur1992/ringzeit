@@ -589,3 +589,13 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   ohne sie gesperrt ist.
 - Tests: 279.
 
+## iOS: untere Leiste bleibt nach dem Scrollen mitten im Bild hängen (15.11.2026)
+
+- Meldung: installierte App (Home-Bildschirm), ohne Tastatur, Leiste bleibt hängen. Im Chromium nicht nachstellbar.
+- Gegenmaßnahmen: `.tabbar` mit eigener Ebene (`translateZ(0)`, `will-change`), kein `background-attachment: fixed`
+  am `body` mehr (iOS ignoriert es, malt aber feste Ebenen fehlerhaft neu), `tabsReanchor()`: nach dem Scrollen, bei
+  Größenänderung und Rückkehr in die App wird die Leiste neu gesetzt, wenn ihre Unterkante nicht am Fensterende liegt
+  (nicht während einer Eingabe mit Tastatur, nicht während des Trainings).
+- Wirkung muss auf dem iPhone bestätigt werden; falls nicht: App-Gerüst mit eigenem Scrollbereich (größerer Umbau).
+- Tests: 280.
+

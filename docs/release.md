@@ -201,3 +201,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 15.11. | Kraftziele Schritt 2: Ändert der Fitnesstest den Wiederholungsbereich, wird die letzte Leistung umgerechnet übernommen statt neu zu beginnen | 278 |
 | 15.11. | Kraftziele Schritt 2 nachgeschärft: Übertrag mit denselben Sperren wie eine Steigerung, belastungserhöhender Übertrag = ein Hebel (Pause 60 s), zeitliche Reihenfolge entscheidet | 278 |
 | 15.11. | Onboarding: kein „Überspringen“, Vereinstage oder „Kein festes Vereinstraining“, Disziplin/Stil ohne Vorauswahl, Beschwerden oder „Keine“; Standard-Trainingsort (freiwillig, mit Erklärung, auch im Profil) | 279 |
+| 15.11. | iOS-App: untere Leiste bleibt nach dem Scrollen nicht mehr mitten im Bild (eigene Ebene, kein fester Hintergrund, Neusetzen nach dem Scrollen) | 280 |
