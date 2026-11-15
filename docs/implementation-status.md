@@ -562,3 +562,10 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
 - Kickbox-Vergleich neu aufgezeichnet: einziger Unterschied ist das neue Feld `target.eq`.
 - Tests: 277.
 
+## Kraftziele, Schritt 2: Übertrag nach Fitnesstest (15.11.2026)
+
+- Ändert der Fitnesstest den Wiederholungsbereich, überträgt `strengthTarget` (`carryOver`) die letzte vollständige
+  Leistung in den neuen Bereich (Epley, schwächster Satz, abgerundet, höchstens +10 %, Schutztage und zu hohe
+  Anstrengung ohne Erhöhung). Grund `carry` mit eigenem Hinweis. Aus dem Protokoll abgeleitet, keine Doppelzählung.
+- Tests: 278.
+

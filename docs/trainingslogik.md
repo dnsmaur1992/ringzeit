@@ -129,5 +129,11 @@ legt die Wiederholungsbereiche fest. Das Technikniveau bleibt davon getrennt.
   Aufbauphasen dürfen Kraft weiter steigern (wie bisher).
 - **Nachvollziehbar und ohne Doppelzählung:** Alles wird bei jedem Planen neu aus dem Protokoll berechnet, nichts
   wird aufaddiert. Begonnene Einheiten behalten ihre Ziele. Code: `strengthTarget`, `applyStrengthRestDose`.
-- Offen (Schritt 2): Übernahme des Leistungsstands, wenn ein Fitnesstest den Wiederholungsbereich ändert.
+- **Fitnesstest ändert den Wiederholungsbereich (Schritt 2):** Die letzte vollständige Leistung derselben Übung mit
+  derselben Ausrüstung (höchstens 12 Wochen alt) wird übertragen statt neu zu beginnen. Mit Gewicht: geschätztes
+  Maximum nach Epley aus dem schwächsten Satz, auf den neuen Bereich umgerechnet und auf 0,1 kg abgerundet,
+  Wiederholungen an der Untergrenze; höchstens +10 % gegenüber dem bisherigen Gewicht, an Schutztagen oder nach einer
+  Einheit über dem Anstrengungsziel gar keine Erhöhung. Ohne Gewicht: die erreichten Wiederholungen, in den neuen
+  Bereich eingepasst. Hinweis: „Neuer Wiederholungsbereich: aus deiner letzten Leistung umgerechnet.“ Ohne vollständige
+  Leistung beginnt die Übung wie bisher beim Ausgangsziel, ein Gewicht wird nie erfunden.
 

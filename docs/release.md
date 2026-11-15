@@ -198,3 +198,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 15.11. | Hilfe & Fragen: „?“ auf jeder Seite, 43 Fragen mit Suche, Fragen zur aktuellen Seite zuerst, „Hinführen“ zur Funktion | 275 |
 | 15.11. | Codeprüfung Schritt 1: „Hinführen“ führt zur nächsten vorhandenen Einheit statt auf Ruhetage; Hinweis bei Pause, ohne Trainingstage oder wenn alles erledigt ist; laufendes Training und Timer bleiben | 276 |
 | 15.11. | Kraftziele aus eingetragenen Sätzen, auch mit Emoji-Steuerung: Mehrleistung in 2 von 3 Einheiten zählt (schwächster Satz), ein Hebel pro Schritt, Satzpause bei Steigerung 60 s, Schutztage, 14-Tage-Abstand | 277 |
+| 15.11. | Kraftziele Schritt 2: Ändert der Fitnesstest den Wiederholungsbereich, wird die letzte Leistung umgerechnet übernommen statt neu zu beginnen | 278 |
