@@ -568,4 +568,8 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   Leistung in den neuen Bereich (Epley, schwächster Satz, abgerundet, höchstens +10 %, Schutztage und zu hohe
   Anstrengung ohne Erhöhung). Grund `carry` mit eigenem Hinweis. Aus dem Protokoll abgeleitet, keine Doppelzählung.
 - Tests: 278.
+- Nachgeschärft nach Prüfung des Betreibers (Prod f57f464): (1) Übertrag beachtet dieselben Sperren wie eine Steigerung
+  (`mayUp` jetzt vor dem Übertrag), (2) belastungserhöhender Übertrag setzt `loadUp` → Satzpause 60 s, Faktor 1,
+  (3) neuere Leistung im anderen Bereich schlägt ein älteres Ziel im neuen Bereich. Je ein Regressionstest
+  (schlägt auf f57f464 fehl, jetzt grün).
 

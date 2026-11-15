@@ -136,4 +136,9 @@ legt die Wiederholungsbereiche fest. Das Technikniveau bleibt davon getrennt.
   Einheit über dem Anstrengungsziel gar keine Erhöhung. Ohne Gewicht: die erreichten Wiederholungen, in den neuen
   Bereich eingepasst. Hinweis: „Neuer Wiederholungsbereich: aus deiner letzten Leistung umgerechnet.“ Ohne vollständige
   Leistung beginnt die Übung wie bisher beim Ausgangsziel, ein Gewicht wird nie erfunden.
+  Nachgeschärft nach Prüfung (15.11.2026): Die Übertragung erhöht nur, wenn auch eine normale Steigerung erlaubt wäre
+  (Schutztage, Leistungsabfall, Reduktionssignal, schwere Vorbelastung, Änderung in den letzten 14 Tagen sperren);
+  erhöht sie das Gewicht (bzw. ohne Gewicht die Wiederholungen), gilt sie als der eine Hebel des Tages – Satzpause
+  60 s. Liegt im neuen Bereich nur ein älteres Ziel vor, entscheidet die Zeit: die neuere vollständige Leistung im
+  anderen Bereich wird übertragen.
 
