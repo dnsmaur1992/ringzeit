@@ -45,7 +45,8 @@
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     background-image: radial-gradient(120% 60% at 50% -10%, #16181d 0%, var(--night) 60%);
-    background-attachment: fixed;
+    /* no background-attachment: fixed – iOS ignores it but repaints fixed layers (the tab bar) badly while scrolling */
+    background-repeat: no-repeat;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
     padding-block: 0 calc(92px + env(safe-area-inset-bottom, 0px));
@@ -1127,6 +1128,10 @@
     right: 0;
     bottom: 0;
     z-index: 20;
+    /* own compositing layer: iOS (installed app) otherwise sometimes leaves the bar mid-screen after scrolling */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
     background: rgba(10, 11, 13, 0.86);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
