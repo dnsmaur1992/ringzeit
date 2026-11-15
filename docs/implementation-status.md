@@ -538,3 +538,15 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
 - Tour-Ende verweist auf das „?“.
 - Tests: 275.
 
+## Codeprüfung 15.11.2026, Schritt 1: Hilfe führt zu einer vorhandenen Einheit
+
+- Befund bestätigt: `helpGo()` setzte bei fehlender Auswahl heute – an Ruhetagen ohne „Training beginnen“.
+- Jetzt (`helpDay`, `helpNoTrain`): Für Beginnen, Abschließen, Anpassen und Verschieben zählt ein gewählter Tag nur,
+  wenn dort eine geplante, unerledigte Einheit ab heute liegt; sonst die nächste in 14 Tagen („Abschließen“ zuerst
+  heute). Ist sie noch nicht erstellt, wird „Einheit erstellen“ markiert – es wird nichts im Hintergrund erzeugt.
+- Keine Einheit: „Heute“ mit Hinweis – Pause (bis wann, Knopf „Zur Pause“), keine Ringzeit-Tage (Knopf
+  „Trainingstage eintragen“) oder alles erledigt (nächster Termin bis 10 Wochen).
+- Begonnenes Training oder laufender Rundentimer bleiben unangetastet: andere Ziele zeigen nur „Training läuft“, das
+  eigene Training wird gezeigt; „Rundentimer“ zeigt den laufenden Timer. Ein leerer Timer-Bildschirm wird geschlossen.
+- Tests: 276.
+

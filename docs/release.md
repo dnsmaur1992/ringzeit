@@ -196,3 +196,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 14.11. | Technik-Einheiten mit automatischem Schwerpunkt (auch Beinarbeit, Verteidigung & Konter, Taekwondo-Tritte); am Ende nur bis zu 10 Min. Kraft für diese Technik, sonst mehr Technikrunden; Kickbox-Vergleich gewollt neu aufgezeichnet | 273 |
 | 15.11. | Weg zur Gewichtsklasse: Wiege-Erinnerung sobald eine Klasse eingetragen ist, unter Verlauf aktuelles Gewicht, nächstes Turnier, Klasse, Rest und Tempo, Richtlinie in der Kurve, Angaben in der Trainer-Übersicht | 274 |
 | 15.11. | Hilfe & Fragen: „?“ auf jeder Seite, 43 Fragen mit Suche, Fragen zur aktuellen Seite zuerst, „Hinführen“ zur Funktion | 275 |
+| 15.11. | Codeprüfung Schritt 1: „Hinführen“ führt zur nächsten vorhandenen Einheit statt auf Ruhetage; Hinweis bei Pause, ohne Trainingstage oder wenn alles erledigt ist; laufendes Training und Timer bleiben | 276 |
