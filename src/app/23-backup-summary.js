@@ -350,6 +350,23 @@
       fb();
     }
   }
+  /* iOS, installed app (Betreiber 15.11.2026): after scrolling the fixed tab bar could stay mid-screen. When its bottom
+     edge no longer meets the bottom of the window, it is laid out again (hidden for one frame of layout, shown again);
+     checked after scrolling, resizing and when the app comes back. */
+  function tabsReanchor() {
+    const el = document.getElementById("tabs");
+    if (!el || el.hidden || !el.getBoundingClientRect) return false;
+    // the layout viewport (window.innerHeight) is where a fixed bar belongs; while typing the keyboard covers it anyway
+    const act = document.activeElement;
+    if (act && /^(INPUT|TEXTAREA|SELECT)$/.test(act.tagName || "")) return false;
+    const bottom = window.innerHeight,
+      r = el.getBoundingClientRect();
+    if (!Number.isFinite(r.bottom) || !Number.isFinite(bottom) || Math.abs(r.bottom - bottom) <= 2) return false;
+    el.style.display = "none";
+    void el.offsetHeight;
+    el.style.display = "";
+    return true;
+  }
   function renderTabs() {
     const tab = ([k, l]) =>
       `<button type="button" data-tab="${k}" ${ui.tab === k ? 'aria-current="page"' : ""}>${ICONS[k]}<span>${t(l)}</span></button>`;

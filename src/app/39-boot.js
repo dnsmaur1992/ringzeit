@@ -80,6 +80,18 @@
       };
       if (!resumeOffer(next)) next();
     });
+    // keep the tab bar at the bottom (iOS): after scrolling stops, on resize and when the app comes back
+    {
+      let tt = 0;
+      const later = () => {
+        clearTimeout(tt);
+        tt = setTimeout(tabsReanchor, 160);
+      };
+      window.addEventListener("scroll", later, { passive: true });
+      window.addEventListener("resize", later);
+      window.addEventListener("pageshow", later);
+      document.addEventListener("visibilitychange", () => !document.hidden && later());
+    }
     store.init().then(async () => {
       if (await store.loadCloud()) {
         if (!S.profile.planStart) S.profile.planStart = iso(today());
