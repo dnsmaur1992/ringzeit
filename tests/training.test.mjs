@@ -2146,6 +2146,84 @@ test("15.11.2026 iOS: a tab bar left mid-screen after scrolling is laid out agai
   assert.equal(a.run("tabsReanchor()"), false);
 });
 
+test("16.11.2026 speech says abbreviations in full, the screen keeps them – German and English", () => {
+  const a = app();
+  const sp = (x) => a.run(`spokenText(${JSON.stringify(x)})`);
+  a.run("S.profile.lang='de'");
+  assert.equal(sp("Liegestütze. 3 × 10 Wdh., 60 s Pause"), "Liegestütze. 3 mal 10 Wiederholungen, 60 Sekunden Pause");
+  assert.equal(sp("Plank. 2× 30–45 s"), "Plank. 2 mal 30 bis 45 Sekunden");
+  assert.equal(sp("1 min locker, 1 s halten"), "1 Minute locker, 1 Sekunde halten");
+  assert.equal(sp("2 Runden à 2 min, z. B. mit Partner"), "2 Runden zu je 2 Minuten, zum Beispiel mit Partner");
+  assert.equal(sp("Rudern. 3 × 8 × 16,4 kg · 90 s"), "Rudern. 3 mal 8 mal 16,4 Kilogramm, 90 Sekunden");
+  assert.equal(sp("Sprint 30 m, 80 %"), "Sprint 30 Meter, 80 Prozent");
+  assert.equal(sp("sofort 5 explosive Wdh."), "sofort 5 explosive Wiederholungen");
+  // words and combos stay as they are
+  assert.equal(sp("Runde 1. Schattenboxen. Jab, Cross, Lowkick."), "Runde 1. Schattenboxen. Jab, Cross, Lowkick.");
+  assert.equal(sp("Mindestens 6 Kicks, Seitschritt, Sidekick"), "Mindestens 6 Kicks, Seitschritt, Sidekick");
+  a.run("S.profile.lang='en'");
+  assert.equal(sp("3 × 10 reps, 60 s rest"), "3 times 10 reps, 60 seconds rest");
+  assert.equal(sp("2 rounds of 2 min, e.g. with a partner"), "2 rounds of 2 minutes, for example with a partner");
+  assert.equal(sp("Plank 2× 30–45 s · 1 min"), "Plank 2 times 30 to 45 seconds, 1 minute");
+  // every spoken text goes through it
+  assert.match(a.run("say.toString()"), /speakUtterance\(spokenText\(text\)/);
+});
+test("16.11.2026 guiding sentence of the focus: every unit with technique rounds, its own page between warm-up and main part, said once – not on the plan page, not without rounds", () => {
+  const a = app();
+  a.run("S.profile.lang='de';globalThis.SAID=[];say=(x)=>SAID.push(x);");
+  const ids = JSON.parse(a.run("JSON.stringify(Object.keys(t('cues')).filter(k=>!['lbl','say'].includes(k)))"));
+  // a sentence for every focus and hidden theme of all sports, in both languages
+  const all = JSON.parse(a.run("JSON.stringify([...THEMES,...BOXT.BOX_THEMES,...BROAD].map(x=>x.id).concat(TKD_KF.map(k=>'k_'+k)))"));
+  for (const id of all) assert.ok(ids.includes(id), "cue for " + id);
+  a.run("S.profile.lang='en'");
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(Object.keys(t('cues')).sort())")), [...ids, "lbl", "say"].sort());
+  a.run("S.profile.lang='de'");
+  // technique, technique+conditioning (also taekwondo now) and sparring carry a focus with a sentence
+  for (const [sp, ty, eq] of [["kickboxing", "T", ["bag"]], ["boxing", "T", ["bag"]], ["taekwondo", "T", ["bag"]], ["taekwondo", "C", ["bag"]], ["kickboxing", "C", ["bag"]], ["taekwondo", "P", ["partner"]]]) {
+    let hit = 0;
+    for (let i = 0; i < 6; i++) {
+      const s = JSON.parse(a.run(`S.profile.sport='${sp}';JSON.stringify(buildSession('2026-11-02','${ty}','gym',${JSON.stringify(eq)},{sport:'${sp}',min:60${sp === "taekwondo" ? ",tstyle:'wt'" : ""}}))`));
+      if (a.run(`sessCue(${JSON.stringify(s)})`)) hit++;
+    }
+    assert.ok(hit >= 5, `${sp} ${ty}: ${hit}/6`);
+  }
+  // taekwondo conditioning: a kick, no broad focus (the round kinds stay)
+  for (let i = 0; i < 8; i++) assert.match(a.run("S.profile.sport='taekwondo';buildSession('2026-11-02','C','gym',['bag'],{sport:'taekwondo',tstyle:'wt',min:60}).theme||'k_'"), /^k_/);
+  // strength or mobility: no rounds, no sentence
+  const st = JSON.parse(a.run("S.profile.sport='kickboxing';JSON.stringify(buildSession('2026-11-02','S','gym',['weights'],{sport:'kickboxing',min:60}))"));
+  assert.equal(a.run(`sessCue(${JSON.stringify(st)})`), "");
+  // training mode: on the card of the main part, said once when it starts; the plan page stays without it
+  a.run("S.profile.sport='kickboxing';ui.sel='2026-11-16';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{sport:'kickboxing',min:60});S.sessions[ui.sel].theme='lowFinish';ui.tab='session';");
+  const cue = "Achte beim Lowkick auf den Hüfteinsatz, ohne nach dem Kick die Deckung fallen zu lassen.";
+  assert.doesNotMatch(a.run("renderSession()"), /Schwerpunkt heute/);
+  // its own page between warm-up and main part: shown and said once, the rounds follow with "Los geht's"
+  a.run("ui.workout={ds:ui.sel,step:0,block:0,player:true};globalThis.RI=playerSteps(S.sessions[ui.sel]).findIndex(x=>x.kind==='rounds');playerGo(RI-1);");
+  assert.doesNotMatch(a.run("playerHtml()"), /cuepage/, "warm-up: no page yet");
+  a.run("playerGo(RI)");
+  let h = a.run("playerHtml()");
+  assert.match(h, new RegExp(`class="player-inner cuepage"[\\s\\S]*<small>Schwerpunkt heute</small><p>${cue}</p>[\\s\\S]*data-player="cueok">Los geht's`));
+  assert.equal(a.run("ui.focus"), false, "the round view waits");
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(SAID.filter(x=>x.startsWith('Schwerpunkt heute')))")), ["Schwerpunkt heute: " + cue]);
+  // the steps stay as they were (begun trainings keep their place)
+  assert.equal(a.run("ui.workout.step"), a.run("RI"));
+  a.run("playerAction('cueok')");
+  assert.equal(a.run("ui.focus"), true);
+  assert.doesNotMatch(a.run("playerHtml()"), /cuepage/);
+  // back to the main part later: no second page, no second announcement
+  a.run("playerGo(RI-1);playerGo(RI);");
+  assert.equal(a.run("ui.focus"), true);
+  assert.equal(a.run("SAID.filter(x=>x.startsWith('Schwerpunkt heute')).length"), 1);
+  // the round view and the round announcement carry no extra sentence
+  a.run("selectSessionTimer(ui.sel);ui.timer.phase='ready';renderFocus();");
+  assert.doesNotMatch(a.run("document.getElementById('focus').innerHTML"), /Schwerpunkt heute/);
+  a.run("globalThis.Q=[];queueTimerSpeech=(x)=>Q.push(x);window.speechSynthesis={};globalThis.SpeechSynthesisUtterance=function(){};S.profile.voice=true;ui.timer.phase='prep';ui.timer.round=1;ui.timer.called=0;callTick(ui.timer);");
+  assert.ok(a.run("Q[0].startsWith('Runde 1.')"), a.run("Q[0]"));
+  // a main part with rounds already done (resumed training): straight to the rounds
+  a.run("ui.workout={ds:ui.sel,step:0,block:0,player:true};S.sessions[ui.sel].done=S.sessions[ui.sel].done||{};const rb=playerSteps(S.sessions[ui.sel])[RI].bi;itemDone=((f)=>(s,bi,ni)=>bi===rb&&ni===0?true:f(s,bi,ni))(itemDone);playerGo(RI);");
+  assert.equal(a.run("ui.focus"), true);
+  a.run("ui.focus=false;");
+  a.run("ui.workout=null");
+});
+
 test("simple view, session screen: no day form, no 'why', no RPE tag, no extra equipment – partner/bag stays", () => {
   const a = app();
   a.run(`S.profile.simple=true;S.profile.example=false;const d=iso(today());ui.sel=d;ui.tab='session';ui.setup=null;
