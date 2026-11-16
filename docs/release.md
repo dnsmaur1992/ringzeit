@@ -178,7 +178,7 @@ Arbeitsphase des Rundentimers. Ablauf und Dosierungen bleiben gleich.
 Prüfung: 264 Tests und Baseline bestanden, Ablaufmatrix 216 Einheiten plus H1–H9 bestanden.
 Keine neue echte Browser-/Geräteabnahme. Handprüfung und Details: `winterarc-mobility-test.md`.
 
-## 11. Updates 10.–15.11.2026 (aus Ringzeit Dev über `tools/release.py`)
+## 11. Updates 10.–16.11.2026 (aus Ringzeit Dev über `tools/release.py`)
 
 Jeweils nur die geänderten Dateien, Upload mit denselben Pfaden, nichts löschen. Jedes Update wurde im Release-Stand mit
 Testsuite, Kickbox-Vergleich, Gesamtprüfung (648 Abläufe), Browser (13), Isolation (12) und einem Update vom jeweiligen
@@ -202,3 +202,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 15.11. | Kraftziele Schritt 2 nachgeschärft: Übertrag mit denselben Sperren wie eine Steigerung, belastungserhöhender Übertrag = ein Hebel (Pause 60 s), zeitliche Reihenfolge entscheidet | 278 |
 | 15.11. | Onboarding: kein „Überspringen“, Vereinstage oder „Kein festes Vereinstraining“, Disziplin/Stil ohne Vorauswahl, Beschwerden oder „Keine“; Standard-Trainingsort (freiwillig, mit Erklärung, auch im Profil) | 279 |
 | 15.11. | iOS-App: untere Leiste bleibt nach dem Scrollen nicht mehr mitten im Bild (eigene Ebene, kein fester Hintergrund, Neusetzen nach dem Scrollen) | 280 |
+| 16.11. | Leitsatz zum Schwerpunkt als eigene Seite zwischen Aufwärmen und Hauptteil (angezeigt und angesagt) bei jeder Einheit mit Technik; Ansagen sprechen Abkürzungen aus (Sekunden, Minuten, Wiederholungen …) | 282 |
