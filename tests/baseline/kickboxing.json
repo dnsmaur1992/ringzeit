@@ -71843,7 +71843,9 @@
       "step": 4,
       "player": true,
       "list": false,
-      "auto": true
+      "auto": true,
+      "cue": 1,
+      "cueSaid": 1
      },
      "flow": {
       "block": 1,
@@ -71869,7 +71871,9 @@
       "step": 4,
       "player": true,
       "list": false,
-      "auto": true
+      "auto": true,
+      "cue": 1,
+      "cueSaid": 1
      },
      "flow": {
       "block": 1,
@@ -71900,7 +71904,9 @@
       "step": 4,
       "player": true,
       "list": true,
-      "auto": true
+      "auto": true,
+      "cue": 1,
+      "cueSaid": 1
      },
      "flow": {
       "block": 1,
@@ -71931,7 +71937,9 @@
       "step": 4,
       "player": true,
       "list": false,
-      "auto": true
+      "auto": true,
+      "cueSaid": 1,
+      "cue": 1
      },
      "flow": {
       "block": 1,
@@ -71960,7 +71968,9 @@
       "ds": "2026-11-02",
       "block": 1,
       "step": 4,
-      "player": true
+      "player": true,
+      "cue": 1,
+      "cueSaid": 1
      },
      "flow": {
       "block": 1,
@@ -71989,7 +71999,9 @@
       "ds": "2026-11-02",
       "block": 1,
       "step": 4,
-      "player": true
+      "player": true,
+      "cue": 1,
+      "cueSaid": 1
      },
      "flow": {
       "block": 1,
