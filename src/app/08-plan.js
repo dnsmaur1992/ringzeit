@@ -533,6 +533,12 @@
     lowFinish: ["str.single_leg_calf_raises", "str.russian_twists", "str.bulgarian_split_squats", "str.pallof_press"],
     kneeFinish: ["str.hanging_knee_raises", "str.dead_bugs", "str.hollow_hold", "str.bulgarian_split_squats"],
     foot: ["str.single_leg_calf_raises", "pow.lateral_bounds", "str.bulgarian_split_squats", "str.lunges"],
+    tallOpp: ["str.hollow_hold", "str.dead_bugs", "str.neck_iso_hold", "str.bulgarian_split_squats"],
+    shortOpp: ["str.single_leg_calf_raises", "pow.lateral_bounds", "str.plank_shoulder_taps", "str.lunges"],
+    kickVsPunch: ["str.single_leg_calf_raises", "str.push_ups", "str.russian_twists", "str.pallof_press"],
+    punchVsKick: ["str.copenhagen_plank", "mob.active_leg_raises", "str.single_leg_calf_raises", "str.russian_twists"],
+    sameStance: ["str.pallof_press", "str.single_leg_calf_raises", "pow.lateral_bounds", "str.plank_shoulder_taps"],
+    openStance: ["str.pallof_press", "str.russian_twists", "str.single_leg_calf_raises", "pow.lateral_bounds"],
     def: ["str.neck_iso_hold", "str.dead_bugs", "str.hollow_hold", "str.pallof_press", "str.plank"],
     k_dol: KF_STR,
     k_ban: KF_STR,
@@ -547,6 +553,82 @@
     { id: "foot", tag: "mix", kinds: "foot" },
     { id: "def", tag: "mix", kinds: "evade" },
   ];
+  /* tactical foci (Betreiber 16.11.2026): against a taller or a smaller opponent, countering kicks with punches and
+     punches with kicks, against the same or the opposite stance. Taller/smaller from the start, the others from
+     technique level 1. Boxing has no kick counters (its "defence & counter" covers punches), taekwondo works through
+     the kicks it prefers. */
+  const BODY = new Set(["jabb", "crossb", "hookb"]),
+    tallAp = (c) => {
+      // inside: body shots and close range, then out with a side step
+      let core = c.filter((x) => x !== "step" && !["front", "side"].includes(x));
+      if (!core.some((x) => BODY.has(x))) core = [...core.slice(0, 2), "hookb"];
+      return [...core.slice(0, 3), "step"];
+    },
+    shortAp = (c) => {
+      // at range: open with a long tool, nothing from close range, then out
+      const core = c.filter((x) => !["step", "hookb", "upper", "knee", "jknee"].includes(x));
+      return [...(["jab", "front", "side"].includes(core[0]) ? [] : ["jab"]), ...core.slice(0, 3), "step"];
+    },
+    sameAp = (c) => {
+      // same stance: the lead hand leads, the lead hook around the guard
+      const core = c.filter((x) => x !== "jab" && x !== "hook");
+      return ["jab", ...core.slice(0, 2), "hook"];
+    },
+    openAp = (kick) => (c) => {
+      // opposite stance: the rear straight down the middle, finished with the rear side
+      const core = c.filter((x) => x !== "cross" && x !== "jab" && x !== "round" && x !== "hook");
+      return ["cross", ...core.slice(0, 2), kick ? "round" : "hook"];
+    };
+  const TACTIC = {
+    kickboxing: [
+      { id: "tallOpp", tag: "mix", ap: tallAp },
+      { id: "shortOpp", tag: "mix", ap: shortAp },
+      {
+        id: "kickVsPunch",
+        tag: "hand",
+        lvl: 1,
+        kinds: "evade",
+        counters: [
+          { d: "block", att: "round", c: ["cross", "hook"] },
+          { d: "step", att: "front", c: ["jab", "cross"] },
+          { d: "block", att: "roundh", c: ["jab", "cross", "hook"] },
+          { d: "check", att: "lowk", c: ["cross", "hook"], low: true },
+        ],
+      },
+      {
+        id: "punchVsKick",
+        tag: "kick",
+        lvl: 1,
+        kinds: "evade",
+        counters: [
+          { d: "slip", att: "cross", c: ["round"] },
+          { d: "parry", att: "jab", c: ["front"] },
+          { d: "duck", att: "hook", c: ["roundh"] },
+          { d: "step", att: "cross", c: ["side"] },
+          { d: "slip", att: "jab", c: ["lowk"], low: true },
+        ],
+      },
+      { id: "sameStance", tag: "hand", lvl: 1, ap: sameAp },
+      { id: "openStance", tag: "mix", lvl: 1, ap: openAp(true) },
+    ],
+    boxing: [
+      { id: "tallOpp", tag: "hand", ap: tallAp },
+      { id: "shortOpp", tag: "hand", ap: shortAp },
+      { id: "sameStance", tag: "hand", lvl: 1, ap: sameAp },
+      { id: "openStance", tag: "hand", lvl: 1, ap: openAp(false) },
+    ],
+    taekwondo: [
+      { id: "tallOpp", tag: "kick", prefer: ["stepf", "dol", "jir", "dhu"] },
+      { id: "shortOpp", tag: "kick", prefer: ["ap", "yeop", "mireo", "stepb"] },
+      { id: "sameStance", tag: "kick", lvl: 1, prefer: ["mireo", "swch", "ban"] },
+      { id: "openStance", tag: "kick", lvl: 1, prefer: ["dol", "dolh"] },
+    ],
+  };
+  const tacticFoci = () => {
+    const sp = isTkd() ? "taekwondo" : isBox() ? "boxing" : "kickboxing",
+      ka = kneeAnk();
+    return (TACTIC[sp] || []).filter((th) => !th.lvl || techniqueLevel() >= th.lvl).map((th) => ({ ...th, counters: th.counters && th.counters.filter((c) => !(c.low && (ka || !EXTRA[discOf()]))) }));
+  };
   // taekwondo: one kick per unit; it shows up in most combos of the unit (tkdCombo)
   const TKD_KF = ["dol", "ap", "yeop", "nae", "dwi", "mireo", "ban"];
   const hasKick = (c, k, M) => c.some((x) => x === k || (k === "dol" && x === "dolh") || (M.SERIES && M.SERIES[x] && M.SERIES[x].p.some(([y]) => y === k)));
@@ -567,12 +649,13 @@
         (th) => (!th.disc || th.disc.includes(discOf())) && (!th.lvl || techniqueLevel() >= th.lvl) && !(ka && th.risky) && !(th.id === "sweepFinish" && p.limits.includes("ankle")),
       );
     }
-    const ok = noBroad ? base : [...base, ...BROAD],
+    // technique units also get the tactical foci; conditioning/sparring in taekwondo keep a kick (no kinds changed)
+    const ok = noBroad ? base : [...base, ...tacticFoci(), ...BROAD],
       p = S.profile,
       focus = techniqueLevel() === 0 || isTkd() ? "bal" : p.focus,
       recent = Object.values(S.sessions)
         .sort((a, b) => (a.created || 0) - (b.created || 0))
-        .slice(-12)
+        .slice(-Math.max(12, ok.length + 6)) // with many foci the window grows, so every one comes up
         .map((s) => s.theme);
     // the broad foci come about as often as one theme of the sport (not one in three)
     const sc = (th) =>
@@ -583,7 +666,7 @@
       Math.random() * 0.5;
     return ok.sort((a, b) => sc(a) - sc(b))[0] || null;
   }
-  const focusOf = (id) => [...THEMES, ...BOXT.BOX_THEMES, ...BROAD].find((x) => x.id === id) || (id && id.startsWith("k_") ? { id, kick: id.slice(2) } : null);
+  const focusOf = (id) => [...THEMES, ...BOXT.BOX_THEMES, ...BROAD, ...Object.values(TACTIC).flat()].find((x) => x.id === id) || (id && id.startsWith("k_") ? { id, kick: id.slice(2) } : null);
   /* strength for the technique of the focus: only catalogue exercises of its list that fit place, equipment and limits */
   function focusEx(theme, loc, eq, used, n = 3) {
     const keys = FOCUS_STR[theme && theme.id] || [],
@@ -1213,6 +1296,15 @@
     // focus kick of the unit: about three in four combos carry it – swapped for a focus combo of about the same
     // length, so the chain lengths (and the kick counts per level) stay as they were
     let pick = rnd(pool);
+    // tactical focus: about three in four combos with one of its techniques, again of about the same length
+    if (theme && theme.prefer && !pick.some((x) => theme.prefer.includes(x)) && Math.random() < 0.75) {
+      const size = (c) => (M.kickCount ? M.kickCount(c) : c.length),
+        len = size(pick),
+        fk = pool.filter((c) => c.some((x) => theme.prefer.includes(x))),
+        same = fk.filter((c) => size(c) === len),
+        near = same.length ? same : fk.filter((c) => Math.abs(size(c) - len) <= 1);
+      if (near.length) pick = rnd(near);
+    }
     if (theme && theme.kick && !hasKick(pick, theme.kick, M) && Math.random() < 0.75) {
       const len = M.kickCount ? M.kickCount(pick) : pick.length,
         size = (c) => (M.kickCount ? M.kickCount(c) : c.length),
@@ -1345,7 +1437,7 @@
     if (partner) {
       const idx = out.map((r, i) => i).filter((i) => out[i].k === "partner" && out[i].combo),
         pool = idx.length > 1 ? idx.slice(1) : idx,
-        want = theme && theme.id === "def" ? pool.length : reactCount(pool.length),
+        want = theme && (theme.id === "def" || theme.counters) ? pool.length : reactCount(pool.length),
         order = pool.map((i) => ({ i, w: i + Math.random() * pool.length * 0.6 })).sort((a, b) => b.w - a.w);
       usedAtt.clear();
       order.slice(0, want).forEach(({ i }) => (out[i].react = partnerReact(out[i].combo)));
@@ -1387,8 +1479,9 @@
     const out = kinds.map((k) => {
       const r = { kind: "round", k };
       if (k === "evade") {
-        const fresh = kbCounters.filter((c) => !usedC.has(c.d + c.att)),
-          c = rnd(fresh.length ? fresh : kbCounters);
+        const list = theme && theme.counters && theme.counters.length ? theme.counters : kbCounters,
+          fresh = list.filter((c) => !usedC.has(c.d + c.att)),
+          c = rnd(fresh.length ? fresh : list);
         usedC.add(c.d + c.att);
         r.combo = c.c.slice();
         r.evade = { d: c.d };
@@ -1518,7 +1611,7 @@
       const idx = out.map((r, i) => i).filter((i) => PARTNER_K.has(out[i].k) && out[i].combo),
         // the opening round never gets one – the count is capped by the rounds after it (short sessions: fewer)
         pool = idx.length > 1 ? idx.slice(1) : idx,
-        want = theme && theme.id === "def" ? pool.length : reactCount(pool.length),
+        want = theme && (theme.id === "def" || theme.counters) ? pool.length : reactCount(pool.length),
         order = pool.map((i) => ({ i, w: i + Math.random() * pool.length * 0.6 })).sort((a, b) => b.w - a.w);
       lowTurn = Math.random() < 0.5 ? 0 : 1;
       usedAtt.clear();

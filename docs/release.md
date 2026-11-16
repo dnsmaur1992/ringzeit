@@ -203,3 +203,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 15.11. | Onboarding: kein „Überspringen“, Vereinstage oder „Kein festes Vereinstraining“, Disziplin/Stil ohne Vorauswahl, Beschwerden oder „Keine“; Standard-Trainingsort (freiwillig, mit Erklärung, auch im Profil) | 279 |
 | 15.11. | iOS-App: untere Leiste bleibt nach dem Scrollen nicht mehr mitten im Bild (eigene Ebene, kein fester Hintergrund, Neusetzen nach dem Scrollen) | 280 |
 | 16.11. | Leitsatz zum Schwerpunkt als eigene Seite zwischen Aufwärmen und Hauptteil (angezeigt und angesagt) bei jeder Einheit mit Technik; Ansagen sprechen Abkürzungen aus (Sekunden, Minuten, Wiederholungen …) | 282 |
+| 16.11. | Taktische Schwerpunkte: größere/kleinere Gegner, Kick mit Schlag und Schlag mit Kick kontern, gleiche/versetzte Auslage | 283 |

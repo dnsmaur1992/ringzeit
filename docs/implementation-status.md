@@ -614,3 +614,14 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
   bleiben die Abkürzungen. Gilt für jede Ansage (`say`).
 - Tests: 282.
 
+## Taktische Schwerpunkte (16.11.2026)
+
+- `TACTIC` je Sportart, `tacticFoci()`: größere/kleinere Gegner, Kick mit Schlag bzw. Schlag mit Kick kontern
+  (Kickboxen, ab Niveau 1), gleiche/versetzte Auslage (ab Niveau 1); Leitsätze DE/EN, Kraft-Listen. Konter-Schwerpunkte
+  nutzen eigene Abwehr-Konter-Paare in den Ausweichrunden; mit Partner bekommt jede Partnerrunde nach der ersten eine
+  Gegenaktion. Taekwondo: bevorzugte Techniken in etwa drei von vier Kombinationen (gleiche Länge).
+- Ausgleich: Fenster `max(12, Anzahl + 6)` statt 12, sonst kämen Beinarbeit/Verteidigung bei K1 (17 Schwerpunkte)
+  nie dran.
+- Kickbox-Vergleich gewollt neu aufgezeichnet (nur Technik-Einheiten).
+- Tests: 283.
+

@@ -2146,6 +2146,58 @@ test("15.11.2026 iOS: a tab bar left mid-screen after scrolling is laid out agai
   assert.equal(a.run("tabsReanchor()"), false);
 });
 
+test("16.11.2026 tactical foci: taller/smaller opponent, kick vs punch counters, same/opposite stance – per sport and level, shaping the rounds", () => {
+  const a = app();
+  a.run("S.profile.lang='de';S.profile.limits=[];S.profile.birthYear=1992;S.profile.birth='1992-03-14';S.profile.techLevels={};globalThis._cf=chooseFocus;");
+  const ids = (sp, lvl, disc) => JSON.parse(a.run(`S.profile.sport='${sp}';S.profile.disc='${disc || "k1"}';S.profile.level=${lvl};S.profile.tkd={...tkdOf(),style:'wt'};JSON.stringify(tacticFoci().map(x=>x.id))`));
+  assert.deepEqual(ids("kickboxing", 0), ["tallOpp", "shortOpp"]);
+  assert.deepEqual(ids("kickboxing", 1), ["tallOpp", "shortOpp", "kickVsPunch", "punchVsKick", "sameStance", "openStance"]);
+  assert.deepEqual(ids("boxing", 1), ["tallOpp", "shortOpp", "sameStance", "openStance"]);
+  assert.deepEqual(ids("taekwondo", 0), ["tallOpp", "shortOpp"]);
+  assert.deepEqual(ids("taekwondo", 2), ["tallOpp", "shortOpp", "sameStance", "openStance"]);
+  // Full Contact: no low kick in the counters
+  a.run("S.profile.sport='kickboxing';S.profile.disc='fc';S.profile.level=1;");
+  assert.ok(a.run("tacticFoci().every(t=>!t.counters||t.counters.every(c=>!c.c.includes('lowk')))"));
+  // every tactical focus has its strength list and its sentence
+  for (const id of ["tallOpp", "shortOpp", "kickVsPunch", "punchVsKick", "sameStance", "openStance"]) {
+    assert.ok(a.run(`(FOCUS_STR['${id}']||[]).length>=3`), id);
+    assert.ok(a.run(`t('cues')['${id}'].length>40`), id);
+  }
+  const rounds = (sp, id, eq = ["bag"]) => {
+    const out = [];
+    for (let i = 0; i < 12; i++) {
+      const s = JSON.parse(a.run(`S.profile.sport='${sp}';S.profile.disc='k1';S.profile.level=1;(()=>{chooseFocus=()=>tacticFoci().find(x=>x.id==='${id}');const ss=buildSession('2026-11-02','T','gym',${JSON.stringify(eq)},{sport:'${sp}',min:60${sp === "taekwondo" ? ",tstyle:'wt'" : ""}});chooseFocus=_cf;return JSON.stringify(ss)})()`));
+      assert.equal(s.theme, id);
+      out.push(...s.blocks.find((b) => b.key === "main").items);
+    }
+    return out;
+  };
+  const share = (list, f) => list.filter(f).length / Math.max(1, list.length);
+  const att = (list) => list.filter((r) => ["shadow", "bag"].includes(r.k) && r.combo && !r.mine);
+  // taller opponent: body shots and out with a side step
+  let r = att(rounds("kickboxing", "tallOpp"));
+  assert.ok(share(r, (x) => x.combo.some((t) => ["jabb", "crossb", "hookb"].includes(t))) >= 0.5, "body " + share(r, (x) => x.combo.some((t) => ["jabb", "crossb", "hookb"].includes(t))));
+  assert.ok(share(r, (x) => x.combo[x.combo.length - 1] === "step") >= 0.4, "out");
+  // smaller opponent: open long, nothing from close range
+  r = att(rounds("kickboxing", "shortOpp"));
+  assert.ok(share(r, (x) => ["jab", "front", "side"].includes(x.combo[0])) >= 0.55, "long opener");
+  assert.ok(share(r, (x) => !x.combo.some((t) => ["upper", "knee"].includes(t))) >= 0.8, "no close range");
+  // counters: kick → punches, punch → kick
+  r = rounds("kickboxing", "kickVsPunch").filter((x) => x.k === "evade");
+  assert.ok(r.length >= 12 && r.every((x) => x.combo.every((t) => ["jab", "cross", "hook"].includes(t)) && ["block", "step", "check"].includes(x.evade.d)), JSON.stringify(r.slice(0, 3)));
+  r = rounds("kickboxing", "punchVsKick").filter((x) => x.k === "evade");
+  assert.ok(r.length >= 12 && r.every((x) => x.combo.length === 1 && ["round", "front", "roundh", "side", "lowk"].includes(x.combo[0])), JSON.stringify(r.slice(0, 3)));
+  // stances
+  r = att(rounds("kickboxing", "sameStance"));
+  assert.ok(share(r, (x) => x.combo[0] === "jab") >= 0.55);
+  r = att(rounds("boxing", "openStance"));
+  assert.ok(share(r, (x) => x.combo[0] === "cross") >= 0.55);
+  // taekwondo: the preferred techniques in most combos
+  r = rounds("taekwondo", "shortOpp").filter((x) => ["shadow", "bag", "partner"].includes(x.k) && x.combo);
+  assert.ok(share(r, (x) => x.combo.some((t) => ["ap", "yeop", "mireo", "stepb"].includes(t))) >= 0.55, "long kicks");
+  a.run("chooseFocus=_cf");
+});
+
 test("16.11.2026 speech says abbreviations in full, the screen keeps them – German and English", () => {
   const a = app();
   const sp = (x) => a.run(`spokenText(${JSON.stringify(x)})`);
@@ -2172,7 +2224,7 @@ test("16.11.2026 guiding sentence of the focus: every unit with technique rounds
   a.run("S.profile.lang='de';globalThis.SAID=[];say=(x)=>SAID.push(x);");
   const ids = JSON.parse(a.run("JSON.stringify(Object.keys(t('cues')).filter(k=>!['lbl','say'].includes(k)))"));
   // a sentence for every focus and hidden theme of all sports, in both languages
-  const all = JSON.parse(a.run("JSON.stringify([...THEMES,...BOXT.BOX_THEMES,...BROAD].map(x=>x.id).concat(TKD_KF.map(k=>'k_'+k)))"));
+  const all = JSON.parse(a.run("JSON.stringify([...THEMES,...BOXT.BOX_THEMES,...BROAD,...Object.values(TACTIC).flat()].map(x=>x.id).concat(TKD_KF.map(k=>'k_'+k)))"));
   for (const id of all) assert.ok(ids.includes(id), "cue for " + id);
   a.run("S.profile.lang='en'");
   assert.deepEqual(JSON.parse(a.run("JSON.stringify(Object.keys(t('cues')).sort())")), [...ids, "lbl", "say"].sort());

@@ -95,6 +95,14 @@ eigener Text in der Einheit; man erkennt ihn an den Runden und am Kraftblock (Be
 - **Taekwondo (WT und ITF):** ein Tritt – Halbkreistritt, Frontkick, Seitwärtstritt, Axttritt, Rückwärtstritt,
   Schiebetritt oder Sicheltritt –, soweit Level, Grad und Einschränkungen ihn freigeben. Etwa drei von vier
   Kombinationen enthalten ihn.
+- **Taktische Schwerpunkte (16.11.2026):** *Gegen größere Gegner* (Körpertreffer und Nahdistanz, raus mit
+  Seitschritt) und *Gegen kleinere Gegner* (lange Techniken als Eröffnung, nichts aus der Nahdistanz, raus) ab
+  Einsteiger; ab Technikniveau 1 *Kick mit Schlag kontern* und *Schlag mit Kick kontern* (Konterrunden mit passenden
+  Abwehr-Konter-Paaren, nur Kickboxen; Lowkick-Konter nur KL/K1, nicht bei Knie/Sprunggelenk) sowie *Gegen gleiche
+  Auslage* (Führhand führt, Haken außen) und *Gegen versetzte Auslage* (Schlaghand durch die Mitte, Abschluss mit
+  Schlaghand bzw. Kick). Boxen ohne Kick-Konter, Taekwondo über bevorzugte Techniken (groß: Vorwärtsschritt, Halbkreis,
+  Faust; klein: Front-, Seitwärts-, Schiebetritt, Rückwärtsschritt; gleiche Auslage: Schiebetritt, Wechsel, Sichel;
+  versetzte Auslage: Halbkreistritt). Bei vielen Schwerpunkten wächst das Ausgleichsfenster mit, damit jeder dran kommt.
 - **Breite Schwerpunkte in allen Sportarten:** *Beinarbeit* (etwa die Hälfte der Runden nach dem Einstieg sind
   Beinarbeit-Runden) und *Verteidigung & Konter* (Ausweich- und Konterrunden; im Kickboxen mit Partner bekommt jede
   Partnerrunde nach der ersten eine Gegenaktion). Kinder bekommen nur Doppeldeckung, Rausgehen und Block.
