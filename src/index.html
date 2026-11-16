@@ -130,6 +130,33 @@
     color: var(--mist);
     margin: 0 0 10px 2px;
   }
+  /* own page between warm-up and main part: the focus of the unit */
+  .cuepage {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .cuebox {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px 6px;
+  }
+  .cuebox small {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ice);
+  }
+  .cuebox p {
+    margin: 0;
+    font-size: 26px;
+    line-height: 1.3;
+    font-weight: 700;
+  }
   /* help "?" next to the language switch (Betreiber 15.11.2026) */
   .top > div:first-child {
     min-width: 0;
