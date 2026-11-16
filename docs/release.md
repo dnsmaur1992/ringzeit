@@ -204,3 +204,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 15.11. | iOS-App: untere Leiste bleibt nach dem Scrollen nicht mehr mitten im Bild (eigene Ebene, kein fester Hintergrund, Neusetzen nach dem Scrollen) | 280 |
 | 16.11. | Leitsatz zum Schwerpunkt als eigene Seite zwischen Aufwärmen und Hauptteil (angezeigt und angesagt) bei jeder Einheit mit Technik; Ansagen sprechen Abkürzungen aus (Sekunden, Minuten, Wiederholungen …) | 282 |
 | 16.11. | Taktische Schwerpunkte: größere/kleinere Gegner, Kick mit Schlag und Schlag mit Kick kontern, gleiche/versetzte Auslage | 283 |
+| 16.11. | Eine Sprachansage für alle Bereiche: ausgeschriebene Einheiten/Abkürzungen auch in Winter-Arc-Mobility, Atmen/Meditation, freiem Timer, Stimmprobe und bei Ersatzstimmen; Anzeige bleibt kurz | 289 |

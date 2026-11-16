@@ -45,7 +45,7 @@
       if (speechPrimed || !voiceOn() || Date.now() - primeAt < 1500) return;
       if (speechSynthesis.speaking || speechSynthesis.pending) return;
       primeAt = Date.now();
-      const u = new SpeechSynthesisUtterance(".");
+      const u = makeUtterance(".");
       u.volume = 0;
       u.rate = 2;
       applyVoice(u);

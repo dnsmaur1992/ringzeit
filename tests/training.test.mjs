@@ -2216,9 +2216,116 @@ test("16.11.2026 speech says abbreviations in full, the screen keeps them – Ge
   assert.equal(sp("3 × 10 reps, 60 s rest"), "3 times 10 reps, 60 seconds rest");
   assert.equal(sp("2 rounds of 2 min, e.g. with a partner"), "2 rounds of 2 minutes, for example with a partner");
   assert.equal(sp("Plank 2× 30–45 s · 1 min"), "Plank 2 times 30 to 45 seconds, 1 minute");
-  // every spoken text goes through it
-  assert.match(a.run("say.toString()"), /speakUtterance\(spokenText\(text\)/);
+  // every spoken text goes through the one utterance factory (see the engine tests below)
+  assert.match(a.run("makeUtterance.toString()"), /SpeechSynthesisUtterance\(spokenText\(text\)\)/);
 });
+// ---- 16.11.2026 one spoken wording everywhere: the texts that actually reach the speech engine ----
+function engineApp(lang = "de", { failFor = [] } = {}) {
+  const a = app();
+  a.run(`globalThis.ENG=[];globalThis.SpeechSynthesisUtterance=function(t){this.text=t};
+    globalThis.speechSynthesis={speaking:false,pending:false,paused:false,cancel(){},resume(){},getVoices:()=>[{name:'V1',voiceURI:'V1',lang:'de-DE',localService:true},{name:'V2',voiceURI:'V2',lang:'de-DE',localService:true},{name:'E1',voiceURI:'E1',lang:'en-GB',localService:true}],
+      speak(u){ENG.push(u.text);const f=${JSON.stringify(failFor)};if(u.voice?f.includes(u.voice.name):f.includes('*'))setTimeout(()=>u.onerror&&u.onerror({error:'synthesis-failed'}),10)}};
+    window.speechSynthesis=speechSynthesis;S.profile.lang='${lang}';S.profile.voice=true;S.profile.limits=[];S.profile.relax={voice:true};
+    S.profile.arc={start:iso(addDays(today(),-3)),weeks:8,pick:['mob'],train:3,relax:2,checks:{},paused:[]};`);
+  a.eng = () => Array.from(a.run("ENG")).filter((x) => x !== ".");
+  a.clear = () => a.run("ENG.length=0");
+  return a;
+}
+const ABBR = /\d\s?(?:s|Sek\.?|min|Min\.?|Wdh\.?|kg|km|m|h)(?![\wäöüÄÖÜß])|\d\s?[–—]\s?\d|\d\s?[×x](?=\s|\d|$)|\d\s?%|\bz\.\s?B\.|\be\.g\./;
+test("16.11.2026 speech engine: Winter Arc mobility is spoken in full while the screen keeps the short dose", () => {
+  const a = engineApp("de");
+  a.run("arcMobOpen()");
+  // the plan rotates its exercises: make sure the pigeon (operator's example) is part of this run
+  a.run("if(!ui.mob.steps.some(s=>s.id==='mob.pigeon_stretch'))ui.mob.steps.push(mobStep({blocks:[{key:'mob',min:10,items:[{id:'mob.pigeon_stretch'}]}]},0,0))");
+  const steps = JSON.parse(a.run("JSON.stringify(ui.mob.steps.map(s=>({name:exText(s.id).name,dose:s.dose,phases:s.phases.map(p=>p.label)})))"));
+  const pig = steps.findIndex((s) => s.name === "Taube");
+  assert.ok(pig >= 0 && steps[pig].dose === "je Seite 60–90 s", "display dose stays compact");
+  a.run("arcMobStart()");
+  for (let i = 0; i < steps.length; i++) {
+    a.run(`mobGo(${i})`);
+    for (const l of steps[i].phases) a.run(`mobSay(mobSpeak(${JSON.stringify(l)}))`);
+  }
+  const said = a.eng();
+  assert.ok(said.includes("Taube. je Seite 60 bis 90 Sekunden. "), JSON.stringify(said.filter((x) => /Taube/.test(x))));
+  assert.ok(said.includes("Seite 1 von 2"), "side labels keep their own wording");
+  for (const x of said) assert.doesNotMatch(x, ABBR, x);
+  assert.equal(a.run("ui.mob.steps.find(s=>exText(s.id).name==='Taube').dose"), "je Seite 60–90 s", "screen untouched after speaking");
+  // switched off: not a single utterance
+  a.clear();
+  a.run("S.profile.relax.voice=false;mobGo(0);mobSay('je Seite 60–90 s')");
+  assert.deepEqual(a.eng(), []);
+});
+test("16.11.2026 speech engine: breathing and meditation use the same wording, their own voice switch still mutes them", () => {
+  const a = engineApp("de");
+  a.run("relaxOpen({mode:'med',kind:'body',mlen:5,voice:true});relaxStart();rxSay('Atme 2 min ruhig, ca. 4–6 s ein.')");
+  assert.ok(a.eng().includes("Atme 2 Minuten ruhig, circa 4 bis 6 Sekunden ein."), JSON.stringify(a.eng()));
+  for (const x of a.eng()) assert.doesNotMatch(x, ABBR, x);
+  a.run("relaxStop&&relaxStop()");
+  a.clear();
+  a.run("relaxOpen({mode:'breath',pat:'calm',bmin:2,voice:true});relaxStart()");
+  assert.ok(a.eng().length >= 1, "breathing intro reaches the engine");
+  for (const x of a.eng()) assert.doesNotMatch(x, ABBR, x);
+  a.clear();
+  a.run("ui.relax.voice=false;rxSay('Atme 2 min ruhig')");
+  assert.deepEqual(a.eng(), [], "relax voice off: silent");
+});
+test("16.11.2026 speech engine: coach, timer queue and free timer – full words, coach switch off means silence", () => {
+  const a = engineApp("de");
+  a.run("say('Liegestütze. 3 × 10 Wdh., 60 s Pause');queueTimerSpeech('Noch 1 min, 30 s Pause',100,()=>true)");
+  a.advance(200);
+  assert.deepEqual(a.eng(), ["Liegestütze. 3 mal 10 Wiederholungen, 60 Sekunden Pause", "Noch 1 Minute, 30 Sekunden Pause"]);
+  a.clear();
+  a.run("openFt();ui.ft.cfg={r:2,w:5,b:3,prep:false,warn:false,coach:true};ftStart()");
+  a.advance(15000);
+  assert.ok(a.eng().length >= 2, JSON.stringify(a.eng()));
+  for (const x of a.eng()) assert.doesNotMatch(x, ABBR, x);
+  a.run("ftEnd(true)");
+  a.clear();
+  a.run("S.profile.voice=false;say('60 s');queueTimerSpeech('60 s',10,()=>true)");
+  a.advance(100);
+  assert.deepEqual(a.eng(), [], "announcements off: nothing reaches the engine");
+});
+test("16.11.2026 speech engine: a failing voice is retried with exactly the same full text, never expanded twice", () => {
+  for (const fn of ["say", "mobSay", "rxSay"]) {
+    const a = engineApp("de", { failFor: ["V1", "V2", "*"] });
+    if (fn === "rxSay") a.run("relaxOpen({mode:'med',kind:'body',mlen:5,voice:true});ui.relax.voice=true");
+    a.run(`${fn}('Plank. 2× 30–45 s, 1 min, z. B. 5 Wdh.')`);
+    a.advance(2000);
+    const want = "Plank. 2 mal 30 bis 45 Sekunden, 1 Minute, zum Beispiel 5 Wiederholungen";
+    const got = a.eng();
+    assert.ok(got.length >= 2, `${fn}: retried (${got.length})`);
+    assert.deepEqual(got, got.map(() => want), fn);
+  }
+  // running the expansion again changes nothing
+  const a = engineApp("de");
+  const sp = (x) => a.run(`spokenText(${JSON.stringify(x)})`);
+  for (const lang of ["de", "en"]) {
+    a.run(`S.profile.lang='${lang}'`);
+    for (const x of ["3 × 10 Wdh., 60 s", "1 min, 1 s, 1 h, 1 m, 1 kg", "2 min, 2 h, 30 m, 16,4 kg, 5 km, 80 %", "je Seite 60–90 s", "z. B. ca. 3×", "e.g. approx. 2 min", "Runde 1. Ap Chagi, Dollyo Chagi, Naeryo Chagi."])
+      assert.equal(sp(sp(x)), sp(x), `${lang}: ${x}`);
+  }
+});
+test("16.11.2026 speech engine: English singular and plural; technique names, Korean terms and written-out text stay as they are", () => {
+  const a = engineApp("en");
+  a.run("say('1 s, 1 min, 1 h, 1 m, 1 kg · 2 s, 2 min, 2 h, 30 m, 2 kg, 1 rep, 3 × 10 reps')");
+  assert.deepEqual(a.eng(), ["1 second, 1 minute, 1 hour, 1 metre, 1 kilogram, 2 seconds, 2 minutes, 2 hours, 30 metres, 2 kilograms, 1 rep, 3 times 10 reps"]);
+  a.clear();
+  a.run("S.profile.lang='de';say('1 s, 1 min, 1 Wdh. · 2 s, 2 min, 2 Wdh.')");
+  assert.deepEqual(a.eng(), ["1 Sekunde, 1 Minute, 1 Wiederholung, 2 Sekunden, 2 Minuten, 2 Wiederholungen"]);
+  a.clear();
+  const keep = ["Runde 3. Ap Chagi, Dollyo Chagi, Dwit Chagi. Kihap!", "Runde 1. Jab, Cross, Lowkick, Sidekick.", "Halte 30 Sekunden, dann 2 Minuten locker.", "Mindestens 6 Kicks, Seitschritt, Sidekick"];
+  for (const x of keep) a.run(`say(${JSON.stringify(x)})`);
+  assert.deepEqual(a.eng(), keep);
+});
+test("16.11.2026 speech engine: one single place creates utterances – no path can bypass the full wording", () => {
+  assert.equal((script.match(/new SpeechSynthesisUtterance\(/g) || []).length, 1);
+  const a = engineApp("de");
+  for (const f of ["say", "mobSay", "rxSay", "speakUtterance", "voiceProbe"]) assert.doesNotMatch(a.run(`${f}.toString()`), /spokenText/, `${f} does not expand on its own (no double pass)`);
+  a.run("voiceProbe('V1')");
+  a.advance(200);
+  assert.deepEqual(a.eng(), [a.run("spokenText(t('voiceTest'))")]);
+});
+
 test("16.11.2026 guiding sentence of the focus: every unit with technique rounds, its own page between warm-up and main part, said once – not on the plan page, not without rounds", () => {
   const a = app();
   a.run("S.profile.lang='de';globalThis.SAID=[];say=(x)=>SAID.push(x);");
@@ -4991,7 +5098,7 @@ test("7n+ mobility (review): shared doses – both sides with a change for the p
   assert.equal(a.run("timerRunning()"), true, "screen stays awake");
   for (let s = 0; s <= 135; s += 0.5) a.run(`__now=1e12+3000+${s * 1000};arcMobTick()`);
   const said = JSON.parse(a.run("JSON.stringify(spoken)"));
-  assert.ok(said.some((x) => /^Taube\. je Seite 60–90 s/.test(x)), "name and dose");
+  assert.ok(said.some((x) => /^Taube\. je Seite 60 bis 90 Sekunden/.test(x)), "name and dose, spoken in full (16.11.2026)");
   assert.ok(said.includes("Seitenwechsel") && said.includes("Seite 2 von 2"), "change and side 2 said");
   assert.equal(a.run("ui.mob.i"), 1, "reps step waits");
   assert.match(a.run("arcMobHtml()"), /data-arc="mobnext"/);

@@ -625,3 +625,9 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
 - Kickbox-Vergleich gewollt neu aufgezeichnet (nur Technik-Einheiten).
 - Tests: 283.
 
+## Eine Sprachansage für alle Bereiche (16.11.2026)
+
+- **Befund:** Die Ausschreibung (`spokenText`) lief nur über `say()` (Coach, Rundenansagen, Timer-Warteschlange, freier Timer, Leitsatz). Winter-Arc-Mobility (`mobSay`) und Atmen/Meditation (`rxSay`) riefen `speakUtterance()` direkt auf – dort hieß es z. B. „Taube. je Seite 60–90 s.“. Die Stimmprobe und der Wiederholversuch mit Ersatzstimme gingen ebenfalls daran vorbei bzw. hingen davon ab, wer aufrief.
+- **Umsetzung:** Eine einzige Stelle erzeugt Äußerungen: `makeUtterance(text)` in `25-announcer.js` = `new SpeechSynthesisUtterance(spokenText(text))`. `speakUtterance` (alle Ansagen inkl. Wiederholversuch), Stimmprobe und iOS-Vorwärmen nutzen sie. Der Wiederholversuch reicht den Rohtext weiter, die Ausschreibung läuft also genau einmal je Äußerung; `spokenText` ist zusätzlich idempotent.
+- **Unverändert:** Anzeige (kurz), Stimmenwahl, Ansage-Schalter (Coach `S.profile.voice`, Entspannen `ui.relax.voice`, Mobility `S.profile.relax.voice`), Reihenfolge, Pause, Abbruch und Timer-Abgleich; Technikbegriffe, koreanische Begriffe und bereits ausgeschriebene Texte.
+- **Tests:** sechs Engine-Tests prüfen die tatsächlich an `speechSynthesis.speak` übergebenen Texte (Mobility, Atmen/Meditation, Coach/Timer-Warteschlange/freier Timer, abgeschaltete Ansagen, Ersatzstimmen, DE/EN Einzahl/Mehrzahl, Technik-/Koreanisch-Begriffe, genau eine Erzeugungsstelle im Build).

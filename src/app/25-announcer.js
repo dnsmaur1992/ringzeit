@@ -67,7 +67,7 @@
     try {
       const v = voiceList().find((x) => voiceKey(x) === id);
       if (!v) return;
-      const u = new SpeechSynthesisUtterance(t("voiceTest"));
+      const u = makeUtterance(t("voiceTest"));
       u.voice = v;
       u.lang = bcp47(v.lang) || (S.profile.lang === "de" ? "de-DE" : "en-GB");
       u.rate = 0.95;
@@ -132,8 +132,14 @@
   }
   /* A voice that cannot speak (data not installed, engine busy): once more with the next best voice, then with the language alone */
   const SPEECH_RETRY = ["synthesis-failed", "language-unavailable", "voice-unavailable", "synthesis-unavailable", "audio-busy", "audio-hardware", "network"];
+  /* The ONE place an utterance is born: every spoken text (coach, timers, free timer, focus page, Winter Arc mobility,
+     breathing and meditation, voice sample, retries) gets the written-out wording here, so no path can bypass it.
+     Retries pass the raw text again, so the expansion runs exactly once per utterance. */
+  function makeUtterance(text) {
+    return new SpeechSynthesisUtterance(spokenText(text));
+  }
   function speakUtterance(text, rate, skip, started) {
-    const u = new SpeechSynthesisUtterance(text);
+    const u = makeUtterance(text);
     applyVoice(u, skip);
     u.rate = rate;
     u.onerror = (ev) => {
@@ -203,7 +209,7 @@
   function say(text, rate = 1) {
     if (!voiceOn()) return;
     try {
-      const u = speakUtterance(spokenText(text), rate, [], Date.now());
+      const u = speakUtterance(text, rate, [], Date.now());
       // iOS Safari drops an utterance spoken right after cancel() and sometimes leaves the synth paused
       const busy = (speechSynthesis.speaking || speechSynthesis.pending) && !primeU;
       if (busy) speechSynthesis.cancel();
