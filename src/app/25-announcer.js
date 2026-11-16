@@ -151,10 +151,59 @@
     };
     return u;
   }
+  /* Spoken words in full (Betreiber 16.11.2026): the screen keeps "30 s", "2 min", "3 × 10", "5 Wdh.", the voice says
+     "30 Sekunden", "2 Minuten", "3 mal 10", "5 Wiederholungen" – in German and English. */
+  function spokenText(text) {
+    const de = S.profile.lang === "de",
+      one = (n) => /^1$/.test(n),
+      U = de
+        ? { s: ["Sekunde", "Sekunden"], min: ["Minute", "Minuten"], h: ["Stunde", "Stunden"], rep: ["Wiederholung", "Wiederholungen"], kg: ["Kilogramm", "Kilogramm"], km: ["Kilometer", "Kilometer"], m: ["Meter", "Meter"] }
+        : { s: ["second", "seconds"], min: ["minute", "minutes"], h: ["hour", "hours"], rep: ["rep", "reps"], kg: ["kilogram", "kilograms"], km: ["kilometre", "kilometres"], m: ["metre", "metres"] },
+      unit = (n, k) => `${n} ${U[k][one(n) ? 0 : 1]}`,
+      N = "(\\d+(?:[.,]\\d+)?)";
+    let s = String(text || "");
+    const rx = (p, f) => (s = s.replace(new RegExp(p, "g"), f));
+    // words with dots first
+    if (de) {
+      rx("\\bz\\.\\s?B\\.", "zum Beispiel");
+      rx("\\bbzw\\.", "beziehungsweise");
+      rx("\\bca\\.", "circa");
+      rx("\\binkl\\.", "inklusive");
+      rx("\\bmax\\.", "maximal");
+      rx("\\bmind\\.", "mindestens");
+      rx("\\bggf\\.", "gegebenenfalls");
+      rx("\\bStd\\.", "Stunden");
+      rx("(^|\\s)à(?=\\s)", "$1zu je");
+    } else {
+      rx("\\be\\.g\\.", "for example");
+      rx("\\bapprox\\.", "approximately");
+      rx("\\bmax\\.", "maximum");
+      rx("\\bmin\\.(?=\\s+[a-z])", "minimum");
+    }
+    // ranges and times: "8–12" → "8 bis 12", "3 × 10" / "3×" → "3 mal 10"
+    rx(N + "\\s?[–—]\\s?" + N, (m, a, b) => `${a} ${de ? "bis" : "to"} ${b}`);
+    rx(N + "\\s?[×x](?=\\s|\\d|$)", (m, a) => `${a} ${de ? "mal" : "times"}`);
+    // units after a number
+    rx(N + "\\s?(?:Sek\\.?|sek\\.?|sec\\.?|s)(?![\\wäöüÄÖÜß])", (m, n) => unit(n, "s"));
+    rx(N + "\\s?(?:Min\\.?|min\\.?|mins?)(?![\\wäöüÄÖÜß])", (m, n) => unit(n, "min"));
+    rx(N + "\\s?(?:Std|h)(?![\\wäöüÄÖÜß.])", (m, n) => unit(n, "h"));
+    rx(N + "\\s?(?:Wdh\\.?|Wh\\.?)(?![\\wäöüÄÖÜß])", (m, n) => unit(n, "rep"));
+    rx(N + "\\s?kg(?![\\w])", (m, n) => unit(n, "kg"));
+    rx(N + "\\s?km(?![\\w])", (m, n) => unit(n, "km"));
+    rx(N + "\\s?m(?![\\wäöüÄÖÜß])", (m, n) => unit(n, "m"));
+    rx(N + "\\s?%", (m, n) => `${n} ${de ? "Prozent" : "percent"}`);
+    // the abbreviation on its own
+    rx("\\bWdh\\.?(?![\\wäöüÄÖÜß])", de ? "Wiederholungen" : "reps");
+    rx("\\bSek\\.(?=\\s|$)", de ? "Sekunden" : "seconds");
+    rx("\\bMin\\.(?=\\s|$)", de ? "Minuten" : "minutes");
+    // separators
+    rx("\\s·\\s", ", ");
+    return s;
+  }
   function say(text, rate = 1) {
     if (!voiceOn()) return;
     try {
-      const u = speakUtterance(text, rate, [], Date.now());
+      const u = speakUtterance(spokenText(text), rate, [], Date.now());
       // iOS Safari drops an utterance spoken right after cancel() and sometimes leaves the synth paused
       const busy = (speechSynthesis.speaking || speechSynthesis.pending) && !primeU;
       if (busy) speechSynthesis.cancel();

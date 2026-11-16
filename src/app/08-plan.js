@@ -556,7 +556,7 @@
       pool = M.COMBOS.slice(0, (techniqueLevel() || 0) + 1).flat().filter((c) => c.every((x) => M.allowed(x, ctx)));
     return TKD_KF.filter((k) => M.allowed(k, ctx) && pool.filter((c) => hasKick(c, k, M)).length >= 2).map((k) => ({ id: "k_" + k, tag: "kick", kick: k }));
   }
-  function chooseFocus() {
+  function chooseFocus(noBroad) {
     let base;
     if (isTkd()) base = tkdFoci();
     else if (isBox()) base = BOXT.BOX_THEMES.filter((th) => !th.lvl || techniqueLevel() >= th.lvl);
@@ -567,7 +567,7 @@
         (th) => (!th.disc || th.disc.includes(discOf())) && (!th.lvl || techniqueLevel() >= th.lvl) && !(ka && th.risky) && !(th.id === "sweepFinish" && p.limits.includes("ankle")),
       );
     }
-    const ok = [...base, ...BROAD],
+    const ok = noBroad ? base : [...base, ...BROAD],
       p = S.profile,
       focus = techniqueLevel() === 0 || isTkd() ? "bal" : p.focus,
       recent = Object.values(S.sessions)
@@ -581,7 +581,7 @@
       ((focus === "box" && th.tag === "hand") || (focus === "kick" && th.tag === "kick") ? FOCUS_THEME : 0) +
       ((focus === "box" && th.tag === "kick") || (focus === "kick" && th.tag === "hand") ? FOCUS_THEME : 0) +
       Math.random() * 0.5;
-    return ok.sort((a, b) => sc(a) - sc(b))[0];
+    return ok.sort((a, b) => sc(a) - sc(b))[0] || null;
   }
   const focusOf = (id) => [...THEMES, ...BOXT.BOX_THEMES, ...BROAD].find((x) => x.id === id) || (id && id.startsWith("k_") ? { id, kick: id.slice(2) } : null);
   /* strength for the technique of the focus: only catalogue exercises of its list that fit place, equipment and limits */
@@ -2273,7 +2273,9 @@
           sets: supSets,
         });
     } else {
-      theme = type === "T" ? chooseFocus() : chooseTheme();
+      // technique units: a focus; conditioning and sparring keep the hidden themes – taekwondo had none there, it now
+      // gets a kick (no broad focus, the round kinds stay), so every unit with technique has its guiding sentence
+      theme = type === "T" ? chooseFocus() : isTkd() ? chooseFocus(true) : chooseTheme();
       // grading prep: part of the session drills the belt programme
       const exMin0 = ph.phase === "grade" && targetStage() ? Math.max(10, Math.min(20, Math.round(rest * 0.25))) : 0,
         exItems = exMin0 ? examPick(Math.max(3, Math.round(exMin0 / 3)), loc, eq) : [],

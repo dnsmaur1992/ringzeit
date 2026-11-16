@@ -151,6 +151,32 @@
     return itemTitle(sess, st.bi, st.ni);
   }
   /* dose line as in the plan (target for strength, otherwise the prescription) */
+  /* the guiding sentence of the focus for every unit with technique rounds (T, C, P): shown on the main part's card in
+     the training mode and said once when the main part starts – not on the plan page (Betreiber 16.11.2026) */
+  function sessCue(sess) {
+    if (!sess || !sess.theme || !roundBlock(sess)) return "";
+    const C = t("cues") || {};
+    return C[sess.theme] || "";
+  }
+  /* Its own page between warm-up and main part (Betreiber 16.11.2026): when the technique rounds come up and none of
+     them is done yet, the training shows the focus of the unit first – said once – and goes on with "Los geht's".
+     Nothing is added to the steps, so begun trainings keep their place. */
+  function cueGate(sess, bi) {
+    const b = sess && sess.blocks[bi];
+    if (!ui.workout || !b || !b.rounds || !sessCue(sess) || ui.workout.cueOk === bi) return false;
+    if (b.items.some((it, ni) => itemDone(sess, bi, ni))) return false;
+    ui.workout.cue = bi;
+    if (ui.workout.cueSaid !== bi) {
+      ui.workout.cueSaid = bi;
+      say(`${t("cues").say}: ${sessCue(sess)}`, 0.92);
+    }
+    return true;
+  }
+  function cuePageHtml(sess) {
+    const C = t("cues"),
+      W = workoutText();
+    return `<div class="player-inner cuepage"><div class="fbar"><button type="button" class="x" data-workout="close" aria-label="${W.close}">✕</button><span>${esc(blkName(sess.blocks[ui.workout.cue]))}</span><span class="x" aria-hidden="true" style="visibility:hidden"></span></div><div class="cuebox"><small>${C.lbl}</small><p>${esc(sessCue(sess))}</p></div><div class="acts"><button type="button" class="btn sec" data-player="prev">${W.back}</button><button type="button" class="btn" data-player="cueok">${C.go}</button></div></div>`;
+  }
   function stepDose(sess, st) {
     const b = sess.blocks[st.bi],
       it = b.items[st.ni];
@@ -189,7 +215,8 @@
     ui.workout.block = st.bi;
     ui.workout.list = false;
     sess.flow = { ...(sess.flow || {}), block: st.bi, step: i };
-    ui.focus = st.kind === "rounds";
+    delete ui.workout.cue;
+    ui.focus = st.kind === "rounds" && !cueGate(sess, st.bi);
     store.save();
     resumeSave(true);
     render();
@@ -355,6 +382,12 @@
   function playerAction(a, ds = {}) {
     if (!ui.workout) return;
     const st = playerStep();
+    if (a === "cueok") {
+      ui.workout.cueOk = ui.workout.cue;
+      delete ui.workout.cue;
+      ui.focus = true;
+      return render();
+    }
     if (a === "list") {
       ui.workout.list = true;
       ui.focus = false;
@@ -464,6 +497,7 @@
       W = workoutText(),
       tm = ui.exerciseTimer,
       nx = steps[i + 1];
+    if (ui.workout.cue != null && st.kind === "rounds" && st.bi === ui.workout.cue) return cuePageHtml(sess);
     const doneN = steps.filter((s) => stepDone(sess, s)).length,
       head = `<div class="fbar"><button type="button" class="x" data-workout="close" aria-label="${W.close}">✕</button><span>${esc(st.kind === "finish" ? W.finish : blkName(sess.blocks[st.bi]))} · ${P.step(i + 1, steps.length)}</span><button type="button" class="x" data-player="list" aria-label="${P.list}">☰</button></div><div class="pbar"><span style="width:${Math.round((100 * doneN) / Math.max(1, steps.length - 1))}%"></span></div>`;
     if (st.kind === "finish")

@@ -100,7 +100,7 @@
       step = Number.isInteger(storedStep) ? Math.max(0, Math.min(steps.length - 1, storedStep)) : Math.max(0, firstStep);
     sess.flow = { block: steps[step].bi, step, startedAt: sess.flow?.startedAt || Date.now() };
     ui.workout = { ds: ui.sel, block: steps[step].bi, step, player: true };
-    ui.focus = steps[step].kind === "rounds";
+    ui.focus = steps[step].kind === "rounds" && !cueGate(sess, steps[step].bi);
     store.save();
     resumeSave(true);
     render();
@@ -138,7 +138,8 @@
     // keep the player position in step with the section
     const firstOfBlock = playerSteps(sess).findIndex((st) => st.bi === ui.workout.block);
     if (firstOfBlock >= 0) ui.workout.step = sess.flow.step = firstOfBlock;
-    ui.focus = !!sess.blocks[ui.workout.block]?.rounds;
+    delete ui.workout.cue;
+    ui.focus = !!sess.blocks[ui.workout.block]?.rounds && !cueGate(sess, ui.workout.block);
     store.save();
     resumeSave(true);
     render();
