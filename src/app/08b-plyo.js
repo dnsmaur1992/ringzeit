@@ -28,17 +28,34 @@
     "plyo.takeoff": { sp: PLYO_TKD, use: "pow", load: 24 },
     "plyo.react": { sp: PLYO_ALL, use: "cmd", load: 30, cmd: "dirs" },
     "plyo.bounce_slip": { sp: "box " + PLYO_KB, use: "cmd", load: 20, cmd: "slip" },
-    "plyo.bounce_roll": { sp: "box " + PLYO_KB, use: "cmd", load: 20, cmd: "roll" },
+    // rolling under a hook: boxing only – in kickboxing knees (K1) and head kicks make the deep duck a different move (E6, 17.11.2026)
+    "plyo.bounce_roll": { sp: "box", use: "cmd", load: 20, cmd: "roll" },
   };
   const PLYO_CAP = [60, 100, 140];
   const plyoTag = () => (isBox() ? "box" : isTkd() ? tkdUnitStyle() : discOf() || "lc");
   const plyoFits = (key) => !PLYO[key] || PLYO[key].sp.split(" ").includes(plyoTag());
   const plyoCap = () => PLYO_CAP[techniqueLevel()] ?? PLYO_CAP[0];
-  /* weighted contacts of a unit (rounds with a drill count once per round) */
+  /* points of a round spent bouncing (a "Federn & Antritt" round, or a footwork drill filling a conditioning round):
+     by its length, like the stance bounce – 90 s of bouncing = 20 points, a 3-minute round = 40 */
+  const bounceRoundPts = (w) => Math.round(((w || 180) / 90) * 20);
+  /* weighted contacts of a unit over ALL blocks and rounds (17.11.2026: the bounce rounds count too) */
   function plyoLoad(sess) {
     let n = 0;
-    for (const b of (sess && sess.blocks) || []) for (const it of b.items || []) if (it.id && EX[it.id] && PLYO[EX[it.id].key]) n += PLYO[EX[it.id].key].load;
+    for (const b of (sess && sess.blocks) || [])
+      for (const it of b.items || []) {
+        const e = it.id && EX[it.id] && PLYO[EX[it.id].key];
+        if (b.rounds && (it.k === "bounce" || e)) n += bounceRoundPts(b.w);
+        else if (e) n += e.load;
+      }
     return n;
+  }
+  /* a "Federn & Antritt" unit: only as many bounce rounds as the cap allows – the rest stay footwork rounds without the
+     bouncing; the closing block then gets what is left of the cap */
+  function plyoLimitRounds(items, w) {
+    const allowed = Math.floor(plyoCap() / bounceRoundPts(w));
+    let k = 0;
+    for (const r of items) if (r.k === "bounce" && ++k > allowed) r.k = "foot";
+    return items;
   }
   /* up to n drills of one use (or any), place, equipment, limits, level and sport checked by okEx, within the cap */
   function plyoPick(n, loc, eq, used, use, base = 0) {

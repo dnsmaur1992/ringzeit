@@ -534,6 +534,8 @@
     lowFinish: ["str.single_leg_calf_raises", "str.russian_twists", "str.bulgarian_split_squats", "str.pallof_press"],
     kneeFinish: ["str.hanging_knee_raises", "str.dead_bugs", "str.hollow_hold", "str.bulgarian_split_squats"],
     foot: ["str.single_leg_calf_raises", "pow.lateral_bounds", "str.bulgarian_split_squats", "str.lunges"],
+    // Federn & Antritt when the bounce rounds used the whole cap: no further jumps
+    bounceStr: ["str.single_leg_calf_raises", "str.bulgarian_split_squats", "str.lunges", "str.step_ups"],
     tallOpp: ["str.hollow_hold", "str.dead_bugs", "str.neck_iso_hold", "str.bulgarian_split_squats"],
     shortOpp: ["str.single_leg_calf_raises", "pow.lateral_bounds", "str.plank_shoulder_taps", "str.lunges"],
     kickVsPunch: ["str.single_leg_calf_raises", "str.push_ups", "str.russian_twists", "str.pallof_press"],
@@ -1214,7 +1216,9 @@
     else r.mid = { at: cuts[Math.floor(Math.random() * cuts.length)], ...pick(false) };
     // Wettkampf: in some rounds the partner comes in twice – before your combo and again after it
     const dbl = discOf() === "fc" ? [0, 0.25, 0.6][lvl] : lvl >= 2 ? 0.4 : 0;
-    if (!kid && !r.post && Math.random() < dbl) r.post = answer(pick(lowOk && Math.random() < 0.35));
+    // only with an attack not used yet in this unit – no partner attack twice (17.11.2026: with 6 rounds × 2 actions
+    // there can be more spots than attacks)
+    if (!kid && !r.post && Math.random() < dbl && atts.some((x) => !usedAtt.has(x))) r.post = answer(pick(lowOk && Math.random() < 0.35));
     return r;
   }
   /* how many partner rounds of one session get a counter action: Grundlage (and children) exactly 1,
@@ -2398,8 +2402,8 @@
         rb = br ? br.b : restB;
       // technique: about 10 min strength for the technique of the focus at the end – fewer fitting exercises, fewer minutes,
       // none at all: the whole time goes to technique rounds (Betreiber 14.11.2026)
-      const tItems = type === "T" ? focusEx(theme, loc, eq, used, 3) : null,
-        tMin = tItems ? Math.min([0, 4, 7, 10][tItems.length], Math.round((rest - exMin) * 0.3)) : 0;
+      let tItems = type === "T" ? focusEx(theme, loc, eq, used, 3) : null;
+      const tMin = tItems ? Math.min([0, 4, 7, 10][tItems.length], Math.round((rest - exMin) * 0.3)) : 0;
       let main = type === "T" ? rest - exMin - tMin : Math.round((rest - exMin) * share),
         nR = roundsFor(main, (fw + rb) / 60);
       // fixed fight-pace rounds at the end of the round block, technique rounds before them
@@ -2438,6 +2442,14 @@
       else {
         // short sessions have a short warm-up: two easy opening rounds instead of one
         items = fightRounds(type, nR, loc, eq, theme, D <= 45 ? 2 : 1);
+        // Federn & Antritt: the bounce rounds count against the cap, the closing block takes what is left
+        if (theme && theme.id === "bounce") {
+          plyoLimitRounds(items, fw);
+          tItems.forEach((x) => used.delete(x.id));
+          tItems = plyoPick(3, loc, eq, used, "pow", plyoLoad({ blocks: [{ rounds: true, w: fw, items }] }));
+          // the rounds used up the cap: lower-leg strength without more jumps keeps the minutes of the closing block
+          if (!tItems.length) tItems = focusEx({ id: "bounceStr" }, loc, eq, used, 3);
+        }
         // WT full contact: every second bag or pad round with impact (7e)
         if (wtFull(soft)) {
           let k = 0;
@@ -2471,7 +2483,7 @@
       if (type === "T") {
         if (tItems.length && sup > 0)
           blocks.push(
-            theme && theme.id === "bounce"
+            theme && theme.id === "bounce" && tItems.some((x) => EX[x.id] && EX[x.id].cat === "plyo")
               ? { key: "plyo", lbl: "plyo", min: sup, items: tItems.slice(0, sup >= 7 ? 3 : sup >= 4 ? 2 : 1) }
               : { key: "str", lbl: "tstr", min: sup, items: tItems.slice(0, sup >= 7 ? 3 : sup >= 4 ? 2 : 1), sets: supSets },
           );

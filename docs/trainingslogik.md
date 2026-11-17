@@ -180,3 +180,23 @@ sind Bausteine darin.
 - **Prüfungen:** Die Sportfremd-Prüfung (H9) und der Katalogtest lassen „Antritt“ zu („Tritt“ bleibt im Boxen
   verboten). H8 vergleicht Sätze je Seite/Bein/Hand jetzt mit beiden Seiten des Timers. Kickbox-Vergleich neu
   aufgezeichnet; mit abgeschalteter Neuerung ist er identisch zum vorherigen (geprüft).
+
+## Schritt 1 der Trainingsmatrix (17.11.2026)
+
+Entscheidungen und Matrix: Dokument „Ringzeit – Trainingsmatrix und offene Entscheidungen“ (alle Empfehlungen angenommen).
+
+- **Bilanz:** `plyoLoad` zählt jetzt alle Blöcke und Runden. Eine Federn-&-Antritt-Runde und ein Beinarbeits-Drill in
+  einer Konditionsrunde zählen nach Länge (`bounceRoundPts`: 90 s Federn = 20 Punkte, 3 Min. = 40). Im Schwerpunkt
+  „Federn & Antritt“ bleiben nur so viele Federn-Runden, wie die Grenze erlaubt (`plyoLimitRounds`), die übrigen
+  bleiben Beinarbeit-Runden ohne Federn; der Abschlussblock bekommt den Rest der Grenze, und wenn nichts übrig ist,
+  Unterschenkelkraft ohne weitere Sprünge (`FOCUS_STR.bounceStr`).
+- **Partnerangriffe:** Die zweite Gegenaktion auf Wettkampfniveau kommt nur noch, wenn in der Einheit noch ein
+  unbenutzter Angriff übrig ist (vorher: bis zu 12 Gegenaktionen bei 11 Angriffen in LC Niveau 2 → gelegentlich
+  dieselbe; Ursache des schwankenden Tests). In KL/K1 kann der Lowkick bewusst mehrfach kommen.
+- **Rollen** („Federn und Abrollen“) nur noch im Boxen (E6).
+- **Tests mit festen Seeds** (`seedRandom`, wie `baseline.mjs`). Der K1-Test der Gegenaktionen startet jede Probe als
+  eigene Einheit.
+- **Kickbox-Vergleich:** 7 Einheiten (KL/FC Niveau 2, Kondition sowie Technik & Kondition) neu aufgezeichnet. Einzige
+  Ursache ist die engere Rollen-Freigabe: Der kleinere Drill-Vorrat ändert die gezogene Übung (geprüft: jede der drei
+  Änderungen einzeln zurückgenommen; nur das Zurücknehmen der Rollen-Freigabe stellt diese 7 wieder her, alle drei
+  zusammen ergeben den alten Vergleich).

@@ -2219,6 +2219,42 @@ test("16.11.2026 speech says abbreviations in full, the screen keeps them – Ge
   // every spoken text goes through the one utterance factory (see the engine tests below)
   assert.match(a.run("makeUtterance.toString()"), /SpeechSynthesisUtterance\(spokenText\(text\)\)/);
 });
+// reproducible random draws (17.11.2026): the app's Math.random replaced by a seeded generator (as in baseline.mjs)
+const seedRandom = (a, n) =>
+  a.run(`(()=>{let s=${n}|0;Math.random=()=>{s=(s+0x6d2b79f5)|0;let t=Math.imul(s^(s>>>15),1|s);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296};})()`);
+test("17.11.2026 seeded: the partner's attacks never repeat within a unit, also when there are more spots than attacks (LC/FC, levels 1–2)", () => {
+  const a = app();
+  for (const [disc, lv] of [["lc", 1], ["lc", 2], ["fc", 1], ["fc", 2]]) {
+    seedRandom(a, 1000 + lv);
+    const r = JSON.parse(a.run(`(() => { S.profile.sport='kickboxing'; S.profile.disc = "${disc}"; S.profile.level = ${lv}; S.profile.limits = []; S.profile.birthYear = 1995; let rep = 0, slots = 0;
+      for (let i = 0; i < 3000; i++) { const at = [];
+        for (const x of fightRounds("T", 7, "gym", ["partner"], null)) if (x.react) for (const q of [x.react.pre, x.react.mid, x.react.post]) if (q) at.push(q.a);
+        slots = Math.max(slots, at.length); if (new Set(at).size < at.length) rep++; }
+      return JSON.stringify({ rep, slots }); })()`));
+    assert.equal(r.rep, 0, `${disc} L${lv}: ${JSON.stringify(r)}`);
+  }
+});
+test("17.11.2026 seeded: bounce rounds count in the Federn & Antritt balance – rounds and closing block together never over the cap, extra rounds stay footwork", () => {
+  const a = app();
+  // a round of 3 minutes = 40 points (90 s bouncing = 20, like the stance bounce)
+  assert.equal(a.run("plyoLoad({blocks:[{rounds:true,w:180,items:[{kind:'round',k:'bounce'},{kind:'round',k:'shadow'},{kind:'round',k:'bounce'}]}]})"), 80);
+  assert.equal(a.run("plyoLoad({blocks:[{rounds:true,w:90,items:[{kind:'round',k:'ex',id:'plyo.stance_bounce'}]},{key:'plyo',items:[{kind:'ex',id:'plyo.pogo_jumps'}]}]})"), 50);
+  for (const [sp, sty, disc] of [["kickboxing", "", "lc"], ["kickboxing", "", "k1"], ["boxing", "", ""], ["taekwondo", "wt", ""], ["taekwondo", "itf", ""]])
+    for (const lv of [0, 1, 2]) {
+      const cap = [60, 100, 140][lv];
+      plyoSet(a, sp, sty, disc, lv, "chooseFocus=((f)=>(nb)=>nb?f(nb):BROAD.find(x=>x.id==='bounce'))(chooseFocus);");
+      for (let i = 0; i < 6; i++) {
+        seedRandom(a, 7000 + lv * 10 + i);
+        const { s, load } = plyoBuild(a, "T", sp, sty, disc);
+        assert.ok(load <= cap, `${sp} L${lv} seed ${i}: ${load} > ${cap}`);
+        const rb = s.blocks.find((b) => b.rounds),
+          nb = rb.items.filter((r) => r.k === "bounce").length;
+        assert.ok(nb >= 1 && nb <= Math.floor(cap / Math.round((rb.w / 90) * 20)), `${sp} L${lv}: ${nb} bounce rounds`);
+      }
+    }
+  // rolling: boxing only
+  assert.equal(a.run("PLYO['plyo.bounce_roll'].sp"), "box");
+});
 // ---- 17.11.2026 Federn & Antritt: stance, footwork, movement patterns and the spring of feet and ankles ----
 const PLYO_UNITS = [
   ["kickboxing", "", "lc", "box lc"],
@@ -2265,6 +2301,18 @@ test("17.11.2026 Federn & Antritt: 19 drills with sketch, form cues and dose; ea
     plyoSet(a, "kickboxing", "", "k1", 2, `S.profile.limits=['${lim}'];`);
     assert.equal(a.run(`EX.filter(e=>e.cat==='plyo'&&okEx(e,'gym',['rope'])).length`), 0, lim);
   }
+});
+test("17.11.2026 Federn & Antritt: no drill text (name, description, form cues; DE/EN) uses a word of another sport where the drill is planned", () => {
+  const a = app();
+  const RX = {
+    box: /\bkicks?\b|(?<!An)Tritt|Schienbein|\bshins?\b|WAKO|Dobok|Chagi/i,
+    tkd: /Bandag|Boxhandschuh|\bwraps?\b|boxing gloves|\bJab\b|\bCross\b|Haken|\bhooks?\b|Uppercut|Low ?Kick|WAKO|Clinch/i,
+    kb: /Chagi|Dobok|Poomsae|\bTul\b|DBV/i,
+  };
+  const rows = JSON.parse(a.run("JSON.stringify(EX.filter(e=>e.cat==='plyo').map(e=>({k:e.key,sp:PLYO[e.key].sp.split(' '),t:[e.de,e.en,e.dde,e.den,...EXTIPS[e.key][0],...EXTIPS[e.key][1],EXTIPS[e.key][2],EXTIPS[e.key][3]].join(' | ')})))"));
+  for (const r of rows)
+    for (const [sp, tags] of [["box", ["box"]], ["tkd", ["wt", "itf"]], ["kb", ["lc", "kl", "fc", "k1"]]])
+      if (tags.some((x) => r.sp.includes(x))) assert.doesNotMatch(r.t, RX[sp], `${sp}: ${r.k}`);
 });
 test("17.11.2026 Federn & Antritt in the plan: strength first while fresh, one command round in conditioning, one drill before the circuit of technique & conditioning, never over the cap", () => {
   const a = app();
@@ -2317,11 +2365,14 @@ test("17.11.2026 focus Federn & Antritt: guiding sentence, bounce rounds with co
     const rb = s.blocks.find((b) => b.rounds);
     assert.ok(rb.items.filter((r) => r.k === "bounce").length >= 2, `${sp}: bounce rounds`);
     assert.ok(rb.items.filter((r) => r.k === "bounce").every((r) => !r.combo));
-    const last = s.blocks.find((b) => b.key === "plyo");
-    assert.ok(last && last.lbl === "plyo" && last.items.every((it) => a.run(`PLYO['${it.id}'].use`) === "pow"), `${sp}: closing block`);
+    // closing block: jump drills within what the rounds left of the cap – or, when the rounds used it up, lower-leg strength
+    const last = s.blocks.find((b) => b.key === "plyo") || s.blocks.find((b) => b.lbl === "tstr");
+    assert.ok(last, `${sp}: closing block`);
+    if (last.key === "plyo") assert.ok(last.items.every((it) => a.run(`PLYO['${it.id}'].use`) === "pow"));
+    else assert.ok(last.items.every((it) => ["str.single_leg_calf_raises", "str.bulgarian_split_squats", "str.lunges", "str.step_ups"].includes(it.id)), JSON.stringify(last.items));
     assert.ok(load <= 140);
     assert.equal(a.run(`cmdOf({k:'bounce'})`), "round");
-    assert.equal(a.run(`blkName(${JSON.stringify(last)})`), "Federn & Antritt");
+    assert.equal(a.run(`blkName(${JSON.stringify(last)})`), last.key === "plyo" ? "Federn & Antritt" : "Kraft für die Technik");
     assert.equal(a.run(`roundInfo(${JSON.stringify(rb.items.find((r) => r.k === "bounce"))}).title`), "Federn & Antritt");
   }
   // knee/ankle limits: the focus never comes up (without them it does)
@@ -2750,7 +2801,7 @@ test("partner counters: foot sweep from Fortgeschritten (lift the foot / step ou
 test("K1 knees as counter (blocked), quick answers after the defence, double exchange at Wettkampf", () => {
   const a = app();
   const r = JSON.parse(a.run(`JSON.stringify((()=>{const run=(disc,lvl)=>{S.profile.disc=disc;S.profile.level=lvl;S.profile.limits=[];S.profile.birthYear=1995;let knee=0,kneeDefOk=true,post=0,ans=0,dbl=0;
-      for(let i=0;i<4000;i++){const x=partnerReact(['jab','cross','hook','round']);for(const p of ['pre','mid','post'])if(x[p]&&x[p].a==='knee'){knee++;if(!['block','step'].includes(x[p].d))kneeDefOk=false;}
+      for(let i=0;i<4000;i++){usedAtt.clear();const x=partnerReact(['jab','cross','hook','round']); /* each call = a fresh unit (attacks are unique per unit) */for(const p of ['pre','mid','post'])if(x[p]&&x[p].a==='knee'){knee++;if(!['block','step'].includes(x[p].d))kneeDefOk=false;}
         if(x.post){post++;if(x.post.c)ans++;}if((x.pre||x.mid)&&x.post)dbl++;}return {knee,kneeDefOk,ans:ans/post,dbl};};
     return {k1a:run('k1',1),k1w:run('k1',2),fcw:run('fc',2),lc0:run('lc',0)}})())`));
   assert.ok(r.k1a.knee > 0 && r.k1a.kneeDefOk, "knees in K1 from Fortgeschritten, blocked or stepped out of");

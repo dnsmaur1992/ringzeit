@@ -972,7 +972,7 @@ const X = [
     "Vier-Felder-Sprünge",
     "Four-square jumps",
     "Ein Kreuz am Boden: beidbeinig der Reihe nach durch die vier Felder springen (1–2–3–4), nach jedem Satz die Richtung wechseln.",
-    "A cross on the floor: jump through the four fields in order (1–2–3–4) with both feet, change direction after each set.",
+    "Mark a plus sign on the floor: jump through the four fields in order (1–2–3–4) with both feet, change direction after each set.",
     "",
     "gho",
     "ka",
