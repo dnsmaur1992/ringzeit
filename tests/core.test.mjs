@@ -248,11 +248,11 @@ import { EX_KEYS, keyOfLegacy, legacyIndex } from "../src/catalog/ids.js";
 import { EX } from "../src/catalog/exercises.js";
 import { RX, RX_HARD, rxOf, rxText, rxPlan, rxSeconds, rxMinutes } from "../src/core/prescription.js";
 
-test("ids: 88 unique text ids, row order = legacy index, EX reachable by id and by old number", () => {
-  assert.equal(EX_KEYS.length, 88);
-  assert.equal(new Set(EX_KEYS).size, 88);
+test("ids: 107 unique text ids, row order = legacy index, EX reachable by id and by old number", () => {
+  assert.equal(EX_KEYS.length, 107);
+  assert.equal(new Set(EX_KEYS).size, 107);
   EX_KEYS.forEach((k, i) => {
-    assert.match(k, /^(warm|cond|str|mob|cool|pow|pre)\.[a-z0-9_]+$/);
+    assert.match(k, /^(warm|cond|str|mob|cool|pow|pre|plyo)\.[a-z0-9_]+$/);
     assert.equal(keyOfLegacy(i), k);
     assert.equal(legacyIndex(k), i);
     assert.equal(EX[k], EX[i]);
@@ -356,7 +356,7 @@ test("sports: boxing (4b) and taekwondo (6a) are visible next to kickboxing; no 
 
 import { BOX_NO_EX } from "../src/sports/boxing/techniques.js";
 test("boxing: every catalogue exercise whose text is about kicks is excluded from boxing sessions", () => {
-  const kicky = EX.filter((e) => /kick|tritt|schienbein|roundhouse|spinning|sweep/i.test([e.de, e.en, e.dde, e.den].join(" "))).map((e) => e.key);
+  const kicky = EX.filter((e) => /kick|(?<!an)tritt|schienbein|roundhouse|spinning|sweep/i.test([e.de, e.en, e.dde, e.den].join(" "))).map((e) => e.key);
   assert.ok(kicky.length >= 7);
   for (const k of kicky) assert.ok(BOX_NO_EX.has(k), k + " is missing in BOX_NO_EX");
   for (const k of BOX_NO_EX) assert.ok(EX.some((e) => e.key === k), k + " exists in the catalogue");

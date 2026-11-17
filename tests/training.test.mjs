@@ -2219,6 +2219,213 @@ test("16.11.2026 speech says abbreviations in full, the screen keeps them – Ge
   // every spoken text goes through the one utterance factory (see the engine tests below)
   assert.match(a.run("makeUtterance.toString()"), /SpeechSynthesisUtterance\(spokenText\(text\)\)/);
 });
+// ---- 17.11.2026 Federn & Antritt: stance, footwork, movement patterns and the spring of feet and ankles ----
+const PLYO_UNITS = [
+  ["kickboxing", "", "lc", "box lc"],
+  ["kickboxing", "", "kl", "kl"],
+  ["kickboxing", "", "k1", "k1"],
+  ["kickboxing", "", "fc", "fc"],
+  ["boxing", "", "", "box"],
+  ["taekwondo", "wt", "", "wt"],
+  ["taekwondo", "itf", "", "itf"],
+];
+const plyoSet = (a, sp, sty, disc, lv, extra = "") =>
+  a.run(`S.profile.sport='${sp}';S.profile.disc='${disc || "lc"}';S.profile.birthYear=1995;S.profile.level=${lv};S.profile.limits=[];S.sessions={};S.log=[];${sty ? `S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'${sty}'});` : ""}${extra}`);
+const plyoBuild = (a, ty, sp, sty, disc, ds = "2026-11-09") =>
+  JSON.parse(a.run(`(()=>{const s=buildSession('${ds}','${ty}','gym',['bag','rope','weights'],{sport:'${sp}'${sty ? `,tstyle:'${sty}'` : ""}${disc ? `,disc:'${disc}'` : ""}});S.sessions['u'+Object.keys(S.sessions).length]=s;return JSON.stringify({s,load:plyoLoad(s)})})()`));
+test("17.11.2026 Federn & Antritt: 19 drills with sketch, form cues and dose; each only in its sport, discipline and level", () => {
+  const a = app();
+  const ids = JSON.parse(a.run("JSON.stringify(EX.filter(e=>e.cat==='plyo').map(e=>e.key))"));
+  assert.equal(ids.length, 19);
+  for (const id of ids) {
+    assert.ok(a.run(`hasSketch('${id}')`), id + " sketch");
+    assert.ok(a.run(`!!EXTIPS['${id}'] && EXTIPS['${id}'][0].length===3 && EXTIPS['${id}'][1].length===3`), id + " cues");
+    for (const lg of ["de", "en"]) assert.ok(a.run(`S.profile.lang='${lg}';doseTxt('${id}',{key:'plyo',min:6,items:[]}).length>4`), id + " dose " + lg);
+  }
+  a.run("S.profile.lang='de'");
+  assert.equal(a.run("EX['plyo.hop_chamber'].de"), "Einbeinsprung mit Chamber (Knie hoch)");
+  // allowed drills per unit: exactly the table, boxing never a kick, check only with leg kicks, take-offs only in taekwondo
+  for (const [sp, sty, disc] of PLYO_UNITS)
+    for (const lv of [0, 1, 2]) {
+      plyoSet(a, sp, sty, disc, lv);
+      const ok = JSON.parse(a.run(`(()=>{buildSport='${sp}';buildDisc=${disc ? `'${disc}'` : "null"};unitStyle=${sty ? `'${sty}'` : "null"};const r=EX.filter(e=>e.cat==='plyo'&&okEx(e,'gym',['rope'])).map(e=>e.key);buildSport=null;buildDisc=null;unitStyle=null;return JSON.stringify(r)})()`));
+      const tag = sp === "boxing" ? "box" : sty || disc;
+      for (const id of ok) {
+        assert.ok(a.run(`PLYO['${id}'].sp.split(' ').includes('${tag}')`), `${tag}: ${id}`);
+        assert.ok(a.run(`EX['${id}'].lvl`) <= lv, `${tag} L${lv}: ${id}`);
+      }
+      if (sp === "boxing") for (const k of ["plyo.hop_check", "plyo.hop_chamber", "plyo.hop_kick", "plyo.takeoff", "plyo.switch_jumps"]) assert.ok(!ok.includes(k), k);
+      if (sp === "taekwondo") for (const k of ["plyo.bounce_slip", "plyo.bounce_roll", "plyo.hop_check", "plyo.shuffle"]) assert.ok(!ok.includes(k), k);
+      if (lv === 0) assert.deepEqual(ok.filter((k) => a.run(`EX['${k}'].lvl`) > 0), []);
+      assert.equal(ok.includes("plyo.hop_check"), lv >= 1 && ["kl", "k1"].includes(disc), `check ${tag} L${lv}`);
+      assert.equal(ok.includes("plyo.takeoff"), lv >= 2 && sp === "taekwondo");
+    }
+  // knee or ankle limits: no drill at all
+  for (const lim of ["knee", "ankle"]) {
+    plyoSet(a, "kickboxing", "", "k1", 2, `S.profile.limits=['${lim}'];`);
+    assert.equal(a.run(`EX.filter(e=>e.cat==='plyo'&&okEx(e,'gym',['rope'])).length`), 0, lim);
+  }
+});
+test("17.11.2026 Federn & Antritt in the plan: strength first while fresh, one command round in conditioning, one drill before the circuit of technique & conditioning, never over the cap", () => {
+  const a = app();
+  const seen = { S: 0, K: 0, C: 0 };
+  for (const [sp, sty, disc] of PLYO_UNITS)
+    for (const lv of [0, 2]) {
+      plyoSet(a, sp, sty, disc, lv);
+      const cap = [60, 100, 140][lv];
+      for (const ty of "SKC")
+        for (let i = 0; i < 14; i++) {
+          const { s, load } = plyoBuild(a, ty, sp, sty, disc);
+          assert.ok(load <= cap, `${sp}/${sty || disc} L${lv} ${ty}: load ${load} > ${cap}`);
+          const pl = s.blocks.flatMap((b, bi) => b.items.map((it) => ({ ...it, bi, key: b.key }))).filter((it) => it.id && it.id.startsWith("plyo."));
+          if (!pl.length) continue;
+          seen[ty]++;
+          if (ty === "S") {
+            assert.equal(s.blocks[1].key, "plyo", "right after the warm-up");
+            assert.ok(pl.every((it) => it.key === "plyo" && a.run(`PLYO['${it.id}'].use`) === "pow"));
+            assert.ok(pl.length <= 2);
+          }
+          if (ty === "K") {
+            assert.equal(pl.length, 1);
+            const rb = s.blocks.find((b) => b.rounds);
+            assert.equal(rb.items[1].id, pl[0].id, "the second round");
+            assert.equal(rb.items[1].k, "ex");
+            assert.equal(a.run(`PLYO['${pl[0].id}'].use`), "cmd");
+          }
+          if (ty === "C") {
+            assert.equal(pl.length, 1);
+            const bi = s.blocks.findIndex((b) => b.key === "plyo");
+            assert.equal(s.blocks[bi + 1].key, "cond", "before the conditioning circuit");
+          }
+        }
+    }
+  for (const ty of "SKC") assert.ok(seen[ty] > 10, `${ty} gets drills now and then (${seen[ty]})`);
+  // children and deload weeks: no jump block in strength units
+  plyoSet(a, "kickboxing", "", "lc", 1, "S.profile.birthYear=2016;");
+  for (let i = 0; i < 12; i++) assert.ok(!plyoBuild(a, "S", "kickboxing", "", "lc").s.blocks.some((b) => b.key === "plyo"));
+  plyoSet(a, "kickboxing", "", "lc", 1);
+  for (let i = 0; i < 12; i++) assert.ok(!plyoBuild(a, "S", "kickboxing", "", "lc", "2026-11-02").s.blocks.some((b) => b.key === "plyo"), "deload week");
+});
+test("17.11.2026 focus Federn & Antritt: guiding sentence, bounce rounds with commands, closing block of jump drills within the cap – not with knee or ankle limits", () => {
+  const a = app();
+  for (const lg of ["de", "en"]) assert.ok(a.run(`S.profile.lang='${lg}';t('cues').bounce.length>20 && t('blkLbl').plyo.length>5`));
+  a.run("S.profile.lang='de'");
+  for (const [sp, sty, disc] of PLYO_UNITS) {
+    plyoSet(a, sp, sty, disc, 2, "chooseFocus=((f)=>(nb)=>nb?f(nb):BROAD.find(x=>x.id==='bounce'))(chooseFocus);");
+    const { s, load } = plyoBuild(a, "T", sp, sty, disc);
+    assert.equal(s.theme, "bounce");
+    const rb = s.blocks.find((b) => b.rounds);
+    assert.ok(rb.items.filter((r) => r.k === "bounce").length >= 2, `${sp}: bounce rounds`);
+    assert.ok(rb.items.filter((r) => r.k === "bounce").every((r) => !r.combo));
+    const last = s.blocks.find((b) => b.key === "plyo");
+    assert.ok(last && last.lbl === "plyo" && last.items.every((it) => a.run(`PLYO['${it.id}'].use`) === "pow"), `${sp}: closing block`);
+    assert.ok(load <= 140);
+    assert.equal(a.run(`cmdOf({k:'bounce'})`), "round");
+    assert.equal(a.run(`blkName(${JSON.stringify(last)})`), "Federn & Antritt");
+    assert.equal(a.run(`roundInfo(${JSON.stringify(rb.items.find((r) => r.k === "bounce"))}).title`), "Federn & Antritt");
+  }
+  // knee/ankle limits: the focus never comes up (without them it does)
+  const b = app();
+  plyoSet(b, "kickboxing", "", "lc", 2);
+  // the balance over the last units brings every focus up in turn
+  const rot = () => b.run("(()=>{const f=(chooseFocus()||{}).id;S.sessions['f'+Object.keys(S.sessions).length]={theme:f,created:Object.keys(S.sessions).length+1,blocks:[]};return f})()");
+  assert.ok(Array.from({ length: 60 }, rot).includes("bounce"));
+  plyoSet(b, "kickboxing", "", "lc", 2, "S.profile.limits=['ankle'];");
+  assert.ok(!Array.from({ length: 60 }, rot).includes("bounce"));
+});
+function cmdApp(voice = true) {
+  const a = app();
+  a.run(`window.speechSynthesis={speak(){},cancel(){},resume(){},speaking:false,pending:false,paused:false,getVoices:()=>[]};globalThis.speechSynthesis=window.speechSynthesis;globalThis.SpeechSynthesisUtterance=function(t){this.text=t};
+    S.profile.lang='de';S.profile.voice=${voice};S.profile.level=2;S.profile.sport='kickboxing';globalThis.SAID=[];say=(x)=>SAID.push(x);`);
+  return a;
+}
+test("17.11.2026 commands in the exercise timer: only in the work phases, shown and said the same, paused = silent, announcements off = only shown with a signal", () => {
+  let a = cmdApp(true);
+  a.run(`ui.sel='x';ui.tab='session';S.sessions.x={date:'2026-11-02',type:'C',sport:'kickboxing',min:30,eq:[],blocks:[{key:'plyo',lbl:'plyo',min:4,items:[{kind:'ex',id:'plyo.stance_bounce'}]}]};ui.workout={ds:'x',block:0};S.sessions.x.flow={block:0};exerciseTimerAction('start',{key:'0.0'});`);
+  // 3 × (30 s / 30 s rest): commands in the 30 s, never in the rests
+  const log = [];
+  for (let s = 0; s < 180; s++) {
+    const before = a.run("SAID.length");
+    a.advance(1000);
+    const ph = a.run("(ui.exerciseTimer.phases[ui.exerciseTimer.index]||{}).label||''");
+    const now = a.run("SAID.length");
+    if (now > before) log.push({ ph, said: a.run("SAID[SAID.length-1]"), shown: a.node("cmdcall").textContent, rem: a.run("ui.exerciseTimer.remainingMs") });
+  }
+  assert.ok(log.length >= 12, `${log.length} commands in 90 s of work`);
+  for (const x of log) {
+    assert.match(x.ph, /^Belastung|^Arbeit|^Work/, JSON.stringify(x));
+    assert.ok(["Vor", "Zurück", "Stopp", "Wechsel"].includes(x.said), x.said);
+    assert.equal(x.shown, x.said, "the same word on the screen");
+    assert.ok(x.rem > 2000);
+  }
+  for (let i = 1; i < log.length; i++) assert.ok(log[i].said !== log[i - 1].said || log[i].ph !== log[i - 1].ph, "never the same twice in a row");
+  // pause: no more commands, the screen clears
+  a = cmdApp(true);
+  a.run(`ui.sel='x';ui.tab='session';S.sessions.x={date:'2026-11-02',type:'C',sport:'kickboxing',min:30,eq:[],blocks:[{key:'plyo',lbl:'plyo',min:4,items:[{kind:'ex',id:'plyo.react'}]}]};ui.workout={ds:'x',block:0};S.sessions.x.flow={block:0};exerciseTimerAction('start',{key:'0.0'});`);
+  a.advance(8000);
+  assert.ok(a.run("SAID.length") >= 1);
+  a.run("exerciseTimerAction('toggle')");
+  const n = a.run("SAID.length");
+  a.advance(30000);
+  assert.equal(a.run("SAID.length"), n, "paused: silent");
+  assert.equal(a.node("cmdcall").textContent, "");
+  a.run("exerciseTimerAction('toggle')");
+  a.advance(8000);
+  assert.ok(a.run("SAID.length") > n, "goes on after resume");
+  // a drill without commands and a rest-only timer: nothing
+  a = cmdApp(true);
+  a.run(`ui.sel='x';ui.tab='session';S.sessions.x={date:'2026-11-02',type:'S',sport:'kickboxing',min:30,eq:[],blocks:[{key:'plyo',lbl:'plyo',min:4,items:[{kind:'ex',id:'plyo.pogo_jumps'}]}]};ui.workout={ds:'x',block:0};S.sessions.x.flow={block:0};exerciseTimerAction('start',{key:'0.0'});`);
+  a.advance(180000);
+  assert.equal(a.run("SAID.length"), 0);
+  // announcements off: shown with a short signal, nothing said
+  a = cmdApp(false);
+  a.run(`ui.sel='x';ui.tab='session';S.sessions.x={date:'2026-11-02',type:'C',sport:'kickboxing',min:30,eq:[],blocks:[{key:'plyo',lbl:'plyo',min:4,items:[{kind:'ex',id:'plyo.shuffle'}]}]};ui.workout={ds:'x',block:0};S.sessions.x.flow={block:0};exerciseTimerAction('start',{key:'0.0'});`);
+  let shown = 0;
+  const beeps0 = a.calls.filter((c) => c[0] === "beep").length;
+  for (let s = 0; s < 30; s++) {
+    const t0 = a.node("cmdcall").textContent;
+    a.advance(1000);
+    if (a.node("cmdcall").textContent && a.node("cmdcall").textContent !== t0) shown++;
+  }
+  assert.equal(a.run("SAID.length"), 0);
+  assert.ok(shown >= 2);
+  assert.ok(a.calls.filter((c) => c[0] === "beep").length - beeps0 >= shown);
+});
+test("17.11.2026 commands in the round timer: bounce and command rounds, sport words (boxing no switch, taekwondo its kicks), none in the rest, the 10-second call or the last 2 s", () => {
+  for (const [sp, sty] of [["boxing", ""], ["kickboxing", ""], ["taekwondo", "wt"]]) {
+    const a = cmdApp(true);
+    a.run(`S.profile.sport='${sp}';${sty ? `S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'${sty}'});` : ""}
+      ui.sel='x';ui.tab='session';S.sessions.x={date:'2026-11-02',type:'T',sport:'${sp}',${sty ? `tstyle:'${sty}',` : ""}min:30,eq:[],blocks:[{key:'main',rounds:true,w:60,b:30,items:[{kind:'round',k:'shadow',combo:['jab','cross']},{kind:'round',k:'bounce'}]}]};
+      callTick=()=>{};ui.timer=newTimer('x');timerGo();`);
+    const log = [];
+    for (let s = 0; s < 200; s++) {
+      const before = a.run("SAID.length");
+      a.advance(1000);
+      if (a.run("SAID.length") > before) log.push({ round: a.run("ui.timer.round"), phase: a.run("ui.timer.phase"), left: a.run("ui.timer.left"), said: a.run("SAID[SAID.length-1]"), shown: a.run("ui.timer.cmdTxt") });
+    }
+    assert.ok(log.length >= 10, `${sp}: ${log.length}`);
+    for (const x of log) {
+      assert.equal(x.round, 2, `${sp}: only the bounce round – ${JSON.stringify(x)}`);
+      assert.equal(x.phase, "work");
+      assert.ok(x.left > 2 && !(x.left >= 9 && x.left <= 11), JSON.stringify(x));
+    }
+    const words = log.map((x) => x.said).join(" | ");
+    if (sp === "boxing") assert.doesNotMatch(words, /Wechsel|Frontkick|Chagi/, words);
+    if (sp === "taekwondo") assert.doesNotMatch(words, /\bJab\b|Cross/, words);
+    if (sp !== "boxing") assert.match(words, /Wechsel|Vor|Zurück/);
+    // shown and said come from one entry: the same words, on the screen separated by " · "
+    for (const x of log) assert.equal(x.shown.replace(/ · /g, ", "), x.said, JSON.stringify(x));
+  }
+});
+test("17.11.2026 commands go through the same speech path: written out, voice switch respected", () => {
+  const a = app();
+  a.run(`globalThis.ENG=[];globalThis.SpeechSynthesisUtterance=function(t){this.text=t};globalThis.speechSynthesis={speaking:false,pending:false,paused:false,cancel(){},resume(){},getVoices:()=>[],speak(u){ENG.push(u.text)}};window.speechSynthesis=speechSynthesis;S.profile.lang='de';S.profile.voice=true;`);
+  a.run("cmdSay(cmdPick('slip',{sport:'boxing'},''))");
+  assert.equal(a.run("ENG.length"), 1);
+  a.run("S.profile.voice=false;cmdSay({show:'Vor',speak:'Vor'})");
+  assert.equal(a.run("ENG.length"), 1, "voice off: nothing reaches the engine");
+});
+
 // ---- 16.11.2026 one spoken wording everywhere: the texts that actually reach the speech engine ----
 function engineApp(lang = "de", { failFor = [] } = {}) {
   const a = app();

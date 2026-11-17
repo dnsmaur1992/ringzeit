@@ -73,4 +73,9 @@ export const BOX_NO_EX = new Set([
   "mob.slow_motion_kicks",
   "mob.kick_holds",
   "cool.adductors_and_splits",
+  // Federn & Antritt: check, chamber, kicks and take-offs for jump kicks
+  "plyo.hop_check",
+  "plyo.hop_chamber",
+  "plyo.hop_kick",
+  "plyo.takeoff",
 ]);

@@ -389,6 +389,7 @@
   function okEx(e, loc, eq) {
     if (isBox() && BOXT.BOX_NO_EX.has(e.key)) return false; // no kick exercises in boxing
     if (isTkd() && TKDT.NO_EX.has(e.key)) return false; // no kickboxing technique exercises in taekwondo (own plans: 6b/6c)
+    if (e.cat === "plyo" && !plyoFits(e.key)) return false; // Federn & Antritt: only the drills of the sport and discipline
     const av = S.profile.limits.map((l) => AV[l]).join("");
     // the fitness gym ("studio") also allows every indoor hall exercise – except those that need a long free run
     if (loc === "studio" ? !/[gf]/.test(e.locs) || NO_STUDIO.has(e.key) : !e.locs.includes(loc[0])) return false;
@@ -552,6 +553,8 @@
   const BROAD = [
     { id: "foot", tag: "mix", kinds: "foot" },
     { id: "def", tag: "mix", kinds: "evade" },
+    // Federn & Antritt (Betreiber 17.11.2026): bounce rounds with commands, the closing block from the jump drills
+    { id: "bounce", tag: "mix", kinds: "bounce" },
   ];
   /* tactical foci (Betreiber 16.11.2026): against a taller or a smaller opponent, countering kicks with punches and
      punches with kicks, against the same or the opposite stance. Taller/smaller from the start, the others from
@@ -650,7 +653,7 @@
       );
     }
     // technique units also get the tactical foci; conditioning/sparring in taekwondo keep a kick (no kinds changed)
-    const ok = noBroad ? base : [...base, ...tacticFoci(), ...BROAD],
+    const ok = noBroad ? base : [...base, ...tacticFoci(), ...BROAD.filter((th) => th.id !== "bounce" || !kneeAnk())],
       p = S.profile,
       focus = techniqueLevel() === 0 || isTkd() ? "bal" : p.focus,
       recent = Object.values(S.sessions)
@@ -669,6 +672,7 @@
   const focusOf = (id) => [...THEMES, ...BOXT.BOX_THEMES, ...BROAD, ...Object.values(TACTIC).flat()].find((x) => x.id === id) || (id && id.startsWith("k_") ? { id, kick: id.slice(2) } : null);
   /* strength for the technique of the focus: only catalogue exercises of its list that fit place, equipment and limits */
   function focusEx(theme, loc, eq, used, n = 3) {
+    if (theme && theme.id === "bounce") return plyoPick(n, loc, eq, used, "pow");
     const keys = FOCUS_STR[theme && theme.id] || [],
       pool = shuffle(EX.filter((e) => keys.includes(e.key) && okEx(e, loc, eq) && !used.has(e.id)));
     const out = pool.slice(0, n);
@@ -845,6 +849,12 @@
       "Slip & counter",
       "Stell dir einen Angriff vor, weiche aus und kontere sofort mit der Kombination. Kopf bewegen, Hände oben.",
       "Picture an attack, evade it and counter straight away with the combination. Move your head, hands up.",
+    ],
+    bounce: [
+      "Federn & Antritt",
+      "Bounce & burst",
+      "In der Auslage locker federn. Auf jedes Kommando sofort reagieren, danach direkt zurück ins Federn.",
+      "Bounce lightly in your stance. React at once to every command, then straight back into the bounce.",
     ],
     rope: [
       "Seil-Runde",
@@ -2270,9 +2280,13 @@
     const supSets = load.deload || work === "phys" ? "2×" : "3×";
     let theme = null;
     if (type === "S") {
+      // Federn & Antritt (Betreiber 17.11.2026): in about every second strength unit a short block of jumps first, while fresh
+      const plyo = !load.deload && ageGroup() !== "kids" && Math.random() < 0.5 ? plyoPick(2, loc, eq, used, "pow") : [],
+        plyoMin = 3 * plyo.length;
+      if (plyo.length) blocks.push({ key: "plyo", lbl: "plyo", min: plyoMin, items: plyo });
       // boxing: a longer strength-endurance finisher (≈ 24 / 15 min of 39, 7b B7)
-      const main = Math.round(rest * (box ? 24 / 39 : 0.7)),
-        fin = rest - main,
+      const main = Math.round((rest - plyoMin) * (box ? 24 / 39 : 0.7)),
+        fin = rest - plyoMin - main,
         light = fitnessLevel() === 0 || young(),
         B = t("blk").sets;
       if (bk === "pow" && bi.st > 0 && !load.deload) {
@@ -2343,6 +2357,11 @@
         })),
       });
       const cb = blocks[blocks.length - 1];
+      // Federn & Antritt: now and then one round is a footwork drill with commands (not in the fixed rounds of a block)
+      if (!br && cb.items.length >= 3 && Math.random() < 0.6) {
+        const d = plyoPick(1, loc, eq, used, "cmd");
+        if (d.length) cb.items[1] = { ...cb.items[1], id: d[0].id };
+      }
       if (br && br.cue) cb.items.forEach((it, i) => (!br.n || i >= cb.items.length - br.n) && (it.cue = br.cue));
       // a lot of time left after the fixed rounds: strength endurance before the core work
       if (core > coreMax + 5) {
@@ -2450,7 +2469,12 @@
         notes.push(t("examNote")(beltName(stageBelt(targetStage())), pr.ok, pr.n));
       }
       if (type === "T") {
-        if (tItems.length && sup > 0) blocks.push({ key: "str", lbl: "tstr", min: sup, items: tItems.slice(0, sup >= 7 ? 3 : sup >= 4 ? 2 : 1), sets: supSets });
+        if (tItems.length && sup > 0)
+          blocks.push(
+            theme && theme.id === "bounce"
+              ? { key: "plyo", lbl: "plyo", min: sup, items: tItems.slice(0, sup >= 7 ? 3 : sup >= 4 ? 2 : 1) }
+              : { key: "str", lbl: "tstr", min: sup, items: tItems.slice(0, sup >= 7 ? 3 : sup >= 4 ? 2 : 1), sets: supSets },
+          );
       } else {
       const supItems =
         type === "C"
@@ -2460,9 +2484,13 @@
             : [...pickEx("cond", 2, loc, eq, used), ...pickEx("str", 2, loc, eq, used)];
       // WT technique: strength 8 + active flexibility 6 instead of strength 14 (docs/taekwondo-concept.md 6.2, 7b B6)
       const amob = isTkd() && tkdUnitStyle() === "wt" && type === "T" && sup >= 10 ? Math.round((sup * 6) / 14) : 0;
+      // Federn & Antritt: technique & conditioning now and then gets one drill before its conditioning circuit
+      const cPlyo = type === "C" && sup >= 8 && Math.random() < 0.6 ? plyoPick(1, loc, eq, used) : [],
+        cPlyoMin = cPlyo.length ? 4 : 0;
+      if (cPlyo.length) blocks.push({ key: "plyo", lbl: "plyo", min: cPlyoMin, items: cPlyo });
       blocks.push({
         key: type === "C" ? "cond" : "str",
-        min: sup - amob,
+        min: sup - amob - cPlyoMin,
         items: amob ? supItems.slice(0, 3) : supItems,
         sets: supSets,
       });

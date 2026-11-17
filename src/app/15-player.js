@@ -541,6 +541,8 @@
         h += `<div class="pcard${done ? " done" : ""}">${small ? `<small>${esc(small)}</small>` : ""}<div class="pduo">${side("a", st.ni)}${side("b", bk)}</div></div>`;
       } else {
       h += `<div class="pcard${done ? " done" : ""}">${sk ? `<div class="fsk">${sketchSvg(EX[it.id].key, true)}</div>` : ""}${small ? `<small>${esc(small)}</small>` : ""}<b>${esc(stepTitle(sess, st))}${done ? " ✓" : ""}</b>${dose ? `<span class="dose">${esc(dose)}</span>` : ""}${desc ? `<p>${esc(desc)}</p>` : ""}`;
+      // Federn & Antritt: the command of the moment, big (the same word that is said)
+      if (st.kind === "timed" && cmdOf(it)) h += `<div class="ftcall cmdcall" id="cmdcall" aria-live="polite">${tm && tm.player === i && tm.running ? esc(tm.cmdTxt || "") : ""}</div>`;
       if (st.lap != null)
         h += `<ol class="plap">${b.items.map((x, k) => `<li class="${k === st.ni ? "on" : ""}">${esc(itemTitle(sess, st.bi, k))}</li>`).join("")}</ol>`;
       h += `</div>`;
@@ -771,6 +773,7 @@
     }
     if (EX[b.items[ni].id]?.cat === "str" && !["warm", "cool"].includes(b.key))
       h += `<button type="button" class="btn ghost" data-exercise-timer="rest" data-key="${key}">${W.restStart} · 1:00</button>`;
+    if (active && cmdOf(b.items[ni])) h += `<div class="ftcall cmdcall" id="cmdcall" aria-live="polite">${tm.running ? esc(tm.cmdTxt || "") : ""}</div>`;
     if (active)
       h += `<div class="exercise-countdown" role="timer"><span id="exercisePhase"></span><strong id="exerciseClock">${fmt(Math.ceil((tm.remainingMs ?? 0) / 1000))}</strong><div class="minirow"><button type="button" class="btn" data-exercise-timer="toggle" id="exerciseToggle"></button><button type="button" class="btn sec" data-exercise-timer="reset">${W.reset}</button></div></div>`;
     return h + "</div>";
@@ -895,6 +898,7 @@
     }
     if (tm.running) tm.remainingMs = Math.max(0, tm.endAt - now);
     if (changed) resumeSave(true);
+    cmdTickExercise(tm, changed); // Federn & Antritt: commands in the work phases
     playerTimerTick(tm, changed && tm.done);
     if (!timerVisible()) return;
     if (changed && ui.workout?.player && !ui.workout.list) renderWorkout();
@@ -931,6 +935,7 @@
       toggle = document.getElementById("exerciseToggle");
     if (clock) clock.textContent = fmt(Math.ceil((tm.remainingMs || 0) / 1000));
     if (phase) phase.textContent = tm.done ? workoutText().done : tm.phases[tm.index]?.label || "";
+    cmdShow(tm.running && !tm.done ? tm.cmdTxt : "");
     if (toggle) {
       toggle.textContent = tm.running ? workoutText().pause : workoutText().continue;
       toggle.disabled = tm.done;

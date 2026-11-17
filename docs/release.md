@@ -205,3 +205,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 16.11. | Leitsatz zum Schwerpunkt als eigene Seite zwischen Aufwärmen und Hauptteil (angezeigt und angesagt) bei jeder Einheit mit Technik; Ansagen sprechen Abkürzungen aus (Sekunden, Minuten, Wiederholungen …) | 282 |
 | 16.11. | Taktische Schwerpunkte: größere/kleinere Gegner, Kick mit Schlag und Schlag mit Kick kontern, gleiche/versetzte Auslage | 283 |
 | 16.11. | Eine Sprachansage für alle Bereiche: ausgeschriebene Einheiten/Abkürzungen auch in Winter-Arc-Mobility, Atmen/Meditation, freiem Timer, Stimmprobe und bei Ersatzstimmen; Anzeige bleibt kurz | 289 |
+| 17.11. | Federn & Antritt: 19 Drills für Stellung, Beinarbeit, Bewegungsmuster und Sprunggelenkskraft (je Sportart/Disziplin/Niveau), mit Skizze, Formtipps und Dosis; in Kraft, Kondition, Technik & Kondition und als eigener Schwerpunkt; Kommandos im Übungs- und Rundentimer (angezeigt und angesagt) | 295 |

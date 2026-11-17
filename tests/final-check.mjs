@@ -195,7 +195,7 @@ const note = (id, ok, txt) => R.push(`${ok ? "OK    " : "BEFUND"} ${id}: ${txt}`
   for (const [sp, sty] of [["kickboxing", ""], ["boxing", ""], ["taekwondo", "wt"], ["taekwondo", "itf"]])
     for (const ty of "TSPKCM") for (const loc of ["gym", "home", "outdoor"]) for (let k = 0; k < 3; k++) {
       a.run(`S.profile.sport='${sp}';S.profile.birthYear=1995;S.profile.level=${k};`);
-      const res = JSON.parse(a.run(`(()=>{const s=buildSession('2026-11-02','${ty}','${loc}',['bag','rope','partner','weights','band','kb'],{sport:'${sp}'${sty ? `,tstyle:'${sty}'` : ""}});S.sessions.q=s;const o=[];s.blocks.forEach((b,bi)=>{if(b.rounds)return;b.items.forEach((it,ni)=>{const tm=exerciseTiming(s,bi,ni);if(!tm||it.kind!=='ex')return;const work=tm.phases.filter(p=>!p.prep&&!/Pause|Wechsel|Rest|Change|Seite|Side/i.test(p.label));const txt=doseTxt(it.id,b);const m=String(txt).match(/(\\d+)\\s*[×x]\\s*(\\d+)\\s*s\\b/);if(m&&work.length){const secs=work.map(p=>p.seconds);if(+m[1]!==work.length||!secs.includes(+m[2]))o.push(it.id+' | '+txt+' | timer '+work.length+'×'+secs[0]);}});});return JSON.stringify(o)})()`));
+      const res = JSON.parse(a.run(`(()=>{const s=buildSession('2026-11-02','${ty}','${loc}',['bag','rope','partner','weights','band','kb'],{sport:'${sp}'${sty ? `,tstyle:'${sty}'` : ""}});S.sessions.q=s;const o=[];s.blocks.forEach((b,bi)=>{if(b.rounds)return;b.items.forEach((it,ni)=>{const tm=exerciseTiming(s,bi,ni);if(!tm||it.kind!=='ex')return;const txt=doseTxt(it.id,b),per=/pro Bein|per leg|pro Hand|per hand|je Seite|per side/.test(txt)?2:1;const work=tm.phases.filter(p=>!p.prep&&!/Pause|Wechsel|Rest|Change/i.test(p.label)&&(per===2||!/Seite|Side/i.test(p.label)));const m=String(txt).match(/(\\d+)\\s*[×x]\\s*(\\d+)\\s*s\\b/);if(m&&work.length){const secs=work.map(p=>p.seconds);if(+m[1]*per!==work.length||!secs.includes(+m[2]))o.push(it.id+' | '+txt+' | timer '+work.length+'×'+secs[0]);}});});return JSON.stringify(o)})()`));
       n++; res.forEach((x) => bad.add(sp + ": " + x));
     }
   note("H8", bad.size === 0, `${n} Einheiten geprüft; Abweichungen Text↔Timer: ${bad.size ? [...bad].slice(0, 8).join(" ;; ") : "keine"}`);
@@ -204,7 +204,7 @@ const note = (id, ok, txt) => R.push(`${ok ? "OK    " : "BEFUND"} ${id}: ${txt}`
 {
   const a = app();
   const RX = {
-    boxing: /\bkicks?\b|Tritt|Schienbein|\bshins?\b|WAKO|Dobok|Chagi/i,
+    boxing: /\bkicks?\b|(?<!An)Tritt|Schienbein|\bshins?\b|WAKO|Dobok|Chagi/i,
     taekwondo: /Bandag|Boxhandschuh|\bwraps?\b|boxing gloves|\bJab\b|\bCross\b|Haken|\bhooks?\b|Uppercut|Low ?Kick|WAKO|Clinch/i,
     kickboxing: /Chagi|Dobok|Poomsae|\bTul\b|DBV/i,
   };

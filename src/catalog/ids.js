@@ -91,6 +91,26 @@ export const EX_KEYS = [
   "mob.kick_holds", // 85
   "mob.active_leg_raises", // 86
   "pre.short_pre_stretch", // 87
+  /* Federn & Antritt (Betreiber 17.11.2026): stance, footwork, movement patterns, spring of feet and ankles */
+  "plyo.pogo_jumps", // 88
+  "plyo.stance_bounce", // 89
+  "plyo.line_jumps", // 90
+  "plyo.boxer_skip", // 91
+  "plyo.four_square", // 92
+  "plyo.quarter_turn", // 93
+  "plyo.switch_jumps", // 94
+  "plyo.shuffle", // 95
+  "plyo.burst", // 96
+  "plyo.hop_stick", // 97
+  "plyo.hop_check", // 98
+  "plyo.hop_chamber", // 99
+  "plyo.single_pogo", // 100
+  "plyo.single_line_jumps", // 101
+  "plyo.hop_kick", // 102
+  "plyo.takeoff", // 103
+  "plyo.react", // 104
+  "plyo.bounce_slip", // 105
+  "plyo.bounce_roll", // 106
 ];
 const LEGACY = new Map(EX_KEYS.map((k, i) => [k, i]));
 /** old numeric id → stable id (anything else is returned unchanged) */

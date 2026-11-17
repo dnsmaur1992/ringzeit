@@ -631,3 +631,36 @@ genauso mit dem unveränderten Prod-Stand auf). Kein Push/Upload.
 - **Umsetzung:** Eine einzige Stelle erzeugt Äußerungen: `makeUtterance(text)` in `25-announcer.js` = `new SpeechSynthesisUtterance(spokenText(text))`. `speakUtterance` (alle Ansagen inkl. Wiederholversuch), Stimmprobe und iOS-Vorwärmen nutzen sie. Der Wiederholversuch reicht den Rohtext weiter, die Ausschreibung läuft also genau einmal je Äußerung; `spokenText` ist zusätzlich idempotent.
 - **Unverändert:** Anzeige (kurz), Stimmenwahl, Ansage-Schalter (Coach `S.profile.voice`, Entspannen `ui.relax.voice`, Mobility `S.profile.relax.voice`), Reihenfolge, Pause, Abbruch und Timer-Abgleich; Technikbegriffe, koreanische Begriffe und bereits ausgeschriebene Texte.
 - **Tests:** sechs Engine-Tests prüfen die tatsächlich an `speechSynthesis.speak` übergebenen Texte (Mobility, Atmen/Meditation, Coach/Timer-Warteschlange/freier Timer, abgeschaltete Ansagen, Ersatzstimmen, DE/EN Einzahl/Mehrzahl, Technik-/Koreanisch-Begriffe, genau eine Erzeugungsstelle im Build).
+
+## Federn & Antritt (17.11.2026)
+
+- Tests: 295 (6 neue). Beschreibung der Logik: docs/trainingslogik.md.
+
+Stellung, Beinarbeit, Bewegungsmuster und die Kraft aus Füßen und Sprunggelenken. Chamber, Check, Slippen und Abrollen
+sind Bausteine darin.
+
+- **Katalog:** 19 Drills der Kategorie `plyo` (ids.js 88–106, exercises.js), jede mit Skizze (19-sketches.js),
+  Formtipps (EXTIPS) und Dosis: Zeit-Drills über die Verschreibung (`core/prescription.js`, Text = Timer),
+  gezählte Landungen über `DOSE_TXT` (ohne Timer).
+- **Wo ein Drill hingehört:** `PLYO` in `08b-plyo.js` – Sportart/Disziplin (`box`, `lc kl fc k1`, `wt itf`),
+  Verwendung (`pow` = Sprünge/Landungen, `cmd` = Beinarbeit mit Kommandos), Belastung (gewichtete Bodenkontakte)
+  und Kommandoliste. Niveau über `lvl` des Katalogs (0: beidbeinig auf der Stelle, 1: Richtung/wechselbeinig/
+  Landungen, 2: einbeinig und reaktiv). Check nur in Kick Light und K1, Absprünge für Sprungtritte nur Taekwondo,
+  Slippen/Abrollen nur Boxen und Kickboxen. Knie- oder Sprunggelenkbeschwerden: kein Drill, kein Schwerpunkt.
+- **Obergrenze je Einheit:** 60 / 100 / 140 gewichtete Kontakte nach Technikniveau (`plyoPick`, `plyoLoad`).
+- **Einplanung:**
+  - Kraft: in etwa jeder zweiten Einheit (nicht in Entlastungswochen, nicht bei Kindern) ein Block „Federn & Antritt“
+    direkt nach dem Aufwärmen, 1–2 Drills (`pow`).
+  - Kondition: in etwa 60 % der Einheiten wird die zweite Runde ein Beinarbeits-Drill mit Kommandos (`cmd`), nicht in
+    den festen Runden eines Schwerpunktblocks.
+  - Technik & Kondition: in etwa 60 % ein Drill vor dem Konditionszirkel (eigener Block, 4 Min.).
+  - Schwerpunkt „Federn & Antritt“ (`BROAD`, Ausgleich wie die anderen): etwa die Hälfte der Runden nach dem
+    Einstieg werden Federn-&-Antritt-Runden mit Kommandos, der Abschlussblock nimmt Sprung-Drills statt Kraft.
+- **Kommandos:** `cmdTickExercise` (Übungstimer) und `cmdTickRound` (Rundentimer) rufen nur in Arbeitsphasen, frühestens
+  nach 3–4 s, nicht in den letzten 2 s und nicht zur 10-Sekunden-Ansage; Abstand nach Niveau 4–6 / 3–5 / 2–4 s, nie
+  zweimal dasselbe hintereinander. Angezeigt und gesagt kommt aus demselben Eintrag (Anzeige trennt mit „·“).
+  Gesprochen über `say` (ausgeschrieben, Stimme, Schalter); Ansagen aus: nur Anzeige und kurzer Signalton. Pause =
+  kein Tick = kein Kommando. Wörter je Sportart: Boxen ohne Auslagenwechsel und Kicks, Taekwondo mit seinen Kicks.
+- **Prüfungen:** Die Sportfremd-Prüfung (H9) und der Katalogtest lassen „Antritt“ zu („Tritt“ bleibt im Boxen
+  verboten). H8 vergleicht Sätze je Seite/Bein/Hand jetzt mit beiden Seiten des Timers. Kickbox-Vergleich neu
+  aufgezeichnet; mit abgeschalteter Neuerung ist er identisch zum vorherigen (geprüft).

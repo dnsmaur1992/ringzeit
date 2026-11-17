@@ -31,6 +31,12 @@
     "cond.strides": ["2 × 80 m", "2 × 80 m"],
     "cond.kettlebell_swings": ["15 Wdh.", "15 reps"],
     "cond.skater_jumps": ["pro Bein 10", "10 per leg"],
+    // Federn & Antritt: landings that are counted, not timed
+    "plyo.hop_stick": ["3 × 5 pro Bein · 2 s halten · 60 s Pause", "3 × 5 per leg · hold 2 s · 60 s rest"],
+    "plyo.hop_check": ["3 × 6 pro Bein · 2 s halten · 60 s Pause", "3 × 6 per leg · hold 2 s · 60 s rest"],
+    "plyo.hop_chamber": ["3 × 5 pro Bein · 2 s halten · 60 s Pause", "3 × 5 per leg · hold 2 s · 60 s rest"],
+    "plyo.hop_kick": ["3 × 4 pro Bein · 60 s Pause", "3 × 4 per leg · 60 s rest"],
+    "plyo.takeoff": ["3 × 4 pro Bein · 60 s Pause", "3 × 4 per leg · 60 s rest"],
   };
   const DOSE_FIX = { ...DOSE_TXT };
   for (const [k, rx] of Object.entries(RX)) if (k.includes(".")) DOSE_FIX[k] = [rxText(rx, "de"), rxText(rx, "en")];
@@ -68,6 +74,8 @@
     "str.single_leg_calf_raises",
     "str.single_leg_kick_hold",
     "cond.skater_jumps",
+    "plyo.single_pogo",
+    "plyo.single_line_jumps",
   ]);
   /* sprint-type items that state their own count: a block with several sets repeats it ("3 × 4 Sprints") */
   const DOSE_REPEAT = new Set(["cond.sprints", "cond.hill_sprints", "cond.strides"]);
@@ -96,6 +104,8 @@
       m = (b.sets || "").match(/^(\d+)×\s*(\d+(?:[–-]\d+)?)?/),
       n = m ? +m[1] : 3;
     if (e.cat === "pre") return fix;
+    // Federn & Antritt: the prescription (timer) or the counted landings, in every block the same
+    if (e.cat === "plyo") return fix;
     if (b.key === "warm") {
       const mins = Math.max(2, Math.round(b.min / Math.max(1, b.items.length)));
       return `${mins} ${de ? "Min." : "min"}${fix ? " · " + fix : ""}`;

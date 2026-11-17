@@ -85,6 +85,23 @@
       return `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${SK.BAND}" stroke-width="5" stroke-linecap="round"/>`;
     if (k === "towel")
       return `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#d8cfc0" stroke-width="9" stroke-linecap="round"/>`;
+    if (k === "mark") return `<line x1="${a}" y1="139" x2="${a}" y2="152" stroke="${SK.BRASS}" stroke-width="3" stroke-linecap="round"/>`;
+    /* top views in the upper right corner: four fields with their order, four directions */
+    if (k === "plus4") {
+      const n = (x, y, t) => `<text x="${x}" y="${y}" font-size="12" font-weight="600" fill="${L}" text-anchor="middle">${t}</text>`;
+      return `<line x1="180" y1="34" x2="232" y2="34" stroke="${L}" stroke-width="2.5"/><line x1="206" y1="8" x2="206" y2="60" stroke="${L}" stroke-width="2.5"/>${n(193, 52, 1)}${n(193, 25, 2)}${n(219, 25, 3)}${n(219, 52, 4)}<circle cx="193" cy="48" r="8" fill="none" stroke="${SK.BRASS}" stroke-width="2.5"/>`;
+    }
+    if (k === "dirs")
+      return (
+        [
+          [208, 30, 208, 12],
+          [208, 30, 208, 48],
+          [208, 30, 190, 30],
+          [208, 30, 226, 30],
+        ]
+          .map(([x1, y1, x2, y2]) => `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${SK.BRASS}" stroke-width="2.5" stroke-linecap="round" marker-end="url(#skHead)"/>`)
+          .join("") + `<circle cx="208" cy="30" r="3" fill="${L}"/>`
+      );
     if (k === "handle")
       return `<line x1="${a[0] - 18}" y1="${a[1]}" x2="${a[0] + 18}" y2="${a[1]}" stroke="${L}" stroke-width="4" stroke-linecap="round"/>`;
     return "";
@@ -2124,6 +2141,68 @@
         [160, 100],
         [150, 120],
       ],
+    },
+  });
+  /* ============ Federn & Antritt (Betreiber 17.11.2026): stance, footwork, movement patterns and the spring of feet
+     and ankles. Guard stance facing right, near leg in front; jumps lift the whole figure, a brass tick marks the
+     floor line, small top views show the four fields and the four directions. ============ */
+  const GUARD = { h: [126, 38], s: [120, 62], p: [114, 96], f: [138, 148], F: [100, 148], ka: [1, -0.3], KA: [1, 0], w: [136, 48], W: [138, 52], ea: [0, 1], EA: [0, 1] },
+    POGO = st({ w: [132, 92], W: [110, 92], ea: [0, 1], EA: [0, 1], f: [124, 148], F: [118, 148] }),
+    ONE = { h: [120, 36], s: [120, 60], p: [120, 94], f: [122, 148], ka: [1, 0], F: [98, 124], KA: [1, 0], w: [140, 84], W: [98, 84], ea: [0, 1], EA: [0, 1] },
+    CHAMBER = { ...GUARD, h: [110, 40], s: [114, 62], p: [114, 96], F: [108, 148], KA: [1, 0], f: [117, 104], ka: [1, 0] },
+    up = (q, dy, dx = 0) => skShift(q, dx, -dy),
+    vArrow = (x) => [
+      [x, 140],
+      [x, 112],
+    ];
+  Object.assign(SKETCH, {
+    "plyo.pogo_jumps": { a: POGO, b: { ...up(POGO, 16), f: [126, 132], F: [118, 132] }, arrow: vArrow(178) },
+    "plyo.stance_bounce": { a: GUARD, b: up(GUARD, 8), arrow: vArrow(180) },
+    "plyo.line_jumps": { a: up(POGO, 0, -24), b: up(POGO, 14, 24), props: [["mark", 120]], arrow: [[100, 128], [140, 128]] },
+    "plyo.boxer_skip": {
+      a: { ...SKETCH["cond.rope_intervals"].a, f: [124, 142], F: [116, 132], KA: [1, 0] },
+      b: { ...SKETCH["cond.rope_intervals"].a, f: [126, 132], F: [118, 142], ka: [1, 0] },
+      props: [["rope", [134, 100, 108], -30]],
+      pb: [["rope", [134, 100, 108], 176]],
+    },
+    "plyo.four_square": { a: up(POGO, 0, -14), b: up(POGO, 12, 14), props: [["plus4"]] },
+    "plyo.quarter_turn": {
+      a: GUARD,
+      b: up(st({ w: [130, 50], W: [112, 50], ea: [0, 1], EA: [0, 1] }), 6),
+      arc: [[120, 140], 26, 200, 340],
+    },
+    "plyo.switch_jumps": { a: GUARD, b: { ...up(GUARD, 10), f: [100, 138], F: [138, 138] }, arc: [[119, 138], 26, 200, 340] },
+    "plyo.shuffle": { a: up(GUARD, 0, -16), b: up(GUARD, 6, 16), arrow: [[96, 10], [150, 10]] },
+    "plyo.burst": {
+      a: up(GUARD, 0, -18),
+      b: { h: [150, 40], s: [142, 62], p: [128, 98], f: [170, 148], F: [104, 148], ka: [1, -0.3], KA: [1, 0], w: [184, 54], W: [150, 52], ea: [0, 1], EA: [0, 1] },
+      arrow: [[100, 10], [150, 10]],
+    },
+    "plyo.hop_stick": {
+      a: { ...up(ONE, 12), f: [124, 136] },
+      b: { ...ONE, h: [124, 44], s: [120, 68], p: [114, 102], ka: [1, -0.4] },
+      arrow: [[176, 112], [176, 140]],
+    },
+    "plyo.hop_check": { a: GUARD, b: { ...up(GUARD, 4), F: [104, 144], f: [138, 104], ka: [0, -1] }, arrow: vArrow(182) },
+    "plyo.hop_chamber": { a: GUARD, b: { ...up(CHAMBER, 4) }, arrow: vArrow(182) },
+    "plyo.single_pogo": { a: ONE, b: up(ONE, 14), arrow: vArrow(178) },
+    "plyo.single_line_jumps": { a: up(ONE, 0, -22), b: up(ONE, 12, 22), props: [["mark", 120]], arrow: [[100, 140], [140, 140]] },
+    "plyo.hop_kick": { a: up(CHAMBER, 6), b: SKETCH["cond.kick_intervals"].b, arrow: [[150, 140], [188, 104]] },
+    "plyo.takeoff": {
+      a: { h: [134, 54], s: [126, 76], p: [114, 106], f: [128, 148], ka: [1, -0.6], F: [92, 132], KA: [1, 0], w: [98, 104], W: [94, 100], ea: [-1, 0], EA: [-1, 0] },
+      b: { h: [124, 12], s: [122, 36], p: [120, 70], f: [118, 124], ka: [1, 0], F: [140, 98], KA: [1, -1], w: [136, 4], W: [128, 6], ea: [1, 0], EA: [1, 0] },
+      arrow: [[178, 120], [178, 70]],
+    },
+    "plyo.react": { a: GUARD, b: up(GUARD, 4, 16), props: [["dirs"]] },
+    "plyo.bounce_slip": {
+      a: GUARD,
+      b: { ...GUARD, p: [112, 100], s: [130, 70], h: [146, 54], w: [148, 58], W: [150, 62], ka: [1, -0.6] },
+      arrow: [[128, 22], [150, 46]],
+    },
+    "plyo.bounce_roll": {
+      a: GUARD,
+      b: { ...GUARD, p: [108, 110], s: [130, 90], h: [148, 82], w: [150, 76], W: [152, 80], ka: [1, -0.8], KA: [1, -0.4] },
+      arc: [[140, 74], 34, 200, 340],
     },
   });
   /* top view for self-defence in the circle */
