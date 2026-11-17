@@ -1243,6 +1243,21 @@
       applyPlan();
       return;
     }
+    // height (E8, 17.11.2026): optional, 120–230 cm, empty = none; affects only how often the opponent foci come up
+    if (ev.target.id === "pHeight") {
+      const raw = String(ev.target.value || "").trim(),
+        v = parseInt(raw, 10);
+      if (raw && !(v >= 120 && v <= 230)) {
+        ev.target.value = +S.profile.height || "";
+        return;
+      }
+      if (raw) S.profile.height = v;
+      else delete S.profile.height;
+      if (draft) draft.height = S.profile.height;
+      store.save();
+      render();
+      return;
+    }
     if (ev.target.id === "pBirth") {
       const v = ev.target.value;
       if (!validBirth(v)) {

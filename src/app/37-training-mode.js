@@ -26,7 +26,7 @@
     return {
       title: r[lg],
       // partner rounds: no long text, only the short rule (the A/B frames show the rest)
-      desc: (PARTNER_K.has(it.k) ? t("partnerNote") : roundDesc(it, lg)) + (it.six ? " " + t("sixPartner") : "") + (guardCue(it) ? " " + guardCue(it) : "") + (paceTxt(it) ? " " + paceTxt(it) : ""),
+      desc: (PARTNER_K.has(it.k) ? (it.dist ? distTxt(it, lg) + " " : "") + t("partnerNote") : roundDesc(it, lg)) + (it.six ? " " + t("sixPartner") : "") + (guardCue(it) ? " " + guardCue(it) : "") + (paceTxt(it) ? " " + paceTxt(it) : ""),
       combo: it.combo,
       item: it,
       label: it.mine ? "★ " + t("myc").lbl : undefined,

@@ -2163,9 +2163,11 @@ test("16.11.2026 tactical foci: taller/smaller opponent, kick vs punch counters,
     assert.ok(a.run(`(FOCUS_STR['${id}']||[]).length>=3`), id);
     assert.ok(a.run(`t('cues')['${id}'].length>40`), id);
   }
+  // 17.11.2026: reproducible (fewer free rounds since the Grundabdeckung, so the shares come from a fixed seed and more units)
+  seedRandom(a, 2026);
   const rounds = (sp, id, eq = ["bag"]) => {
     const out = [];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 24; i++) {
       const s = JSON.parse(a.run(`S.profile.sport='${sp}';S.profile.disc='k1';S.profile.level=1;(()=>{chooseFocus=()=>tacticFoci().find(x=>x.id==='${id}');const ss=buildSession('2026-11-02','T','gym',${JSON.stringify(eq)},{sport:'${sp}',min:60${sp === "taekwondo" ? ",tstyle:'wt'" : ""}});chooseFocus=_cf;return JSON.stringify(ss)})()`));
       assert.equal(s.theme, id);
       out.push(...s.blocks.find((b) => b.key === "main").items);
@@ -2477,6 +2479,189 @@ test("17.11.2026 commands go through the same speech path: written out, voice sw
   assert.equal(a.run("ENG.length"), 1, "voice off: nothing reaches the engine");
 });
 
+test("17.11.2026 seeded: focus order – the one that waited longest comes next, also footwork, defence and bounce; no focus twice before all others", () => {
+  const a = app();
+  for (const [sp, sty, disc] of [["kickboxing", "", "lc"], ["kickboxing", "", "fc"], ["kickboxing", "", "k1"], ["boxing", "", ""], ["taekwondo", "wt", ""], ["taekwondo", "itf", ""]]) {
+    plyoSet(a, sp, sty, disc, 1, "S.profile.focus='bal';");
+    seedRandom(a, 4242);
+    const n = a.run(`(()=>{buildSport='${sp}';buildDisc=${disc ? `'${disc}'` : "null"};unitStyle=${sty ? `'${sty}'` : "null"};const k=[...(isTkd()?tkdFoci():isBox()?BOXT.BOX_THEMES.filter(th=>!th.lvl||techniqueLevel()>=th.lvl):THEMES.filter(th=>(!th.disc||th.disc.includes(discOf()))&&(!th.lvl||techniqueLevel()>=th.lvl))),...tacticFoci(),...BROAD].length;buildSport=null;buildDisc=null;unitStyle=null;return k})()`);
+    const seq = [];
+    for (let i = 0; i < n; i++) {
+      const ds = a.run(`iso(addDays(parse('2026-11-09'),${i}))`);
+      seq.push(JSON.parse(a.run(`(()=>{const s=buildSession('${ds}','T','gym',['bag'],{sport:'${sp}'${sty ? `,tstyle:'${sty}'` : ""}${disc ? `,disc:'${disc}'` : ""}});s.created=${i + 1};S.sessions['${ds}']=s;return JSON.stringify(s.theme)})()`)));
+    }
+    assert.equal(new Set(seq).size, n, `${sp}/${sty || disc}: ${n} foci in ${n} units, each once – ${seq.join(",")}`);
+    for (const f of ["foot", "def", "bounce"]) assert.ok(seq.includes(f), `${sp}/${sty || disc}: ${f}`);
+  }
+  // a realistic week (technique, strength, conditioning, technique & conditioning): footwork, defence and bounce come in turn
+  plyoSet(a, "kickboxing", "", "k1", 1, "S.profile.focus='bal';");
+  seedRandom(a, 99);
+  const last = {}, gaps = { foot: 0, def: 0, bounce: 0 };
+  let t = 0;
+  for (let w = 0; w < 40; w++)
+    for (const [d, ty] of [[0, "T"], [2, "S"], [3, "C"], [5, "K"]]) {
+      const ds = a.run(`iso(addDays(parse('2026-11-09'),${w * 7 + d}))`);
+      const th = JSON.parse(a.run(`(()=>{const s=buildSession('${ds}','${ty}','gym',['bag'],{sport:'kickboxing',disc:'k1'});s.created=${w * 10 + d + 1};S.sessions['${ds}']=s;return JSON.stringify(s.theme||null)})()`));
+      if (ty !== "T") continue;
+      t++;
+      if (th in gaps) {
+        if (last[th]) gaps[th] = Math.max(gaps[th], t - last[th]);
+        last[th] = t;
+      }
+    }
+  for (const f of ["foot", "def", "bounce"]) {
+    assert.ok(last[f], `${f} comes up`);
+    assert.ok(gaps[f] <= 25, `${f}: longest gap ${gaps[f]} technique units`);
+  }
+});
+test("17.11.2026 focus order keeps 'more boxing/kicks' and the own build: preferred side and the fitting opponent focus about twice as often", () => {
+  const a = app();
+  const count = (extra, seed) => {
+    plyoSet(a, "kickboxing", "", "lc", 1, extra);
+    seedRandom(a, seed);
+    const c = {};
+    for (let i = 0; i < 160; i++) {
+      const ds = a.run(`iso(addDays(parse('2026-11-09'),${i}))`);
+      const th = JSON.parse(a.run(`(()=>{const s=buildSession('${ds}','T','gym',['bag'],{sport:'kickboxing',disc:'lc'});s.created=${i + 1};S.sessions['${ds}']=s;return JSON.stringify(s.theme)})()`));
+      const tag = a.run(`(focusOf(${JSON.stringify(th)})||{}).tag||''`);
+      c[th] = (c[th] || 0) + 1;
+      c["#" + tag] = (c["#" + tag] || 0) + 1;
+    }
+    return c;
+  };
+  const box = count("S.profile.focus='box';", 1), kick = count("S.profile.focus='kick';", 1);
+  assert.ok(box["#hand"] > kick["#hand"] * 1.2 && kick["#kick"] > box["#kick"] * 1.2, JSON.stringify([box["#hand"], kick["#hand"], box["#kick"], kick["#kick"]]));
+  // tall for the class (182 cm, class −67 kg → index 44.8): the smaller opponent about twice as often as the taller one
+  const W = "S.profile.focus='bal';S.weights=[{date:'2026-11-01',kg:79.7}];S.profile.comps=[{date:'2027-02-27',kind:'comp',wc:67}];";
+  assert.deepEqual(JSON.parse(a.run(`(()=>{${W}S.profile.height=182;return JSON.stringify(buildOf())})()`)), { pi: 44.8, kg: 67, cls: true, k: "tall" });
+  const tall = count(W + "S.profile.height=182;", 5);
+  assert.ok(tall.shortOpp >= 1.6 * tall.tallOpp, JSON.stringify([tall.shortOpp, tall.tallOpp]));
+  const short = count(W + "S.profile.height=165;", 5);
+  assert.ok(short.tallOpp >= 1.6 * short.shortOpp, JSON.stringify([short.tallOpp, short.shortOpp]));
+  const none = count("S.profile.focus='bal';delete S.profile.height;", 5);
+  assert.ok(Math.abs(none.tallOpp - none.shortOpp) <= 2, "no height: no shift");
+});
+test("17.11.2026 height in the profile: optional, 120–230 cm, estimate shown only with a weight or class; empty removes it", async () => {
+  const a = app();
+  a.run("S.profile.lang='de';S.weights=[];S.profile.comps=[];ui.tab='profile';ui.profSec='me';");
+  await a.emit("change", { id: "pHeight", value: "182" });
+  assert.equal(a.run("S.profile.height"), 182);
+  assert.match(a.run("profPersonHtml(S.profile)"), /Körpergröße \(freiwillig\)[\s\S]*fehlt noch ein Gewicht/);
+  a.run("S.weights=[{date:'2026-11-01',kg:79.7}]");
+  assert.match(a.run("profPersonHtml(S.profile)"), /Schätzung: durchschnittlich für dein Gewicht \(79\.7 kg\)/);
+  a.run("S.profile.comps=[{date:'2027-02-27',kind:'comp',wc:67}]");
+  assert.match(a.run("profPersonHtml(S.profile)"), /Schätzung: eher groß für deine Klasse \(67 kg\)/);
+  await a.emit("change", { id: "pHeight", value: "99" });
+  assert.equal(a.run("S.profile.height"), 182, "out of range: kept");
+  await a.emit("change", { id: "pHeight", value: "" });
+  assert.equal(a.run("S.profile.height"), undefined);
+  assert.equal(a.run("buildOf()"), null);
+  assert.doesNotMatch(a.run("profPersonHtml(S.profile)"), /Schätzung/);
+});
+test("17.11.2026 new planning logic: untouched planned units are rebuilt once with the focus order, begun ones stay", () => {
+  const a = app();
+  a.setDate("2026-11-09");
+  a.run("S.profile.days=[0,2,4];S.profile.planLogic=undefined;S.sessions={};S.log=[];");
+  a.run("S.sessions['2026-11-11']=buildSession('2026-11-11','T','gym',['bag'],{});S.sessions['2026-11-11'].theme='old';S.sessions['2026-11-13']=buildSession('2026-11-13','T','gym',['bag'],{});S.sessions['2026-11-13'].theme='old';S.sessions['2026-11-13'].flow={step:2};");
+  assert.equal(a.run("refreshLegacyPlans()"), true);
+  assert.notEqual(a.run("S.sessions['2026-11-11'].theme"), "old", "untouched: rebuilt");
+  assert.equal(a.run("S.sessions['2026-11-13'].theme"), "old", "begun: kept");
+  assert.equal(a.run("S.profile.planLogic"), a.run("PLAN_LOGIC"));
+  const again = a.run("JSON.stringify(S.sessions['2026-11-11'])");
+  assert.equal(a.run("refreshLegacyPlans()"), false);
+  assert.equal(a.run("JSON.stringify(S.sessions['2026-11-11'])"), again, "not again on the next start");
+});
+
+test("17.11.2026 seeded: Grundabdeckung Kickboxen – range & exit and defence in every technique unit, below 4 rounds and in technique & conditioning one in turn, the focus covers its own kind", () => {
+  const a = app();
+  const kinds = (s) => {
+    const rb = s.blocks.find((b) => b.rounds);
+    return { n: rb.items.length, dist: rb.items.filter((r) => r.dist).length, def: rb.items.filter((r) => r.k === "evade" || r.cover === "def").length, fixedDef: rb.items.filter((r) => r.cover === "def").length, items: rb.items };
+  };
+  for (const disc of ["lc", "kl", "fc", "k1"])
+    for (const lv of [0, 1, 2])
+      for (const eq of [["bag"], ["partner"]]) {
+        plyoSet(a, "kickboxing", "", disc, lv);
+        seedRandom(a, 300 + lv);
+        let lastDist = null; // alternation follows the last unit: after a range round comes the defence, and the other way
+        for (let i = 0; i < 10; i++) {
+          const ty = i % 3 === 2 ? "C" : "T",
+            min = [45, 60, 90, 30][i % 4],
+            ds = a.run(`iso(addDays(parse('2026-11-09'),${i}))`);
+          const s = JSON.parse(a.run(`(()=>{const s=buildSession('${ds}','${ty}','gym',${JSON.stringify(eq)},{sport:'kickboxing',disc:'${disc}',min:${min}});s.created=${i + 1};S.sessions['${ds}']=s;return JSON.stringify(s)})()`));
+          const k = kinds(s),
+            th = JSON.parse(a.run(`JSON.stringify(focusOf(${JSON.stringify(s.theme)})||{})`)),
+            covDist = th.kinds === "foot" || th.kinds === "bounce",
+            covDef = th.kinds === "evade" || !!th.counters || th.id === "def",
+            tag = `${disc} L${lv} ${eq} ${ty} ${min}min ${s.theme}: ${k.items.map((r) => r.k + (r.dist ? "D" : "") + (r.cover ? "C" : "")).join(" ")}`;
+          assert.equal(s.blocks.reduce((n, b) => n + b.min, 0), s.min, "minutes " + tag);
+          if (ty === "T" && k.n >= 4) {
+            if (covDist) assert.equal(k.dist, 0, "the focus covers range " + tag);
+            else assert.equal(k.dist, 1, "range " + tag);
+            if (!covDef) assert.ok(k.def >= 1, "defence " + tag);
+          } else {
+            const one = k.dist ? "dist" : k.fixedDef || (!covDef && k.def) ? "def" : null;
+            assert.ok(one || covDist || covDef, "one of them " + tag);
+            if (one && lastDist !== null && !covDist && !covDef) assert.equal(one, lastDist ? "def" : "dist", "in turn " + tag);
+          }
+          lastDist = k.dist > 0;
+          if (eq[0] === "partner") {
+            // the fixed rounds stay partner drills (focus rounds such as footwork or bounce are solo, as before)
+            assert.ok(k.items.every((r) => ["partner", "rope", "foot", "bounce"].includes(r.k)), "partner units stay partner drills " + tag);
+            const pr = k.items.filter((r) => r.combo);
+            if (pr.length > 1) assert.ok(!pr[0].react, "opening partner round without counter " + tag);
+            for (const r of k.items.filter((r) => r.cover === "def")) assert.ok(r.react, "defence round with a real attack " + tag);
+          }
+        }
+      }
+});
+test("17.11.2026 range & exit rounds fit the discipline: low-kick range only KL/K1, knee to close range only K1 (no clinch), exit first from level 1; limits and children drop them", () => {
+  const a = app();
+  const draw = (disc, lv, extra = "", theme = "null") => {
+    plyoSet(a, "kickboxing", "", disc, lv, extra);
+    seedRandom(a, 77 + lv);
+    return JSON.parse(a.run(`(()=>{buildSport='kickboxing';buildDisc='${disc}';const o=[];for(let i=0;i<400;i++)o.push(distRound(${theme}));buildSport=null;buildDisc=null;return JSON.stringify(o)})()`));
+  };
+  for (const disc of ["lc", "kl", "fc", "k1"])
+    for (const lv of [0, 1, 2]) {
+      const rs = draw(disc, lv),
+        ins = new Set(rs.map((r) => r.dist.i));
+      assert.equal(ins.has("low"), lv >= 1 && ["kl", "k1"].includes(disc), `${disc} L${lv} low`);
+      assert.equal(ins.has("knee"), lv >= 1 && disc === "k1", `${disc} L${lv} knee`);
+      for (const r of rs) {
+        if (r.dist.i === "low") assert.ok(r.combo.includes("lowk"));
+        if (r.dist.i === "knee") assert.ok(r.combo.includes("knee"));
+        assert.ok(r.combo.length >= 1 && r.combo.length <= 3);
+      }
+      assert.equal(rs.some((r) => !r.dist.o), lv >= 1, `${disc} L${lv} exit first`);
+      assert.ok(rs.filter((r) => r.dist.o).every((r) => ["back", "side", "pivot"].includes(r.dist.o)));
+    }
+  for (const lim of ["knee", "ankle"]) assert.ok(draw("k1", 2, `S.profile.limits=['${lim}'];`).every((r) => !["low", "knee"].includes(r.dist.i)), lim);
+  const kids = draw("kl", 2, "S.profile.birthYear=2016;");
+  assert.ok(kids.every((r) => r.dist.i === "jab" && ["back", "side"].includes(r.dist.o)), "children: the simple entry and exits");
+  assert.ok(draw("k1", 2, "", "{id:'shortOpp'}").every((r) => r.dist.i !== "knee"), "smaller opponent: no close range");
+  // boxing and taekwondo keep their own footwork and evasion rounds
+  for (const [sp, sty] of [["boxing", ""], ["taekwondo", "wt"]]) {
+    plyoSet(a, sp, sty, "", 1);
+    const s = plyoBuild(a, "T", sp, sty, "").s;
+    assert.ok(!s.blocks.some((b) => b.rounds && b.items.some((r) => r.k === "dist" || r.dist || r.cover)), sp);
+  }
+});
+test("17.11.2026 range & exit round: the card names entry and exit, the round call says entry, combo, exit in that order – written out", () => {
+  const a = app();
+  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.disc='kl';S.profile.level=1;");
+  const it = { kind: "round", k: "dist", combo: ["jab", "cross", "lowk"], dist: { i: "low", o: "side" } };
+  assert.match(a.run(`roundInfo(${JSON.stringify(it)}).desc`), /^Eingang: seitlich in Lowkick-Distanz · Kombination · Ausgang: seitlich raus in den Winkel\./);
+  assert.match(a.run(`roundInfo(${JSON.stringify({ ...it, dist: { i: "sideIn", o: null } })}).desc`), /^Ausgang zuerst: erst seitlich raus in den Winkel, dann aus dem Winkel angreifen\./);
+  assert.match(a.run(`roundInfo(${JSON.stringify({ ...it, k: "partner" })}).desc`), /^Eingang: seitlich in Lowkick-Distanz/);
+  a.run(`globalThis.Q=[];queueTimerSpeech=(x)=>Q.push(x);window.speechSynthesis={};globalThis.SpeechSynthesisUtterance=function(){};S.profile.voice=true;
+    ui.sel='x';S.sessions.x={date:'2026-11-02',type:'T',sport:'kickboxing',min:30,eq:[],blocks:[{key:'main',rounds:true,w:60,b:30,items:[${JSON.stringify(it)}]}]};ui.timer=newTimer('x');ui.timer.phase='prep';ui.timer.round=1;ui.timer.called=0;callTick(ui.timer);`);
+  const said = a.run("Q[0]");
+  assert.match(said, /^Runde 1\. Distanz & Ausgang\. seitlich in Lowkick-Distanz\. .*\. seitlich raus in den Winkel\.$/);
+  assert.ok(said.indexOf("Lowkick-Distanz") < said.indexOf("Jab") && said.indexOf("Jab") < said.indexOf("Winkel"));
+  assert.doesNotMatch(a.run(`spokenText(${JSON.stringify(said)})`), /·/);
+});
+
 // ---- 16.11.2026 one spoken wording everywhere: the texts that actually reach the speech engine ----
 function engineApp(lang = "de", { failFor = [] } = {}) {
   const a = app();
@@ -2757,13 +2942,20 @@ test("partner sessions: counter actions per session – Grundlage 1, Fortgeschri
   const a = app();
   const res = JSON.parse(a.run(`JSON.stringify((()=>{const out={};S.profile.disc='kl';S.profile.limits=[];S.profile.birthYear=1995;
     for(const lvl of [0,1,2]){S.profile.level=lvl;const ns=[];for(let i=0;i<150;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min:90});const rb=s.blocks.find(b=>b.rounds);
-      const pr=rb.items.filter(x=>['partner','pads','counter'].includes(x.k)&&x.combo).length;ns.push([rb.items.filter(x=>x.react).length,pr]);}out[lvl]=ns;}return out})())`));
+      const pr=rb.items.filter(x=>['partner','pads','counter'].includes(x.k)&&x.combo&&!x.dist).length;const th=focusOf(s.theme)||{};ns.push([rb.items.filter(x=>x.react).length,pr,th.id==='def'||!!th.counters,rb.items.some(x=>x.cover==='def')?1:0]);}out[lvl]=ns;}return out})())`));
+  // 17.11.2026: with the focus order every focus comes up – defence & counter and the counter foci give every partner
+  // round after the first a counter action (Teil 25); the ranges hold for all other foci
   const check = (lvl, lo, hi) => {
-    for (const [n, pr] of res[lvl]) assert.ok(n >= Math.min(lo, pr - 1) && n <= Math.min(hi, pr - 1), `level ${lvl}: ${n} of ${pr}`);
+    // 17.11.2026 Grundabdeckung: the defence round with a partner (cover) may add one counter action on top
+    for (const [n, pr, all, cv] of res[lvl])
+      if (all) assert.ok(n >= Math.max(1, pr - 1) && n <= Math.max(1, pr - 1) + cv, `level ${lvl}, counter focus: ${n} of ${pr}`);
+      else assert.ok(n >= Math.min(lo, pr - 1) && n <= Math.min(hi, pr - 1) + cv, `level ${lvl}: ${n} of ${pr}`);
+    res[lvl] = res[lvl].filter(([, , all]) => !all);
     const vals = new Set(res[lvl].map(([n]) => n));
     return vals;
   };
-  assert.deepEqual([...check(0, 1, 1)], [1]);
+  // Grundlage: one counter action; the defence round with a partner (Grundabdeckung) may add one, short units may have none left
+  assert.ok([...check(0, 1, 1)].every((v) => v <= 2) && res[0].some(([n]) => n === 1));
   const v1 = check(1, 2, 4), v2 = check(2, 3, 6);
   assert.ok(v1.has(2) && v1.has(4), "Fortgeschritten spans 2–4");
   assert.ok(v2.has(3) && [...v2].some((x) => x >= 5), "Wettkampf spans 3–6");
@@ -2778,7 +2970,7 @@ test("partner sessions build up easy → hard; counters sit on the final combos 
         const lv=pr.map(([r])=>comboLevel(r.combo));
         // allow the opening-round easing swap: compare from the second partner round on
         for(let k=2;k<lv.length;k++)if(lv[k]+0.001<lv[k-1])bad.push('order '+lv.join(','));
-        for(const [r,k] of pr){if(!r.react)continue;total++;if(k===pr[0][1])first++;if(k>=pr[Math.floor(pr.length/2)][1])late++;
+        for(const [r,k] of pr){if(!r.react)continue;total++;if(k===pr[0][1]&&pr.length>1)first++; /* a single partner round (e.g. footwork focus) may carry one */if(k>=pr[Math.floor(pr.length/2)][1])late++;
           if(r.react.mid&&(r.react.mid.at<1||r.react.mid.at>r.combo.length-2||!STRIKE.has(r.combo[r.react.mid.at-1])))bad.push('mid '+r.combo.join('-')+'@'+r.react.mid.at);}}}
     return {bad:[...new Set(bad)].slice(0,5),first,late,total}})())`));
   assert.deepEqual(res.bad, []);
@@ -4550,14 +4742,15 @@ test("14.11.2026 technique units (replaces 7b B6): no fitness add-on – a visib
         if (disc) a.run(`S.profile.disc='${disc}'`);
         const s = sess7(a, sp, "T", { st, loc, eq: i % 2 ? ["partner"] : ["bag", "rope", "weights", "bands", "bar"] });
         const tag = `${sp}/${st || disc || ""}/${loc}: ${JSON.stringify(s.blocks.map((b) => [b.key, b.lbl, b.min]))}`;
-        assert.ok(s.theme && STR[s.theme] || ["foot", "def"].includes(s.theme), "focus " + s.theme + " " + tag);
+        assert.ok(s.theme && STR[s.theme] || ["foot", "def", "bounce"].includes(s.theme), "focus " + s.theme + " " + tag);
         assert.ok(!blk(s, (b) => b.key === "cond" || b.lbl === "amob"), "no conditioning/flexibility add-on " + tag);
         const str = s.blocks.filter((b) => b.key === "str");
         assert.ok(str.length <= 1, tag);
         if (str.length) {
           assert.equal(str[0].lbl, "tstr", tag);
           assert.ok(str[0].min >= 4 && str[0].min <= 10, tag);
-          assert.ok(str[0].items.length >= 1 && str[0].items.every((it) => STR[s.theme].includes(it.id)), "only strength for the focus technique " + tag);
+          // Federn & Antritt: lower-leg strength when the bounce rounds used the cap (17.11.2026)
+          assert.ok(str[0].items.length >= 1 && str[0].items.every((it) => STR[s.theme === "bounce" ? "bounceStr" : s.theme].includes(it.id)), "only strength for the focus technique " + tag);
         }
         assert.equal(s.blocks.reduce((n, b) => n + b.min, 0), s.min, "minutes add up " + tag);
       }
@@ -4614,7 +4807,8 @@ test("14.11.2026 technique focus: always one, not shown as extra text, balanced 
   a.run("S.profile.disc='kl'");
   const ps = sess7(a, "kickboxing", "T", { eq: ["partner"], lvl: 1 }),
     pr = blk(ps, (b) => b.key === "main").items.filter((r) => ["partner", "pads", "counter"].includes(r.k) && r.combo);
-  assert.ok(pr.slice(1).every((r) => r.react), "every partner round after the first with a counter action");
+  // (the range & exit round of the Grundabdeckung, 17.11.2026, carries entry and exit instead)
+  assert.ok(pr.slice(1).filter((r) => !r.dist).every((r) => r.react), "every partner round after the first with a counter action");
   back();
   // children: only simple defences
   force("def");
@@ -5687,6 +5881,9 @@ test('release 4: upgrade refreshes untouched old previews with the same settings
   for(const progress of ["s.flow={step:0}","s.perf={'0.0':[{r:5}]}","s.checked={'0.0':true}","s.rdone=1","s.roundChecks={1:false}","localStorage.setItem(RESUME_KEY,JSON.stringify({v:1,ds:'2026-11-10'}))"]){
     const a=app();a.setDate('2026-11-09');a.run(`S=hydrate(${JSON.stringify(fixtures[0].state)});let s=S.sessions['2026-11-10'];${progress};`);
     const before=a.run("JSON.stringify(S.sessions['2026-11-10'])");
+    // 17.11.2026 (E14): a new planning logic rebuilds untouched previews once – a begun one still stays exactly as it is
+    assert.equal(a.run('refreshLegacyPlans()'),true,'the logic version is noted once');
+    assert.equal(a.run("JSON.stringify(S.sessions['2026-11-10'])"),before);
     assert.equal(a.run('refreshLegacyPlans()'),false);
     assert.equal(a.run("JSON.stringify(S.sessions['2026-11-10'])"),before);
   }

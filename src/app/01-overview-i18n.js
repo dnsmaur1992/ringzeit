@@ -102,6 +102,11 @@
       resetAsk:
         "Wirklich alles löschen? Das lässt sich nicht rückgängig machen – außer mit einer gespeicherten Sicherung.",
       pme: {
+        height: "Körpergröße (freiwillig)",
+        heightHint: "Nur für eine grobe Einordnung im Verhältnis zu deiner Gewichtsklasse. Sie ändert lediglich, wie oft „gegen größeren/kleineren Gegner“ als Schwerpunkt kommt.",
+        build: (k, kg, cls) =>
+          `Schätzung: ${k === "tall" ? "eher groß" : k === "short" ? "eher klein" : "durchschnittlich"} für ${cls ? `deine Klasse (${kg} kg)` : `dein Gewicht (${kg} kg)`}`,
+        buildNone: "Für die Einordnung fehlt noch ein Gewicht oder eine Gewichtsklasse (Verlauf bzw. Turnier).",
         sportSec: "Sport & Gürtel",
         forLbl: "Angaben für:",
         mainBadge: "Hauptsport",
@@ -1548,6 +1553,11 @@
       resetBtn: "Delete all data",
       resetAsk: "Really delete everything? This can't be undone – except with a saved backup.",
       pme: {
+        height: "Height (optional)",
+        heightHint: "Only for a rough placement relative to your weight class. It only changes how often “against a taller/smaller opponent” comes up as a focus.",
+        build: (k, kg, cls) =>
+          `Estimate: ${k === "tall" ? "rather tall" : k === "short" ? "rather short" : "average"} for ${cls ? `your class (${kg} kg)` : `your weight (${kg} kg)`}`,
+        buildNone: "A weight or a weight class is still missing for the placement (history or tournament).",
         sportSec: "Sport & belt",
         forLbl: "Details for:",
         mainBadge: "Main sport",

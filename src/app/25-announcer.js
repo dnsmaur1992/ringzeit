@@ -231,7 +231,10 @@
     tm.called = round;
     const info = roundInfo(it),
       de = S.profile.lang === "de",
-      text = `${de ? "Runde" : "Round"} ${round}. ${info.title}.${it.combo ? " " + comboWords(it.combo) + "." : ""}`; // counter actions are shown, not spoken
+      d = it.dist && distOf(it.dist.i),
+      o = it.dist && it.dist.o && distOf(it.dist.o),
+      // range & exit round: entry (or exit first), combo, exit – said in that order
+      text = `${de ? "Runde" : "Round"} ${round}. ${info.title}.${d ? ` ${d[de ? "de" : "en"]}.` : ""}${it.combo ? " " + comboWords(it.combo) + "." : ""}${o ? ` ${o[de ? "de" : "en"]}.` : ""}`; // counter actions are shown, not spoken
     queueTimerSpeech(
       text,
       300,

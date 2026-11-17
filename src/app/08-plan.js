@@ -456,8 +456,7 @@
     out.forEach((e) => used.add(e.id));
     return out.map((e) => ({ kind: "ex", id: e.id }));
   }
-  const FOCUS_POW = 3,
-    FOCUS_THEME = 1.2;
+  const FOCUS_POW = 3; // weight of "more boxing/kicks" in combo picks; in the focus order: focusWeight (08b-plyo.js)
   const kickShare = (c) => {
     const s = c.filter((x) => STRIKE.has(x));
     return s.length ? s.filter((x) => KICKS.has(x)).length / s.length : 0;
@@ -483,16 +482,11 @@
     if (isTkd()) return null; // taekwondo has no hidden themes yet
     if (isBox()) {
       const lv = techniqueLevel(),
-        recent = Object.values(S.sessions)
-          .sort((a, b) => (a.created || 0) - (b.created || 0))
-          .slice(-12)
-          .map((s) => s.theme),
         ok = BOXT.BOX_THEMES.filter((th) => !th.lvl || lv >= th.lvl);
-      return ok.sort((a, b) => recent.filter((x) => x === a.id).length - recent.filter((x) => x === b.id).length + (Math.random() - 0.5) * 0.5)[0] || null;
+      return rotatePick(ok, focusWeight);
     }
     const p = S.profile,
-      ka = kneeAnk(),
-      focus = techniqueLevel() === 0 ? "bal" : p.focus;
+      ka = kneeAnk();
     const ok = THEMES.filter(
       (th) =>
         (!th.disc || th.disc.includes(discOf())) &&
@@ -500,16 +494,7 @@
         !(ka && th.risky) &&
         !(th.id === "sweepFinish" && p.limits.includes("ankle")),
     );
-    const recent = Object.values(S.sessions)
-      .sort((a, b) => (a.created || 0) - (b.created || 0))
-      .slice(-12)
-      .map((s) => s.theme);
-    const sc = (th) =>
-      recent.filter((x) => x === th.id).length -
-      ((focus === "box" && th.tag === "hand") || (focus === "kick" && th.tag === "kick") ? FOCUS_THEME : 0) +
-      ((focus === "box" && th.tag === "kick") || (focus === "kick" && th.tag === "hand") ? FOCUS_THEME : 0) +
-      Math.random() * 0.5;
-    return ok.sort((a, b) => sc(a) - sc(b))[0] || null;
+    return rotatePick(ok, focusWeight);
   }
   /* Technique units (type T) always have a focus (Schwerpunkt, Betreiber 14.11.2026) that gives the unit its point: chosen
      automatically and balanced over the last sessions, not shown as an extra text – the rounds and the closing block carry it. The technique themes above plus two broad ones – footwork and defence & counter –
@@ -655,21 +640,9 @@
       );
     }
     // technique units also get the tactical foci; conditioning/sparring in taekwondo keep a kick (no kinds changed)
-    const ok = noBroad ? base : [...base, ...tacticFoci(), ...BROAD.filter((th) => th.id !== "bounce" || !kneeAnk())],
-      p = S.profile,
-      focus = techniqueLevel() === 0 || isTkd() ? "bal" : p.focus,
-      recent = Object.values(S.sessions)
-        .sort((a, b) => (a.created || 0) - (b.created || 0))
-        .slice(-Math.max(12, ok.length + 6)) // with many foci the window grows, so every one comes up
-        .map((s) => s.theme);
-    // the broad foci come about as often as one theme of the sport (not one in three)
-    const sc = (th) =>
-      recent.filter((x) => x === th.id).length +
-      (th.kinds ? 0.6 : 0) -
-      ((focus === "box" && th.tag === "hand") || (focus === "kick" && th.tag === "kick") ? FOCUS_THEME : 0) +
-      ((focus === "box" && th.tag === "kick") || (focus === "kick" && th.tag === "hand") ? FOCUS_THEME : 0) +
-      Math.random() * 0.5;
-    return ok.sort((a, b) => sc(a) - sc(b))[0] || null;
+    const ok = noBroad ? base : [...base, ...tacticFoci(), ...BROAD.filter((th) => th.id !== "bounce" || !kneeAnk())];
+    // in turn (rotatePick): the one that waited longest, no extra penalty for the broad foci (E3, 17.11.2026)
+    return rotatePick(ok, focusWeight);
   }
   const focusOf = (id) => [...THEMES, ...BOXT.BOX_THEMES, ...BROAD, ...Object.values(TACTIC).flat()].find((x) => x.id === id) || (id && id.startsWith("k_") ? { id, kick: id.slice(2) } : null);
   /* strength for the technique of the focus: only catalogue exercises of its list that fit place, equipment and limits */
@@ -851,6 +824,13 @@
       "Slip & counter",
       "Stell dir einen Angriff vor, weiche aus und kontere sofort mit der Kombination. Kopf bewegen, Hände oben.",
       "Picture an attack, evade it and counter straight away with the combination. Move your head, hands up.",
+    ],
+    // kickboxing range & exit round (Grundabdeckung, 17.11.2026): the card adds entry and exit (distTxt)
+    dist: [
+      "Distanz & Ausgang",
+      "Range & exit",
+      "Die Kombination kontrolliert, danach sofort zurück in die Kampfstellung.",
+      "The combo with control, then straight back into your stance.",
     ],
     bounce: [
       "Federn & Antritt",
@@ -1266,7 +1246,7 @@
   // round text; the heavy bag reads differently in Full Contact (impact) and Leichtkontakt (speed)
   /* taekwondo rounds carry sp: "t" and read their own texts */
   const rtOf = (it) => (it.sp === "t" && tkm().RT[it.k]) || RT[it.k];
-  const roundDesc = (it, lg) => (it.pow ? t("wtPow") + " " : "") + ((it.k === "bag" && it.sp !== "t" && t("bagDisc")[discOf()]) || (rtOf(it) || [])[lg + 2] || "");
+  const roundDesc = (it, lg) => (it.pow ? t("wtPow") + " " : "") + (it.dist ? distTxt(it, lg) + " " : "") + ((it.k === "bag" && it.sp !== "t" && t("bagDisc")[discOf()]) || (rtOf(it) || [])[lg + 2] || "");
   /* rough difficulty of a combo: length, kicks, head kicks and advanced techniques */
   const comboLevel = (c) =>
     c.length + 0.5 * c.filter((x) => KICKS.has(x)).length + c.filter((x) => HIGHK.has(x)).length + 1.5 * c.filter((x) => ADV.has(x)).length;
@@ -1484,13 +1464,15 @@
       const idx = Math.min(2, n - 1);
       if (["shadow", "bag"].includes(kinds[idx]) || !partner) kinds[idx] = "sixkick";
     }
+    // Grundabdeckung (E10/E11/E17–E19, 17.11.2026): a range & exit round and a defence round in every technique unit
+    const cover = coverSlots(kinds, type, theme, easy, partner);
     const lvlK = techniqueLevel() || 0,
       kbCounters = KB_COUNTER.filter((c) => c.lvl <= lvlK && !(c.low && (ka || !EXTRA[discOf()])) && !(ageGroup() === "kids" && (c.lvl > 0 || c.c.length > 2))),
       usedC = new Set();
     // my combos from club training: the first suitable round always, later ones now and then
     let mi = Math.floor(Math.random() * 8),
       gotMine = false;
-    const out = kinds.map((k) => {
+    const out = kinds.map((k, ki) => {
       const r = { kind: "round", k };
       if (k === "evade") {
         const list = theme && theme.counters && theme.counters.length ? theme.counters : kbCounters,
@@ -1514,16 +1496,24 @@
         r.combo = ["front", "round", "side", "roundh", "round", "front"].filter(
           (x) => !(techniqueLevel() === 0 && x === "roundh"),
         );
+      // range & exit: its own round, or – with a partner – a partner round carrying entry and exit (pads or a target)
+      if (k === "dist" || ki === cover.dist) Object.assign(r, distRound(theme));
       return r;
     });
     // no combo twice in one session (a repeat gets a fresh one, a few tries)
     const seen = new Set();
     for (const r of out) {
       if (!r.combo || r.mine || r.k === "sixkick" || r.k === "evade") continue;
+      // range & exit: a fresh one (entry, combo, exit belong together)
+      if (r.dist) {
+        for (let t = 0; t < 6 && seen.has(r.combo.join()); t++) Object.assign(r, distRound(theme));
+        seen.add(r.combo.join());
+        continue;
+      }
       r.combo = lcShort(r.combo);
       if (PARTNER_K.has(r.k)) r.combo = partnerClean(r.combo);
       for (let t = 0; t < 6 && seen.has(r.combo.join()); t++) {
-        const kk = r.k === "bag" || r.k === "shadow" ? r.k : "pads",
+        const kk = r.k === "bag" || r.k === "shadow" ? r.k : r.k === "dist" ? "shadow" : "pads",
           c = combo(kk, theme);
         r.combo = lcShort(PARTNER_K.has(r.k) ? partnerClean(c) : c);
       }
@@ -1540,7 +1530,8 @@
         !(r.k === "bag" && (ka || p.limits.includes("wrist") || p.limits.includes("shoulder"))),
     );
     const need = ["roundh"];
-    if (EXTRA[discOf()] && !ka) need.push(...(discOf() === "k1" ? ["lowk", "knee"] : ["lowk"]));
+    // K1 knees – except when the focus keeps it long against a smaller opponent (no close range, 17.11.2026)
+    if (EXTRA[discOf()] && !ka) need.push(...(discOf() === "k1" && !(theme && theme.id === "shortOpp") ? ["lowk", "knee"] : ["lowk"]));
     const highPool = COMBOS.slice(0, techniqueLevel() + 1)
       .flat()
       .filter(
@@ -1556,6 +1547,12 @@
         const free = withC.filter((x) => !x.combo.some((y) => need.includes(y))),
           pool = free.length ? free : withC.filter((x) => !x.combo.includes(tech));
         if (!pool.length) break;
+        // the range & exit round takes it first: its combo is free-form, so the focus rounds keep their shape (17.11.2026)
+        const dr = pool.find((x) => x.dist && !(x.dist.i === "low" && tech !== "lowk") && !(x.dist.i === "knee" && tech !== "knee"));
+        if (dr) {
+          dr.combo = [...dr.combo.filter((x) => x !== tech).slice(0, 2), tech];
+          continue;
+        }
         const r = pool[(j + m * 2 + 1) % pool.length];
         const src = tech === "roundh" ? (highPool.length ? highPool : [["jab", "cross", "roundh"]]) : EXTRA[discOf()].filter((c) => c.includes(tech)),
           have = new Set(out.map((x) => x.combo && x.combo.join())),
@@ -1622,14 +1619,18 @@
     // counter actions as an exception (reactCount), on the final combos; later rounds are preferred because a
     // counter action makes a round harder – the opening round never gets one when there is a choice
     if (partner) {
-      const idx = out.map((r, i) => i).filter((i) => PARTNER_K.has(out[i].k) && out[i].combo),
-        // the opening round never gets one – the count is capped by the rounds after it (short sessions: fewer)
-        pool = idx.length > 1 ? idx.slice(1) : idx,
+      const all = out.map((r, i) => i).filter((i) => PARTNER_K.has(out[i].k) && out[i].combo),
+        // the opening round never gets one – the count is capped by the rounds after it (short sessions: fewer);
+        // the range & exit round (Grundabdeckung) carries entry and exit instead of a counter action
+        pool = (all.length > 1 ? all.slice(1) : all).filter((i) => !out[i].dist),
         want = theme && (theme.id === "def" || theme.counters) ? pool.length : reactCount(pool.length),
         order = pool.map((i) => ({ i, w: i + Math.random() * pool.length * 0.6 })).sort((a, b) => b.w - a.w);
       lowTurn = Math.random() < 0.5 ? 0 : 1;
       usedAtt.clear();
       order.slice(0, want).forEach(({ i }) => (out[i].react = partnerReact(out[i].combo)));
+      // the defence slot with a partner: a real attack → defence → counter, on top of the counter actions above
+      if (cover.def != null && out[cover.def] && out[cover.def].combo && !out[cover.def].react) out[cover.def].react = partnerReact(out[cover.def].combo);
+      if (cover.def != null && out[cover.def]) out[cover.def].cover = "def";
     }
     return out;
   }

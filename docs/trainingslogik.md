@@ -200,3 +200,57 @@ Entscheidungen und Matrix: Dokument „Ringzeit – Trainingsmatrix und offene E
   Ursache ist die engere Rollen-Freigabe: Der kleinere Drill-Vorrat ändert die gezogene Übung (geprüft: jede der drei
   Änderungen einzeln zurückgenommen; nur das Zurücknehmen der Rollen-Freigabe stellt diese 7 wieder her, alle drei
   zusammen ergeben den alten Vergleich).
+
+## Schritt 2: Schwerpunkt-Reihenfolge und Körpergröße (17.11.2026)
+
+- **Reihenfolge** (`rotatePick`, 08b-plyo.js; E3/E9): Der Schwerpunkt, der am längsten nicht gewählt wurde, kommt als
+  Nächstes; gezählt werden alle Einheiten mit Technikrunden (Technik, Technik & Kondition, Sparring) derselben
+  Sportart, im Taekwondo desselben Stils. Nie gewählt = zuerst; Gleichstand entscheidet der Zufall. Der Aufschlag +0,6
+  für allgemeine Schwerpunkte und das Fenster über alle Einheitenarten sind entfernt. Gilt für Technik-Schwerpunkte
+  und die versteckten Themen von Technik & Kondition und Sparring.
+- **Gewichte** (`focusWeight`) strecken nur die Wartezeit: „Mehr Boxen/Kicks“ ×1,5 für die eigene Seite (÷1,5 für die
+  andere), der zum Körperbau passende Gegner-Schwerpunkt ×2.
+- **Körpergröße** (E8/E15/E16): freiwilliges Feld im Profil (120–230 cm, leer = keine). `buildOf`: Ponderal-Index
+  cm ÷ ∛kg mit dem Limit der Gewichtsklasse des nächsten Turniers, sonst dem letzten Gewicht; über 44,5 eher groß
+  (→ „gegen kleineren Gegner“ öfter), unter 41,5 eher klein (→ „gegen größeren Gegner“ öfter). Eigene Faustregel,
+  im Profil als Schätzung angezeigt. Hilfe-Frage „Wie wird der Schwerpunkt einer Einheit gewählt?“.
+- **Bestand** (E14): `PLAN_LOGIC` (39-boot.js). Beim ersten Start mit neuer Logik werden geplante, nicht begonnene
+  Einheiten einmal mit denselben Einstellungen neu erstellt (in Datumsreihenfolge); begonnene/erledigte bleiben.
+- **Wirkung** (nachgestellt, 30 Wochen T/S/K): Kickboxen bekommt Beinarbeit, Verteidigung und Federn als Schwerpunkt
+  jetzt der Reihe nach (vorher nie); die feste Grundabdeckung je Einheit folgt in Schritt 3.
+- **Tests:** Reihenfolge mit festen Seeds (jede Sportart: alle Schwerpunkte einmal, bevor einer wiederkommt; im
+  Wochenmix Lücke ≤ 25 Technikeinheiten), Vorliebe und Körperbau, Profilfeld, einmaliges Neuerstellen. Angepasst:
+  zwei Partner-Tests (Verteidigungs-/Konter-Schwerpunkte geben jeder Partnerrunde nach der ersten eine Gegenaktion,
+  Teil 25; eine einzelne Partnerrunde darf eine tragen), der Schwerpunkt-Einheiten-Test (Federn & Antritt) und der
+  Release-4-Test (Logikversion wird einmal vermerkt, begonnene Einheit bleibt gleich).
+- **Kickbox-Vergleich:** 96 Einheiten neu aufgezeichnet, alle Technik, Technik & Kondition und Sparring; in jeder hat
+  sich der Schwerpunkt bzw. das Thema geändert, Kraft, Kondition und die Abläufe sind unverändert.
+
+## Schritt 3: Grundabdeckung Kickboxen (17.11.2026)
+
+Entscheidungen E10, E11, E17–E20 (Dokument „Ringzeit – Trainingsmatrix und offene Entscheidungen“). Code: `08c-cover.js`.
+
+- **Feste Runden:** Jede Kickbox-Technikeinheit ab 4 Runden bekommt eine Runde „Distanz & Ausgang“ (früh, nach dem
+  Einstieg) und eine Verteidigungsrunde (zweite Hälfte). Unter 4 Runden und in Technik & Kondition eine der beiden im
+  Wechsel; maßgeblich ist die letzte Kickbox-Einheit mit Technikrunden. Deckt der Schwerpunkt eine Art ab
+  (Beinarbeit/Federn → Distanz, Verteidigung & Konter/Konter-Schwerpunkte → Verteidigung), entfällt nur diese Runde.
+  Nie auf der 6-Kick-, Seil- oder Schwerpunkt-Runde; reicht der Platz nach dem Einstieg nicht, nimmt sie eine
+  Einstiegsrunde (nie die erste). Boxen und Taekwondo bleiben unverändert (dort feste Beinarbeits- und Meiden-Runden).
+- **Distanz & Ausgang** (`distRound`): kurze Kombination (2–3 Techniken) mit Eingang und Ausgang, oder ab Niveau 1
+  „Ausgang zuerst“ (E20: erst raus/Pivot, dann aus der neuen Position angreifen). Eingänge: Schritt mit Jab;
+  ab Niveau 1 Nachstellschritt, schräg hinein; KL/K1 seitlich in Lowkick-Distanz (Kombination mit Lowkick); K1 in die
+  Nahdistanz mit Knie, kein Clinch (WAKO K1 ab 2027). Ausgänge: zurück, seitlich in den Winkel, ab Niveau 1 Pivot.
+  Knie-/Sprunggelenkbeschwerden: kein Lowkick- und Knie-Eingang; Kinder: nur der einfache Eingang, keine
+  Ausgang-zuerst-Variante; „gegen kleineren Gegner“: kein Eingang in die Nahdistanz.
+- **Mit Partner:** Die Distanzrunde bleibt ein Partnerdrill (Eingang und Ausgang stehen auf der Karte), die
+  Verteidigungsrunde ist eine Partnerrunde mit echtem Angriff → Abwehr → Konter, zusätzlich zu den bisherigen
+  Gegenaktionen. Die erste Partnerrunde bekommt weiter keine Gegenaktion, die Distanzrunde auch nicht.
+- **Anzeige und Ansage:** Karte „Eingang: … · Kombination · Ausgang: …“ bzw. „Ausgang zuerst: …“; die Rundenansage
+  sagt Eingang, Kombination, Ausgang in dieser Reihenfolge (über die gemeinsame Textaufbereitung).
+- **Disziplin-Techniken pro Einheit** (Hochkick, KL/K1 Lowkick, K1 Knie): kommen zuerst in die Distanzrunde, damit die
+  Schwerpunkt-Runden ihre Form behalten; K1-Knie entfällt bei „gegen kleineren Gegner“.
+- **Tests:** Abdeckung mit festen Seeds (4 Disziplinen × 3 Niveaus × solo/Partner, 10 Einheiten im Wechsel),
+  Inhalte je Disziplin/Niveau/Einschränkung/Kinder, Karte und Ansage. Angepasst: Partner-Tests (Distanzrunde ohne
+  Gegenaktion, Verteidigungsrunde darf eine dazugeben), Taktik-Test mit festem Seed und 24 Einheiten.
+- **Kickbox-Vergleich:** 70 Einheiten (Technik, Technik & Kondition) neu aufgezeichnet – jede enthält jetzt die
+  Distanz- oder Verteidigungsrunde; mit abgeschalteter Grundabdeckung ist der Vergleich identisch zu Schritt 2.

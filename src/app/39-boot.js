@@ -6,17 +6,26 @@
   }
   /* Release transition: refresh only untouched legacy previews, keeping their chosen settings.
      Started/done/resumable sessions retain the exact prescriptions the user already saw in training. */
+  /* version of the planning logic: a change rebuilds the planned, not begun sessions once (E14, 17.11.2026);
+     begun or done sessions and every entry stay as they are */
+  const PLAN_LOGIC = 2;
   function refreshLegacyPlans() {
-    const from = iso(today()), resume = resumeRead();
+    const from = iso(today()), resume = resumeRead(),
+      newLogic = S.profile.planLogic !== PLAN_LOGIC;
     let changed = false;
-    for (const [ds, sess] of Object.entries(S.sessions)) {
+    // in date order, so the focus order of the rebuilt units follows the calendar
+    for (const [ds, sess] of Object.entries(S.sessions).sort(([a], [b]) => a.localeCompare(b))) {
       const started = sess.flow || sess.rdone || Object.keys(sess.perf || {}).length ||
         Object.keys(sess.checked || {}).length || Object.keys(sess.roundChecks || {}).length || resume?.ds === ds;
       if (ds < from || doneOn(ds) || started ||
-          ([0,1,2].includes(sess.techniqueLevel) && Object.prototype.hasOwnProperty.call(sess, "effortDose"))) continue;
+          (!newLogic && [0,1,2].includes(sess.techniqueLevel) && Object.prototype.hasOwnProperty.call(sess, "effortDose"))) continue;
       S.sessions[ds] = buildSession(ds, sess.type, sess.loc, sess.eq, {
         min: sess.min, run: !!sess.run, sport: sess.sport || mainSport(), tstyle: sess.tstyle, disc: sess.disc,
       });
+      changed = true;
+    }
+    if (newLogic) {
+      S.profile.planLogic = PLAN_LOGIC;
       changed = true;
     }
     return changed;

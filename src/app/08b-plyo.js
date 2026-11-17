@@ -73,6 +73,51 @@
     return out.map((e) => ({ kind: "ex", id: e.id }));
   }
 
+  /* ---- Schwerpunkt-Reihenfolge (E3/E9, Betreiber 17.11.2026) ----
+     The focus that has waited longest among the units with technique rounds (technique, technique & conditioning,
+     sparring) of the same sport – taekwondo: the same style – comes next; a tie (e.g. never used) is decided by chance.
+     No penalty for the broad foci any more: footwork, defence and bounce come up in turn like every other focus.
+     A weight only stretches the waiting time: "more boxing/kicks" ×1.5 for its side (÷1.5 for the other), the opponent
+     focus that fits one's build ×2 (E16). */
+  function rotatePick(ok, weight = () => 1) {
+    const sp = sportNow(),
+      sty = isTkd() ? tkdUnitStyle() : null,
+      hist = Object.values(S.sessions)
+        .filter((s) => s && s.theme && ["T", "C", "P"].includes(s.type) && (s.sport || mainSport()) === sp && (!sty || (s.tstyle || tkdStyle()) === sty))
+        .sort((a, b) => (b.created || 0) - (a.created || 0))
+        .map((s) => s.theme),
+      age = (id) => {
+        const i = hist.indexOf(id);
+        return i < 0 ? Infinity : i + 1;
+      };
+    const sc = ok.map((th) => ({ th, s: age(th.id) * weight(th), r: Math.random() }));
+    sc.sort((a, b) => b.s - a.s || a.r - b.r);
+    return sc.length ? sc[0].th : null;
+  }
+  /* own build for the opponent foci (E8/E15, Betreiber 17.11.2026): ponderal index = height (cm) ÷ ∛weight (kg) with the
+     limit of the weight class of the next tournament, else the last logged weight. Above 44.5 rather tall, below 41.5
+     rather short for the class – an own rule of thumb, shown as an estimate. No height or no weight: nothing. */
+  function buildOf(p = S.profile) {
+    const h = +p.height;
+    if (!(h >= 120 && h <= 230)) return null;
+    const nc = nextComp(),
+      last = S.weights.length ? S.weights[S.weights.length - 1].kg : null,
+      kg = (nc && nc.wc) || last;
+    if (!kg) return null;
+    const pi = h / Math.cbrt(kg);
+    return { pi: Math.round(pi * 10) / 10, kg, cls: !!(nc && nc.wc), k: pi > 44.5 ? "tall" : pi < 41.5 ? "short" : "mid" };
+  }
+  /* weight of a focus in the rotation: More boxing/kicks and the own build */
+  function focusWeight(th) {
+    const focus = techniqueLevel() === 0 || isTkd() ? "bal" : S.profile.focus;
+    let w = 1;
+    if ((focus === "box" && th.tag === "hand") || (focus === "kick" && th.tag === "kick")) w *= 1.5;
+    if ((focus === "box" && th.tag === "kick") || (focus === "kick" && th.tag === "hand")) w /= 1.5;
+    const b = buildOf();
+    // a tall athlete meets smaller opponents more often – and the other way round
+    if (b && ((b.k === "tall" && th.id === "shortOpp") || (b.k === "short" && th.id === "tallOpp"))) w *= 2;
+    return w;
+  }
   /* ---- commands: one list gives the word on the screen and the word that is said ---- */
   const CMD_W = {
     de: { fwd: "Vor", back: "Zurück", left: "Links", right: "Rechts", stop: "Stopp", sw: "Wechsel", sw2: "Doppelwechsel", fwd2: "Doppelt vor", back2: "Doppelt zurück", slip: "Slip", roll: "Rollen" },

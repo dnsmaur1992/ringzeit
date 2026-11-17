@@ -61,6 +61,7 @@
     const M = t("pme"),
       age = ageExact(today(), p);
     return `<div class="panel"><div class="field"><span class="lab">${M.person}</span></div><div class="field"><label class="lab" for="pBirth">${t("birth")}</label><input id="pBirth" type="date" min="1950-01-01" max="${birthMax()}" required value="${p.birth || ""}"><span class="sub">${M.birthHint[p.sport || mainSport()] || M.birthHint.kickboxing}${age != null ? ` · ${age} · ${t("ages")[ageGroup(p)]}` : ""}</span>${ageGroup(p) === "kids" ? `<span class="sub">${t("kidsNote")}</span>` : ""}</div>
+ <div class="field"><label class="lab" for="pHeight">${M.height}</label><div class="inline"><input id="pHeight" type="text" inputmode="numeric" maxlength="3" placeholder="178" value="${+p.height >= 120 && +p.height <= 230 ? +p.height : ""}"><span class="u">cm</span></div><span class="sub">${M.heightHint}${+p.height ? ` ${(() => { const b = buildOf(p); return b ? M.build(b.k, b.kg, b.cls) + "." : M.buildNone; })()}` : ""}</span></div>
  <div class="field"><span class="lab">${t("sex")}</span><div class="seg g3">${["m", "f", "d"].map((k) => `<button type="button" data-p="sex" data-v="${k}" aria-pressed="${p.sex === k}">${t("sexes")[k]}</button>`).join("")}</div><span class="sub">${t("sexHint")}</span></div>
  <div class="field"><span class="lab">${t("limits")}</span><div class="chips">${Object.keys(AV)
    .map((k) => `<button type="button" class="chip" data-lim="${k}" aria-pressed="${p.limits.includes(k)}">${t("lim")[k]}</button>`)
