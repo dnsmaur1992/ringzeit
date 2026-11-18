@@ -2988,23 +2988,27 @@ test("17.11.2026 preparation comes from the same focus as the main part: its com
   const tk = one("taekwondo", "wt", "k_yeop", "S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'wt'});").blocks.find((b) => b.key === "prep");
   if (tk) assert.match(tk.items[0].steps[0].de, /Ausholstellung für Yeop/i);
 });
-test("17.11.2026 preparation in the training: guiding sentence + parts on its page, timer calls sentence and parts, pause is silent, 'Direkt los' goes straight to the rounds, no second focus page", () => {
+test("18.11.2026 order in the training: focus as its own full page → preparation (parts, timer calls the parts) → main part; 'Direkt los' goes straight to the rounds, the sentence is said once", () => {
   const a = app();
   a.run(`S.profile.lang='de';S.profile.voice=true;window.speechSynthesis={speak(){},cancel(){},resume(){},speaking:false,pending:false,paused:false,getVoices:()=>[]};globalThis.speechSynthesis=window.speechSynthesis;globalThis.SpeechSynthesisUtterance=function(t){this.text=t};globalThis.SAID=[];say=(x)=>SAID.push(x);
     S.profile.sport='kickboxing';chooseFocus=()=>focusOf('lowFinish');S.profile.disc='kl';ui.sel='2026-11-16';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{sport:'kickboxing',disc:'kl',min:60});
     ui.workout={ds:ui.sel,step:0,block:0,player:true};globalThis.ST=playerSteps(S.sessions[ui.sel]);globalThis.PI=ST.findIndex(x=>S.sessions[ui.sel].blocks[x.bi]&&S.sessions[ui.sel].blocks[x.bi].key==='prep');playerGo(PI);`);
   const cue = "Achte beim Lowkick auf den Hüfteinsatz, ohne nach dem Kick die Deckung fallen zu lassen.";
+  // 1. the focus: its own full page before the preparation, said once
   let h = a.run("playerHtml()");
-  assert.match(h, new RegExp(`Vorbereitung auf den Schwerpunkt[\\s\\S]*<small>Schwerpunkt heute</small><p>${cue}</p>[\\s\\S]*<ol class="prepl"><li>Langsam und einzeln: [\\s\\S]*</li><li>Verbunden: [\\s\\S]*<li>Arbeitstempo: [\\s\\S]*data-player="prepskip">Direkt los`));
+  assert.match(h, new RegExp(`cuepage[\\s\\S]*Hauptteil[\\s\\S]*<small>Schwerpunkt heute</small><p>${cue}</p>[\\s\\S]*data-player="cueok"`));
+  assert.doesNotMatch(h, /prepl/);
+  assert.deepEqual(Array.from(a.run("SAID")), ["Schwerpunkt heute: " + cue]);
+  // 2. "Los geht's": the preparation with its parts – without the sentence
+  a.run("playerAction('cueok')");
+  h = a.run("playerHtml()");
+  assert.doesNotMatch(h, /cuepage|Schwerpunkt heute/);
+  assert.match(h, /Vorbereitung auf den Schwerpunkt[\s\S]*<ol class="prepl"><li>Langsam und einzeln: [\s\S]*<\/li><li>Verbunden: [\s\S]*<li>Arbeitstempo: [\s\S]*data-player="prepskip">Direkt los/);
   assert.equal(a.run("ST[PI].kind"), "timed");
-  // timer: the sentence at the start, then each part with its tempo
+  // the timer calls each part with its tempo, the sentence is not repeated
   a.run("playerStartTimed()");
   a.advance(12000);
-  const ci = a.run(`SAID.indexOf(${JSON.stringify("Schwerpunkt heute: " + cue)})`);
-  assert.ok(ci >= 0, "the guiding sentence is said");
-  assert.match(a.run(`SAID[${ci}+1]`), /^Langsam und einzeln\. /);
-  // the arrow of the dose line is said as a word
-  a.run("S.profile.lang='de'");
+  assert.ok(a.run("SAID.findIndex(x=>/^Langsam und einzeln\\. /.test(x))") > 0, "the first part is called");
   assert.equal(a.run("spokenText('langsam → Arbeitstempo')"), "langsam, dann Arbeitstempo");
   a.run("exerciseTimerAction('toggle')");
   const n = a.run("SAID.length");
@@ -3013,13 +3017,16 @@ test("17.11.2026 preparation in the training: guiding sentence + parts on its pa
   a.run("exerciseTimerAction('toggle')");
   a.advance(40000);
   assert.ok(a.run("SAID.some(x=>x.startsWith('Verbunden. '))"));
-  // "Direkt los": marked done, the round block is next – no extra focus page
+  // 3. "Direkt los": the rounds – no second focus page
   a.run("playerAction('prepskip')");
   assert.equal(a.run("itemDone(S.sessions[ui.sel],ST[PI].bi,0)"), true);
   assert.equal(a.run("ui.workout.step"), a.run("PI+1"));
   assert.equal(a.run("ST[PI+1].kind"), "rounds");
   assert.doesNotMatch(a.run("playerHtml()"), /cuepage/);
   assert.equal(a.run("SAID.filter(x=>x.startsWith('Schwerpunkt heute')).length"), 1);
+  // back to the preparation after "Los geht's": no new focus page
+  a.run("playerGo(PI)");
+  assert.doesNotMatch(a.run("playerHtml()"), /cuepage/);
   // the plan page lists the parts under the block, without the sentence
   const page = a.run("renderSession()");
   assert.match(page, /Vorbereitung auf den Schwerpunkt[\s\S]*3 × 40 s · langsam → Arbeitstempo[\s\S]*<ol class="prepl">/);

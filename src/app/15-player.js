@@ -160,12 +160,16 @@
   }
   /* Its own page between warm-up and main part (Betreiber 16.11.2026): when the technique rounds come up and none of
      them is done yet, the training shows the focus of the unit first – said once – and goes on with "Los geht's".
-     Nothing is added to the steps, so begun trainings keep their place. */
+     Nothing is added to the steps, so begun trainings keep their place.
+     Order since 18.11.2026: focus (full page) → preparation on the focus → main part. With a preparation block the page
+     comes before it; without one before the rounds as before. */
   function cueGate(sess, bi) {
     const b = sess && sess.blocks[bi];
-    if (!ui.workout || !b || !b.rounds || !sessCue(sess) || ui.workout.cueOk === bi) return false;
-    // a preparation block before the rounds shows the guiding sentence itself (17.11.2026)
-    if (sess.blocks.some((x, i) => i < bi && x.key === "prep")) return false;
+    if (!ui.workout || !b || !sessCue(sess) || ui.workout.cueOk === bi) return false;
+    const ri = sess.blocks.findIndex((x) => x.rounds),
+      pi = sess.blocks.findIndex((x) => x.key === "prep"),
+      gate = pi >= 0 && pi < ri ? pi : ri;
+    if (bi !== gate) return false;
     if (b.items.some((it, ni) => itemDone(sess, bi, ni))) return false;
     ui.workout.cue = bi;
     if (ui.workout.cueSaid !== bi) {
@@ -177,7 +181,7 @@
   function cuePageHtml(sess) {
     const C = t("cues"),
       W = workoutText();
-    return `<div class="player-inner cuepage"><div class="fbar"><button type="button" class="x" data-workout="close" aria-label="${W.close}">✕</button><span>${esc(blkName(sess.blocks[ui.workout.cue]))}</span><span class="x" aria-hidden="true" style="visibility:hidden"></span></div><div class="cuebox"><small>${C.lbl}</small><p>${esc(sessCue(sess))}</p></div><div class="acts"><button type="button" class="btn sec" data-player="prev">${W.back}</button><button type="button" class="btn" data-player="cueok">${C.go}</button></div></div>`;
+    return `<div class="player-inner cuepage"><div class="fbar"><button type="button" class="x" data-workout="close" aria-label="${W.close}">✕</button><span>${esc(blkName(roundBlock(sess) || sess.blocks[ui.workout.cue]))}</span><span class="x" aria-hidden="true" style="visibility:hidden"></span></div><div class="cuebox"><small>${C.lbl}</small><p>${esc(sessCue(sess))}</p></div><div class="acts"><button type="button" class="btn sec" data-player="prev">${W.back}</button><button type="button" class="btn" data-player="cueok">${C.go}</button></div></div>`;
   }
   function stepDose(sess, st) {
     const b = sess.blocks[st.bi],
@@ -218,7 +222,8 @@
     ui.workout.list = false;
     sess.flow = { ...(sess.flow || {}), block: st.bi, step: i };
     delete ui.workout.cue;
-    ui.focus = st.kind === "rounds" && !cueGate(sess, st.bi);
+    const gated = cueGate(sess, st.bi);
+    ui.focus = st.kind === "rounds" && !gated;
     store.save();
     resumeSave(true);
     render();
@@ -388,7 +393,7 @@
     if (a === "cueok") {
       ui.workout.cueOk = ui.workout.cue;
       delete ui.workout.cue;
-      ui.focus = true;
+      ui.focus = st.kind === "rounds";
       return render();
     }
     if (a === "list") {
@@ -500,7 +505,7 @@
       W = workoutText(),
       tm = ui.exerciseTimer,
       nx = steps[i + 1];
-    if (ui.workout.cue != null && st.kind === "rounds" && st.bi === ui.workout.cue) return cuePageHtml(sess);
+    if (ui.workout.cue != null && st.bi === ui.workout.cue) return cuePageHtml(sess);
     const doneN = steps.filter((s) => stepDone(sess, s)).length,
       head = `<div class="fbar"><button type="button" class="x" data-workout="close" aria-label="${W.close}">✕</button><span>${esc(st.kind === "finish" ? W.finish : blkName(sess.blocks[st.bi]))} · ${P.step(i + 1, steps.length)}</span><button type="button" class="x" data-player="list" aria-label="${P.list}">☰</button></div><div class="pbar"><span style="width:${Math.round((100 * doneN) / Math.max(1, steps.length - 1))}%"></span></div>`;
     if (st.kind === "finish")
@@ -547,8 +552,8 @@
       // Federn & Antritt: the command of the moment, big (the same word that is said)
       // preparation for the focus: guiding sentence, the parts, and "Direkt los" (17.11.2026)
       if (isFocusPrep(it)) {
-        const cue = sessCue(sess);
-        h += `${cue ? `<div class="cuebox"><small>${t("cues").lbl}</small><p>${esc(cue)}</p></div>` : ""}<ol class="prepl">${prepLines(sess, it).map((x) => `<li>${esc(x.replace(/^\d+\. /, ""))}</li>`).join("")}</ol><button type="button" class="btn sec prepgo" data-player="prepskip">${t("cues").skip}</button>`;
+        // the focus has its own full page before (18.11.2026) – here only the parts
+        h += `<ol class="prepl">${prepLines(sess, it).map((x) => `<li>${esc(x.replace(/^\d+\. /, ""))}</li>`).join("")}</ol><button type="button" class="btn sec prepgo" data-player="prepskip">${t("cues").skip}</button>`;
       }
       if (st.kind === "timed" && cmdOf(it)) h += `<div class="ftcall cmdcall" id="cmdcall" aria-live="polite">${tm && tm.player === i && tm.running ? esc(tm.cmdTxt || "") : ""}</div>`;
       if (st.lap != null)

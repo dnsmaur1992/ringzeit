@@ -76453,7 +76453,8 @@
       "step": 5,
       "player": true,
       "list": false,
-      "auto": true
+      "auto": true,
+      "cueSaid": 1
      },
      "flow": {
       "block": 2,
@@ -76479,7 +76480,8 @@
       "step": 5,
       "player": true,
       "list": false,
-      "auto": true
+      "auto": true,
+      "cueSaid": 1
      },
      "flow": {
       "block": 2,
@@ -76510,7 +76512,8 @@
       "step": 5,
       "player": true,
       "list": true,
-      "auto": true
+      "auto": true,
+      "cueSaid": 1
      },
      "flow": {
       "block": 2,
@@ -76541,7 +76544,8 @@
       "step": 5,
       "player": true,
       "list": false,
-      "auto": true
+      "auto": true,
+      "cueSaid": 1
      },
      "flow": {
       "block": 2,

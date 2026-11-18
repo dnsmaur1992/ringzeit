@@ -2,9 +2,9 @@
      Every unit with technique rounds (technique, technique & conditioning, sparring; all sports) ends its warm-up with a
      short preparation derived from the SAME focus as the main part: up to 45 min 2 parts × 45 s, longer 3 × 40 s, 5 s
      change between them – slow and one by one → linked → working pace. Solo, also with a partner. The 2 minutes come
-     out of the general warm-up (it keeps at least 6), so the chosen duration stays. The page shows the guiding sentence
-     of the focus (instead of the separate focus page), the parts and a timer with calls; "Direkt los" starts the main
-     part at once. It does not count for the Grundabdeckung – the fixed rounds stay. */
+     out of the general warm-up (it keeps at least 6), so the chosen duration stays. Order (18.11.2026): the focus on its own
+     full page first, then this page with the parts and a timer with calls, then the main part; "Direkt los" starts the
+     main part at once. It does not count for the Grundabdeckung – the fixed rounds stay. */
   const PREP_MIN = 2;
   const PREP_TEMPO = {
     de: { slow: "Langsam und einzeln", link: "Verbunden", work: "Arbeitstempo" },
@@ -119,11 +119,8 @@
     const ph = tm.phases[tm.index],
       lg = S.profile.lang === "de" ? "de" : "en";
     if (!ph) return;
-    if (ph.prep) {
-      const cue = sessCue(sess);
-      if (cue) say(`${t("cues").say}: ${cue}`, 0.92);
-      return;
-    }
+    // the guiding sentence was said on its own page before (18.11.2026)
+    if (ph.prep) return;
     if (/Wechsel|Change/.test(ph.label || "")) return;
     const wi = tm.phases.slice(0, tm.index + 1).filter((p) => !p.prep && !/Wechsel|Change/.test(p.label || "")).length - 1,
       st = it.steps[wi];

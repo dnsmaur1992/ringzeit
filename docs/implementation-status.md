@@ -820,3 +820,8 @@ Code: `08e-load.js`; eingehängt in `rpeRange` und `buildSessionCore` (Zielanstr
 - **Eingeschaltet:** höchstens 3 harte Tage pro Woche; hart zählt nur ein Eintrag (eigen oder Verein) mit Anstrengung ≥ 7. Die harten Ringzeit-Tage markiert die Person (höchstens 3). Würde ein hartes Vereinstraining die 3 überschreiten, wird der nächste markierte, noch nicht begonnene Tag mittel. Ein verpasster harter Tag: die nächste offene Ringzeit-Einheit der Woche wird hart (nie direkt nach einem harten Tag). Eine verpasste mittlere/lockere Einheit: die nächste Technik- bzw. Technik-&-Kondition-Einheit bekommt eine Technikrunde mehr, die Minuten kommen aus dem Abschlussblock (mind. 4 bleiben). Die übrigen Einheiten abwechselnd mittel (bis 6) und locker (bis 4), Mobility bleibt bei 3. Dauer und Art der Tage bleiben; nur dieselbe Woche zählt.
 - Die Rolle steht an der Einheit (`ld`); ändert sie sich (Eintrag, verpasster Tag), wird eine nicht begonnene Einheit dieser Woche neu erstellt.
 - Hilfefrage „Was ist die automatische Lastverteilung?“. Kickbox-Vergleich unverändert (Schalter aus ist Standard).
+
+## Reihenfolge im Training: Schwerpunkt → Vorbereitung → Hauptteil (18.11.2026)
+
+- Wunsch nach Sichtung: der Schwerpunkt wieder als eigene Vollseite. Mit Vorbereitungsblock kommt die Schwerpunkt-Seite jetzt **vor** der Vorbereitung (Kopfzeile: Hauptteil, Leitsatz, „Los geht's“), danach die Vorbereitung mit ihren Teilen (ohne Leitsatz), dann der Hauptteil. Ohne Vorbereitung bleibt die Seite vor den Runden.
+- Der Leitsatz wird einmal gesagt (auf seiner Seite); der Timer der Vorbereitung sagt nur noch die Teile. Zurückblättern nach „Los geht's“ zeigt die Seite nicht erneut.

@@ -100,7 +100,8 @@
       step = Number.isInteger(storedStep) ? Math.max(0, Math.min(steps.length - 1, storedStep)) : Math.max(0, firstStep);
     sess.flow = { block: steps[step].bi, step, startedAt: sess.flow?.startedAt || Date.now() };
     ui.workout = { ds: ui.sel, block: steps[step].bi, step, player: true };
-    ui.focus = steps[step].kind === "rounds" && !cueGate(sess, steps[step].bi);
+    const gated = cueGate(sess, steps[step].bi);
+    ui.focus = steps[step].kind === "rounds" && !gated;
     store.save();
     resumeSave(true);
     render();
@@ -139,7 +140,8 @@
     const firstOfBlock = playerSteps(sess).findIndex((st) => st.bi === ui.workout.block);
     if (firstOfBlock >= 0) ui.workout.step = sess.flow.step = firstOfBlock;
     delete ui.workout.cue;
-    ui.focus = !!sess.blocks[ui.workout.block]?.rounds && !cueGate(sess, ui.workout.block);
+    const gated = cueGate(sess, ui.workout.block);
+    ui.focus = !!sess.blocks[ui.workout.block]?.rounds && !gated;
     store.save();
     resumeSave(true);
     render();
