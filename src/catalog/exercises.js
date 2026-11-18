@@ -1132,6 +1132,17 @@ const X = [
     "ka",
     2,
   ],
+  [
+    "pre",
+    "Vorbereitung auf den Schwerpunkt",
+    "Preparing the focus",
+    "Kurze, gezielte Vorbereitung auf den Hauptteil: erst langsam und einzeln, dann verbunden, dann im Arbeitstempo.",
+    "A short, targeted preparation for the main part: first slow and one by one, then linked, then at working pace.",
+    "",
+    "gho",
+    "",
+    0,
+  ],
 ];
 export const EX = X.map((r, i) => ({
   id: EX_KEYS[i],

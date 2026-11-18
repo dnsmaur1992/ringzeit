@@ -77,7 +77,7 @@ src/
   sports/
     index.js                 Register: SPORTS, sportFor(id) (ohne/unbekannt → kickboxing), visibleSports(), previewSports()
     kickboxing/index.js      SportDefinition: id, visible, rules, dayPattern (früher PATTERN), techniques
-    kickboxing/rules.js      RULE_PROFILE (WAKO): DISCIPLINES, waFormat, STD_FORMAT; Fassung noch nicht belegt
+    kickboxing/rules.js      RULE_PROFILE (WAKO): DISCIPLINES, waFormat, STD_FORMAT; geprüft 17.11.2026 (rules-sources R1)
     kickboxing/techniques.js TECH, KICKS, STRIKE, RISKY, ADV, COMBOS, EXTRA, KICK_ONLY, HAND_ONLY, THEMES
     boxing/                  SportDefinition (visible, seit 4b), rules.js (DBV: Altersklassen, Formate, K.o.-Sperre, WKB-Link), techniques.js (Kombinationen, Konter, Themen), tasks.js (Aufgabensparring) (4a-U)
     taekwondo/               SportDefinition (visible; WT und ITF-D: T/S/P/K/C/M; dayPattern = ITF, dayPatternWt = WT mit Mobility statt Kondition ab 4 Tagen, 7b), grades.js (Style, Kup/Dan/Poom, Gürtelfarben, Wartezeiten, Formnamen, Prüfungsteile) (6a), techniques.js (Techniken mit koreanischem Namen, Freischaltung, Kombis, Konter, Rundentexte, Aufgaben) (6b), rules.js (WT-/ITF-D-Altersklassen, Formate, K.o.-Sperre) (6b/6c), itf.js (ITF-D: Techniken mit eigenen Namen, Freischaltung, Hand-Fuß-Kombis, Konter, Matsogi-/Hosinsul-Aufgaben) (6c, Sammelexport als `ITFT`), all.js (Sammelexport als `TKDT`)

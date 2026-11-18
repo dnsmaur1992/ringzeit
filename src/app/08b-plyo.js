@@ -3,74 +3,173 @@
      sp   where a drill belongs: "box", the kickboxing disciplines lc/kl/fc/k1 and the taekwondo styles wt/itf
      use  "pow" = counted or short timed jumps (strength unit, closing block of the focus, technique & conditioning),
           "cmd" = footwork drills that also fill a conditioning round
-     load weighted ground contacts of the whole prescription (easy bounces count less, one-legged landings full);
-          a unit never asks for more than PLYO_CAP of the technique level (60 / 100 / 140)
+     kind how it is counted (Schritt 5, E13/E27–E29): "bounce" = loose bouncing and footwork (Federzeit, seconds),
+          "jump" = timed jumps on both legs (Federzeit; landings only as an estimate, 2 per second),
+          "single" = timed jumps on one leg (Federzeit, estimate 1.5 per second and leg; needs an allowance for
+          intensive landings), "reps" = counted landings (land = all of them, both legs; every one is one-legged)
      cmd  the command list: called in the work phases of the exercise or round timer, shown and said from the same list */
   const PLYO_ALL = "box lc kl fc k1 wt itf",
     PLYO_KB = "lc kl fc k1",
     PLYO_TKD = "wt itf";
   const PLYO = {
-    "plyo.pogo_jumps": { sp: PLYO_ALL, use: "pow", load: 30 },
-    "plyo.stance_bounce": { sp: PLYO_ALL, use: "cmd", load: 20, cmd: "bounce" },
-    "plyo.line_jumps": { sp: PLYO_ALL, use: "pow", load: 40 },
-    "plyo.boxer_skip": { sp: "box " + PLYO_KB, use: "cmd", load: 20 },
-    "plyo.four_square": { sp: PLYO_ALL, use: "pow", load: 35 },
-    "plyo.quarter_turn": { sp: "box " + PLYO_KB, use: "pow", load: 30 },
-    "plyo.switch_jumps": { sp: PLYO_KB + " " + PLYO_TKD, use: "cmd", load: 30, cmd: "switch" },
-    "plyo.shuffle": { sp: "box " + PLYO_KB, use: "cmd", load: 30, cmd: "shuffle" },
-    "plyo.burst": { sp: PLYO_ALL, use: "cmd", load: 30, cmd: "burst" },
-    "plyo.hop_stick": { sp: PLYO_ALL, use: "pow", load: 30 },
-    "plyo.hop_check": { sp: "kl k1", use: "pow", load: 36 },
-    "plyo.hop_chamber": { sp: PLYO_KB + " " + PLYO_TKD, use: "pow", load: 30 },
-    "plyo.single_pogo": { sp: PLYO_ALL, use: "pow", load: 60 },
-    "plyo.single_line_jumps": { sp: PLYO_ALL, use: "pow", load: 50 },
-    "plyo.hop_kick": { sp: PLYO_KB + " " + PLYO_TKD, use: "pow", load: 24 },
-    "plyo.takeoff": { sp: PLYO_TKD, use: "pow", load: 24 },
-    "plyo.react": { sp: PLYO_ALL, use: "cmd", load: 30, cmd: "dirs" },
-    "plyo.bounce_slip": { sp: "box " + PLYO_KB, use: "cmd", load: 20, cmd: "slip" },
+    "plyo.pogo_jumps": { sp: PLYO_ALL, use: "pow", kind: "jump" },
+    "plyo.stance_bounce": { sp: PLYO_ALL, use: "cmd", kind: "bounce", cmd: "bounce" },
+    "plyo.line_jumps": { sp: PLYO_ALL, use: "pow", kind: "jump" },
+    "plyo.boxer_skip": { sp: "box " + PLYO_KB, use: "cmd", kind: "bounce" },
+    "plyo.four_square": { sp: PLYO_ALL, use: "pow", kind: "jump" },
+    "plyo.quarter_turn": { sp: "box " + PLYO_KB, use: "pow", kind: "jump" },
+    "plyo.switch_jumps": { sp: PLYO_KB + " " + PLYO_TKD, use: "cmd", kind: "jump", cmd: "switch" },
+    "plyo.shuffle": { sp: "box " + PLYO_KB, use: "cmd", kind: "bounce", cmd: "shuffle" },
+    "plyo.burst": { sp: PLYO_ALL, use: "cmd", kind: "bounce", cmd: "burst" },
+    "plyo.hop_stick": { sp: PLYO_ALL, use: "pow", kind: "reps", land: 30 },
+    "plyo.hop_check": { sp: "kl k1", use: "pow", kind: "reps", land: 36 },
+    "plyo.hop_chamber": { sp: PLYO_KB + " " + PLYO_TKD, use: "pow", kind: "reps", land: 30 },
+    "plyo.single_pogo": { sp: PLYO_ALL, use: "pow", kind: "single" },
+    "plyo.single_line_jumps": { sp: PLYO_ALL, use: "pow", kind: "single" },
+    "plyo.hop_kick": { sp: PLYO_KB + " " + PLYO_TKD, use: "pow", kind: "reps", land: 24 },
+    "plyo.takeoff": { sp: PLYO_TKD, use: "pow", kind: "reps", land: 24 },
+    "plyo.react": { sp: PLYO_ALL, use: "cmd", kind: "bounce", cmd: "dirs" },
+    "plyo.bounce_slip": { sp: "box " + PLYO_KB, use: "cmd", kind: "bounce", cmd: "slip" },
     // rolling under a hook: boxing only – in kickboxing knees (K1) and head kicks make the deep duck a different move (E6, 17.11.2026)
-    "plyo.bounce_roll": { sp: "box", use: "cmd", load: 20, cmd: "roll" },
+    "plyo.bounce_roll": { sp: "box", use: "cmd", kind: "bounce", cmd: "roll" },
   };
-  const PLYO_CAP = [60, 100, 140];
   const plyoTag = () => (isBox() ? "box" : isTkd() ? tkdUnitStyle() : discOf() || "lc");
   const plyoFits = (key) => !PLYO[key] || PLYO[key].sp.split(" ").includes(plyoTag());
-  const plyoCap = () => PLYO_CAP[techniqueLevel()] ?? PLYO_CAP[0];
-  /* points of a round spent bouncing (a "Federn & Antritt" round, or a footwork drill filling a conditioning round):
-     by its length, like the stance bounce – 90 s of bouncing = 20 points, a 3-minute round = 40 */
-  const bounceRoundPts = (w) => Math.round(((w || 180) / 90) * 20);
-  /* weighted contacts of a unit over ALL blocks and rounds (17.11.2026: the bounce rounds count too) */
-  function plyoLoad(sess) {
-    let n = 0;
+  /* internal limits per unit by fitness level (E13, own values – no measured contacts, no confirmed safety limits):
+     Federzeit 600/900/1200 s, landings 40/80/120, of them intensive 0/20/40; a deload week −30 %. No settling-in phase
+     after a break (E27). Skipping with a rope does not count (E29). The technique level only unlocks the difficulty. */
+  const PLYO_LIM = { fed: [600, 900, 1200], land: [40, 80, 120], int: [0, 20, 40] };
+  let buildDate = null;
+  function plyoLimits() {
+    const f = Math.max(0, Math.min(2, fitnessLevel())),
+      k = buildDate && weekLoad(buildDate).deload ? 0.7 : 1;
+    return { fed: Math.round(PLYO_LIM.fed[f] * k), land: Math.round(PLYO_LIM.land[f] * k), int: Math.round(PLYO_LIM.int[f] * k) };
+  }
+  /* what one drill asks for: work seconds (Federzeit), counted landings, intensive landings, estimated landings */
+  function plyoCost(key, it) {
+    const p = PLYO[key];
+    if (!p) return { fed: 0, land: 0, int: 0, est: 0 };
+    if (p.kind === "reps") {
+      const n = plyoReps(key, it);
+      return { fed: 0, land: n, int: n, est: 0 };
+    }
+    const rx = plyoRx(key, it),
+      work = rx ? (rx.k === "sidedsets" ? rx.n * rx.s * 2 : rx.n * rx.on) : 0;
+    return {
+      fed: work,
+      land: 0,
+      int: 0,
+      est: p.kind === "jump" ? Math.round(work * 2) : p.kind === "single" ? Math.round(work * 1.5) : 0,
+      single: p.kind === "single",
+    };
+  }
+  /* the effective prescription of a timed drill (with the progression of the unit's item, Schritt 7) */
+  function plyoRx(key, it) {
+    const rx = RX[key];
+    if (!rx) return null;
+    const pr = it && it.prog;
+    if (!pr) return rx;
+    if (rx.k === "sidedsets") return { ...rx, s: rx.s + (pr.add || 0) };
+    return { ...rx, on: rx.on + (pr.add || 0), off: Math.max(10, rx.off - (pr.rest || 0)) };
+  }
+  /* counted landings of a rep drill, all sets and both legs (with the progression: +1 per step in one set) */
+  const plyoReps = (key, it) => (PLYO[key] && PLYO[key].land ? PLYO[key].land + 2 * ((it && it.prog && it.prog.add) || 0) : 0);
+  /* the whole unit: all blocks and rounds (a bounce round or a footwork drill in a round = its round time) */
+  function plyoBudget(sess) {
+    const o = { fed: 0, land: 0, int: 0, est: 0 };
     for (const b of (sess && sess.blocks) || [])
       for (const it of b.items || []) {
-        const e = it.id && EX[it.id] && PLYO[EX[it.id].key];
-        if (b.rounds && (it.k === "bounce" || e)) n += bounceRoundPts(b.w);
-        else if (e) n += e.load;
+        const e = it.id && EX[it.id] && PLYO[EX[it.id].key] ? EX[it.id].key : null;
+        if (b.rounds && (it.k === "bounce" || e)) o.fed += b.w || 180;
+        else if (e) {
+          const c = plyoCost(e, it);
+          o.fed += c.fed;
+          o.land += c.land;
+          o.int += c.int;
+          o.est += c.est;
+        }
       }
-    return n;
+    return o;
   }
-  /* a "Federn & Antritt" unit: only as many bounce rounds as the cap allows – the rest stay footwork rounds without the
-     bouncing; the closing block then gets what is left of the cap */
+  const plyoFitsBudget = (cur, c, L) =>
+    cur.fed + c.fed <= L.fed && cur.land + c.land <= L.land && cur.int + c.int <= L.int && !(c.single && L.int <= 0);
+  /* a "Federn & Antritt" unit: only as many bounce rounds as the Federzeit allows – the rest stay footwork rounds
+     without the bouncing; the closing block then gets what is left */
   function plyoLimitRounds(items, w) {
-    const allowed = Math.floor(plyoCap() / bounceRoundPts(w));
+    const allowed = Math.floor(plyoLimits().fed / (w || 180));
     let k = 0;
     for (const r of items) if (r.k === "bounce" && ++k > allowed) r.k = "foot";
     return items;
   }
-  /* up to n drills of one use (or any), place, equipment, limits, level and sport checked by okEx, within the cap */
-  function plyoPick(n, loc, eq, used, use, base = 0) {
-    const cap = plyoCap(),
+  /* ---- Progression (Schritt 7, E5/E30–E34, Betreiber 17.11.2026) ----
+     Automatic and cautious, per drill of the closing block (not in rounds). Evidence: the last 3 own units with this
+     drill at the current step all complete, effort (RPE) ≤ 6 and no complaints (a note with pain/complaints or an active
+     knee/ankle limit) → one step up. One step is about +5 %: +1 repetition in one set (rep drills) or +5 s per set (timed
+     drills). Order: first the amount up to +4 steps (and only within the unit's limits), then the rest −5 s per step to
+     −15 s at most, then the commands 1 s faster (once). A signal – RPE ≥ 9, complaints or the drill not done (aborted) –
+     goes one step back. A deload week keeps the step reached but trains it without the additions. The step is stored
+     with the drill in the unit and in the log entry ("plyo": id, step, done); older entries without it start at 0.
+     Rebuilding an unbegun unit computes the same step again – nothing moves without a new entry. */
+  const PROG_ADD = 4,
+    PROG_MAX = PROG_ADD + 3 + 1;
+  function progOf(lv) {
+    lv = Math.max(0, Math.min(PROG_MAX, lv || 0));
+    return { lv, add: Math.min(lv, PROG_ADD), rest: lv > PROG_ADD ? 5 * Math.min(3, lv - PROG_ADD) : 0, cmd: lv > PROG_ADD + 3 ? 1 : 0 };
+  }
+  const plyoComplaint = (e) => /schmerz|beschwerd|weh\b|pain|hurt|sore/i.test((e && e.note) || "") || kneeAnk();
+  function plyoHistory(id) {
+    return (S.log || [])
+      .filter((e) => e && e.src === "own" && Array.isArray(e.plyo) && (!buildDate || e.date < buildDate) && e.plyo.some((x) => x.id === id))
+      .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : String(b.id).localeCompare(String(a.id))))
+      .map((e) => ({ e, x: e.plyo.find((x) => x.id === id) }));
+  }
+  function plyoStep(id) {
+    const h = plyoHistory(id);
+    if (!h.length) return 0;
+    const lv = h[0].x.lv || 0;
+    // a signal in the last unit with this drill: one step back
+    if (!h[0].x.done || h[0].e.rpe >= 9 || plyoComplaint(h[0].e)) return Math.max(0, lv - 1);
+    const ok = h.slice(0, 3).filter((r) => (r.x.lv || 0) === lv && r.x.done && r.e.rpe > 0 && r.e.rpe <= 6 && !plyoComplaint(r.e));
+    return ok.length === 3 ? Math.min(PROG_MAX, lv + 1) : lv;
+  }
+  /* the step of a drill for this unit: deload keeps it without additions; the amount stays inside the limits */
+  function plyoProg(e, cur, L) {
+    const lv = plyoStep(e.id);
+    if (!lv) return null;
+    if (buildDate && weekLoad(buildDate).deload) return { lv, add: 0, rest: 0, cmd: 0, dl: 1 };
+    const p = progOf(lv);
+    while (p.add > 0 && !plyoFitsBudget(cur, plyoCost(e.key, { prog: p }), L)) p.add--;
+    return p;
+  }
+  /* up to n drills of one use (or any), place, equipment, limits, level and sport checked by okEx, within the limits */
+  function plyoPick(n, loc, eq, used, use, base = null) {
+    const L = plyoLimits(),
+      cur = { fed: 0, land: 0, int: 0, ...(base || {}) },
       pool = shuffle(EX.filter((e) => e.cat === "plyo" && (!use || PLYO[e.key].use === use) && okEx(e, loc, eq) && !used.has(e.id))),
       out = [];
-    let sum = base;
     for (const e of pool) {
       if (out.length >= n) break;
-      if (sum + PLYO[e.key].load > cap) continue;
-      out.push(e);
-      sum += PLYO[e.key].load;
+      if (!plyoFitsBudget(cur, plyoCost(e.key), L)) continue;
+      const pr = plyoProg(e, cur, L),
+        c = plyoCost(e.key, pr ? { prog: pr } : null);
+      out.push(pr ? { ...e, prog: pr } : e);
+      cur.fed += c.fed;
+      cur.land += c.land;
+      cur.int += c.int;
     }
     out.forEach((e) => used.add(e.id));
-    return out.map((e) => ({ kind: "ex", id: e.id }));
+    return out.map((e) => (e.prog ? { kind: "ex", id: e.id, prog: e.prog } : { kind: "ex", id: e.id }));
+  }
+  /* the small line in the unit (E28): only when it contains jumps or bouncing; estimates are marked */
+  function plyoLine(sess) {
+    const o = plyoBudget(sess);
+    if (!o.fed && !o.land) return "";
+    const de = S.profile.lang === "de",
+      parts = [];
+    if (o.fed) parts.push(de ? `Federzeit ${fmt(o.fed)} Min.` : `Bounce time ${fmt(o.fed)} min`);
+    if (o.land) parts.push(de ? `${o.land} Landungen (davon ${o.int} einbeinig)` : `${o.land} landings (${o.int} on one leg)`);
+    if (o.est) parts.push(de ? `ca. ${o.est} Bodenkontakte geschätzt` : `approx. ${o.est} ground contacts estimated`);
+    return (de ? "Federn & Antritt heute: " : "Bounce & burst today: ") + parts.join(" · ");
   }
 
   /* ---- Schwerpunkt-Reihenfolge (E3/E9, Betreiber 17.11.2026) ----
@@ -188,11 +287,39 @@
       return rnd(fresh.length ? fresh : all);
     });
   }
-  const cmdGap = (sess) =>
+  const cmdGap = (sess, it) =>
     inUnit(sess, () => {
       const g = CMD_GAP[techniqueLevel()] || CMD_GAP[0];
-      return g[0] + Math.floor(Math.random() * (g[1] - g[0] + 1));
+      // progression (last stage): the commands come 1 s faster, never closer than 2 s
+      return Math.max(2, g[0] + Math.floor(Math.random() * (g[1] - g[0] + 1)) - ((it && it.prog && it.prog.cmd) || 0));
     });
+  /* the log of a finished unit: per drill of the closing blocks its step and whether it was done */
+  function plyoLog(sess) {
+    const out = [];
+    ((sess && sess.blocks) || []).forEach((b, bi) => {
+      if (b.rounds) return;
+      b.items.forEach((it, ni) => {
+        if (it.kind === "ex" && EX[it.id] && EX[it.id].cat === "plyo") out.push({ id: it.id, lv: (it.prog && it.prog.lv) || 0, done: !!itemDone(sess, bi, ni) });
+      });
+    });
+    return out.length ? out : undefined;
+  }
+  /* dose text of a drill with its step: timed from plyoRx, counted per set (+1 in one set per step) */
+  function plyoDose(key, it, de) {
+    const p = it && it.prog;
+    if (PLYO[key] && PLYO[key].kind === "reps") {
+      const base = DOSE_TXT[key] ? DOSE_TXT[key][de ? 0 : 1] : "";
+      if (!p || (!p.add && !p.rest)) return base;
+      const per = PLYO[key].land / 6,
+        sets = [0, 1, 2].map((i) => per + Math.floor(p.add / 3) + (i < p.add % 3 ? 1 : 0)),
+        same = sets.every((x) => x === sets[0]);
+      return base
+        .replace(/^3 × \d+/, same ? `3 × ${sets[0]}` : sets.join(" · "))
+        .replace(/(\d+) s (Pause|rest)/, (m, s, w) => `${Math.max(10, +s - (p.rest || 0))} s ${w}`);
+    }
+    const rx = plyoRx(key, it);
+    return rx ? rxText(rx, de ? "de" : "en") : "";
+  }
   /* said like the coach calls of the round timer; with the announcements off only shown, with a short signal */
   function cmdSay(c) {
     if (voiceOn()) say(c.speak, 1.05);
@@ -231,7 +358,7 @@
       const c = cmdPick(set, sess, tm.cmdTxt || tm.cmdLast);
       tm.cmdTxt = tm.cmdLast = c.show;
       cmdSay(c);
-      tm.cmdAt = el + cmdGap(sess) * 1000;
+      tm.cmdAt = el + cmdGap(sess, it) * 1000;
     }
   }
   /* round timer (one call per timer second): the same in the work phase of a round with commands */

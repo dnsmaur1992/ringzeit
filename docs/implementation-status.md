@@ -738,3 +738,64 @@ Entscheidungen E10, E11, E17–E20 (Dokument „Ringzeit – Trainingsmatrix und
   Gegenaktion, Verteidigungsrunde darf eine dazugeben), Taktik-Test mit festem Seed und 24 Einheiten.
 - **Kickbox-Vergleich:** 70 Einheiten (Technik, Technik & Kondition) neu aufgezeichnet – jede enthält jetzt die
   Distanz- oder Verteidigungsrunde; mit abgeschalteter Grundabdeckung ist der Vergleich identisch zu Schritt 2.
+
+## Schritt 4: Vorbereitung auf den Schwerpunkt (17.11.2026)
+
+Entscheidungen E1, E12, E21–E27 (Dokument „Ringzeit – Trainingsmatrix und offene Entscheidungen“). Code: `08d-prep.js`.
+
+- **Wo:** jede Einheit mit Technikrunden (Technik, Technik & Kondition, Sparring), alle Sportarten. Neuer Block
+  „Vorbereitung auf den Schwerpunkt“ direkt nach dem Aufwärmen; die 2 Minuten kommen aus dem allgemeinen Aufwärmen
+  (es behält mindestens 6). Die gewählte Dauer bleibt.
+- **Inhalt:** bis 45 Min. 2 Teile × 45 s, länger 3 × 40 s, 5 s Wechsel; langsam und einzeln → verbunden →
+  Arbeitstempo; abgeleitet aus demselben Schwerpunkt wie der Hauptteil (Beinarbeit/Federn, Verteidigung/Konter,
+  Taekwondo-Kick mit Ausholstellung, Kombination, Sparring-Rhythmus). Allein, auch mit Partner.
+- **Seite:** Leitsatz des Schwerpunkts (ersetzt die eigene Leitsatz-Seite), Teile, Timer mit Ansage über den
+  gemeinsamen Sprachweg; Knopf „Direkt los“ startet den Hauptteil. Zählt nicht für die Grundabdeckung, keine
+  Gewöhnungsphase.
+- **Bestehende Pläne:** Logikversion 3; nicht begonnene Einheiten werden einmal neu erstellt, begonnene bleiben.
+- **Kickbox-Vergleich:** alle Technik-, Technik-&-Kondition- und Sparringseinheiten mit dem neuen Block; ohne
+  Vorbereitung identisch zu Schritt 3.
+
+## Schritt 5: Zähler und Grenzen für Federn & Antritt (17.11.2026)
+
+Entscheidungen E4, E13, E27–E29. Code: `08b-plyo.js`.
+
+- **Drei Zähler statt Punkte:** Federzeit (Sekunden; Federrunden mit ihrer Rundenzeit), gezählte Landungen
+  (Wiederholungsdrills, alle einbeinig) und davon intensive; geschätzte Bodenkontakte nur zur Anzeige
+  (beidbeinig 2/s, einbeinig 1,5/s).
+- **Grenzen je Fitnessstufe** (eigene Werte, keine gemessenen Sicherheitsgrenzen): Federzeit 600/900/1200 s,
+  Landungen 40/80/120, intensiv 0/20/40; Entlastungswoche −30 %. Seilspringen zählt nicht. Folge: einbeinige
+  Wiederholungsdrills (24–36 Landungen) kommen erst ab Fitnessstufe 2 vor.
+- **Zeile in der Einheit:** „Federn & Antritt heute: Federzeit m:ss Min. · N Landungen (davon M einbeinig) · ca. X
+  Bodenkontakte geschätzt“ – nur wenn die Einheit Sprünge oder Federn enthält.
+- **Kickbox-Vergleich:** 13 Kraft-/Konditionseinheiten mit anderem Drill im Abschlussblock (Stufe 1: einbeinige
+  Wiederholungsdrills → beidbeinige; Stufe 0: zweiter Drill, Block 3 → 6 Min., Kraft −2, Kondition −1 Min.).
+
+## E35: Partnerangriffe passend zum Konter-Schwerpunkt (17.11.2026)
+
+- Bei „Kick mit Schlag kontern“ bzw. „Schlag mit Kick kontern“ greift der Partner genau mit den Angriffen des
+  Schwerpunkts an, die Abwehr folgt dem Schwerpunkt – in allen Gegenaktionen und in der Verteidigungsrunde der
+  Grundabdeckung; die schnelle Antwort bleibt im Schwerpunkt (Schläge gegen Kicks, Kicks gegen Schläge).
+  Knie-/Sprunggelenkgrenzen nehmen Check und Lowkick weiter heraus. Kickbox-Vergleich unverändert.
+
+## Schritt 6: WAKO-Regelfassung geprüft (17.11.2026, E7)
+
+- `docs/rules-sources.md` R1: WAKO Rules Kapitel 2 (Tatami) und 7 (Ring), Beschlüsse des Board vom 20.03.2026
+  (K1 ohne Clinch ab 01.01.2027). Die Kampfzeiten in `waFormat` stimmen; jüngere Kadetten 10–12 sind für LC/KL im
+  Kapitel nicht ausgewiesen (bleibt Trainingsformat). Keine Codeänderung außer `RULE_PROFILE.version`.
+
+## Schritt 7: Steigerung bei Federn & Antritt (17.11.2026)
+
+Entscheidungen E5, E30–E34. Code: `08b-plyo.js` (`plyoStep`, `plyoProg`, `plyoDose`, `plyoLog`).
+
+- **Automatisch und vorsichtig**, je Drill im Abschlussblock (nicht in Runden). Nachweis: die letzten 3 eigenen
+  Einheiten mit dem Drill auf der aktuellen Stufe vollständig, Anstrengung ≤ 6, keine Beschwerden (Notiz mit
+  Schmerz/Beschwerden oder aktive Knie-/Sprunggelenkgrenze) → eine Stufe hoch.
+- **Stufe ≈ +5 %:** +1 Wiederholung in einem Satz bzw. +5 s je Satz. Reihenfolge: Menge bis +4 Stufen (nur innerhalb
+  der Grenzen), dann Pause −5/−10/−15 s, dann Kommandos 1 s schneller.
+- **Zurück:** Anstrengung ≥ 9, Beschwerden oder Drill nicht erledigt → eine Stufe zurück. Entlastungswoche: Stufe
+  bleibt, ohne Zuschläge.
+- **Eine Vorgabe:** Text, Timer und Zähler nutzen `plyoRx`/`plyoReps`; die Stufe steht am Drill in der Einheit und
+  im Eintrag (`plyo`: id, Stufe, erledigt). Ältere Einträge ohne Angabe beginnen bei 0; Neuerstellen ändert nichts.
+- **Kickbox-Vergleich unverändert** (keine Verlaufsdaten mit Drills).
+- **Hilfe:** zwei neue Fragen („Vorbereitung auf den Schwerpunkt“, „Federn & Antritt heute“).

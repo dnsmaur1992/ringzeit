@@ -213,6 +213,7 @@
       disc: (sess?.sport || mainSport()) === "kickboxing" ? sess?.disc || S.profile.disc : undefined,
       sid: sess?.id,
       reg: sessionRegions(sess),
+      plyo: plyoLog(sess),
     }));
     store.save();
     ui.win = true;
@@ -592,6 +593,9 @@ ${setupFields(setup, ty)}
     sess.blocks.forEach((b, bi) => {
       h += sessionBlockHtml(sess, bi, true);
     });
+    // Federn & Antritt: one small line with the counters of the unit (E28, 17.11.2026)
+    const pl = plyoLine(sess);
+    if (pl) h += `<p class="sub plyobal">${esc(pl)}</p>`;
     const done = S.log.find((e) => e.date === ds && own(e));
     if (done) h += `<div class="note ok">✓ ${t("already")} ${effortTxt(done.rpe)} · ${done.minutes} ${t("min")}${runInfo(done)}</div>`;
     else
@@ -637,7 +641,7 @@ ${setupFields(setup, ty)}
         const x = exText(it.id),
           tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
         const dz = it.target ? targetText(it.target, it.id) : doseTxt(it.id, b);
-        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${tr ? `<span class="num">${pad(n + 1)}</span>` : checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${exName(it.id, x.name)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${tr ? setsHtml(sess, bi, n, b, it.id, false, preview) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true, preview) : ""}</div></div>`;
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${tr ? `<span class="num">${pad(n + 1)}</span>` : checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${exName(it.id, x.name)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${isFocusPrep(it) ? `<ol class="prepl">${prepLines(sess, it).map((l) => `<li>${esc(l.replace(/^\d+\. /, ""))}</li>`).join("")}</ol>` : ""}${tr ? setsHtml(sess, bi, n, b, it.id, false, preview) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true, preview) : ""}</div></div>`;
       }
       if (!preview && !b.rounds) h += exerciseTimerHtml(sess, bi, n);
     });

@@ -1,5 +1,6 @@
-/* Kickboxing rule profile (WAKO). The bout formats below were taken over unchanged from the app; the exact rule
-   edition was not recorded there and is checked when the sources are documented (docs/rules-sources.md). */
+/* Kickboxing rule profile (WAKO). Checked 17.11.2026 (docs/rules-sources.md R1): WAKO Rules chapter 2 (tatami, general)
+   and chapter 7 (ring, general) – the chapters carry no version number – plus the WAKO IF Board decisions of 20.03.2026
+   (K1 without clinching from 01.01.2027). */
 
 export const DISCIPLINES = ["lc", "kl", "fc", "k1"];
 
@@ -26,7 +27,7 @@ export const STD_FORMAT = { r: 3, w: 120, b: 60, cls: null };
 export const RULE_PROFILE = {
   publisher: "WAKO",
   title: "WAKO rules – tatami (LC, KL) and ring (FC, K1)",
-  version: null, // not recorded in the existing app – to be documented in docs/rules-sources.md
+  version: "WAKO Rules ch. 2 + 7 (no version number), Board decisions 20.03.2026 – checked 17.11.2026",
   disciplines: DISCIPLINES,
   format: waFormat,
   standardFormat: STD_FORMAT,

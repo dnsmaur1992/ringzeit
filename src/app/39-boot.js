@@ -8,7 +8,7 @@
      Started/done/resumable sessions retain the exact prescriptions the user already saw in training. */
   /* version of the planning logic: a change rebuilds the planned, not begun sessions once (E14, 17.11.2026);
      begun or done sessions and every entry stay as they are */
-  const PLAN_LOGIC = 2;
+  const PLAN_LOGIC = 3; // 3: preparation for the focus (17.11.2026)
   function refreshLegacyPlans() {
     const from = iso(today()), resume = resumeRead(),
       newLogic = S.profile.planLogic !== PLAN_LOGIC;

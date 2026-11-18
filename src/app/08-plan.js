@@ -1144,7 +1144,10 @@
   let lowTurn = 0;
   // the partner's attacks vary within a session: an attack already used comes again only when all were used
   const usedAtt = new Set();
-  function partnerReact(c) {
+  /* E35 (17.11.2026): with a counter focus (kickVsPunch / punchVsKick) the partner attacks with exactly what the focus
+     counters, and you defend as the focus says – in every counter action and in the defence round of the Grundabdeckung;
+     your quick answer stays in the focus too (punches against kicks, kicks against punches). */
+  function partnerReact(c, theme = null) {
     const p = S.profile,
       kid = ageGroup() === "kids",
       ka = kneeAnk(),
@@ -1160,7 +1163,16 @@
       if (x.k1) return discOf() === "k1" && lvl >= x.lvl;
       return lvl >= x.lvl;
     });
+    const focus = theme && theme.counters && theme.counters.length ? theme.counters.filter((x) => atts.includes(x.att) && !(ka && x.d === "check")) : [];
     const pick = (low) => {
+      if (focus.length) {
+        let pool = low && focus.some((x) => x.att === "lowk") ? focus.filter((x) => x.att === "lowk") : focus;
+        const fresh = pool.filter((x) => !usedAtt.has(x.att));
+        pool = fresh.length ? fresh : pool;
+        const x = pool[Math.floor(Math.random() * pool.length)];
+        usedAtt.add(x.att);
+        return { a: x.att, d: x.d };
+      }
       // low kicks come often in Kick Light/K1 – they are what those disciplines add
       let pool = low && atts.includes("lowk") ? ["lowk"] : atts;
       if (pool.length > 1) {
@@ -1178,6 +1190,8 @@
       if (kid || Math.random() >= [0, 0.5, 0.85][lvl]) return x;
       const ok = (ANSWER[x.d] || []).filter(
         (t) =>
+          !(focus.length && theme.tag === "hand" && KICKS.has(t)) &&
+          !(focus.length && theme.tag === "kick" && !KICKS.has(t)) &&
           !(box && !BOXT.BOX_ATT.has(t)) &&
           !(t === "lowk" && !lowOk) &&
           !(t === "knee" && (discOf() !== "k1" || ka)) &&
@@ -1198,7 +1212,7 @@
     const dbl = discOf() === "fc" ? [0, 0.25, 0.6][lvl] : lvl >= 2 ? 0.4 : 0;
     // only with an attack not used yet in this unit – no partner attack twice (17.11.2026: with 6 rounds × 2 actions
     // there can be more spots than attacks)
-    if (!kid && !r.post && Math.random() < dbl && atts.some((x) => !usedAtt.has(x))) r.post = answer(pick(lowOk && Math.random() < 0.35));
+    if (!kid && !r.post && Math.random() < dbl && (focus.length ? focus : atts.map((a) => ({ att: a }))).some((x) => !usedAtt.has(x.att))) r.post = answer(pick(lowOk && Math.random() < 0.35));
     return r;
   }
   /* how many partner rounds of one session get a counter action: Grundlage (and children) exactly 1,
@@ -1434,7 +1448,7 @@
         want = theme && (theme.id === "def" || theme.counters) ? pool.length : reactCount(pool.length),
         order = pool.map((i) => ({ i, w: i + Math.random() * pool.length * 0.6 })).sort((a, b) => b.w - a.w);
       usedAtt.clear();
-      order.slice(0, want).forEach(({ i }) => (out[i].react = partnerReact(out[i].combo)));
+      order.slice(0, want).forEach(({ i }) => (out[i].react = partnerReact(out[i].combo, theme)));
     }
     return out;
   }
@@ -1627,9 +1641,9 @@
         order = pool.map((i) => ({ i, w: i + Math.random() * pool.length * 0.6 })).sort((a, b) => b.w - a.w);
       lowTurn = Math.random() < 0.5 ? 0 : 1;
       usedAtt.clear();
-      order.slice(0, want).forEach(({ i }) => (out[i].react = partnerReact(out[i].combo)));
+      order.slice(0, want).forEach(({ i }) => (out[i].react = partnerReact(out[i].combo, theme)));
       // the defence slot with a partner: a real attack → defence → counter, on top of the counter actions above
-      if (cover.def != null && out[cover.def] && out[cover.def].combo && !out[cover.def].react) out[cover.def].react = partnerReact(out[cover.def].combo);
+      if (cover.def != null && out[cover.def] && out[cover.def].combo && !out[cover.def].react) out[cover.def].react = partnerReact(out[cover.def].combo, theme);
       if (cover.def != null && out[cover.def]) out[cover.def].cover = "def";
     }
     return out;
@@ -2040,11 +2054,13 @@
   /* A built session carries its sport (default: main sport) and a stable id that links it to its log entry */
   function buildSession(dateStr, type, loc, eqIn, opts = {}) {
     buildSport = opts.sport || mainSport();
+    buildDate = dateStr; // Federn & Antritt: the deload week of this date lowers the limits
     buildDisc = buildSport === "kickboxing" ? opts.disc || null : null;
     unitStyle = buildSport === "taekwondo" ? opts.tstyle || null : null;
     let s;
     try {
       s = buildSessionCore(dateStr, type, loc, eqIn, opts);
+      addPrep(s); // preparation for the focus at the end of the warm-up (17.11.2026)
       s.techniqueLevel = techniqueLevel();
       s.fitnessLevel = fitnessLevel();
       s.blocks.forEach(b => { b.fitnessLevel = s.fitnessLevel; });
@@ -2447,7 +2463,7 @@
         if (theme && theme.id === "bounce") {
           plyoLimitRounds(items, fw);
           tItems.forEach((x) => used.delete(x.id));
-          tItems = plyoPick(3, loc, eq, used, "pow", plyoLoad({ blocks: [{ rounds: true, w: fw, items }] }));
+          tItems = plyoPick(3, loc, eq, used, "pow", plyoBudget({ blocks: [{ rounds: true, w: fw, items }] }));
           // the rounds used up the cap: lower-leg strength without more jumps keeps the minutes of the closing block
           if (!tItems.length) tItems = focusEx({ id: "bounceStr" }, loc, eq, used, 3);
         }

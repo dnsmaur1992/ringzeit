@@ -2205,6 +2205,8 @@
       arc: [[140, 74], 34, 200, 340],
     },
   });
+  // preparation for the focus: the fighting stance, bouncing lightly (17.11.2026)
+  SKETCH["pre.focus_prep"] = SKETCH["plyo.stance_bounce"];
   /* top view for self-defence in the circle */
   function sdCircleSvg() {
     let h = `<svg class="sketch" viewBox="0 0 240 156" role="img"><defs><marker id="skHead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${SK.BRASS}"/></marker></defs><circle cx="120" cy="78" r="58" fill="none" stroke="#2b2f36" stroke-width="2" stroke-dasharray="5 6"/>`;

@@ -103,9 +103,17 @@
       circ = isCirc(b),
       m = (b.sets || "").match(/^(\d+)×\s*(\d+(?:[–-]\d+)?)?/),
       n = m ? +m[1] : 3;
+    // preparation for the focus: its parts from the unit (17.11.2026)
+    if (e.key === "pre.focus_prep") {
+      const it = b && b.items && b.items.find((x) => x.id === id && x.steps);
+      return it ? prepDose(it) : fix;
+    }
     if (e.cat === "pre") return fix;
     // Federn & Antritt: the prescription (timer) or the counted landings, in every block the same
-    if (e.cat === "plyo") return fix;
+    if (e.cat === "plyo") {
+      const it = b && b.items && b.items.find((x) => x.id === id && x.prog);
+      return it ? plyoDose(e.key, it, de) : fix;
+    }
     if (b.key === "warm") {
       const mins = Math.max(2, Math.round(b.min / Math.max(1, b.items.length)));
       return `${mins} ${de ? "Min." : "min"}${fix ? " · " + fix : ""}`;

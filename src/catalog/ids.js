@@ -111,6 +111,8 @@ export const EX_KEYS = [
   "plyo.react", // 104
   "plyo.bounce_slip", // 105
   "plyo.bounce_roll", // 106
+  /* Vorbereitung auf den Schwerpunkt am Ende des Warm-ups (Betreiber 17.11.2026, E1/E21–E26) */
+  "pre.focus_prep", // 107
 ];
 const LEGACY = new Map(EX_KEYS.map((k, i) => [k, i]));
 /** old numeric id → stable id (anything else is returned unchanged) */

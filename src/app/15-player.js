@@ -164,6 +164,8 @@
   function cueGate(sess, bi) {
     const b = sess && sess.blocks[bi];
     if (!ui.workout || !b || !b.rounds || !sessCue(sess) || ui.workout.cueOk === bi) return false;
+    // a preparation block before the rounds shows the guiding sentence itself (17.11.2026)
+    if (sess.blocks.some((x, i) => i < bi && x.key === "prep")) return false;
     if (b.items.some((it, ni) => itemDone(sess, bi, ni))) return false;
     ui.workout.cue = bi;
     if (ui.workout.cueSaid !== bi) {
@@ -382,6 +384,7 @@
   function playerAction(a, ds = {}) {
     if (!ui.workout) return;
     const st = playerStep();
+    if (a === "prepskip") return playerDone();
     if (a === "cueok") {
       ui.workout.cueOk = ui.workout.cue;
       delete ui.workout.cue;
@@ -542,6 +545,11 @@
       } else {
       h += `<div class="pcard${done ? " done" : ""}">${sk ? `<div class="fsk">${sketchSvg(EX[it.id].key, true)}</div>` : ""}${small ? `<small>${esc(small)}</small>` : ""}<b>${esc(stepTitle(sess, st))}${done ? " ✓" : ""}</b>${dose ? `<span class="dose">${esc(dose)}</span>` : ""}${desc ? `<p>${esc(desc)}</p>` : ""}`;
       // Federn & Antritt: the command of the moment, big (the same word that is said)
+      // preparation for the focus: guiding sentence, the parts, and "Direkt los" (17.11.2026)
+      if (isFocusPrep(it)) {
+        const cue = sessCue(sess);
+        h += `${cue ? `<div class="cuebox"><small>${t("cues").lbl}</small><p>${esc(cue)}</p></div>` : ""}<ol class="prepl">${prepLines(sess, it).map((x) => `<li>${esc(x.replace(/^\d+\. /, ""))}</li>`).join("")}</ol><button type="button" class="btn sec prepgo" data-player="prepskip">${t("cues").skip}</button>`;
+      }
       if (st.kind === "timed" && cmdOf(it)) h += `<div class="ftcall cmdcall" id="cmdcall" aria-live="polite">${tm && tm.player === i && tm.running ? esc(tm.cmdTxt || "") : ""}</div>`;
       if (st.lap != null)
         h += `<ol class="plap">${b.items.map((x, k) => `<li class="${k === st.ni ? "on" : ""}">${esc(itemTitle(sess, st.bi, k))}</li>`).join("")}</ol>`;
@@ -681,6 +689,10 @@
       name = EX[it.id]?.key,
       W = workoutText();
     if (b.rounds) return null;
+    if (isFocusPrep(it)) {
+      const ph = prepPhases(it, W);
+      return { phases: ph, choices: [], seconds: ph.reduce((n, p) => n + p.seconds, 0), sides: 1, tracked: false };
+    }
     if (DOSE_LEG.has(name)) W.side = S.profile.lang === "de" ? "Bein" : "Leg";
     const phase = (seconds, label = W.run) => ({ seconds, label }),
       interval = (n, on, off) =>
@@ -720,7 +732,8 @@
       seconds = choices.includes(choice) ? choice : choices[0];
       sides = DOSE_SIDE.has(name) || DOSE_LEG.has(name) ? 2 : 1;
     } else {
-      const rx = RX[name];
+      // Federn & Antritt: the prescription with the drill's progression step (same numbers as the text)
+      const rx = EX[it.id]?.cat === "plyo" ? plyoRx(name, it) : RX[name];
       if (rx) fromRx(rx);
       else if (EX[it.id]?.cat === "cond" && !DOSE_FIX[name] && !repDose(it.id, b)) {
         phases = interval(1, [30, 40, 45][doseLevel(b)], [30, 20, 15][doseLevel(b)]);
@@ -899,6 +912,7 @@
     if (tm.running) tm.remainingMs = Math.max(0, tm.endAt - now);
     if (changed) resumeSave(true);
     cmdTickExercise(tm, changed); // Federn & Antritt: commands in the work phases
+    prepTick(tm); // preparation for the focus: guiding sentence and parts are called
     playerTimerTick(tm, changed && tm.done);
     if (!timerVisible()) return;
     if (changed && ui.workout?.player && !ui.workout.list) renderWorkout();

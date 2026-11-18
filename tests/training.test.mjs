@@ -1285,9 +1285,10 @@ test("mobility time frames and hardening holds use their existing prescription",
 
 test("completed rounds lead to the following planned section instead of skipping to session save", async () => {
  const a=app();
- a.run(`ui.sel='2026-11-02';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60});S.sessions[ui.sel].flow={block:1};ui.workout={ds:ui.sel,block:1};ui.focus=true;ui.timer=newTimer(ui.sel);ui.timer.phase='done';`);
+ // (17.11.2026: the preparation block sits between warm-up and rounds – the rounds block is looked up)
+ a.run(`ui.sel='2026-11-02';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{min:60});globalThis.RB=S.sessions[ui.sel].blocks.findIndex(b=>b.rounds);S.sessions[ui.sel].flow={block:RB};ui.workout={ds:ui.sel,block:RB};ui.focus=true;ui.timer=newTimer(ui.sel);ui.timer.phase='done';`);
  await a.click({dataset:{fx:'finish'}});
- assert.equal(a.run('ui.workout.block'),2);
+ assert.equal(a.run('ui.workout.block'),a.run('RB+1'));
  assert.equal(a.run('ui.focus'),false);
  assert.equal(a.run('S.log.length'),0);
  assert.equal(a.run('sessionCompletion(S.sessions[ui.sel]).done'),0);
@@ -2238,20 +2239,19 @@ test("17.11.2026 seeded: the partner's attacks never repeat within a unit, also 
 });
 test("17.11.2026 seeded: bounce rounds count in the Federn & Antritt balance – rounds and closing block together never over the cap, extra rounds stay footwork", () => {
   const a = app();
-  // a round of 3 minutes = 40 points (90 s bouncing = 20, like the stance bounce)
-  assert.equal(a.run("plyoLoad({blocks:[{rounds:true,w:180,items:[{kind:'round',k:'bounce'},{kind:'round',k:'shadow'},{kind:'round',k:'bounce'}]}]})"), 80);
-  assert.equal(a.run("plyoLoad({blocks:[{rounds:true,w:90,items:[{kind:'round',k:'ex',id:'plyo.stance_bounce'}]},{key:'plyo',items:[{kind:'ex',id:'plyo.pogo_jumps'}]}]})"), 50);
+  // Schritt 5: a bounce round counts its round time as Federzeit; timed jumps their work time (landings only estimated)
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(plyoBudget({blocks:[{rounds:true,w:180,items:[{kind:'round',k:'bounce'},{kind:'round',k:'shadow'},{kind:'round',k:'bounce'}]}]}))")), { fed: 360, land: 0, int: 0, est: 0 });
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(plyoBudget({blocks:[{rounds:true,w:90,items:[{kind:'round',k:'ex',id:'plyo.stance_bounce'}]},{key:'plyo',items:[{kind:'ex',id:'plyo.pogo_jumps'},{kind:'ex',id:'plyo.hop_stick'}]}]}))")), { fed: 150, land: 30, int: 30, est: 120 });
   for (const [sp, sty, disc] of [["kickboxing", "", "lc"], ["kickboxing", "", "k1"], ["boxing", "", ""], ["taekwondo", "wt", ""], ["taekwondo", "itf", ""]])
     for (const lv of [0, 1, 2]) {
-      const cap = [60, 100, 140][lv];
       plyoSet(a, sp, sty, disc, lv, "chooseFocus=((f)=>(nb)=>nb?f(nb):BROAD.find(x=>x.id==='bounce'))(chooseFocus);");
       for (let i = 0; i < 6; i++) {
         seedRandom(a, 7000 + lv * 10 + i);
-        const { s, load } = plyoBuild(a, "T", sp, sty, disc);
-        assert.ok(load <= cap, `${sp} L${lv} seed ${i}: ${load} > ${cap}`);
+        const { s, load, L } = plyoBuild(a, "T", sp, sty, disc);
+        assert.ok(within(load, L), `${sp} L${lv} seed ${i}: ${JSON.stringify([load, L])}`);
         const rb = s.blocks.find((b) => b.rounds),
           nb = rb.items.filter((r) => r.k === "bounce").length;
-        assert.ok(nb >= 1 && nb <= Math.floor(cap / Math.round((rb.w / 90) * 20)), `${sp} L${lv}: ${nb} bounce rounds`);
+        assert.ok(nb >= 1 && nb <= Math.floor(L.fed / rb.w), `${sp} L${lv}: ${nb} bounce rounds`);
       }
     }
   // rolling: boxing only
@@ -2270,7 +2270,105 @@ const PLYO_UNITS = [
 const plyoSet = (a, sp, sty, disc, lv, extra = "") =>
   a.run(`S.profile.sport='${sp}';S.profile.disc='${disc || "lc"}';S.profile.birthYear=1995;S.profile.level=${lv};S.profile.limits=[];S.sessions={};S.log=[];${sty ? `S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'${sty}'});` : ""}${extra}`);
 const plyoBuild = (a, ty, sp, sty, disc, ds = "2026-11-09") =>
-  JSON.parse(a.run(`(()=>{const s=buildSession('${ds}','${ty}','gym',['bag','rope','weights'],{sport:'${sp}'${sty ? `,tstyle:'${sty}'` : ""}${disc ? `,disc:'${disc}'` : ""}});S.sessions['u'+Object.keys(S.sessions).length]=s;return JSON.stringify({s,load:plyoLoad(s)})})()`));
+  JSON.parse(a.run(`(()=>{const s=buildSession('${ds}','${ty}','gym',['bag','rope','weights'],{sport:'${sp}'${sty ? `,tstyle:'${sty}'` : ""}${disc ? `,disc:'${disc}'` : ""}});S.sessions['u'+Object.keys(S.sessions).length]=s;buildDate='${ds}';const L=plyoLimits();buildDate=null;return JSON.stringify({s,load:plyoBudget(s),L})})()`));
+// Schritt 5 (E13): Federzeit, counted landings and intensive landings of a unit stay within the limits of its fitness level
+const within = (o, L) => o.fed <= L.fed && o.land <= L.land && o.int <= L.int;
+test("17.11.2026 E35 seeded: with a counter focus the partner attacks with what the focus counters – counter actions and the defence round; the quick answer stays in the focus", () => {
+  const a = app();
+  a.run("var _cf2=chooseFocus;S.log=[];S.profile.limits=[]");
+  for (const [id, atts, ans] of [
+    ["kickVsPunch", { round: ["block"], front: ["step"], roundh: ["block"], lowk: ["check"] }, (t) => !["round", "roundh", "front", "side", "lowk", "knee", "hook_kick", "spin"].includes(t)],
+    ["punchVsKick", { cross: ["slip", "step"], jab: ["parry", "slip"], hook: ["duck"] }, (t) => ["round", "roundh", "front", "side", "lowk", "knee"].includes(t)],
+  ]) {
+    let n = 0, def = 0;
+    for (const disc of ["lc", "kl", "k1"])
+      for (let i = 0; i < 12; i++) {
+        seedRandom(a, 9300 + i);
+        const s = JSON.parse(a.run(`S.sessions={};S.profile.sport='kickboxing';S.profile.disc='${disc}';S.profile.level=2;(()=>{chooseFocus=()=>tacticFoci().find(x=>x.id==='${id}');const ss=buildSession('2026-11-02','T','gym',['partner','pads','bag'],{sport:'kickboxing',min:60});chooseFocus=_cf2;return JSON.stringify(ss)})()`));
+        assert.equal(s.theme, id);
+        for (const r of s.blocks.find((b) => b.rounds).items.filter((r) => r.react))
+          for (const x of [r.react.pre, r.react.mid, r.react.post].filter(Boolean)) {
+            n++;
+            assert.ok(atts[x.a] && atts[x.a].includes(x.d), `${id}/${disc}: ${JSON.stringify(x)}`);
+            if (x.c) assert.ok(ans(x.c), `${id}/${disc} answer ${x.c}`);
+            if (r.cover === "def") def++;
+          }
+      }
+    assert.ok(n >= 30, `${id}: ${n} partner attacks`);
+  }
+});
+test("17.11.2026 Schritt 7: progression per drill – 3 good units step up, a signal steps back, ladder amount → rest → commands, deload keeps the step, text = timer = counter", () => {
+  const a = app();
+  a.run("S.tests=[];S.profile.fitnessBase=2;S.profile.limits=[];S.profile.lang='de';S.sessions={};buildDate='2026-11-20'");
+  const log = (rows) => a.run(`S.log=${JSON.stringify(rows.map(([d, lv, done, rpe, note], i) => ({ id: "e" + i, date: d, src: "own", type: "S", minutes: 60, rpe, note: note || "", plyo: [{ id: "plyo.pogo_jumps", lv, done }] })))};0`);
+  const step = () => +a.run("plyoStep('plyo.pogo_jumps')");
+  log([]);
+  assert.equal(step(), 0);
+  log([["2026-11-02", 0, true, 6], ["2026-11-05", 0, true, 5]]);
+  assert.equal(step(), 0, "two units are not enough");
+  log([["2026-11-02", 0, true, 6], ["2026-11-05", 0, true, 5], ["2026-11-09", 0, true, 6]]);
+  assert.equal(step(), 1, "three good units: one step up");
+  log([["2026-11-02", 0, true, 6], ["2026-11-05", 0, true, 7], ["2026-11-09", 0, true, 6]]);
+  assert.equal(step(), 0, "RPE 7 is no evidence");
+  log([["2026-11-02", 0, true, 6], ["2026-11-05", 0, true, 6], ["2026-11-09", 1, true, 6]]);
+  assert.equal(step(), 1, "the evidence counts at the current step only");
+  log([["2026-11-05", 3, true, 6], ["2026-11-09", 3, true, 9]]);
+  assert.equal(step(), 2, "RPE 9: one step back");
+  log([["2026-11-05", 3, true, 6], ["2026-11-09", 3, false, 6]]);
+  assert.equal(step(), 2, "drill not done (aborted): one step back");
+  log([["2026-11-05", 3, true, 6], ["2026-11-09", 3, true, 5, "Sprunggelenk Schmerzen"]]);
+  assert.equal(step(), 2, "complaints: one step back");
+  log([["2026-11-25", 0, true, 6], ["2026-11-26", 0, true, 6], ["2026-11-27", 0, true, 6]]);
+  assert.equal(step(), 0, "entries after the unit's date do not count (rebuilding stays the same)");
+  // the ladder: amount up to +4, then rest −5/−10/−15 s, then commands 1 s faster
+  assert.deepEqual([1, 4, 5, 7, 8, 12].map((lv) => JSON.parse(a.run(`JSON.stringify(progOf(${lv}))`))), [
+    { lv: 1, add: 1, rest: 0, cmd: 0 }, { lv: 4, add: 4, rest: 0, cmd: 0 }, { lv: 5, add: 4, rest: 5, cmd: 0 },
+    { lv: 7, add: 4, rest: 15, cmd: 0 }, { lv: 8, add: 4, rest: 15, cmd: 1 }, { lv: 8, add: 4, rest: 15, cmd: 1 },
+  ]);
+  // deload keeps the step without additions; within the limits the amount is reduced
+  log([["2026-11-02", 5, true, 6], ["2026-11-05", 5, true, 6], ["2026-11-09", 5, true, 6]]);
+  const prog = (dl, cur) => JSON.parse(a.run(`(()=>{const w=weekLoad;weekLoad=()=>({deload:${dl}});const p=plyoProg(EX['plyo.pogo_jumps'],${JSON.stringify(cur)},plyoLimits());weekLoad=w;return JSON.stringify(p)})()`));
+  assert.deepEqual(prog(false, { fed: 0, land: 0, int: 0 }), { lv: 6, add: 4, rest: 10, cmd: 0 });
+  assert.deepEqual(prog(true, { fed: 0, land: 0, int: 0 }), { lv: 6, add: 0, rest: 0, cmd: 0, dl: 1 });
+  assert.equal(prog(false, { fed: 1200 - 66, land: 0, int: 0 }).add, 2, "only as much as fits the Federzeit (3 × 22 s)");
+  // one prescription for text, timer and counter: timed drill
+  a.run("S.sessions['2026-11-20']={id:'x',type:'S',blocks:[{key:'plyo',min:6,items:[{kind:'ex',id:'plyo.pogo_jumps',prog:{lv:6,add:4,rest:10,cmd:0}},{kind:'ex',id:'plyo.hop_stick',prog:{lv:5,add:4,rest:5,cmd:0}}]}]}");
+  assert.equal(a.run("doseTxt('plyo.pogo_jumps',S.sessions['2026-11-20'].blocks[0])"), a.run("rxText({k:'iv',n:3,on:24,off:30,offW:['Pause','rest']},'de')"));
+  const ph = JSON.parse(a.run("JSON.stringify(exerciseTiming(S.sessions['2026-11-20'],0,0).phases.map(p=>p.seconds))"));
+  assert.deepEqual(ph.filter((x, i) => i % 2 === 0), [24, 24, 24]);
+  assert.ok(ph.filter((x, i) => i % 2 === 1).every((x) => x === 30), JSON.stringify(ph));
+  assert.equal(JSON.parse(a.run("JSON.stringify(plyoBudget(S.sessions['2026-11-20']))")).fed, 72);
+  // counted drill: +1 in one set per step, rest −5 s
+  assert.equal(a.run("doseTxt('plyo.hop_stick',S.sessions['2026-11-20'].blocks[0])"), "7 · 6 · 6 pro Bein · 2 s halten · 55 s Pause");
+  assert.equal(JSON.parse(a.run("JSON.stringify(plyoBudget(S.sessions['2026-11-20']))")).land, 38);
+  // the log of the finished unit carries the step and whether the drill was done
+  a.run("S.sessions['2026-11-20'].checked={'0.0':true}");
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(plyoLog(S.sessions['2026-11-20']))")), [{ id: "plyo.pogo_jumps", lv: 6, done: true }, { id: "plyo.hop_stick", lv: 5, done: false }]);
+  a.run("buildDate=null");
+});
+test("17.11.2026 Schritt 5: limits by fitness level, deload −30 %, rope never counts, single-leg drills only with an intensive budget, counter line", () => {
+  const a = app();
+  a.run("S.tests=[];S.log=[];S.profile.lang='de'");
+  const lim = (f, dl) => JSON.parse(a.run(`(()=>{S.profile.fitnessBase=${f};const w=weekLoad;weekLoad=()=>({deload:${dl}});buildDate='2026-11-09';const L=plyoLimits();buildDate=null;weekLoad=w;return JSON.stringify(L)})()`));
+  assert.deepEqual(lim(0, false), { fed: 600, land: 40, int: 0 });
+  assert.deepEqual(lim(1, false), { fed: 900, land: 80, int: 20 });
+  assert.deepEqual(lim(2, false), { fed: 1200, land: 120, int: 40 });
+  assert.deepEqual(lim(2, true), { fed: 840, land: 84, int: 28 });
+  // rope skipping is no bounce work (E29)
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(plyoBudget({blocks:[{rounds:true,w:180,items:[{kind:'round',k:'rope'},{kind:'round',k:'rope'}]}]}))")), { fed: 0, land: 0, int: 0, est: 0 });
+  // fitness level 0: no intensive landings → no single-leg rep drill is ever picked
+  for (let i = 0; i < 20; i++) {
+    seedRandom(a, 9100 + i);
+    const k = JSON.parse(a.run("(()=>{S.profile.fitnessBase=0;S.profile.sport='kickboxing';S.profile.level=2;buildDate=null;return JSON.stringify(plyoPick(3,'gym',['bag'],new Set(),null).map(it=>PLYO[EX[it.id].key].kind))})()"));
+    assert.ok(!k.includes("reps"), k.join());
+  }
+  // the counter line on the unit page
+  assert.equal(
+    a.run("plyoLine({blocks:[{rounds:true,w:180,items:[{kind:'round',k:'bounce'}]},{key:'plyo',items:[{kind:'ex',id:'plyo.pogo_jumps'},{kind:'ex',id:'plyo.hop_stick'}]}]})"),
+    "Federn & Antritt heute: Federzeit 4:00 Min. · 30 Landungen (davon 30 einbeinig) · ca. 120 Bodenkontakte geschätzt"
+  );
+  assert.equal(a.run("plyoLine({blocks:[{key:'warm',items:[]}]})"), "");
+});
 test("17.11.2026 Federn & Antritt: 19 drills with sketch, form cues and dose; each only in its sport, discipline and level", () => {
   const a = app();
   const ids = JSON.parse(a.run("JSON.stringify(EX.filter(e=>e.cat==='plyo').map(e=>e.key))"));
@@ -2322,11 +2420,10 @@ test("17.11.2026 Federn & Antritt in the plan: strength first while fresh, one c
   for (const [sp, sty, disc] of PLYO_UNITS)
     for (const lv of [0, 2]) {
       plyoSet(a, sp, sty, disc, lv);
-      const cap = [60, 100, 140][lv];
       for (const ty of "SKC")
         for (let i = 0; i < 14; i++) {
-          const { s, load } = plyoBuild(a, ty, sp, sty, disc);
-          assert.ok(load <= cap, `${sp}/${sty || disc} L${lv} ${ty}: load ${load} > ${cap}`);
+          const { s, load, L } = plyoBuild(a, ty, sp, sty, disc);
+          assert.ok(within(load, L), `${sp}/${sty || disc} L${lv} ${ty}: ${JSON.stringify([load, L])}`);
           const pl = s.blocks.flatMap((b, bi) => b.items.map((it) => ({ ...it, bi, key: b.key }))).filter((it) => it.id && it.id.startsWith("plyo."));
           if (!pl.length) continue;
           seen[ty]++;
@@ -2362,7 +2459,7 @@ test("17.11.2026 focus Federn & Antritt: guiding sentence, bounce rounds with co
   a.run("S.profile.lang='de'");
   for (const [sp, sty, disc] of PLYO_UNITS) {
     plyoSet(a, sp, sty, disc, 2, "chooseFocus=((f)=>(nb)=>nb?f(nb):BROAD.find(x=>x.id==='bounce'))(chooseFocus);");
-    const { s, load } = plyoBuild(a, "T", sp, sty, disc);
+    const { s, load, L } = plyoBuild(a, "T", sp, sty, disc);
     assert.equal(s.theme, "bounce");
     const rb = s.blocks.find((b) => b.rounds);
     assert.ok(rb.items.filter((r) => r.k === "bounce").length >= 2, `${sp}: bounce rounds`);
@@ -2372,7 +2469,7 @@ test("17.11.2026 focus Federn & Antritt: guiding sentence, bounce rounds with co
     assert.ok(last, `${sp}: closing block`);
     if (last.key === "plyo") assert.ok(last.items.every((it) => a.run(`PLYO['${it.id}'].use`) === "pow"));
     else assert.ok(last.items.every((it) => ["str.single_leg_calf_raises", "str.bulgarian_split_squats", "str.lunges", "str.step_ups"].includes(it.id)), JSON.stringify(last.items));
-    assert.ok(load <= 140);
+    assert.ok(within(load, L), JSON.stringify([load, L]));
     assert.equal(a.run(`cmdOf({k:'bounce'})`), "round");
     assert.equal(a.run(`blkName(${JSON.stringify(last)})`), last.key === "plyo" ? "Federn & Antritt" : "Kraft für die Technik");
     assert.equal(a.run(`roundInfo(${JSON.stringify(rb.items.find((r) => r.k === "bounce"))}).title`), "Federn & Antritt");
@@ -2662,6 +2759,95 @@ test("17.11.2026 range & exit round: the card names entry and exit, the round ca
   assert.doesNotMatch(a.run(`spokenText(${JSON.stringify(said)})`), /·/);
 });
 
+test("17.11.2026 seeded: preparation for the focus – after the warm-up of every unit with technique rounds, 2 × 45 s up to 45 min, 3 × 40 s longer, taken from the warm-up; from the unit's own focus, sport words only", () => {
+  const a = app();
+  const RX = { boxing: /\bkicks?\b|(?<!An)Tritt|Chagi|Knie/i, taekwondo: /\bJab\b|\bCross\b|Haken|\bhooks?\b|Uppercut|Low ?Kick/i, kickboxing: /Chagi|Poomsae/i };
+  for (const [sp, sty, disc] of [["kickboxing", "", "lc"], ["kickboxing", "", "k1"], ["boxing", "", ""], ["taekwondo", "wt", ""], ["taekwondo", "itf", ""]])
+    for (const ty of ["T", "C", "P", "S", "K"])
+      for (const min of [30, 45, 60, 90]) {
+        plyoSet(a, sp, sty, disc, 1);
+        seedRandom(a, min * 7 + ty.charCodeAt(0));
+        const s = plyoBuild(a, ty, sp, sty, disc).s && JSON.parse(a.run(`JSON.stringify(buildSession('2026-11-11','${ty}','gym',${JSON.stringify(ty === "P" ? ["partner"] : ["bag"])},{sport:'${sp}',min:${min}${sty ? `,tstyle:'${sty}'` : ""}${disc ? `,disc:'${disc}'` : ""}}))`));
+        const tag = `${sp}/${sty || disc} ${ty} ${min}`,
+          wi = s.blocks.findIndex((b) => b.key === "warm"),
+          pi = s.blocks.findIndex((b) => b.key === "prep"),
+          rb = s.blocks.find((b) => b.rounds);
+        assert.equal(s.blocks.reduce((n, b) => n + b.min, 0), s.min, "minutes " + tag);
+        if (!["T", "C", "P"].includes(ty) || !rb) {
+          assert.equal(pi, -1, "no preparation " + tag);
+          continue;
+        }
+        if (s.blocks[wi].min < 6) continue;
+        assert.equal(pi, wi + 1, "right after the warm-up " + tag);
+        const it = s.blocks[pi].items[0];
+        assert.equal(s.blocks[pi].min, 2);
+        assert.ok(s.blocks[wi].min >= 6, "warm-up keeps at least 6 min " + tag);
+        assert.deepEqual([it.n, it.s], min <= 45 ? [2, 45] : [3, 40], tag);
+        assert.deepEqual(it.steps.map((x) => x.t), min <= 45 ? ["slow", "work"] : ["slow", "link", "work"]);
+        for (const st of it.steps) for (const lg of ["de", "en"]) assert.doesNotMatch(st[lg], RX[sp], `${tag} ${lg}: ${st[lg]}`);
+        // the timer: the parts with 5 s change, the same numbers as the dose line
+        const tm = JSON.parse(a.run(`(()=>{const s=${JSON.stringify(s)};return JSON.stringify(exerciseTiming(s,${pi},0).phases)})()`));
+        assert.deepEqual(tm.map((p) => p.seconds), it.n === 2 ? [45, 5, 45] : [40, 5, 40, 5, 40]);
+        assert.equal(a.run(`S.profile.lang='de';doseTxt('pre.focus_prep',${JSON.stringify(s.blocks[pi])})`), `${it.n} × ${it.s} s · langsam → Arbeitstempo`);
+      }
+});
+test("17.11.2026 preparation comes from the same focus as the main part: its combo, footwork, defence or the kick of the focus", () => {
+  const a = app();
+  const one = (sp, sty, focus, extra = "") => {
+    plyoSet(a, sp, sty, "lc", 1, `chooseFocus=()=>focusOf('${focus}');${extra}`);
+    seedRandom(a, 5);
+    return JSON.parse(a.run(`JSON.stringify(buildSession('2026-11-11','T','gym',['bag'],{sport:'${sp}',min:60${sty ? `,tstyle:'${sty}'` : ""}}))`));
+  };
+  // a technique focus: the techniques of a main-part combo, slow → linked → working pace
+  let s = one("kickboxing", "", "bodyHead");
+  const st = s.blocks.find((b) => b.key === "prep").items[0].steps,
+    rounds = s.blocks.find((b) => b.rounds).items;
+  const names = JSON.parse(a.run(`S.profile.lang='de';JSON.stringify(${JSON.stringify(rounds)}.filter(r=>r.combo).map(r=>r.combo.slice(0,4).map(x=>techNm(x)).join(', ')))`));
+  assert.ok(names.some((n) => st[0].de.includes(n) && st[2].de.includes(n)), JSON.stringify([st[0].de, names]));
+  // footwork, defence, a taekwondo kick
+  assert.match(one("kickboxing", "", "foot").blocks.find((b) => b.key === "prep").items[0].steps[0].de, /Schritte vor, zurück und seitlich/);
+  assert.match(one("boxing", "", "def").blocks.find((b) => b.key === "prep").items[0].steps[1].de, /dann Konter:/);
+  const tk = one("taekwondo", "wt", "k_yeop", "S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'wt'});").blocks.find((b) => b.key === "prep");
+  if (tk) assert.match(tk.items[0].steps[0].de, /Ausholstellung für Yeop/i);
+});
+test("17.11.2026 preparation in the training: guiding sentence + parts on its page, timer calls sentence and parts, pause is silent, 'Direkt los' goes straight to the rounds, no second focus page", () => {
+  const a = app();
+  a.run(`S.profile.lang='de';S.profile.voice=true;window.speechSynthesis={speak(){},cancel(){},resume(){},speaking:false,pending:false,paused:false,getVoices:()=>[]};globalThis.speechSynthesis=window.speechSynthesis;globalThis.SpeechSynthesisUtterance=function(t){this.text=t};globalThis.SAID=[];say=(x)=>SAID.push(x);
+    S.profile.sport='kickboxing';chooseFocus=()=>focusOf('lowFinish');S.profile.disc='kl';ui.sel='2026-11-16';ui.tab='session';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{sport:'kickboxing',disc:'kl',min:60});
+    ui.workout={ds:ui.sel,step:0,block:0,player:true};globalThis.ST=playerSteps(S.sessions[ui.sel]);globalThis.PI=ST.findIndex(x=>S.sessions[ui.sel].blocks[x.bi]&&S.sessions[ui.sel].blocks[x.bi].key==='prep');playerGo(PI);`);
+  const cue = "Achte beim Lowkick auf den Hüfteinsatz, ohne nach dem Kick die Deckung fallen zu lassen.";
+  let h = a.run("playerHtml()");
+  assert.match(h, new RegExp(`Vorbereitung auf den Schwerpunkt[\\s\\S]*<small>Schwerpunkt heute</small><p>${cue}</p>[\\s\\S]*<ol class="prepl"><li>Langsam und einzeln: [\\s\\S]*</li><li>Verbunden: [\\s\\S]*<li>Arbeitstempo: [\\s\\S]*data-player="prepskip">Direkt los`));
+  assert.equal(a.run("ST[PI].kind"), "timed");
+  // timer: the sentence at the start, then each part with its tempo
+  a.run("playerStartTimed()");
+  a.advance(12000);
+  const ci = a.run(`SAID.indexOf(${JSON.stringify("Schwerpunkt heute: " + cue)})`);
+  assert.ok(ci >= 0, "the guiding sentence is said");
+  assert.match(a.run(`SAID[${ci}+1]`), /^Langsam und einzeln\. /);
+  // the arrow of the dose line is said as a word
+  a.run("S.profile.lang='de'");
+  assert.equal(a.run("spokenText('langsam → Arbeitstempo')"), "langsam, dann Arbeitstempo");
+  a.run("exerciseTimerAction('toggle')");
+  const n = a.run("SAID.length");
+  a.advance(60000);
+  assert.equal(a.run("SAID.length"), n, "paused: silent");
+  a.run("exerciseTimerAction('toggle')");
+  a.advance(40000);
+  assert.ok(a.run("SAID.some(x=>x.startsWith('Verbunden. '))"));
+  // "Direkt los": marked done, the round block is next – no extra focus page
+  a.run("playerAction('prepskip')");
+  assert.equal(a.run("itemDone(S.sessions[ui.sel],ST[PI].bi,0)"), true);
+  assert.equal(a.run("ui.workout.step"), a.run("PI+1"));
+  assert.equal(a.run("ST[PI+1].kind"), "rounds");
+  assert.doesNotMatch(a.run("playerHtml()"), /cuepage/);
+  assert.equal(a.run("SAID.filter(x=>x.startsWith('Schwerpunkt heute')).length"), 1);
+  // the plan page lists the parts under the block, without the sentence
+  const page = a.run("renderSession()");
+  assert.match(page, /Vorbereitung auf den Schwerpunkt[\s\S]*3 × 40 s · langsam → Arbeitstempo[\s\S]*<ol class="prepl">/);
+  assert.doesNotMatch(page, /Schwerpunkt heute/);
+});
+
 // ---- 16.11.2026 one spoken wording everywhere: the texts that actually reach the speech engine ----
 function engineApp(lang = "de", { failFor = [] } = {}) {
   const a = app();
@@ -2794,7 +2980,8 @@ test("16.11.2026 guiding sentence of the focus: every unit with technique rounds
   const st = JSON.parse(a.run("S.profile.sport='kickboxing';JSON.stringify(buildSession('2026-11-02','S','gym',['weights'],{sport:'kickboxing',min:60}))"));
   assert.equal(a.run(`sessCue(${JSON.stringify(st)})`), "");
   // training mode: on the card of the main part, said once when it starts; the plan page stays without it
-  a.run("S.profile.sport='kickboxing';ui.sel='2026-11-16';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{sport:'kickboxing',min:60});S.sessions[ui.sel].theme='lowFinish';ui.tab='session';");
+  // (a unit planned before 17.11.2026 – without the preparation block, which shows the sentence itself now)
+  a.run("S.profile.sport='kickboxing';ui.sel='2026-11-16';S.sessions[ui.sel]=buildSession(ui.sel,'T','gym',['bag'],{sport:'kickboxing',min:60});S.sessions[ui.sel].theme='lowFinish';S.sessions[ui.sel].blocks=S.sessions[ui.sel].blocks.filter(b=>b.key!=='prep');ui.tab='session';");
   const cue = "Achte beim Lowkick auf den Hüfteinsatz, ohne nach dem Kick die Deckung fallen zu lassen.";
   assert.doesNotMatch(a.run("renderSession()"), /Schwerpunkt heute/);
   // its own page between warm-up and main part: shown and said once, the rounds follow with "Los geht's"
@@ -4754,13 +4941,15 @@ test("14.11.2026 technique units (replaces 7b B6): no fitness add-on – a visib
         }
         assert.equal(s.blocks.reduce((n, b) => n + b.min, 0), s.min, "minutes add up " + tag);
       }
-  // nothing fits: the time goes to technique rounds
+  // nothing fits: the time goes to technique rounds (a technique focus – the broad foci come in turn since 17.11.2026,
+  // and "bounce" fills its closing block with jumps, so a random bounce focus made this check flaky)
+  a.run("var _cf7 = chooseFocus; chooseFocus = () => _cf7(true);");
   a.run("var _fx = focusEx; focusEx = () => [{ kind: 'ex', id: 'str.dead_bugs' }, { kind: 'ex', id: 'str.hollow_hold' }, { kind: 'ex', id: 'str.plank' }];");
   const ref = sess7(a, "kickboxing", "T", { eq: ["bag"] });
   assert.equal(blk(ref, (b) => b.key === "str").min, 10);
   a.run("focusEx = () => [];");
   const none = sess7(a, "kickboxing", "T", { eq: ["bag"] });
-  a.run("focusEx = _fx;");
+  a.run("focusEx = _fx; chooseFocus = _cf7;");
   assert.ok(!blk(none, (b) => b.key === "str"), JSON.stringify(none.blocks.map((b) => [b.key, b.min])));
   const main = (s) => blk(s, (b) => b.key === "main");
   assert.equal(main(none).min, main(ref).min + 10);

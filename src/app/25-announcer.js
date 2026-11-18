@@ -169,6 +169,8 @@
       N = "(\\d+(?:[.,]\\d+)?)";
     let s = String(text || "");
     const rx = (p, f) => (s = s.replace(new RegExp(p, "g"), f));
+    // an arrow between two words is said as "dann" / "then" (e.g. "langsam → Arbeitstempo", 17.11.2026)
+    rx("\\s*→\\s*", de ? ", dann " : ", then ");
     // words with dots first
     if (de) {
       rx("\\bz\\.\\s?B\\.", "zum Beispiel");
