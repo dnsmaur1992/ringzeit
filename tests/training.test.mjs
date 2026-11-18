@@ -2016,12 +2016,17 @@ test("18.11.2026 E41–E58 automatic load distribution: dialog from 5 days, mark
   let r = roles();
   assert.equal(r["2026-11-09"], "hard");
   assert.equal(r["2026-11-10"], "hard", "the club session counts once logged");
-  assert.equal(r["2026-11-11"], "mid");
+  // Teil 36: two hard days in the last 3 – Wednesday easy at most (before: moderate by E48)
+  assert.equal(r["2026-11-11"], "easy");
   assert.equal(r["2026-11-13"], "hard");
   assert.equal(Object.values(r).filter((x) => x === "hard").length, 3);
   // planned is not done: a club day without an entry does not count
-  a.run("S.log=[{id:'a',date:'2026-11-09',src:'own',type:'T',minutes:60,rpe:8}];S.profile.club={days:[1],minutes:90}");
-  assert.equal(roles()["2026-11-11"], "hard");
+  // (Teil 36: Monday hard two days before → Wednesday moderate at most; the planned club Tuesday changes nothing)
+  a.run("S.log=[{id:'a',date:'2026-11-09',src:'own',type:'T',minutes:60,rpe:8}];S.profile.club={days:[],minutes:90}");
+  const noClub = roles();
+  a.run("S.profile.club={days:[1],minutes:90}");
+  assert.deepEqual(roles(), noClub);
+  assert.notEqual(noClub["2026-11-11"], "hard");
   a.run("S.profile.club={days:[],minutes:90}");
   // E52: a marked hard day missed – the next open unit takes over, never right after a hard day
   a.run("S.profile.hardDays=[0,3];S.log=[]");
@@ -2037,13 +2042,15 @@ test("18.11.2026 E41–E58 automatic load distribution: dialog from 5 days, mark
   assert.equal(Object.values(r).filter((x) => x === "hard").length, 2, "nothing taken over");
   // E53: a missed moderate unit – the next technique unit gets one round more, the duration stays
   a.run("S.profile.hardDays=[0,3];S.log=[{id:'a',date:'2026-11-09',src:'own',type:'T',minutes:60,rpe:7}]");
-  assert.deepEqual(ex(), { "2026-11-13": 1 }, "Tuesday missed → Friday's technique unit");
-  const fri = (on) => JSON.parse(a.run(`(()=>{S.profile.autoLoad=${on};S.profile.ldClaims={};Math.random=(()=>{let x=7;return()=>((x=(x*16807)%2147483647)/2147483647)})();const s=buildSession('2026-11-13','T','gym',['bag'],{sport:'kickboxing',min:60});return JSON.stringify({n:s.blocks.find(b=>b.rounds).items.length,min:s.blocks.reduce((a,b)=>a+b.min,0),notes:s.notes,ld:s.ld||''})})()`));
+  // Teil 36: with Mon and Thu marked, strength and sparring sit on them – Wednesday is the next technique unit
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(['2026-11-09','2026-11-10','2026-11-11','2026-11-12','2026-11-13'].map(planOn))")), ["S", "T", "T", "P", "K"]);
+  assert.deepEqual(ex(), { "2026-11-11": 1 }, "Tuesday missed → Wednesday's technique unit");
+  const fri = (on) => JSON.parse(a.run(`(()=>{S.profile.autoLoad=${on};S.profile.ldClaims={};Math.random=(()=>{let x=7;return()=>((x=(x*16807)%2147483647)/2147483647)})();const s=buildSession('2026-11-11','T','gym',['bag'],{sport:'kickboxing',min:60});return JSON.stringify({n:s.blocks.find(b=>b.rounds).items.length,min:s.blocks.reduce((a,b)=>a+b.min,0),notes:s.notes,ld:s.ld||''})})()`));
   const f0 = fri(false), f1 = fri(true);
   assert.equal(f1.n, f0.n + 1, JSON.stringify([f0, f1]));
   assert.equal(f1.min, f0.min, "same duration");
   assert.ok(f1.notes.some((x) => /Technikrunde mehr/.test(x)));
-  assert.equal(f1.ld, "mid+");
+  assert.match(f1.ld, /^(mid|easy)\+/, "a not hard role with the extra round");
   // E54: a new week counts afresh
   a.setDate("2026-11-16");
   a.run("S.profile.hardDays=[0,2,4]");
@@ -2055,7 +2062,7 @@ test("18.11.2026 E41–E58 automatic load distribution: dialog from 5 days, mark
   a.run("S.log=[{id:'c1',date:'2026-11-16',src:'own',type:'T',minutes:60,rpe:8},{id:'c2',date:'2026-11-17',src:'club',type:'T',minutes:90,rpe:8}];loadRefreshKey=''");
   a.setDate("2026-11-18");
   a.run("loadRefresh()");
-  assert.equal(a.run("S.sessions['2026-11-18'].ld"), "mid", "rebuilt with its new role");
+  assert.equal(a.run("S.sessions['2026-11-18'].ld"), "easy:recent", "rebuilt with its new role (Teil 36: hard yesterday → easy, with the reason)");
   assert.equal(a.run("JSON.stringify(S.sessions['2026-11-20'].checked)"), '{"0.0":true}', "a begun unit stays");
   // the dialog: from 5 days (the harness has no drawing – render() runs loadAskCheck() at its end), once per crossing (E41, E42, E55, E58)
   a.run("S.profile.autoLoad=undefined;S.profile.loadAsked=false;S.profile.hardDays=[];ui.sheet=null;S.profile.days=[0,2,4];S.profile.club={days:[1],minutes:90}");
@@ -2152,58 +2159,58 @@ test("18.11.2026 make-up only once: a missed hard day triggers one replacement, 
 
 test("18.11.2026 hard make-up vs. the current week: a replacement beyond 3 actual hard days is stepped down – entries added, changed or deleted re-evaluate it, the claim is never released again, begun units stay, stable after restart", () => {
   const a = app();
-  a.setDate("2026-11-11"); // Wednesday
-  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.example=false;S.profile.days=[0,1,2,4,5];S.profile.minutes=60;S.profile.club={days:[3],minutes:90};S.sessions={};S.ov={};S.profile.planStart='2026-10-05';S.profile.comps=[];S.profile.loadAsked=true;S.profile.toured=true;S.profile.newsSeen=99;S.profile.autoLoad=true;S.profile.hardDays=[0];S.profile.ldClaims={}");
-  a.run("S.log=[{id:'tu',date:'2026-11-10',src:'own',type:'T',minutes:60,rpe:8}]"); // Tuesday hard
+  // Teil 36: the replacement lies 3+ days after the hard entries, so only the weekly limit decides (not the 3-day rule)
+  a.setDate("2026-11-13"); // Friday; own days Mon Tue Wed Thu Sat (Sun mobility), Thursday marked hard and missed
+  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.example=false;S.profile.days=[0,1,2,3,5,6];S.profile.minutes=60;S.profile.club={days:[],minutes:90};S.sessions={};S.ov={};S.profile.planStart='2026-10-05';S.profile.comps=[];S.profile.loadAsked=true;S.profile.toured=true;S.profile.newsSeen=99;S.profile.autoLoad=true;S.profile.hardDays=[3];S.profile.ldClaims={}");
+  assert.ok(!["M", null].includes(a.run("planOn('2026-11-14')")), "Saturday is an own unit");
+  a.run("S.log=[{id:'mo',date:'2026-11-09',src:'own',type:'T',minutes:60,rpe:8},{id:'tu',date:'2026-11-10',src:'own',type:'T',minutes:60,rpe:5},{id:'we',date:'2026-11-11',src:'own',type:'T',minutes:60,rpe:5}]");
   const week = () => JSON.parse(a.run("JSON.stringify(loadWeek(iso(today())))"));
   const claims = () => JSON.parse(a.run("JSON.stringify(S.profile.ldClaims)"));
   const hardDays = () => JSON.parse(a.run("JSON.stringify([...loadWeekBase(iso(today())).hard].sort())")); // own units and club entries
   const refresh = () => a.run("loadRefresh()"); // no key reset: the change itself must be noticed
-  // Monday (marked hard) missed → Wednesday follows the hard Tuesday, so Friday takes over
   a.run("loadAssign(iso(today()))");
-  assert.deepEqual(claims(), { "2026-11-09": { to: "2026-11-13", k: "hard" } });
-  a.run("S.sessions['2026-11-13']=buildSession('2026-11-13','S','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-14']=buildSession('2026-11-14','T','gym',['bag'],{sport:'kickboxing',min:60})");
-  assert.equal(a.run("S.sessions['2026-11-13'].ld"), "hard");
-  // the report: Wednesday hard, then a hard club evening on Thursday – three actual hard days
-  a.run("S.log.push({id:'we',date:'2026-11-11',src:'own',type:'P',minutes:60,rpe:8})");
-  a.setDate("2026-11-12");
-  a.run("S.log.push({id:'th',date:'2026-11-12',src:'club',type:'T',minutes:90,rpe:8})");
+  assert.deepEqual(claims(), { "2026-11-12": { to: "2026-11-14", k: "hard" } });
+  a.run("S.sessions['2026-11-14']=buildSession('2026-11-14',planOn('2026-11-14'),'gym',['bag'],{sport:'kickboxing',min:60})");
+  assert.equal(a.run("S.sessions['2026-11-14'].ld"), "hard");
+  // a new club entry (Tuesday evening, hard): Monday, Tuesday and Saturday – still within 3
+  a.run("S.log.push({id:'tc',date:'2026-11-10',src:'club',type:'T',minutes:90,rpe:8})");
   refresh();
-  let w = week();
-  assert.notEqual(w.role["2026-11-13"], "hard", JSON.stringify(w));
-  assert.deepEqual(hardDays(), ["2026-11-10", "2026-11-11", "2026-11-12"]);
-  assert.match(a.run("S.sessions['2026-11-13'].ld"), /^(mid|easy)/, "the planned replacement is rebuilt");
-  assert.deepEqual(claims(), { "2026-11-09": { to: "2026-11-13", k: "hard" } }, "the claim stays used – not handed on to Saturday");
-  assert.notEqual(w.role["2026-11-14"], "hard");
-  // recomputing and restarting give the same week
-  const snap = JSON.stringify([w, claims(), a.run("S.sessions['2026-11-13'].ld")]);
-  for (let i = 0; i < 3; i++) a.run("loadRefreshKey='';loadRefresh();loadAssign(iso(today()))");
-  a.run("S.profile=JSON.parse(JSON.stringify(S.profile));S.log=JSON.parse(JSON.stringify(S.log));loadRefreshKey='';loadRefresh()");
-  assert.equal(JSON.stringify([week(), claims(), a.run("S.sessions['2026-11-13'].ld")]), snap);
-  // a changed entry (not the last one): Wednesday was only moderate after all → Friday is hard again
-  a.run("S.log.find(e=>e.id==='we').rpe=5");
-  refresh();
-  assert.equal(week().role["2026-11-13"], "hard");
-  assert.equal(a.run("S.sessions['2026-11-13'].ld"), "hard");
-  // changed back, then the club entry deleted → stepped down, then hard again; never a second claim
+  assert.equal(week().role["2026-11-14"], "hard");
+  // the report: a changed entry (not the last one) – Wednesday was hard after all: three actual hard days
   a.run("S.log.find(e=>e.id==='we').rpe=8");
   refresh();
-  assert.notEqual(week().role["2026-11-13"], "hard");
-  a.run("S.log=S.log.filter(e=>e.id!=='th')");
+  let w = week();
+  assert.notEqual(w.role["2026-11-14"], "hard", JSON.stringify(w));
+  assert.deepEqual(hardDays(), ["2026-11-09", "2026-11-10", "2026-11-11"]);
+  assert.match(a.run("S.sessions['2026-11-14'].ld"), /^(mid|easy)/, "the planned replacement is rebuilt");
+  assert.deepEqual(claims(), { "2026-11-12": { to: "2026-11-14", k: "hard" } }, "the claim stays used – not handed on");
+  // recomputing and restarting give the same week
+  const snap = JSON.stringify([w, claims(), a.run("S.sessions['2026-11-14'].ld")]);
+  for (let i = 0; i < 3; i++) a.run("loadRefreshKey='';loadRefresh();loadAssign(iso(today()))");
+  a.run("S.profile=JSON.parse(JSON.stringify(S.profile));S.log=JSON.parse(JSON.stringify(S.log));loadRefreshKey='';loadRefresh()");
+  assert.equal(JSON.stringify([week(), claims(), a.run("S.sessions['2026-11-14'].ld")]), snap);
+  // changed back → hard again; then the club entry deleted → hard again too; never a second claim
+  a.run("S.log.find(e=>e.id==='we').rpe=5");
   refresh();
-  assert.equal(week().role["2026-11-13"], "hard");
-  a.run("S.log.push({id:'th2',date:'2026-11-12',src:'club',type:'T',minutes:90,rpe:9})");
+  assert.equal(week().role["2026-11-14"], "hard");
+  assert.equal(a.run("S.sessions['2026-11-14'].ld"), "hard");
+  a.run("S.log.find(e=>e.id==='we').rpe=8");
   refresh();
-  assert.notEqual(week().role["2026-11-13"], "hard");
-  assert.equal(Object.keys(claims()).length, 1);
-  // the stepped-down Friday itself missed: no new claim, no chain
-  a.setDate("2026-11-14");
-  for (let i = 0; i < 2; i++) a.run("loadRefreshKey='';loadRefresh()");
-  assert.deepEqual(claims(), { "2026-11-09": { to: "2026-11-13", k: "hard" } });
   assert.notEqual(week().role["2026-11-14"], "hard");
+  a.run("S.log=S.log.filter(e=>e.id!=='tc')");
+  refresh();
+  assert.equal(week().role["2026-11-14"], "hard");
+  a.run("S.log.push({id:'tc2',date:'2026-11-10',src:'club',type:'T',minutes:90,rpe:9})");
+  refresh();
+  assert.notEqual(week().role["2026-11-14"], "hard");
+  assert.equal(Object.keys(claims()).length, 1);
+  // the stepped-down Saturday itself missed: no new claim, no chain
+  a.setDate("2026-11-15");
+  for (let i = 0; i < 2; i++) a.run("loadRefreshKey='';loadRefresh()");
+  assert.deepEqual(claims(), { "2026-11-12": { to: "2026-11-14", k: "hard" } });
   // a begun hard replacement stays as it is and counts – the marked Friday steps down instead (E48)
   a.setDate("2026-11-17"); // Tuesday, Monday 16 missed
-  a.run("S.profile.ldClaims={};S.profile.hardDays=[0,4];S.log=[];S.sessions={};loadAssign(iso(today()))");
+  a.run("S.profile.days=[0,1,2,4,5];S.profile.club={days:[3],minutes:90};S.profile.ldClaims={};S.profile.hardDays=[0,4];S.log=[];S.sessions={};loadAssign(iso(today()))");
   assert.deepEqual(claims()["2026-11-16"], { to: "2026-11-17", k: "hard" });
   a.run("S.sessions['2026-11-17']=buildSession('2026-11-17','S','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-17'].perf={'1.0':[{kg:10,r:8}]}");
   assert.equal(a.run("S.sessions['2026-11-17'].ld"), "hard");
@@ -6879,4 +6886,140 @@ test("18.11.2026 Light Contact stays at 4 techniques when a body shot or a high 
   assert.ok(r.lc.flat().some((c) => c[0] === "crossb"), "the path is really taken");
   // Full Contact has no such limit: the combo just gets longer there
   assert.ok(r.fc.flat().some((c) => c.length > 4));
+});
+
+/* ---- Teil 36 (18.11.2026): the load distribution follows what was really trained ---- */
+const ldBase = (a, extra = "") =>
+  a.run(`S.profile.lang='de';S.profile.sport='kickboxing';S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.example=false;S.profile.minutes=60;S.profile.club={days:[],minutes:90};S.log=[];S.sessions={};S.ov={};S.profile.form={};S.profile.planStart='2026-10-05';S.profile.comps=[];S.profile.loadAsked=true;S.profile.toured=true;S.profile.newsSeen=99;S.profile.autoLoad=true;S.profile.ldClaims={};${extra}`);
+test("Teil 36: the last 3 days decide – hard Sunday and Tuesday: Wednesday easy, moved to Thursday moderate, to Friday hard again (the operator's example); only logged entries count", () => {
+  const a = app();
+  a.setDate("2026-11-18"); // Wednesday
+  ldBase(a, "S.profile.days=[0,1,2,5];S.profile.hardDays=[2]");
+  const role = (d) => JSON.parse(a.run(`JSON.stringify(loadRole('${d}'))`));
+  // nothing logged yet: Wednesday is the marked hard day
+  assert.equal(role("2026-11-18").role, "hard");
+  // planned or missing is not trained: a club day without an entry and an entry without an effort change nothing
+  a.run("S.profile.club={days:[1],minutes:90};S.log=[{id:'n',date:'2026-11-17',src:'club',type:'T',minutes:90}]");
+  assert.equal(role("2026-11-18").role, "hard");
+  // hard on Sunday (club) and Tuesday (own)
+  a.run("S.profile.club={days:[],minutes:90};S.log=[{id:'su',date:'2026-11-15',src:'club',type:'T',minutes:90,rpe:8},{id:'tu',date:'2026-11-17',src:'own',type:'S',minutes:60,rpe:8}]");
+  let r = role("2026-11-18");
+  assert.equal(r.role, "easy");
+  assert.equal(r.why, "recent");
+  // moved to Thursday: the day before yesterday was hard → moderate
+  a.run("S.ov['2026-11-18']={off:'moved',to:'2026-11-19'};S.ov['2026-11-19']={t:'T',from:'2026-11-18'}");
+  r = role("2026-11-19");
+  assert.equal(r.role, "mid");
+  // moved to Friday: the last hard day 3 days ago → hard again (the hard unit stays one when it is moved)
+  a.run("delete S.ov['2026-11-19'];S.ov['2026-11-18']={off:'moved',to:'2026-11-20'};S.ov['2026-11-20']={t:'T',from:'2026-11-18'}");
+  r = role("2026-11-20");
+  assert.equal(r.role, "hard");
+  // one hard day yesterday is enough for easy
+  a.run("S.ov={};S.log=[{id:'tu',date:'2026-11-17',src:'own',type:'S',minutes:60,rpe:7}]");
+  assert.equal(role("2026-11-18").role, "easy");
+  // the effort follows: easy at most 4, and the note says why
+  assert.equal(+a.run("rpeRange(planOn('2026-11-18'),'2026-11-18').hi") <= 4, true);
+  a.run("S.sessions['2026-11-18']=buildSession('2026-11-18',planOn('2026-11-18'),'gym',['bag'],{sport:'kickboxing',min:60})");
+  assert.ok(JSON.parse(a.run("JSON.stringify(S.sessions['2026-11-18'].notes)")).some((x) => /letzten 3 Tagen/.test(x)));
+  // switched off: none of it
+  a.run("S.profile.autoLoad=false");
+  assert.equal(a.run("JSON.stringify(loadRole('2026-11-18'))"), "null");
+});
+test("Teil 36: bad form (only when given) swaps a hard day – today easy, the next fitting unit hard, the number of hard days stays; trained hard anyway: nothing moves; the form lowers the effort once", () => {
+  const a = app();
+  a.setDate("2026-11-18"); // Wednesday
+  ldBase(a, "S.profile.days=[0,1,2,3,4,5];S.profile.hardDays=[2,5];S.log=[{id:'mo',date:'2026-11-16',src:'own',type:'T',minutes:60,rpe:5},{id:'tu',date:'2026-11-17',src:'own',type:'T',minutes:60,rpe:4}]");
+  const week = () => JSON.parse(a.run("JSON.stringify(loadWeek(iso(today())))"));
+  const nHard = (w) => Object.values(w.role).filter((x) => x === "hard").length;
+  const w0 = week();
+  assert.equal(w0.role["2026-11-18"], "hard");
+  // no form given, or okay form: nothing changes
+  a.run("S.profile.form={'2026-11-18':{sleep:1,energy:1}}");
+  assert.deepEqual(week().role, w0.role);
+  // bad form: today easy, Thursday takes over (follows no hard day, the last 3 days allow it)
+  a.run("S.profile.form={'2026-11-18':{sleep:0,energy:0}}");
+  let w = week();
+  assert.equal(w.role["2026-11-18"], "easy");
+  assert.equal(w.why["2026-11-18"], "form");
+  assert.equal(w.role["2026-11-19"], "hard");
+  assert.equal(w.why["2026-11-19"], "formTo");
+  assert.equal(nHard(w), nHard(w0), "same number of hard days");
+  // the effort is lowered by the easy role – not a second time for the form
+  const easyHi = +a.run("(()=>{const f=S.profile.form;S.profile.form={};S.profile.hardDays=[5];const v=rpeRange(planOn('2026-11-18'),'2026-11-18').hi;S.profile.hardDays=[2,5];S.profile.form=f;return v})()");
+  assert.equal(+a.run("rpeRange(planOn('2026-11-18'),'2026-11-18').hi"), easyHi > 4 ? 4 : easyHi);
+  // Wednesday trained easy: on Thursday the swap still holds (stable from the stored form and entries)
+  a.run("S.log.push({id:'we',date:'2026-11-18',src:'own',type:'T',minutes:60,rpe:4})");
+  a.setDate("2026-11-19");
+  w = week();
+  assert.equal(w.role["2026-11-19"], "hard");
+  for (let i = 0; i < 3; i++) a.run("loadRefreshKey='';loadRefresh()");
+  assert.deepEqual(week(), w);
+  // trained hard anyway: nothing moved, Thursday follows a hard day → not hard
+  a.run("S.log.find(e=>e.id==='we').rpe=8");
+  w = week();
+  assert.equal(w.role["2026-11-18"], "hard");
+  assert.notEqual(w.role["2026-11-19"], "hard");
+  // the form changes a not begun unit right away (loadRefresh notices it), a begun one stays
+  a.setDate("2026-11-18");
+  a.run("S.log=S.log.filter(e=>e.id!=='we');S.profile.form={};S.sessions={};S.sessions['2026-11-19']=buildSession('2026-11-19',planOn('2026-11-19'),'gym',['bag'],{sport:'kickboxing',min:60})");
+  assert.doesNotMatch(a.run("S.sessions['2026-11-19'].ld"), /^hard/);
+  a.run("S.profile.form={'2026-11-18':{sleep:0,energy:0}};loadRefresh()");
+  assert.match(a.run("S.sessions['2026-11-19'].ld"), /^hard/);
+});
+test("Teil 36: strength, sparring and conditioning sit on the marked hard days, technique on the others – same types in the week; off = as before; a not begun unit follows, a begun one stays", () => {
+  const a = app();
+  a.setDate("2026-11-16");
+  ldBase(a, "S.profile.days=[0,1,2,3,4,5];S.profile.hardDays=[0,2,4]");
+  const types = () => JSON.parse(a.run("JSON.stringify([16,17,18,19,20,21].map(d=>planOn('2026-11-'+d)))"));
+  const on = types();
+  a.run("S.profile.autoLoad=false");
+  const off = types();
+  assert.deepEqual([...on].sort(), [...off].sort(), "the same types, only on other days");
+  for (const i of [0, 2, 4]) assert.ok(["S", "P", "C", "K"].includes(on[i]), JSON.stringify(on));
+  for (const i of [1, 3]) assert.ok(!["S", "P", "C", "K"].includes(on[i]) || off.filter((x) => ["S", "P", "C", "K"].includes(x)).length > 3, JSON.stringify(on));
+  assert.equal(on[5], off[5], "mobility stays");
+  // not begun units follow the new days; a begun one stays as it is
+  a.run("S.sessions={};for(const d of [16,17,18,19,20])S.sessions['2026-11-'+d]=buildSession('2026-11-'+d,planOn('2026-11-'+d),'gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-17'].checked={'0.0':true}");
+  const begun = a.run("JSON.stringify(S.sessions['2026-11-17'])");
+  a.run("S.profile.autoLoad=true;loadRefreshKey='';loadRefresh()");
+  const got = JSON.parse(a.run("JSON.stringify([16,17,18,19,20].map(d=>S.sessions['2026-11-'+d].type))"));
+  assert.equal(got[0], on[0]);
+  assert.equal(got[2], on[2]);
+  assert.equal(got[4], on[4]);
+  assert.equal(a.run("JSON.stringify(S.sessions['2026-11-17'])"), begun, "begun: unchanged");
+  // a moved unit keeps its type
+  a.run("S.ov['2026-11-21']={t:'T',from:'2026-11-20'};S.ov['2026-11-20']={off:'moved',to:'2026-11-21'}");
+  assert.equal(a.run("planOn('2026-11-21')"), "T");
+});
+test("Teil 36: progress in the history only from entries – load per week by effort, strength first → latest per exercise; nothing without entries; DE/EN", () => {
+  const a = app();
+  a.setDate("2026-11-18");
+  ldBase(a, "S.profile.days=[0,2,4];S.profile.autoLoad=false");
+  assert.equal(a.run("progressHtml()"), "", "no entries: no card");
+  a.run(`S.log=[
+    {id:'1',date:'2026-10-26',src:'own',type:'S',minutes:60,rpe:8,perf:[{id:'str.leg_press',sets:[{r:10,kg:60},{r:8,kg:65}]},{id:'str.push_ups',sets:[{r:12}]}]},
+    {id:'2',date:'2026-11-02',src:'club',type:'T',minutes:90,rpe:6},
+    {id:'3',date:'2026-11-09',src:'own',type:'S',minutes:60,rpe:6,perf:[{id:'str.leg_press',sets:[{r:10,kg:70}]},{id:'str.push_ups',sets:[{r:15},{r:14}]}]},
+    {id:'4',date:'2026-11-17',src:'own',type:'T',minutes:60,rpe:3},
+    {id:'5',date:'2026-11-17',src:'club',type:'T',minutes:90}]`);
+  const w = JSON.parse(a.run("JSON.stringify(progLoadWeeks())"));
+  assert.deepEqual(w.map((x) => [x.from, x.hard, x.mid, x.easy]), [["2026-10-26", 1, 0, 0], ["2026-11-02", 0, 1, 0], ["2026-11-09", 0, 1, 0], ["2026-11-16", 0, 0, 1]], "the entry without an effort is not counted");
+  const st = JSON.parse(a.run("JSON.stringify(progStrength('2026-09-01'))"));
+  const lp = st.find((x) => x.id === "str.leg_press"), pu = st.find((x) => x.id === "str.push_ups");
+  assert.equal(Math.round(lp.first.v * 10) / 10, Math.round(Math.max(60 * (1 + 10 / 30), 65 * (1 + 8 / 30)) * 10) / 10);
+  assert.equal(Math.round(lp.last.v * 10) / 10, Math.round(70 * (1 + 10 / 30) * 10) / 10);
+  assert.deepEqual([pu.first.v, pu.last.v], [12, 15]);
+  const h = a.run("progressHtml()");
+  assert.match(h, /Fortschritt[\s\S]*Belastung der letzten 4 Wochen[\s\S]*1 hart[\s\S]*Kraft[\s\S]*Beinpresse/);
+  assert.match(h, /Letzte 8 Wochen/);
+  // switched on later: the window starts there
+  a.run("S.profile.autoLoad=true;S.profile.autoLoadSince='2026-11-05'");
+  assert.equal(JSON.parse(a.run("JSON.stringify(progStrength(progStart().from))")).length, 0, "one entry per exercise since then – no comparison yet");
+  assert.match(a.run("progressHtml()"), /Belastung der letzten 4 Wochen/);
+  // switching on in the profile notes the day
+  a.run("S.profile.autoLoad=false;delete S.profile.autoLoadSince");
+  a.run("loadAction({ldon:'1'})");
+  assert.equal(a.run("S.profile.autoLoadSince"), "2026-11-18");
+  a.run("S.profile.lang='en'");
+  assert.match(a.run("progressHtml()"), /Progress[\s\S]*Load of the last 4 weeks/);
 });

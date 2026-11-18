@@ -1242,6 +1242,7 @@
       h += `<div class="empty">${S.weights[0].kg.toFixed(1)} kg · ${fmtDate(S.weights[0].date)}</div>`;
     else h += `<div class="empty">${t("emptyW")}</div>`;
     if (wp) h += `<div class="note wcpath">${esc(wcText(wp))}${wp.steep ? `<br><small class="sub">${esc(t("wcp").steep)}</small>` : ""}</div>`;
+    h += progressHtml(); // Teil 36: progress from what was entered
     h += prsHtml();
     h += resultsHtml();
     if (S.log.length)

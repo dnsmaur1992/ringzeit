@@ -14,6 +14,12 @@
        the minutes come from the closing block (E53);
      - the other units alternate moderate (target up to 6) and easy (up to 4); mobility stays at 3 (E50); durations and
        the kind of day stay (E45, E46); only the same week counts (E54).
+     - only what was really trained steers it (Betreiber 18.11.2026, Teil 36): the last 3 days before a unit decide how
+       hard it may be – a hard entry yesterday or two in the last 3 days: easy at most; one the day before yesterday:
+       moderate at most; 3 days or more: hard allowed. The role belongs to the date, so a moved unit is judged anew;
+     - today's form (optional, only when given): bad form on a hard day swaps it – today easy, the hard day goes to the
+       next open unit of the week that may be hard (same number of hard days, nothing made up twice);
+     - the intense unit types (strength, sparring, conditioning) sit on the marked hard days, technique on the others.
      Switched off, everything new is gone and Ringzeit plans as before. Protective rules, the day after, deload weeks, the
      weekly load brake and the tournament phases apply in both. */
   const LOAD_MIN_DAYS = 5,
@@ -56,19 +62,19 @@
     let changed = false;
     // hard days first: the next open unit, never right after a hard day, within the weekly limit
     for (const d of w.missed) {
-      if (C[d] || isClaimTarget(d, C) || !w.marked.has(wd(d))) continue;
+      if (C[d] || isClaimTarget(d, C) || !markedOn(d, w.marked)) continue;
       const hardNow = (x) => w.hard.has(x);
       const used = w.hard.size;
       let to = null;
       if (used < LOAD_HARD_MAX)
-        to = w.open.find((x) => x >= td && !hardNow(x) && !isClaimTarget(x, C) && !hardNow(iso(addDays(parse(x), -1)))) || null;
+        to = w.open.find((x) => x >= td && !hardNow(x) && !isClaimTarget(x, C) && !hardNow(iso(addDays(parse(x), -1))) && !w.begun.has(x) && recentCap(x) === "hard") || null;
       C[d] = { to, k: "hard" };
       if (to) w.hard.add(to);
       changed = true;
     }
     // then the moderate/easy ones: one technique round more in the next open technique unit
     for (const d of w.missed) {
-      if (C[d] || isClaimTarget(d, C) || w.marked.has(wd(d))) continue;
+      if (C[d] || isClaimTarget(d, C) || markedOn(d, w.marked)) continue;
       const hardNow = (x) => w.hard.has(x);
       const to = w.open.find((x) => ["T", "C"].includes(planOn(x)) && !hardNow(x) && !isClaimTarget(x, C)) || null;
       C[d] = { to, k: "x" };
@@ -85,6 +91,21 @@
   }
   /* the facts of a week: dates, settled hard days, open and missed own units, marked days, and the hard days as they
      stand now (hard) – fixed ones first, then the replacements, then the marked days, never more than 3 */
+  /* the last 3 days before a date: only logged entries with effort ≥ 7 count (nothing assumed for missing entries) */
+  const ROLE_N = { easy: 0, mid: 1, hard: 2 };
+  function recentCap(ds) {
+    const back = (k) => hardEntry(iso(addDays(parse(ds), -k)));
+    if (back(1) || [1, 2, 3].filter(back).length >= 2) return "easy";
+    if (back(2)) return "mid";
+    return "hard";
+  }
+  const capRole = (role, cap) => (ROLE_N[role] > ROLE_N[cap] ? cap : role);
+  /* a marked hard unit stays one when it is moved: the weekday of its origin counts (moving keeps "from") */
+  const markedOn = (d, marked = new Set(S.profile.hardDays || [])) => {
+    const o = (S.ov || {})[d];
+    return marked.has(wd(o && o.from ? o.from : d));
+  };
+  const badForm = (d) => typeof formOn === "function" && formOn(d) === 0;
   function loadWeekBase(ds) {
     const mon = monday(parse(ds)),
       td = iso(today()),
@@ -97,16 +118,30 @@
       // a begun unit keeps the role it was built with
       begun = new Map(open.filter((d) => ldStarted(d)).map((d) => [d, String(S.sessions[d].ld || "")])),
       hard = new Set(settledHard.concat([...begun].filter(([, r]) => r.startsWith("hard")).map(([d]) => d)));
-    const free = open.filter((d) => !begun.has(d) && !hard.has(d));
+    // open, not begun days the last 3 days allow to be hard (a day that may not be hard is left out, nothing moves)
+    const free = open.filter((d) => !begun.has(d) && !hard.has(d)),
+      mayHard = (d) => recentCap(d) === "hard";
     // replacements first – beyond the limit (actual and begun hard days counted) they step down, the claim stays used
-    const claims = free.filter((d) => claimedHard(d, C));
+    const claims = free.filter((d) => claimedHard(d, C) && mayHard(d));
     for (const d of claims) if (hard.size < LOAD_HARD_MAX) hard.add(d);
     // E48: too many marked days left for the allowed number – the next ones (in date order) become moderate
-    const R = free.filter((d) => marked.has(wd(d)) && !claimedHard(d, C)),
+    const R = free.filter((d) => markedOn(d, marked) && !claimedHard(d, C) && mayHard(d)),
       allowed = Math.max(0, LOAD_HARD_MAX - hard.size),
       H = new Set(R.slice(Math.max(0, R.length - allowed)));
     H.forEach((d) => hard.add(d));
-    return { dates, marked, settledHard, open, missed, H, hard, begun };
+    // today's form: a hard day with bad form (only when given) hands its hardness on to the next open unit that may be
+    // hard and does not follow a hard day. A past day counts only when it was trained (a missed one is made up instead)
+    const swap = {};
+    for (const d of dates) {
+      if (!ownUnit(d) || !badForm(d) || hardEntry(d) || begun.has(d)) continue;
+      const wasHard = open.includes(d) ? hard.has(d) : doneOn(d) && (markedOn(d, marked) || claimedHard(d, C));
+      if (!wasHard) continue;
+      hard.delete(d);
+      const to = free.find((x) => x > d && !hard.has(x) && !swap[x] && mayHard(x) && !hard.has(iso(addDays(parse(x), -1))) && !hardEntry(iso(addDays(parse(x), -1))));
+      swap[d] = to || null;
+      if (to && hard.size < LOAD_HARD_MAX) hard.add(to);
+    }
+    return { dates, marked, settledHard, open, missed, H, hard, begun, swap };
   }
   /* the roles of the whole week of a date: { [date]: "hard" | "mid" | "easy" }, extra: { [date]: 1 } (E50, E52, E53) –
      only read from the ledger, so the same state always gives the same week */
@@ -116,27 +151,46 @@
       role = {},
       extra = {},
       claimed = (d, k) => Object.values(C).some((c) => c && c.k === k && c.to === d);
+      why = {},
+      gotSwap = new Set(Object.values(w.swap).filter(Boolean));
     let i = 0;
     for (const d of w.dates) {
       if (!ownUnit(d)) continue;
+      const open = w.open.includes(d);
       // past days keep the role they were planned with; open days follow the week as it stands now
-      const pastClaim = !w.open.includes(d) && claimed(d, "hard");
-      if (w.hard.has(d) || hardEntry(d) || pastClaim) role[d] = "hard";
+      const pastClaim = !open && claimed(d, "hard") && !(d in w.swap);
+      // a unit meant to be hard (marked or a replacement) that the last 3 days hold back gets exactly what they allow:
+      // moderate after a hard day the day before yesterday, easy after one yesterday (the operator's example)
+      const held = open && !w.begun.has(d) && !w.hard.has(d) && !(d in w.swap) && (markedOn(d, w.marked) || claimed(d, "hard")) && recentCap(d) !== "hard";
+      if (w.begun.has(d)) role[d] = w.begun.get(d).replace(/[^a-z].*$/, "") || "mid";
+      else if (w.hard.has(d) || hardEntry(d) || pastClaim) role[d] = "hard";
+      else if (held) role[d] = recentCap(d);
       else role[d] = i++ % 2 === 0 ? "mid" : "easy";
-      if (claimed(d, "x") && role[d] !== "hard" && w.open.includes(d)) extra[d] = 1;
+      if (open && !w.begun.has(d)) {
+        if (d in w.swap) {
+          role[d] = "easy";
+          why[d] = "form";
+        } else {
+          const c = capRole(role[d], recentCap(d));
+          if (c !== role[d] || (role[d] !== "hard" && (markedOn(d, w.marked) || claimed(d, "hard")) && recentCap(d) !== "hard")) why[d] = "recent";
+          role[d] = c;
+          if (gotSwap.has(d) && role[d] === "hard") why[d] = "formTo";
+        }
+      }
+      if (claimed(d, "x") && role[d] !== "hard" && open) extra[d] = 1;
     }
-    return { role, extra };
+    return { role, extra, why };
   }
   /* role and extra round of one date (null when the switch is off or the day has no own unit) */
   function loadRole(ds) {
     if (!ds || !loadOn() || !ownUnit(ds)) return null;
     loadAssign(ds);
     const w = loadWeek(ds);
-    return { role: w.role[ds] || "mid", extra: w.extra[ds] || 0 };
+    return { role: w.role[ds] || "mid", extra: w.extra[ds] || 0, why: w.why[ds] || "" };
   }
   /* the target effort of a role: hard keeps the phase value, moderate up to 6, easy up to 4 (rpeRange centre) */
   const loadCap = (role) => (role === "mid" ? 5 : role === "easy" ? 3 : 99);
-  const ldSig = (lr) => (lr ? `${lr.role}${lr.extra ? "+" : ""}` : "");
+  const ldSig = (lr) => (lr ? `${lr.role}${lr.extra ? "+" : ""}${lr.why ? ":" + lr.why : ""}` : "");
   /* rebuild the planned, not begun units of this week whose role changed (an entry, a missed day, a new day) */
   let loadRefreshKey = "";
   function loadRefresh() {
@@ -145,7 +199,8 @@
       mon = iso(monday(today())),
       // every entry of this week with its effort: added, changed or deleted entries re-evaluate the week
       wk = S.log.filter((e) => e && e.date >= mon).map((e) => `${e.id}:${e.date}:${e.rpe}`).sort().join(","),
-      key = [td, S.log.length, last && last.id, last && last.rpe, wk, !!S.profile.autoLoad, (S.profile.hardDays || []).join(""), Object.keys(S.sessions).length].join("|");
+      fm = Object.entries(S.profile.form || {}).filter(([d]) => d >= mon).map(([d, f]) => `${d}:${f.sleep}:${f.energy}`).join(","),
+      key = [td, S.log.length, last && last.id, last && last.rpe, wk, fm, !!S.profile.autoLoad, (S.profile.hardDays || []).join(""), Object.keys(S.sessions).length].join("|");
     if (key === loadRefreshKey) return false;
     loadRefreshKey = key;
     loadAssign(td); // write down make-up claims once (never twice for the same missed day)
@@ -154,9 +209,12 @@
     for (const [ds, sess] of Object.entries(S.sessions)) {
       if (ds < td || ds > sun || doneOn(ds) || !sess || sess.type === "M") continue;
       if (ldStarted(ds)) continue;
+      // the intense types moved to the hard days (or back, switched off): a not begun unit of a planned type follows
+      const now = planOn(ds),
+        moved = now && now !== sess.type && !(S.ov && S.ov[ds] && S.ov[ds].t) && [suggestOn(ds, true), suggestOn(ds)].includes(sess.type) && sess.type !== "M" && now !== "M";
       const sig = ldSig(loadRole(ds));
-      if ((sess.ld || "") === sig) continue;
-      S.sessions[ds] = buildSession(ds, sess.type, sess.loc, sess.eq, { min: sess.min, run: !!sess.run, sport: sess.sport || mainSport(), tstyle: sess.tstyle, disc: sess.disc });
+      if (!moved && (sess.ld || "") === sig) continue;
+      S.sessions[ds] = buildSession(ds, moved ? now : sess.type, sess.loc, sess.eq, { min: sess.min, run: !!sess.run, sport: sess.sport || mainSport(), tstyle: sess.tstyle, disc: sess.disc });
       changed = true;
     }
     if (changed) store.save();
@@ -197,7 +255,12 @@
   /* taps: dialog answers, switch, hard days – the profile draft and the stored profile change together */
   function loadAction(ds) {
     const P = [S.profile, typeof draft !== "undefined" && draft].filter(Boolean);
+    // the day it was switched on – the progress card counts from there (Teil 36)
+    const since = (on) => P.forEach((p) => {
+      if (on && !p.autoLoad) p.autoLoadSince = iso(today());
+    });
     if (ds.ld) {
+      since(ds.ld === "yes");
       P.forEach((p) => {
         p.autoLoad = ds.ld === "yes";
         p.loadAsked = true;
@@ -208,6 +271,7 @@
       return render();
     }
     if (ds.ldon != null) {
+      since(ds.ldon === "1");
       P.forEach((p) => {
         p.autoLoad = ds.ldon === "1";
         p.loadAsked = true;

@@ -5279,6 +5279,50 @@
     }
   }
   /* exercise sketches */
+  /* history: progress from the entries (Teil 36) – the labels carry the meaning, the colours only support it */
+  .prog .progw {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+  }
+  .prog .progd,
+  .prog .progv {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .prog .progs {
+    font-size: 14px;
+    white-space: nowrap;
+    flex: none;
+  }
+  .prog .progv {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .prog .progc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+  .prog .pchip {
+    font-size: 12px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .prog .pchip.h {
+    border-color: var(--ember);
+  }
+  .prog .pchip.e {
+    border-color: var(--done);
+  }
   /* fitness gym: "Gerät wechseln" – a clear secondary button below the exercise and its target (18.11.2026):
      frame and a quiet accent surface, swap symbol and text, at least 44 × 44 px, below the main action */
   .altrow {

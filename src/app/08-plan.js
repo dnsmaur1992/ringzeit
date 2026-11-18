@@ -108,10 +108,33 @@
   };
   const koLock = (ds) => !!S.ko && ds >= S.ko && daysBetween(parse(S.ko), parse(ds)) < koDays();
   /* Weekly suggestion; no sparring during a KO suspension or the day after club sparring */
-  function suggestOn(ds) {
+  /* load distribution (Teil 36): the intense types – strength, sparring, conditioning – go to the marked hard days,
+     technique to the others; the week keeps the same types, only their days change (in the order of the week) */
+  const INTENSE = new Set(["S", "P", "C", "K"]);
+  function loadTypeWeek(ds) {
+    const mon = monday(parse(ds)),
+      dates = [0, 1, 2, 3, 4, 5, 6].map((i) => iso(addDays(mon, i))),
+      base = dates.map((d) => {
+        const b = blockInfo(d);
+        return dayTypes(b && b.k)[wd(d)] || null;
+      }),
+      own = dates.map((d, i) => i).filter((i) => base[i] && base[i] !== "M"),
+      marked = new Set(S.profile.hardDays || []),
+      hot = own.filter((i) => INTENSE.has(base[i])).map((i) => base[i]),
+      calm = own.filter((i) => !INTENSE.has(base[i])).map((i) => base[i]),
+      out = base.slice(),
+      mk = own.filter((i) => marked.has(wd(dates[i]))),
+      rest = own.filter((i) => !marked.has(wd(dates[i])));
+    // marked days take the intense types first; the rest of the days take what is left, technique first
+    for (const i of mk) out[i] = hot.length ? hot.shift() : calm.shift();
+    for (const i of rest) out[i] = calm.length ? calm.shift() : hot.shift();
+    return out;
+  }
+  function suggestOn(ds, raw) {
     const bi = blockInfo(ds);
     let ty = dayTypes(bi && bi.k)[wd(ds)];
     if (!ty) return null;
+    if (!raw && ty !== "M" && typeof loadOn === "function" && loadOn() && (S.profile.hardDays || []).length) ty = loadTypeWeek(ds)[wd(ds)] || ty;
     if (ramadanOn(ds) && (ty === "K" || ty === "C")) ty = "T";
     // a stressful week: technique instead of sparring and hard conditioning
     if (weekMood(ds) === "hard" && (ty === "K" || ty === "C" || ty === "P")) ty = "T";
@@ -375,7 +398,8 @@
     if (lr) r = Math.min(r, loadCap(lr.role));
     if (type !== "M" && ramadanOn(ds)) r -= 1;
     if (type !== "M" && weekMood(ds) === "hard") r -= 1;
-    if (type !== "M") r -= [1.5, 0.5, 0][formOn(ds || iso(today()))];
+    // the form already made today easy (load distribution swapped the hard day) – not lowered twice
+    if (type !== "M" && !(lr && lr.why === "form")) r -= [1.5, 0.5, 0][formOn(ds || iso(today()))];
     if (type !== "M" && weekLoad(ds).deload) r -= 1.5;
     // a hard day before in a region (e.g. club sparring → legs): a little easier today (core/history.js lightRegions)
     if (type !== "M" && lightRegions({ log: S.log, date: ds || iso(today()) }).length) r -= 1;
@@ -2167,6 +2191,7 @@
     if (bi) notes.push(t("blk").note[bi.k][bi.st]);
     const lrole = type !== "M" ? loadRole(dateStr) : null;
     if (lrole) notes.push(t("loadDist").note[lrole.role]);
+    if (lrole && lrole.why) notes.push(t("loadDist").note[lrole.why]);
     if (type === "M") {
       // sport focus (7b): WT active flexibility in the full range of motion, boxing loose footwork/shadow, ITF loose hand-foot links
       const wtM = isTkd() && tkdUnitStyle() === "wt",
