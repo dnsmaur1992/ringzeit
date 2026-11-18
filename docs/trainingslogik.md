@@ -361,3 +361,8 @@ Grundsatz (Betreiber): **nur eingetragene Anstrengung und Belastungen steuern di
 - **Harte Reize auf harte Tage:** Kraft, Sparring und Kondition liegen auf den markierten harten Tagen, Technik auf den übrigen; die Woche behält dieselben Arten, Mobilität bleibt. Nicht begonnene Einheiten folgen, begonnene bleiben; verschobene behalten ihre Art.
 - **Vereins-Sparring** zählt nur nach seiner eingetragenen Anstrengung (Entscheidung Betreiber; Vorschlag 4 entfällt).
 - **Fortschritt im Verlauf:** Belastung der letzten 4 Wochen nach eingetragener Anstrengung (hart/mittel/locker) und Kraft je Übung (erster → letzter Eintrag, mit Gewicht als geschätztes Maximum nach Epley, sonst Wiederholungen/Sekunden) seit dem Einschalten der Lastverteilung bzw. der letzten 8 Wochen. Ohne Einträge keine Karte.
+
+## Schalter Lastverteilung immer verfügbar (18.11.2026)
+
+- Der Schalter „Automatische Lastverteilung“ steht für alle ab 18 immer unter Profil → Trainingswoche, unabhängig von der Zahl der Trainingstage. Unter 5 Tagen (Ringzeit und Verein zusammen) steht ein Hinweis darunter, dass es ab 5 Tagen am meisten bringt. Ringzeit fragt weiterhin nur von selbst ab 5 Tagen (einmal je Überschreiten). Unter 18 gesperrt wie bisher.
+- Texte: Frage und Hilfe nennen „Profil → Trainingswoche“; die Hilfe beschreibt jetzt auch die 3-Tage-Regel, die Tagesform und die harten Tagesarten aus Teil 36.

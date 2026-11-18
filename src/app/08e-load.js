@@ -1,7 +1,7 @@
   /* ============ Automatische Lastverteilung (Betreiber 18.11.2026, E41–E58) ============
      Next to the classic week (few, hard units) a week after the model of Russian wrestling: many units, most of them
-     moderate. Switched on only by the person: from 5 training days a week (Ringzeit and club days together, a day with
-     both counts once) Ringzeit asks once – at the first start, in operation when the days newly cross the threshold, and
+     moderate. Switched on only by the person – the switch is always in the profile for adults (18.11.2026); from 5
+     training days a week (Ringzeit and club days together, a day with both counts once) Ringzeit asks once – at the first start, in operation when the days newly cross the threshold, and
      once after the update for existing profiles (E41, E49, E55). Never for children and youth.
      With the switch on (E56/E57):
      - at most 3 hard days a week (E43); a hard day only counts once it took place: an entry (own or club) with effort ≥ 7
@@ -247,10 +247,11 @@
       .map((i) => `<button type="button" class="chip" data-hday="${i}" aria-pressed="${hd.includes(i)}"${!hd.includes(i) && hd.length >= LOAD_HARD_MAX ? " disabled" : ""}>${t("dayNames")[i]}</button>`)
       .join("")}</div><span class="sub">${esc(L.hardHint(hd.length))}</span>${sheet ? `<div class="acts2"><button type="button" class="btn" data-sx="close">${t("close")}</button></div>` : ""}`;
   }
+  /* the switch is always there for adults (Betreiber 18.11.2026); Ringzeit only asks by itself from 5 days */
   function loadProfHtml(p) {
-    if (!loadAllowed(p) || (loadDays(p) < LOAD_MIN_DAYS && !p.autoLoad)) return "";
+    if (!loadAllowed(p)) return "";
     const L = t("loadDist");
-    return `<div class="panel"><div class="field"><span class="lab">${L.title}</span><div class="seg g2"><button type="button" data-ldon="1" aria-pressed="${!!p.autoLoad}">${L.on}</button><button type="button" data-ldon="0" aria-pressed="${!p.autoLoad}">${L.off}</button></div><span class="sub">${esc(p.autoLoad ? L.onHint : L.offHint)}</span></div>${p.autoLoad ? `<div class="field">${loadHardHtml(p, false)}</div>` : ""}</div>`;
+    return `<div class="panel"><div class="field"><span class="lab">${L.title}</span><div class="seg g2"><button type="button" data-ldon="1" aria-pressed="${!!p.autoLoad}">${L.on}</button><button type="button" data-ldon="0" aria-pressed="${!p.autoLoad}">${L.off}</button></div><span class="sub">${esc(p.autoLoad ? L.onHint : L.offHint)}</span>${loadDays(p) < LOAD_MIN_DAYS ? `<span class="sub">${esc(L.fewDays)}</span>` : ""}</div>${p.autoLoad ? `<div class="field">${loadHardHtml(p, false)}</div>` : ""}</div>`;
   }
   /* taps: dialog answers, switch, hard days – the profile draft and the stored profile change together */
   function loadAction(ds) {

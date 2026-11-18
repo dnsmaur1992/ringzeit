@@ -2092,6 +2092,18 @@ test("18.11.2026 E41–E58 automatic load distribution: dialog from 5 days, mark
   await a.click({ dataset: { ldon: "0" } });
   assert.equal(a.run("!!S.profile.autoLoad"), false);
   assert.doesNotMatch(a.run("loadProfHtml(S.profile)"), /data-hday/);
+  // always there for adults (18.11.2026): with 3 days the switch stays, with a hint – but Ringzeit does not ask
+  a.run("S.profile.days=[0,2,4];S.profile.club={days:[],minutes:90};S.profile.loadAsked=false;ui.sheet=null;loadAskCheck()");
+  assert.equal(a.run("ui.sheet&&ui.sheet.kind"), null, "fewer than 5 days: no question");
+  assert.match(a.run("loadProfHtml(S.profile)"), /Automatische Lastverteilung[\s\S]*data-ldon="1"[\s\S]*ab 5 Trainingstagen/);
+  await a.click({ dataset: { ldon: "1" } });
+  assert.equal(a.run("!!S.profile.autoLoad"), true, "switched on with 3 days");
+  assert.equal(a.run("loadRole(planOn('2026-11-16')?'2026-11-16':'2026-11-18')!==null"), true);
+  a.run("S.profile.days=[0,1,2,3,4];S.profile.autoLoad=false");
+  assert.doesNotMatch(a.run("loadProfHtml(S.profile)"), /ab 5 Trainingstagen/, "no hint from 5 days");
+  assert.match(a.run("t('loadDist').askNote"), /Trainingswoche/);
+  assert.match(a.run("helpT().q.load[1]"), /Profil → Trainingswoche[\s\S]*ab 18/);
+  a.run("S.profile.days=[0,2,4,5]");
   // children and youth: never asked, never active
   a.run("S.profile.birth='2010-03-01';S.profile.birthYear=2010;S.profile.loadAsked=false;S.profile.autoLoad=true;ui.sheet=null;loadAskCheck()");
   assert.equal(a.run("ui.sheet&&ui.sheet.kind"), null);
