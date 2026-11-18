@@ -8,8 +8,10 @@
        stays comparable, the pull alternates cable row / lat pulldown, the other exercises vary (E62, E66);
      - conditioning: first one cardio machine, then the kettlebell at one place – one station change at most (E59, E64);
        limits pick the machine (knee/ankle: no treadmill; back: no rower, no swings);
-     - "Anderes Gerät" (E63): one tap swaps an exercise to the next alternative of the same movement pattern that the
-       standard list has and the limits allow – only while it has no sets yet; cardio swaps all rounds of that machine.
+     - "Gerät wechseln" (E63; label and look 18.11.2026): one tap swaps an exercise to the next alternative of the same
+       movement pattern that the standard list has and the limits allow – only while nothing of it is entered, ticked or
+       running (Prüfauftrag Punkt 2: any value, left or right side alone too; target values are placeholders, not input);
+       cardio swaps all rounds of that machine. Entered data is never deleted by a swap.
        Weights are never carried over: the target comes from the history of the new exercise. Nothing claims that a
        machine is free. */
   const STUDIO_CARDIO = ["cond.bike_sprints", "cond.cross_trainer_intervals", "cond.rowing_machine_intervals", "cond.treadmill_intervals"];
@@ -49,12 +51,28 @@
     // the hip hinge (back of the legs) varies: leg curl, Romanian deadlift or hip thrust
     Object.assign(shuffle(["str.leg_curl_machine", "str.barbell_romanian_deadlift", "str.barbell_hip_thrust"]).concat(["str.romanian_deadlift", "str.glute_bridges"]), { free: true }),
   ];
-  /* an exercise or round may be swapped while nothing of it is logged or ticked */
+  /* an exercise or round may be swapped only while nothing of it is entered, ticked or running: every field of every
+     set row counts (r, kg, rL, rR, …) – one side of a one-legged set alone is an entry; targets live in it.target and
+     the placeholders, never in the rows */
+  const altVal = (v) => v != null && v !== "" && v !== false;
+  function altKeyStarted(sess, key) {
+    const rows = (sess.perf || {})[key],
+      tm = ui.exerciseTimer;
+    return !!(
+      (sess.checked || {})[key] ||
+      (Array.isArray(rows) && rows.some((r) => r && Object.values(r).some(altVal))) ||
+      (sess.timedLaps || {})[key] > 0 ||
+      ((sess.lapsDone || {})[key] || []).length ||
+      altVal((sess.exerciseEffort || {})[key]) ||
+      (tm && tm.ds === (sess.date || ui.sel) && tm.key === key && !tm.restOnly)
+    );
+  }
   function altStarted(sess, bi, ni) {
-    const b = sess.blocks[bi];
-    if (b.rounds) return b.items.some((it, k) => it.id === b.items[ni].id && roundDone(sess, k + 1));
-    const rows = (sess.perf || {})[`${bi}.${ni}`];
-    return !!((sess.checked || {})[`${bi}.${ni}`] || (rows && rows.some((r) => r && (r.r != null || r.kg != null || r.l != null))));
+    const b = sess.blocks[bi],
+      it = b && b.items[ni];
+    if (!it) return true;
+    if (b.rounds) return b.items.some((x, k) => x.id === it.id && (roundDone(sess, k + 1) || altKeyStarted(sess, `${bi}.${k}`)));
+    return altKeyStarted(sess, `${bi}.${ni}`);
   }
   /* the next alternative of the same pattern that exists in the fitness gym, fits the limits and is not in the unit yet */
   function altNext(sess, bi, ni) {
@@ -75,7 +93,8 @@
     const b = sess.blocks[bi],
       it = b && b.items[ni];
     if (!it || !EX[it.id] || ["warm", "cool"].includes(b.key) || altStarted(sess, bi, ni) || !altNext(sess, bi, ni)) return "";
-    return `<button type="button" class="chip altbtn" data-alt="${bi}.${ni}">${t("studioAlt").btn}</button>`;
+    // a secondary button: frame, accent surface, swap symbol and text – below the main action, never colour alone
+    return `<div class="altrow"><button type="button" class="btn sec altbtn" data-alt="${bi}.${ni}"><span class="altic" aria-hidden="true">⇄</span><span>${t("studioAlt").btn}</span></button></div>`;
   }
   function altAction(key) {
     const sess = S.sessions[ui.sel];
@@ -83,7 +102,12 @@
     const [bi, ni] = String(key).split(".").map(Number),
       b = sess.blocks[bi],
       it = b && b.items[ni];
-    if (!it || altStarted(sess, bi, ni)) return;
+    if (!it) return;
+    // the lock in the handler too: something is entered – nothing is swapped, nothing deleted
+    if (altStarted(sess, bi, ni)) {
+      toast(t("studioAlt").locked);
+      return render();
+    }
     const nx = altNext(sess, bi, ni);
     if (!nx) return;
     const old = it.id;
@@ -98,7 +122,9 @@
         if (tg) x.target = tg;
       }
     }
-    if (!b.rounds && sess.perf) delete sess.perf[`${bi}.${ni}`];
+    // only empty rows go (the new exercise may have another number of sets) – the lock above makes sure they are empty
+    const rows = !b.rounds && sess.perf && sess.perf[`${bi}.${ni}`];
+    if (rows && !rows.some((r) => r && Object.values(r).some(altVal))) delete sess.perf[`${bi}.${ni}`];
     store.save();
     toast(t("studioAlt").done(exText(nx).name));
     render();

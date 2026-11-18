@@ -33,9 +33,21 @@
      { [missed date]: { to: replacement date | null, k: "hard" | "x" } }, and from then on only read: opening, recomputing
      or restarting never creates a second claim. A replacement that is done (or missed itself) has used up the claim; a
      missed replacement day never triggers a further one (no chain). A claim without a free slot is stored with to: null
-     and is settled as well. Claims older than 5 weeks are dropped. */
+     and is settled as well. Claims older than 5 weeks are dropped.
+     The week is evaluated anew from the facts each time (Prüfauftrag 18.11.2026, Punkt 1): actual hard days (entries with
+     effort ≥ 7) and begun units planned hard are fixed; a not begun hard replacement that would make it more than 3 is
+     stepped down first, then the marked days (E48). Stepping down never touches the ledger – the claim stays used, so a
+     changed or deleted entry can make the replacement hard again, but nothing is handed on and nothing is made up twice. */
   const ldClaims = () => (S.profile.ldClaims = S.profile.ldClaims || {});
   const isClaimTarget = (d, C = ldClaims()) => Object.values(C).some((c) => c && c.to === d);
+  const claimedHard = (d, C = ldClaims()) => Object.values(C).some((c) => c && c.k === "hard" && c.to === d);
+  /* a unit with anything logged, ticked or running – its plan is never rebuilt */
+  function ldStarted(ds) {
+    const sess = S.sessions[ds];
+    if (!sess) return false;
+    const resume = typeof resumeRead === "function" ? resumeRead() : null;
+    return !!(sess.flow || sess.rdone || Object.keys(sess.perf || {}).length || Object.keys(sess.checked || {}).length || Object.keys(sess.roundChecks || {}).length || (resume && resume.ds === ds) || (ui.timer && ui.timer.ds === ds));
+  }
   function loadAssign(ds) {
     if (!loadOn()) return false;
     const C = ldClaims(),
@@ -45,18 +57,19 @@
     // hard days first: the next open unit, never right after a hard day, within the weekly limit
     for (const d of w.missed) {
       if (C[d] || isClaimTarget(d, C) || !w.marked.has(wd(d))) continue;
-      const hardNow = (x) => hardEntry(x) || w.H.has(x) || Object.values(C).some((c) => c && c.k === "hard" && c.to === x);
-      const used = w.settledHard.length + w.open.filter((x) => hardNow(x)).length;
+      const hardNow = (x) => w.hard.has(x);
+      const used = w.hard.size;
       let to = null;
       if (used < LOAD_HARD_MAX)
         to = w.open.find((x) => x >= td && !hardNow(x) && !isClaimTarget(x, C) && !hardNow(iso(addDays(parse(x), -1)))) || null;
       C[d] = { to, k: "hard" };
+      if (to) w.hard.add(to);
       changed = true;
     }
     // then the moderate/easy ones: one technique round more in the next open technique unit
     for (const d of w.missed) {
       if (C[d] || isClaimTarget(d, C) || w.marked.has(wd(d))) continue;
-      const hardNow = (x) => hardEntry(x) || w.H.has(x) || Object.values(C).some((c) => c && c.k === "hard" && c.to === x);
+      const hardNow = (x) => w.hard.has(x);
       const to = w.open.find((x) => ["T", "C"].includes(planOn(x)) && !hardNow(x) && !isClaimTarget(x, C)) || null;
       C[d] = { to, k: "x" };
       changed = true;
@@ -70,7 +83,8 @@
     if (changed) store.save();
     return changed;
   }
-  /* the facts of a week, without claims: dates, settled hard days, open and missed own units, marked days (E48 applied) */
+  /* the facts of a week: dates, settled hard days, open and missed own units, marked days, and the hard days as they
+     stand now (hard) – fixed ones first, then the replacements, then the marked days, never more than 3 */
   function loadWeekBase(ds) {
     const mon = monday(parse(ds)),
       td = iso(today()),
@@ -80,12 +94,19 @@
       settledHard = dates.filter((d) => hardEntry(d)),
       open = dates.filter((d) => d >= td && ownUnit(d) && !doneOn(d)),
       missed = dates.filter((d) => d < td && ownUnit(d) && !doneOn(d)),
-      openClaimsHard = open.filter((d) => Object.values(C).some((c) => c && c.k === "hard" && c.to === d)).length,
-      allowed = Math.max(0, LOAD_HARD_MAX - settledHard.length - openClaimsHard);
+      // a begun unit keeps the role it was built with
+      begun = new Map(open.filter((d) => ldStarted(d)).map((d) => [d, String(S.sessions[d].ld || "")])),
+      hard = new Set(settledHard.concat([...begun].filter(([, r]) => r.startsWith("hard")).map(([d]) => d)));
+    const free = open.filter((d) => !begun.has(d) && !hard.has(d));
+    // replacements first – beyond the limit (actual and begun hard days counted) they step down, the claim stays used
+    const claims = free.filter((d) => claimedHard(d, C));
+    for (const d of claims) if (hard.size < LOAD_HARD_MAX) hard.add(d);
     // E48: too many marked days left for the allowed number – the next ones (in date order) become moderate
-    const R = open.filter((d) => marked.has(wd(d)) && !Object.values(C).some((c) => c && c.k === "hard" && c.to === d)),
+    const R = free.filter((d) => marked.has(wd(d)) && !claimedHard(d, C)),
+      allowed = Math.max(0, LOAD_HARD_MAX - hard.size),
       H = new Set(R.slice(Math.max(0, R.length - allowed)));
-    return { dates, marked, settledHard, open, missed, H };
+    H.forEach((d) => hard.add(d));
+    return { dates, marked, settledHard, open, missed, H, hard, begun };
   }
   /* the roles of the whole week of a date: { [date]: "hard" | "mid" | "easy" }, extra: { [date]: 1 } (E50, E52, E53) –
      only read from the ledger, so the same state always gives the same week */
@@ -98,7 +119,9 @@
     let i = 0;
     for (const d of w.dates) {
       if (!ownUnit(d)) continue;
-      if (w.H.has(d) || hardEntry(d) || claimed(d, "hard")) role[d] = "hard";
+      // past days keep the role they were planned with; open days follow the week as it stands now
+      const pastClaim = !w.open.includes(d) && claimed(d, "hard");
+      if (w.hard.has(d) || hardEntry(d) || pastClaim) role[d] = "hard";
       else role[d] = i++ % 2 === 0 ? "mid" : "easy";
       if (claimed(d, "x") && role[d] !== "hard" && w.open.includes(d)) extra[d] = 1;
     }
@@ -119,17 +142,18 @@
   function loadRefresh() {
     const td = iso(today()),
       last = S.log.length ? S.log[S.log.length - 1] : null,
-      key = [td, S.log.length, last && last.id, last && last.rpe, !!S.profile.autoLoad, (S.profile.hardDays || []).join(""), Object.keys(S.sessions).length].join("|");
+      mon = iso(monday(today())),
+      // every entry of this week with its effort: added, changed or deleted entries re-evaluate the week
+      wk = S.log.filter((e) => e && e.date >= mon).map((e) => `${e.id}:${e.date}:${e.rpe}`).sort().join(","),
+      key = [td, S.log.length, last && last.id, last && last.rpe, wk, !!S.profile.autoLoad, (S.profile.hardDays || []).join(""), Object.keys(S.sessions).length].join("|");
     if (key === loadRefreshKey) return false;
     loadRefreshKey = key;
     loadAssign(td); // write down make-up claims once (never twice for the same missed day)
-    const resume = typeof resumeRead === "function" ? resumeRead() : null,
-      sun = iso(addDays(monday(today()), 6));
+    const sun = iso(addDays(monday(today()), 6));
     let changed = false;
     for (const [ds, sess] of Object.entries(S.sessions)) {
       if (ds < td || ds > sun || doneOn(ds) || !sess || sess.type === "M") continue;
-      const started = sess.flow || sess.rdone || Object.keys(sess.perf || {}).length || Object.keys(sess.checked || {}).length || Object.keys(sess.roundChecks || {}).length || (resume && resume.ds === ds) || (ui.timer && ui.timer.ds === ds);
-      if (started) continue;
+      if (ldStarted(ds)) continue;
       const sig = ldSig(loadRole(ds));
       if ((sess.ld || "") === sig) continue;
       S.sessions[ds] = buildSession(ds, sess.type, sess.loc, sess.eq, { min: sess.min, run: !!sess.run, sport: sess.sport || mainSport(), tstyle: sess.tstyle, disc: sess.disc });

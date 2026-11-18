@@ -1189,6 +1189,8 @@
       if (!rows) return;
       const v = parseFloat(el.value.replace(",", "."));
       rows[+el.dataset.i][el.dataset.f] = isNaN(v) || v < 0 ? null : Math.round(v * 10) / 10;
+      // fitness gym: the first entry locks "Gerät wechseln" at once (the handler checks again)
+      if (typeof altKeyStarted === "function" && altKeyStarted(sess, el.dataset.k)) document.querySelectorAll(`[data-alt="${el.dataset.k}"]`).forEach((x) => x.closest(".altrow")?.remove());
       if (el.dataset.f === "rL" || el.dataset.f === "rR") {
         legSync(rows[+el.dataset.i]);
         el.classList.toggle("ok", rows[+el.dataset.i][el.dataset.f] != null);

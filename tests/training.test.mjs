@@ -11,6 +11,7 @@ const script = html.slice(
   html.lastIndexOf("<script>") + 8,
   html.lastIndexOf("</script>"),
 );
+const VM_TIMEOUT = 15000;
 function app(opts = {}) {
   let calendar = [2026, 10, 2],
     nowMs = new Date(2026, 10, 2).getTime(),
@@ -110,8 +111,21 @@ function app(opts = {}) {
     breakOnSigint: true,
   });
   // Boot was deliberately not run (see script replacement below).
-  const run = (code) => vm.runInContext(code, context, { timeout: 3000 });
+  // Time limit per call: a guard against endless loops, not a speed test. Big sweeps on a slow or busy machine
+  // must not fail as if the plan were wrong – a timeout is reported as such (RZ_VM_TIMEOUT overrides, ms).
+  const limit = +process.env.RZ_VM_TIMEOUT || VM_TIMEOUT;
+  const run = (code) => {
+    try {
+      return vm.runInContext(code, context, { timeout: limit });
+    } catch (e) {
+      if (e && e.code === "ERR_SCRIPT_EXECUTION_TIMEOUT")
+        throw new Error(`ZEITÜBERSCHREITUNG nach ${limit} ms (Laufzeit, keine fachliche Abweichung): ${String(code).replace(/\s+/g, " ").slice(0, 120)}`);
+      throw e;
+    }
+  };
   // 3-D: exercises are found by their text id; exKey(fn) returns the id of the first exercise matching fn
+  // reproducible: every app starts with the same random numbers (RZ_SEED picks another sequence; tests may reseed)
+  run(`(()=>{let x=${(opts.seed ?? (+process.env.RZ_SEED || 20261118)) % 2147483647 || 1};Math.random=()=>((x=(x*16807)%2147483647)/2147483647)})()`);
   run(`globalThis.levelFor=RZ.levelFor;globalThis.exKey=(f)=>{const e=EX.find(f);return e?e.key:-1};`);
   run(
     `S = hydrate({profile:{...DEFAULT_PROFILE, level:1, example:false, planStart:'2026-08-31'}}); ui.onb = null;`,
@@ -2136,6 +2150,76 @@ test("18.11.2026 make-up only once: a missed hard day triggers one replacement, 
   assert.equal(a.run("JSON.stringify(S.sessions['2026-11-17'])"), kept);
 });
 
+test("18.11.2026 hard make-up vs. the current week: a replacement beyond 3 actual hard days is stepped down – entries added, changed or deleted re-evaluate it, the claim is never released again, begun units stay, stable after restart", () => {
+  const a = app();
+  a.setDate("2026-11-11"); // Wednesday
+  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.example=false;S.profile.days=[0,1,2,4,5];S.profile.minutes=60;S.profile.club={days:[3],minutes:90};S.sessions={};S.ov={};S.profile.planStart='2026-10-05';S.profile.comps=[];S.profile.loadAsked=true;S.profile.toured=true;S.profile.newsSeen=99;S.profile.autoLoad=true;S.profile.hardDays=[0];S.profile.ldClaims={}");
+  a.run("S.log=[{id:'tu',date:'2026-11-10',src:'own',type:'T',minutes:60,rpe:8}]"); // Tuesday hard
+  const week = () => JSON.parse(a.run("JSON.stringify(loadWeek(iso(today())))"));
+  const claims = () => JSON.parse(a.run("JSON.stringify(S.profile.ldClaims)"));
+  const hardDays = () => JSON.parse(a.run("JSON.stringify([...loadWeekBase(iso(today())).hard].sort())")); // own units and club entries
+  const refresh = () => a.run("loadRefresh()"); // no key reset: the change itself must be noticed
+  // Monday (marked hard) missed → Wednesday follows the hard Tuesday, so Friday takes over
+  a.run("loadAssign(iso(today()))");
+  assert.deepEqual(claims(), { "2026-11-09": { to: "2026-11-13", k: "hard" } });
+  a.run("S.sessions['2026-11-13']=buildSession('2026-11-13','S','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-14']=buildSession('2026-11-14','T','gym',['bag'],{sport:'kickboxing',min:60})");
+  assert.equal(a.run("S.sessions['2026-11-13'].ld"), "hard");
+  // the report: Wednesday hard, then a hard club evening on Thursday – three actual hard days
+  a.run("S.log.push({id:'we',date:'2026-11-11',src:'own',type:'P',minutes:60,rpe:8})");
+  a.setDate("2026-11-12");
+  a.run("S.log.push({id:'th',date:'2026-11-12',src:'club',type:'T',minutes:90,rpe:8})");
+  refresh();
+  let w = week();
+  assert.notEqual(w.role["2026-11-13"], "hard", JSON.stringify(w));
+  assert.deepEqual(hardDays(), ["2026-11-10", "2026-11-11", "2026-11-12"]);
+  assert.match(a.run("S.sessions['2026-11-13'].ld"), /^(mid|easy)/, "the planned replacement is rebuilt");
+  assert.deepEqual(claims(), { "2026-11-09": { to: "2026-11-13", k: "hard" } }, "the claim stays used – not handed on to Saturday");
+  assert.notEqual(w.role["2026-11-14"], "hard");
+  // recomputing and restarting give the same week
+  const snap = JSON.stringify([w, claims(), a.run("S.sessions['2026-11-13'].ld")]);
+  for (let i = 0; i < 3; i++) a.run("loadRefreshKey='';loadRefresh();loadAssign(iso(today()))");
+  a.run("S.profile=JSON.parse(JSON.stringify(S.profile));S.log=JSON.parse(JSON.stringify(S.log));loadRefreshKey='';loadRefresh()");
+  assert.equal(JSON.stringify([week(), claims(), a.run("S.sessions['2026-11-13'].ld")]), snap);
+  // a changed entry (not the last one): Wednesday was only moderate after all → Friday is hard again
+  a.run("S.log.find(e=>e.id==='we').rpe=5");
+  refresh();
+  assert.equal(week().role["2026-11-13"], "hard");
+  assert.equal(a.run("S.sessions['2026-11-13'].ld"), "hard");
+  // changed back, then the club entry deleted → stepped down, then hard again; never a second claim
+  a.run("S.log.find(e=>e.id==='we').rpe=8");
+  refresh();
+  assert.notEqual(week().role["2026-11-13"], "hard");
+  a.run("S.log=S.log.filter(e=>e.id!=='th')");
+  refresh();
+  assert.equal(week().role["2026-11-13"], "hard");
+  a.run("S.log.push({id:'th2',date:'2026-11-12',src:'club',type:'T',minutes:90,rpe:9})");
+  refresh();
+  assert.notEqual(week().role["2026-11-13"], "hard");
+  assert.equal(Object.keys(claims()).length, 1);
+  // the stepped-down Friday itself missed: no new claim, no chain
+  a.setDate("2026-11-14");
+  for (let i = 0; i < 2; i++) a.run("loadRefreshKey='';loadRefresh()");
+  assert.deepEqual(claims(), { "2026-11-09": { to: "2026-11-13", k: "hard" } });
+  assert.notEqual(week().role["2026-11-14"], "hard");
+  // a begun hard replacement stays as it is and counts – the marked Friday steps down instead (E48)
+  a.setDate("2026-11-17"); // Tuesday, Monday 16 missed
+  a.run("S.profile.ldClaims={};S.profile.hardDays=[0,4];S.log=[];S.sessions={};loadAssign(iso(today()))");
+  assert.deepEqual(claims()["2026-11-16"], { to: "2026-11-17", k: "hard" });
+  a.run("S.sessions['2026-11-17']=buildSession('2026-11-17','S','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-17'].perf={'1.0':[{kg:10,r:8}]}");
+  assert.equal(a.run("S.sessions['2026-11-17'].ld"), "hard");
+  const kept = a.run("JSON.stringify(S.sessions['2026-11-17'])");
+  a.run("S.sessions['2026-11-20']=buildSession('2026-11-20','C','gym',['bag'],{sport:'kickboxing',min:60})");
+  assert.equal(a.run("S.sessions['2026-11-20'].ld"), "hard");
+  a.run("S.log.push({id:'c1',date:'2026-11-18',src:'own',type:'P',minutes:60,rpe:8},{id:'c2',date:'2026-11-19',src:'club',type:'T',minutes:90,rpe:8})");
+  refresh();
+  assert.equal(a.run("JSON.stringify(S.sessions['2026-11-17'])"), kept, "begun: unchanged");
+  w = week();
+  assert.equal(w.role["2026-11-17"], "hard");
+  assert.notEqual(w.role["2026-11-20"], "hard", "the marked Friday gives way");
+  assert.deepEqual(hardDays(), ["2026-11-17", "2026-11-18", "2026-11-19"]);
+  assert.match(a.run("S.sessions['2026-11-20'].ld"), /^(mid|easy)/, "rebuilt as moderate");
+});
+
 test("voice: the best installed voice is used – premium before enhanced before default, no novelty or online-only voices", () => {
   const a = app();
   a.run(`globalThis.spoken=[];const V=(name,lang,uri,extra={})=>({name,lang,voiceURI:uri,localService:true,default:false,...extra});
@@ -3112,7 +3196,7 @@ test("18.11.2026 fitness gym: limits pick the machines – knee: no leg press, l
     for (const x of ["str.chest_press_machine", "str.machine_shoulder_press", "str.seated_dumbbell_shoulder_press"]) assert.ok(!sh.includes(x), `shoulder ${i}: ${x}`);
   }
 });
-test("18.11.2026 fitness gym: 'Anderes Gerät' swaps within the movement pattern, only before the first set; weights come from the new exercise's own history; cardio moves all its rounds; begun units stay", async () => {
+test("18.11.2026 fitness gym: 'Gerät wechseln' swaps within the movement pattern, only before the first set; weights come from the new exercise's own history; cardio moves all its rounds; begun units stay", async () => {
   const a = app();
   a.setDate("2026-11-16");
   a.run("S.profile.lang='de';S.tests=[];S.sessions={};S.profile.limits=[];S.profile.sport='kickboxing';S.profile.fitnessBase=1;S.profile.work=''");
@@ -3128,7 +3212,7 @@ test("18.11.2026 fitness gym: 'Anderes Gerät' swaps within the movement pattern
   const [bi2, ni2] = loc();
   assert.equal(sess().blocks[bi2].items[ni2].target.kg, 40);
   // in the training (list and card) – the plan page is a read-only preview
-  assert.match(a.run(`sessionBlockHtml(S.sessions[ui.sel],${bi2},false)`), new RegExp(`data-alt="${bi2}\\.${ni2}">Anderes Gerät<`));
+  assert.match(a.run(`sessionBlockHtml(S.sessions[ui.sel],${bi2},false)`), new RegExp(`data-alt="${bi2}\\.${ni2}"><span class="altic" aria-hidden="true">⇄</span><span>Gerät wechseln</span>`));
   assert.doesNotMatch(a.run(`sessionBlockHtml(S.sessions[ui.sel],${bi2},true)`), /data-alt=/);
   await a.click({ dataset: { alt: `${bi2}.${ni2}` } });
   let it = sess().blocks[bi2].items[ni2];
@@ -3157,6 +3241,56 @@ test("18.11.2026 fitness gym: 'Anderes Gerät' swaps within the movement pattern
   a.run("refreshLegacyPlans()");
   assert.ok(!JSON.parse(a.run("JSON.stringify(S.sessions['2026-11-18'].blocks.map(b=>b.key))")).includes("plyo"), "rebuilt without the jump block");
   assert.equal(a.run("JSON.stringify(S.sessions['2026-11-20'])"), begun, "begun unit unchanged");
+});
+test("18.11.2026 fitness gym: 'Gerät wechseln' is locked by any entry – one side of a one-legged set, weight alone, a tick, effort or a running timer; nothing entered is ever deleted, targets do not count, the handler checks too", async () => {
+  const a = app();
+  a.setDate("2026-11-16");
+  a.run("S.profile.lang='de';S.tests=[];S.log=[];S.sessions={};S.profile.limits=[];S.profile.sport='kickboxing';S.profile.fitnessBase=1;S.profile.work=''");
+  a.run("Math.random=(()=>{let x=42;return()=>((x=(x*16807)%2147483647)/2147483647)})();ui.sel='2026-11-16';S.sessions[ui.sel]=buildSession(ui.sel,'S','studio',[],{sport:'kickboxing',min:60})");
+  const bi = +a.run("S.sessions[ui.sel].blocks.findIndex(b=>b.key==='str')");
+  // a one-legged exercise in this place: lunges (squat pattern)
+  a.run(`(()=>{const it=S.sessions[ui.sel].blocks[${bi}].items[1];it.id='str.lunges';delete it.target;S.sessions[ui.sel].perf={}})()`);
+  const key = `${bi}.1`;
+  const btn = () => a.run(`altBtn(S.sessions[ui.sel],${bi},1)`);
+  const id = () => a.run(`S.sessions[ui.sel].blocks[${bi}].items[1].id`);
+  // empty rows with the target only as placeholder: swapping is allowed
+  a.run(`perfRows(S.sessions[ui.sel],'${key}',S.sessions[ui.sel].blocks[${bi}])`);
+  assert.match(a.run(`setsHtml(S.sessions[ui.sel],${bi},1,S.sessions[ui.sel].blocks[${bi}],'str.lunges',false)`), /placeholder="Ziel/);
+  assert.match(btn(), /data-alt=/, "targets are not an entry");
+  for (const [what, set] of [
+    ["left side only", `S.sessions[ui.sel].perf['${key}'][0].rL=8`],
+    ["right side only", `S.sessions[ui.sel].perf['${key}'][1].rR=7`],
+    ["weight only", `S.sessions[ui.sel].perf['${key}'][2].kg=12`],
+    ["ticked", `S.sessions[ui.sel].checked={'${key}':true}`],
+    ["effort", `S.sessions[ui.sel].exerciseEffort={'${key}':'ok'}`],
+    ["timer running", `ui.exerciseTimer={ds:ui.sel,key:'${key}',running:true}`],
+  ]) {
+    a.run(`S.sessions[ui.sel].perf={};S.sessions[ui.sel].checked={};S.sessions[ui.sel].exerciseEffort={};ui.exerciseTimer=null;perfRows(S.sessions[ui.sel],'${key}',S.sessions[ui.sel].blocks[${bi}]);${set}`);
+    const mine = () => a.run(`(()=>{const s=S.sessions[ui.sel];return JSON.stringify([s.blocks[${bi}].items[1],s.perf['${key}'],s.checked,s.exerciseEffort])})()`);
+    const before = mine();
+    assert.equal(btn(), "", what);
+    assert.doesNotMatch(a.run(`sessionBlockHtml(S.sessions[ui.sel],${bi},false)`), new RegExp(`data-alt="${key}"`), what);
+    // the handler checks on its own (an old button on the screen)
+    await a.click({ dataset: { alt: key } });
+    assert.equal(id(), "str.lunges", what);
+    assert.equal(mine(), before, `${what}: nothing deleted`);
+  }
+  a.run("ui.exerciseTimer=null;S.sessions[ui.sel].checked={};S.sessions[ui.sel].exerciseEffort={}");
+  // deleted again → free again; the swap keeps the order of the pattern and its own history
+  a.run(`S.sessions[ui.sel].perf['${key}']=[{r:null,kg:null,rL:null,rR:''},{r:null,kg:null}]`);
+  assert.match(btn(), /data-alt=/);
+  await a.click({ dataset: { alt: key } });
+  assert.equal(id(), "str.barbell_back_squat", "next in the squat pattern that is not in the unit yet");
+  // the button on the guided card sits with the exercise and its target, the preview has none
+  a.run("ui.workout={ds:ui.sel,block:" + bi + ",step:0,player:true}");
+  const steps = JSON.parse(a.run("JSON.stringify(playerSteps(S.sessions[ui.sel]).map((s,i)=>[i,s.bi,s.ni,s.kind]))"));
+  const st = steps.find((x) => x[1] === bi && x[2] === 1);
+  a.run(`ui.workout.step=${st[0]}`);
+  assert.match(a.run("playerHtml()"), /<span class="dose">[^<]*<\/span><div class="altrow"><button type="button" class="btn sec altbtn" data-alt=/);
+  assert.doesNotMatch(a.run(`sessionBlockHtml(S.sessions[ui.sel],${bi},true)`), /data-alt=/);
+  // English
+  a.run("S.profile.lang='en'");
+  assert.match(btn(), /<span>Change equipment<\/span>/);
 });
 test("18.11.2026 progression wording matches the code: +1 s per set (timed) or +1 repetition in one set, no promised 5 %", () => {
   const a = app();
@@ -3538,8 +3672,10 @@ test("partner sessions: counter actions per session – Grundlage 1, Fortgeschri
 
 test("partner sessions build up easy → hard; counters sit on the final combos and mostly later", () => {
   const a = app();
-  const res = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];let first=0,late=0,total=0;
-    for(const disc of ['lc','kl','k1'])for(const lvl of [0,1,2]){S.profile.disc=disc;S.profile.level=lvl;S.profile.limits=[];S.profile.birthYear=1995;
+  // one call per discipline and level (100 sessions each) – small enough for slow machines, same checks
+  const parts = [];
+  for (const disc of ["lc", "kl", "k1"]) for (const lvl of [0, 1, 2]) parts.push(JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];let first=0,late=0,total=0;
+    {const disc='${disc}',lvl=${lvl};S.profile.disc=disc;S.profile.level=lvl;S.profile.limits=[];S.profile.birthYear=1995;
       for(const min of [30,45,60,90])for(let i=0;i<25;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min});if(!s.blocks.some(b=>b.rounds))continue;const rb=s.blocks.find(b=>b.rounds);
         const pr=rb.items.map((r,k)=>[r,k]).filter(([r])=>PARTNER_K.has(r.k)&&r.combo);
         const lv=pr.map(([r])=>comboLevel(r.combo));
@@ -3547,7 +3683,8 @@ test("partner sessions build up easy → hard; counters sit on the final combos 
         for(let k=2;k<lv.length;k++)if(lv[k]+0.001<lv[k-1])bad.push('order '+lv.join(','));
         for(const [r,k] of pr){if(!r.react)continue;total++;if(k===pr[0][1]&&pr.length>1)first++; /* a single partner round (e.g. footwork focus) may carry one */if(k>=pr[Math.floor(pr.length/2)][1])late++;
           if(r.react.mid&&(r.react.mid.at<1||r.react.mid.at>r.combo.length-2||!STRIKE.has(r.combo[r.react.mid.at-1])))bad.push('mid '+r.combo.join('-')+'@'+r.react.mid.at);}}}
-    return {bad:[...new Set(bad)].slice(0,5),first,late,total}})())`));
+    return {bad:[...new Set(bad)].slice(0,5),first,late,total}})())`)));
+  const res = parts.reduce((o, p) => ({ bad: o.bad.concat(p.bad), first: o.first + p.first, late: o.late + p.late, total: o.total + p.total }), { bad: [], first: 0, late: 0, total: 0 });
   assert.deepEqual(res.bad, []);
   assert.equal(res.first, 0, "the opening partner round has no counter action");
   assert.ok(res.late > res.total * 0.6, `counter actions mostly in the later rounds (${res.late}/${res.total})`);
@@ -3657,6 +3794,7 @@ test("no combo twice in one session", () => {
 
 test("Full Contact vs Leichtkontakt: 6-kick rule with a partner, more body and pressure in FC; short combos and control in LC", () => {
   const a = app();
+  seedRandom(a, 20261118); // reproducible: the same 600 sessions in every run
   const r = JSON.parse(a.run(`JSON.stringify((() => { S.profile.limits = []; S.profile.birthYear = 1995; const o = {};
     S.profile.disc = "fc"; S.profile.level = 2; let six = 0, sixFirst = 0, body2 = 0, dbl = 0, cnt = 0;
     for (let i = 0; i < 100; i++) { const rs = fightRounds("T", 6, "gym", ["partner"], null), pr = rs.filter((x) => PARTNER_K.has(x.k) && x.combo);
@@ -6720,4 +6858,25 @@ test("13.11.2026 birthday: greeting, party hat, cake and balloons on the day; 29
   assert.match(at("2028-02-29").greet[0], /Happy birthday/);
   a.run("S.profile.seasonOff=true");
   assert.equal(a.run("season()"), null);
+});
+test("18.11.2026 Light Contact stays at 4 techniques when a body shot or a high kick is added afterwards (only kick combos left)", () => {
+  const a = app();
+  const r = JSON.parse(a.run(`(() => { S.profile.limits = []; S.profile.birthYear = 1995; S.profile.level = 2;
+    const K = [["front","round","side","roundh"],["round","front","roundh","side"],["side","round","front","roundh"],["front","side","roundh","round"],["round","side","front","roundh"],["side","front","round","roundh"],["roundh","front","side","round"]];
+    const run = (disc, seed) => { S.profile.disc = disc; let x = seed, q = 0; Math.random = () => ((x = (x * 16807) % 2147483647) / 2147483647);
+      const keep = combo; combo = () => K[q++ % K.length].slice();
+      try { return [["bag"], [], ["partner"]].map((eq) => fightRounds("T", 6, "gym", eq, null).filter((r) => r.combo && !r.mine)); } finally { combo = keep; } };
+    const o = { lc: [], fc: [] };
+    for (let seed = 1; seed <= 12; seed++) { o.lc.push(...run("lc", seed)); o.fc.push(...run("fc", seed)); }
+    return JSON.stringify({ lc: o.lc.map((rs) => rs.map((r) => r.combo)), fc: o.fc.map((rs) => rs.map((r) => r.combo)) }); })()`));
+  const BODY = ["jabb", "crossb", "hookb"];
+  for (const rs of r.lc) {
+    for (const c of rs) assert.ok(c.length <= 4, c.join(" "));
+    assert.ok(rs.some((c) => c.some((x) => BODY.includes(x))), "the body shot is still there: " + JSON.stringify(rs));
+    assert.ok(rs.some((c) => c.includes("roundh")), "the high kick is still there");
+  }
+  // the case behind the report: the body cross opens a kick combo – in Light Contact the combo is then shortened
+  assert.ok(r.lc.flat().some((c) => c[0] === "crossb"), "the path is really taken");
+  // Full Contact has no such limit: the combo just gets longer there
+  assert.ok(r.fc.flat().some((c) => c.length > 4));
 });

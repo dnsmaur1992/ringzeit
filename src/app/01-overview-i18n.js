@@ -1103,7 +1103,7 @@
         out: "Draußen",
       },
       studioNote:
-        "Im Fitnessstudio plant die App mit Geräten, die es überall gibt: Lang- und Kurzhanteln, Kettlebell, Kabelzug, Latzug, Beinpresse, Brustpresse, Beinbeuger, Beinstrecker, Schulterpresse, Klimmzugstange und Cardio-Geräte (Rad, Laufband, Crosstrainer, Rudergerät). Die Kraft-Einheit kommt dort ohne Sandsack, Partner und freie Fläche aus; ist ein Gerät besetzt, tauscht „Anderes Gerät“ auf eine Alternative.",
+        "Im Fitnessstudio plant die App mit Geräten, die es überall gibt: Lang- und Kurzhanteln, Kettlebell, Kabelzug, Latzug, Beinpresse, Brustpresse, Beinbeuger, Beinstrecker, Schulterpresse, Klimmzugstange und Cardio-Geräte (Rad, Laufband, Crosstrainer, Rudergerät). Die Kraft-Einheit kommt dort ohne Sandsack, Partner und freie Fläche aus; ist ein Gerät besetzt, wechselt „Gerät wechseln“ auf eine Alternative.",
       equipQ: "Was steht dir zur Verfügung?",
       equip: {
         pads: "Pratzen",
@@ -1138,7 +1138,7 @@
       wrist: "Handgelenk & Griff",
       mob: "Mobility-Flow",
       plyo: "Federn & Antritt",
-      studioAlt: { btn: "Anderes Gerät", done: (n) => `Getauscht: ${n}. Zielgewicht aus dem Verlauf dieser Übung.` },
+      studioAlt: { btn: "Gerät wechseln", done: (n) => `Gewechselt: ${n}. Zielgewicht aus dem Verlauf dieser Übung.`, locked: "Für diese Übung ist schon etwas eingetragen – das Gerät bleibt." },
       loadDist: {
         title: "Automatische Lastverteilung",
         on: "An",
@@ -2559,7 +2559,7 @@
         out: "Outdoors",
       },
       studioNote:
-        "In a fitness gym the app uses equipment every gym has: barbells and dumbbells, kettlebell, cable station, lat pulldown, leg press, chest press, leg curl, leg extension, shoulder press, pull-up bar and cardio machines (bike, treadmill, cross-trainer, rower). The strength unit there needs no bag, no partner and no open floor; if a machine is taken, “Other machine” swaps to an alternative.",
+        "In a fitness gym the app uses equipment every gym has: barbells and dumbbells, kettlebell, cable station, lat pulldown, leg press, chest press, leg curl, leg extension, shoulder press, pull-up bar and cardio machines (bike, treadmill, cross-trainer, rower). The strength unit there needs no bag, no partner and no open floor; if a machine is taken, “Change equipment” swaps to an alternative.",
       equipQ: "What do you have?",
       equip: {
         pads: "Focus pads",
@@ -2594,7 +2594,7 @@
       wrist: "Wrist & grip",
       mob: "Mobility flow",
       plyo: "Bounce & burst",
-      studioAlt: { btn: "Other machine", done: (n) => `Swapped: ${n}. Target weight from this exercise's own history.` },
+      studioAlt: { btn: "Change equipment", done: (n) => `Changed: ${n}. Target weight from this exercise's own history.`, locked: "Something is already entered for this exercise – the equipment stays." },
       loadDist: {
         title: "Automatic load distribution",
         on: "On",

@@ -548,14 +548,13 @@
           };
         h += `<div class="pcard${done ? " done" : ""}">${small ? `<small>${esc(small)}</small>` : ""}<div class="pduo">${side("a", st.ni)}${side("b", bk)}</div></div>`;
       } else {
-      h += `<div class="pcard${done ? " done" : ""}">${sk ? `<div class="fsk">${sketchSvg(EX[it.id].key, true)}</div>` : ""}${small ? `<small>${esc(small)}</small>` : ""}<b>${esc(stepTitle(sess, st))}${done ? " ✓" : ""}</b>${dose ? `<span class="dose">${esc(dose)}</span>` : ""}${desc ? `<p>${esc(desc)}</p>` : ""}`;
+      h += `<div class="pcard${done ? " done" : ""}">${sk ? `<div class="fsk">${sketchSvg(EX[it.id].key, true)}</div>` : ""}${small ? `<small>${esc(small)}</small>` : ""}<b>${esc(stepTitle(sess, st))}${done ? " ✓" : ""}</b>${dose ? `<span class="dose">${esc(dose)}</span>` : ""}${st.bi != null && st.ni != null && !done ? altBtn(sess, st.bi, st.ni) : ""}${desc ? `<p>${esc(desc)}</p>` : ""}`; // fitness gym: "Gerät wechseln" next to exercise and target
       // Federn & Antritt: the command of the moment, big (the same word that is said)
       // preparation for the focus: guiding sentence, the parts, and "Direkt los" (17.11.2026)
       if (isFocusPrep(it)) {
         // the focus has its own full page before (18.11.2026) – here only the parts
         h += `<ol class="prepl">${prepLines(sess, it).map((x) => `<li>${esc(x.replace(/^\d+\. /, ""))}</li>`).join("")}</ol><button type="button" class="btn sec prepgo" data-player="prepskip">${t("cues").skip}</button>`;
       }
-      if (st.bi != null && st.ni != null && !done) h += altBtn(sess, st.bi, st.ni); // fitness gym: "Anderes Gerät"
       if (st.kind === "timed" && cmdOf(it)) h += `<div class="ftcall cmdcall" id="cmdcall" aria-live="polite">${tm && tm.player === i && tm.running ? esc(tm.cmdTxt || "") : ""}</div>`;
       if (st.lap != null)
         h += `<ol class="plap">${b.items.map((x, k) => `<li class="${k === st.ni ? "on" : ""}">${esc(itemTitle(sess, st.bi, k))}</li>`).join("")}</ol>`;

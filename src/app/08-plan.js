@@ -1575,7 +1575,8 @@
           have = new Set(out.map((x) => x.combo && x.combo.join())),
           fresh = src.filter((c) => !have.has(partnerClean(c).join()));
         // all fitting combos are in use already (few at Grundlage): this round's combo ends in the high kick instead
-        if (!fresh.length && tech === "roundh") r.combo = fill2([...r.combo.filter((x) => x !== "round" && x !== "step" && !HIGHK.has(x)).slice(0, techniqueLevel() + 2), "roundh"]);
+        // Light Contact keeps its limit of 4 here too – the added high kick is the last technique and stays (18.11.2026)
+        if (!fresh.length && tech === "roundh") r.combo = lcShort(fill2([...r.combo.filter((x) => x !== "round" && x !== "step" && !HIGHK.has(x)).slice(0, techniqueLevel() + 2), "roundh"]));
         else r.combo = lcShort(partnerClean(rnd(fresh.length ? fresh : src)));
       }
     });
@@ -1592,7 +1593,11 @@
       } else {
         // 7g: only kick combos left (kick chains, 7f) – one of them opens with a cross to the body (not the 6-kick round, not my combos)
         const kc = withC.filter((r) => !r.combo.some((x) => BODY.includes(x)) && !r.six && !r.mine);
-        if (kc.length) rnd(kc).combo.unshift("crossb");
+        // Light Contact: still at most 4 – the body cross opens, the finishing technique stays (18.11.2026)
+        if (kc.length) {
+          const r = rnd(kc);
+          r.combo = lcShort(["crossb", ...r.combo]);
+        }
       }
     }
     // partner rounds: no defence without a reason in the own combo (my club combos stay as they are)

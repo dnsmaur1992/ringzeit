@@ -5279,13 +5279,41 @@
     }
   }
   /* exercise sketches */
-  /* fitness gym: "Anderes Gerät" next to the exercise name */
-  .altbtn {
-    margin-left: 8px;
-    padding: 4px 10px;
-    min-height: 40px;
-    font-size: 0.8rem;
-    vertical-align: middle;
+  /* fitness gym: "Gerät wechseln" – a clear secondary button below the exercise and its target (18.11.2026):
+     frame and a quiet accent surface, swap symbol and text, at least 44 × 44 px, below the main action */
+  .altrow {
+    margin: 8px 0 4px;
+  }
+  .btn.sec.altbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+    max-width: 100%;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 14px;
+    border: 1.5px solid var(--ice);
+    background: var(--ice-dim);
+    color: var(--frost);
+    font-size: 15px;
+    line-height: 1.2;
+    text-align: left;
+    white-space: normal;
+    box-sizing: border-box;
+  }
+  .btn.sec.altbtn .altic {
+    font-size: 18px;
+    line-height: 1;
+    color: var(--ice);
+    flex: none;
+  }
+  .btn.sec.altbtn:focus-visible {
+    outline: 2px solid var(--frost);
+    outline-offset: 2px;
+  }
+  .pcard .altrow {
+    margin: 10px 0 2px;
   }
   .exn {
     display: inline-flex;
