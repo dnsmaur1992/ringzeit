@@ -2093,8 +2093,9 @@
       run = !!opts.run && canRun(type, loc);
     let eq = studio ? ["weights", "kb", "bb", "bar", "studio"] : eqIn.filter((x) => EQ_FOR[type].includes(x));
     // equipment that was brought along gets used first (in the gym: the machines)
+    // in the fitness gym a machine (only "studio") comes before the barbell ("studio|bb") and the rest (E62)
     const machines = studio
-      ? (e) => (e.eq.includes("studio") ? 2 : e.eq ? 1 : 0)
+      ? (e) => (e.eq === "studio" ? 3 : e.eq.includes("studio") ? 2 : e.eq ? 1 : 0)
       : (e) => (e.eq && e.eq.split("|").some((q) => eq.includes(q)) ? 1 : 0);
     // after a KO: no sparring and no partner contact – solo work only
     const ko = koLock(dateStr),
@@ -2264,8 +2265,9 @@
     }
     const warmMin = Math.max(8, Math.round(D * 0.15)),
       coolMin = Math.max(5, Math.round(D * 0.1)) + (bk === "mob" ? 5 : 0),
-      // 30-minute sessions skip the hardening block, so the main part keeps enough time
-      hardMin = D <= 30 || (ageGroup() === "kids" && !box) ? 0 : 6,
+      // 30-minute sessions skip the hardening block, so the main part keeps enough time; in the fitness gym the strength
+      // unit has none at all – shin taps and knuckle push-ups belong to the hall and home (Betreiber 18.11.2026)
+      hardMin = D <= 30 || (ageGroup() === "kids" && !box) || (studio && type === "S") ? 0 : 6,
       rest = D - warmMin - coolMin - hardMin;
     // power exercises; with knee/ankle limits the jumps drop out and strength work fills in
     const powPick = (n) => {
@@ -2275,16 +2277,20 @@
     blocks.push({
       key: "warm",
       min: warmMin,
-      items: [
-        ...pickEx(
-          "warm",
-          1,
-          loc,
-          eq.filter((x) => x === "rope"),
-          used,
-        ),
-        ...pickEx("warm", 2, loc, eq, used),
-      ],
+      // the strength unit in the fitness gym: a cardio machine and mobility standing – no shadowboxing, no footwork
+      // drill between the machines (E61); the warm-up sets follow at the first exercise
+      items: studio && type === "S"
+        ? ["warm.cardio_machine", "warm.joint_mobility", "warm.dynamic_stretching"].map((id) => (used.add(id), { kind: "ex", id }))
+        : [
+            ...pickEx(
+              "warm",
+              1,
+              loc,
+              eq.filter((x) => x === "rope"),
+              used,
+            ),
+            ...pickEx("warm", 2, loc, eq, used),
+          ],
     });
     // before kicking sessions: a short pre-stretch after the pulse raiser, followed by dynamic work (short holds don't cost power)
     if (["T", "C", "P"].includes(type)) {
@@ -2310,7 +2316,8 @@
     let theme = null;
     if (type === "S") {
       // Federn & Antritt (Betreiber 17.11.2026): in about every second strength unit a short block of jumps first, while fresh
-      const plyo = !load.deload && ageGroup() !== "kids" && Math.random() < 0.5 ? plyoPick(2, loc, eq, used, "pow") : [],
+      // not in the fitness gym: the minutes go to strength (E60)
+      const plyo = !studio && !load.deload && ageGroup() !== "kids" && Math.random() < 0.5 ? plyoPick(2, loc, eq, used, "pow") : [],
         plyoMin = 3 * plyo.length;
       if (plyo.length) blocks.push({ key: "plyo", lbl: "plyo", min: plyoMin, items: plyo });
       // boxing: a longer strength-endurance finisher (≈ 24 / 15 min of 39, 7b B7)
@@ -2351,7 +2358,8 @@
         key: "cond",
         min: fin,
         rounds: true,
-        items: pickEx("cond", n, loc, eq, used, cpref).map((x) => ({
+        // fitness gym (E59): one cardio machine first, then the kettlebell at one place – one station change at most
+        items: (studio ? studioCond(n, loc, eq, used) : pickEx("cond", n, loc, eq, used, cpref)).map((x) => ({
           kind: "round",
           k: "ex",
           id: x.id,
@@ -2479,9 +2487,13 @@
         items = fightRounds(type, nR, loc, eq, theme, D <= 45 ? 2 : 1);
         // Federn & Antritt: the bounce rounds count against the cap, the closing block takes what is left
         if (theme && theme.id === "bounce") {
-          plyoLimitRounds(items, fw);
+          // the preparation on the focus bounces too: its share is reserved before the rounds (18.11.2026)
+          const reserve = prepFedPlan(type, theme, D, buildSport);
+          plyoLimitRounds(items, fw, reserve);
           tItems.forEach((x) => used.delete(x.id));
-          tItems = plyoPick(3, loc, eq, used, "pow", plyoBudget({ blocks: [{ rounds: true, w: fw, items }] }));
+          const base = plyoBudget({ blocks: [{ rounds: true, w: fw, items }] });
+          base.fed += reserve;
+          tItems = plyoPick(3, loc, eq, used, "pow", base);
           // the rounds used up the cap: lower-leg strength without more jumps keeps the minutes of the closing block
           if (!tItems.length) tItems = focusEx({ id: "bounceStr" }, loc, eq, used, 3);
         }
@@ -2532,7 +2544,10 @@
       // WT technique: strength 8 + active flexibility 6 instead of strength 14 (docs/taekwondo-concept.md 6.2, 7b B6)
       const amob = isTkd() && tkdUnitStyle() === "wt" && type === "T" && sup >= 10 ? Math.round((sup * 6) / 14) : 0;
       // Federn & Antritt: technique & conditioning now and then gets one drill before its conditioning circuit
-      const cPlyo = type === "C" && sup >= 8 && Math.random() < 0.6 ? plyoPick(1, loc, eq, used) : [],
+      // with the rounds and the preparation already counted (18.11.2026)
+      const cBase = type === "C" ? plyoBudget({ blocks: [{ rounds: true, w: fw, items }] }) : null;
+      if (cBase) cBase.fed += prepFedPlan(type, theme, D, buildSport);
+      const cPlyo = type === "C" && sup >= 8 && Math.random() < 0.6 ? plyoPick(1, loc, eq, used, null, cBase) : [],
         cPlyoMin = cPlyo.length ? 4 : 0;
       if (cPlyo.length) blocks.push({ key: "plyo", lbl: "plyo", min: cPlyoMin, items: cPlyo });
       blocks.push({

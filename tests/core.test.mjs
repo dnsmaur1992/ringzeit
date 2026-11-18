@@ -248,9 +248,9 @@ import { EX_KEYS, keyOfLegacy, legacyIndex } from "../src/catalog/ids.js";
 import { EX } from "../src/catalog/exercises.js";
 import { RX, RX_HARD, rxOf, rxText, rxPlan, rxSeconds, rxMinutes } from "../src/core/prescription.js";
 
-test("ids: 108 unique text ids, row order = legacy index, EX reachable by id and by old number", () => {
-  assert.equal(EX_KEYS.length, 108);
-  assert.equal(new Set(EX_KEYS).size, 108);
+test("ids: 114 unique text ids, row order = legacy index, EX reachable by id and by old number", () => {
+  assert.equal(EX_KEYS.length, 114);
+  assert.equal(new Set(EX_KEYS).size, 114);
   EX_KEYS.forEach((k, i) => {
     assert.match(k, /^(warm|cond|str|mob|cool|pow|pre|plyo)\.[a-z0-9_]+$/);
     assert.equal(keyOfLegacy(i), k);

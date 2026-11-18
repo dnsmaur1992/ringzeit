@@ -3022,8 +3022,155 @@ test("17.11.2026 seeded: preparation for the focus – after the warm-up of ever
         // the timer: the parts with 5 s change, the same numbers as the dose line
         const tm = JSON.parse(a.run(`(()=>{const s=${JSON.stringify(s)};return JSON.stringify(exerciseTiming(s,${pi},0).phases)})()`));
         assert.deepEqual(tm.map((p) => p.seconds), it.n === 2 ? [45, 5, 45] : [40, 5, 40, 5, 40]);
-        assert.equal(a.run(`S.profile.lang='de';doseTxt('pre.focus_prep',${JSON.stringify(s.blocks[pi])})`), `${it.n} × ${it.s} s · langsam → Arbeitstempo`);
+        // with Federn the dose names its share – the same seconds as the parts carry (18.11.2026)
+        const fed = Math.round(it.steps.reduce((x, st) => x + st.f * it.s, 0));
+        assert.equal(a.run(`S.profile.lang='de';doseTxt('pre.focus_prep',${JSON.stringify(s.blocks[pi])})`), `${it.n} × ${it.s} s · langsam → Arbeitstempo${fed ? ` · davon ${fed} s Federn` : ""}`);
       }
+});
+test("18.11.2026 Federn in the preparation: structured share (half of the first part for the bounce focus and the Taekwondo stepping), counted with rounds and closing block, reserved at planning, same seconds in dose, timer and balance", () => {
+  const a = app();
+  a.run("S.profile.lang='de';S.profile.limits=[];S.tests=[];S.log=[];S.sessions={};S.profile.fitnessBase=1");
+  const build = (sp, focus, ty, min, extra = "") =>
+    JSON.parse(a.run(`(()=>{S.profile.sport='${sp}';${extra}const cf=chooseFocus,ct=chooseTheme;chooseFocus=()=>${focus};chooseTheme=()=>${focus};const s=buildSession('2026-11-16','${ty}','gym',['bag','rope'],{sport:'${sp}',min:${min}});chooseFocus=cf;chooseTheme=ct;buildDate='2026-11-16';const L=plyoLimits();buildDate=null;return JSON.stringify({s,b:plyoBudget(s),L})})()`));
+  // bounce focus, 60 min: 3 × 40 s, the first part counts 20 s – the others 0; not the whole preparation time
+  for (let i = 0; i < 8; i++) {
+    a.run(`Math.random=(()=>{let x=${101 + i};return()=>((x=(x*16807)%2147483647)/2147483647)})()`);
+    const { s, b, L } = build("kickboxing", "BROAD.find(x=>x.id==='bounce')", "T", 60);
+    const it = s.blocks.find((x) => x.key === "prep").items[0];
+    assert.deepEqual(it.steps.map((x) => x.f), [0.5, 0, 0]);
+    const own = JSON.parse(a.run(`JSON.stringify(plyoBudget({blocks:[{key:'prep',items:[${JSON.stringify(it)}]}]}))`));
+    assert.equal(own.fed, 20, "only the bouncing share, not 2 minutes");
+    const rest = JSON.parse(a.run(`JSON.stringify(plyoBudget({blocks:${JSON.stringify(s.blocks.filter((x) => x.key !== "prep"))}}))`));
+    assert.equal(b.fed, rest.fed + 20, "counted together with rounds and closing block");
+    assert.ok(b.fed <= L.fed && b.land <= L.land && b.int <= L.int, JSON.stringify([b, L]));
+    // display = timer = balance: the dose names the 20 s, the timer runs the 40 s part that holds them
+    assert.equal(a.run(`doseTxt('pre.focus_prep',${JSON.stringify(s.blocks.find((x) => x.key === "prep"))})`), "3 × 40 s · langsam → Arbeitstempo · davon 20 s Federn");
+    const ph = JSON.parse(a.run(`(()=>{const s=${JSON.stringify(s)};return JSON.stringify(exerciseTiming(s,s.blocks.findIndex(b=>b.key==='prep'),0).phases.map(p=>p.seconds))})()`));
+    assert.equal(ph[0], 40);
+  }
+  // reserved at planning: with a Federzeit limit that only just fits the rounds, the preparation share takes one round
+  a.run("Math.random=(()=>{let x=7;return()=>((x=(x*16807)%2147483647)/2147483647)})()");
+  const lim = build("kickboxing", "BROAD.find(x=>x.id==='bounce')", "T", 60, "PLYO_LIM.fed=[600,600,600];");
+  const rb = lim.s.blocks.find((x) => x.rounds);
+  assert.ok(lim.b.fed <= 600, JSON.stringify(lim.b));
+  assert.equal(rb.items.filter((r) => r.k === "bounce").length, Math.floor((600 - 20) / rb.w));
+  a.run("PLYO_LIM.fed=[600,900,1200]");
+  // other foci: no share (e.g. a combo focus), the dose without the addition
+  a.run("Math.random=(()=>{let x=9;return()=>((x=(x*16807)%2147483647)/2147483647)})()");
+  const combo = build("kickboxing", "focusOf('lowFinish')", "T", 45, "S.profile.disc='kl';");
+  const ci = combo.s.blocks.find((x) => x.key === "prep").items[0];
+  assert.deepEqual(ci.steps.map((x) => x.f), [0, 0]);
+  assert.doesNotMatch(a.run(`doseTxt('pre.focus_prep',${JSON.stringify(combo.s.blocks.find((x) => x.key === "prep"))})`), /Federn/);
+  // Taekwondo kick focus: the stepping counts half of the first part
+  a.run("Math.random=(()=>{let x=11;return()=>((x=(x*16807)%2147483647)/2147483647)})()");
+  const tk = JSON.parse(a.run(`(()=>{S.profile.sport='taekwondo';S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'wt'});const th=tkdFoci().find(f=>f.kick);const cf=chooseFocus;chooseFocus=()=>th;const s=buildSession('2026-11-16','T','gym',['bag'],{sport:'taekwondo',min:45});chooseFocus=cf;return JSON.stringify(s.blocks.find(b=>b.key==='prep').items[0].steps.map(x=>x.f))})()`));
+  assert.deepEqual(tk, [0.5, 0]);
+  // the estimate stays marked as an estimate in the counter line
+  a.run("S.profile.sport='kickboxing'");
+  assert.equal(a.run(`plyoLine(${JSON.stringify(lim.s)})`), `Federn & Antritt heute: Federzeit ${Math.floor(lim.b.fed / 60)}:${String(lim.b.fed % 60).padStart(2, "0")} Min.`);
+  const withJumps = { blocks: [{ key: "prep", items: [lim.s.blocks.find((x) => x.key === "prep").items[0]] }, { key: "plyo", items: [{ kind: "ex", id: "plyo.pogo_jumps" }] }] };
+  assert.match(a.run(`plyoLine(${JSON.stringify(withJumps)})`), /^Federn & Antritt heute: Federzeit 1:20 Min\. · ca\. 120 Bodenkontakte geschätzt$/);
+});
+test("18.11.2026 fitness gym strength unit: cardio warm-up, machines per pattern, cardio then kettlebell, no bag/partner/floor drills, no jumps, no hardening – all sports, levels and seeds", () => {
+  const a = app();
+  a.run("S.profile.lang='de';S.tests=[];S.log=[];S.sessions={};S.profile.limits=[]");
+  const OKCOND = new Set(["cond.bike_sprints", "cond.cross_trainer_intervals", "cond.rowing_machine_intervals", "cond.treadmill_intervals", "cond.kettlebell_swings"]);
+  for (const [sp, extra] of [["kickboxing", "S.profile.disc='kl'"], ["boxing", ""], ["taekwondo", "S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'wt'})"]])
+    for (const fb of [0, 1, 2])
+      for (let i = 0; i < 6; i++) {
+        const s = JSON.parse(a.run(`(()=>{S.profile.sport='${sp}';${extra};S.profile.fitnessBase=${fb};Math.random=(()=>{let x=${300 + fb * 10 + i};return()=>((x=(x*16807)%2147483647)/2147483647)})();return JSON.stringify(buildSession('2026-11-1${i}','S','studio',[],{sport:'${sp}',min:60}))})()`));
+        const tag = `${sp} F${fb} #${i}`;
+        assert.equal(s.loc, "studio", tag);
+        assert.deepEqual(s.blocks.find((b) => b.key === "warm").items.map((x) => x.id), ["warm.cardio_machine", "warm.joint_mobility", "warm.dynamic_stretching"], tag);
+        assert.ok(!s.blocks.some((b) => ["plyo", "hard", "wrist"].includes(b.key)), tag + " " + s.blocks.map((b) => b.key));
+        const ids = s.blocks.flatMap((b) => b.items.map((x) => x.id));
+        for (const id of ids) assert.ok(a.run(`okEx(EX['${id}'],'studio',['weights','kb','bb','bar','studio'])`), `${tag}: ${id}`);
+        const str = s.blocks.filter((b) => b.key === "str").flatMap((b) => b.items.map((x) => x.id));
+        assert.ok(str.includes("str.leg_press") && str.includes("str.chest_press_machine"), `${tag}: ${str}`);
+        const cond = s.blocks.find((b) => b.key === "cond").items.map((x) => x.id);
+        for (const id of cond) assert.ok(OKCOND.has(id), `${tag}: ${id}`);
+        // one cardio machine first, then kettlebell – at most one station change
+        const changes = cond.filter((x, k) => k && x !== cond[k - 1]).length;
+        assert.ok(changes <= 1, `${tag}: ${cond}`);
+        assert.ok(cond[0] !== "cond.kettlebell_swings" || cond.every((x) => x === "cond.kettlebell_swings"), `${tag}: ${cond}`);
+        // the minutes stay: the unit still lasts its 60 minutes
+        assert.equal(s.blocks.reduce((x, b) => x + b.min, 0), 60, tag);
+      }
+  // technique stays in the hall, as before
+  assert.equal(JSON.parse(a.run("(()=>{S.profile.sport='kickboxing';return JSON.stringify(buildSession('2026-11-16','T','studio',[],{sport:'kickboxing',min:60}).loc)})()")), "gym");
+});
+test("18.11.2026 fitness gym: limits pick the machines – knee: no leg press, leg extension or treadmill; back: no rower, no swings; shoulder: no presses overhead or on machines", () => {
+  const a = app();
+  a.run("S.profile.lang='de';S.tests=[];S.log=[];S.sessions={};S.profile.sport='kickboxing';S.profile.fitnessBase=1");
+  const ids = (lim, seed) => JSON.parse(a.run(`(()=>{S.profile.limits=${JSON.stringify(lim)};Math.random=(()=>{let x=${seed};return()=>((x=(x*16807)%2147483647)/2147483647)})();const s=buildSession('2026-11-16','S','studio',[],{sport:'kickboxing',min:60});return JSON.stringify(s.blocks.flatMap(b=>b.items.map(x=>x.id)))})()`));
+  for (let i = 0; i < 8; i++) {
+    const k = ids(["knee"], 500 + i);
+    for (const x of ["str.leg_press", "str.leg_extension_machine", "str.leg_curl_machine", "cond.treadmill_intervals"]) assert.ok(!k.includes(x), `knee ${i}: ${x}`);
+    const b = ids(["back"], 600 + i);
+    for (const x of ["cond.rowing_machine_intervals", "cond.kettlebell_swings", "str.cable_woodchop"]) assert.ok(!b.includes(x), `back ${i}: ${x}`);
+    const sh = ids(["shoulder"], 700 + i);
+    for (const x of ["str.chest_press_machine", "str.machine_shoulder_press", "str.seated_dumbbell_shoulder_press"]) assert.ok(!sh.includes(x), `shoulder ${i}: ${x}`);
+  }
+});
+test("18.11.2026 fitness gym: 'Anderes Gerät' swaps within the movement pattern, only before the first set; weights come from the new exercise's own history; cardio moves all its rounds; begun units stay", async () => {
+  const a = app();
+  a.setDate("2026-11-16");
+  a.run("S.profile.lang='de';S.tests=[];S.sessions={};S.profile.limits=[];S.profile.sport='kickboxing';S.profile.fitnessBase=1;S.profile.work=''");
+  // history: bench press 60 kg, chest press 40 kg (different machines – never mixed)
+  a.run("S.log=[{id:'h1',date:'2026-11-09',src:'own',type:'S',minutes:60,rpe:6,perf:[]}]");
+  a.run("Math.random=(()=>{let x=42;return()=>((x=(x*16807)%2147483647)/2147483647)})();ui.sel='2026-11-16';S.sessions[ui.sel]=buildSession(ui.sel,'S','studio',[],{sport:'kickboxing',min:60})");
+  const loc = () => JSON.parse(a.run("(()=>{const s=S.sessions[ui.sel];for(const [bi,b] of s.blocks.entries()){const ni=b.items.findIndex(x=>x.id==='str.chest_press_machine');if(ni>=0)return JSON.stringify([bi,ni])}return 'null'})()"));
+  const [bi, ni] = loc();
+  const sess = () => JSON.parse(a.run("JSON.stringify(S.sessions[ui.sel])"));
+  // the history for both exercises with the same target signature as today
+  const tg = sess().blocks[bi].items[ni].target;
+  a.run(`S.log[0].perf=[{id:'str.bench_press',sets:[{r:10,kg:60}],target:${JSON.stringify({ ...tg, kg: 60 })}},{id:'str.chest_press_machine',sets:[{r:10,kg:40}],target:${JSON.stringify({ ...tg, kg: 40 })}}];S.sessions[ui.sel]=buildSession(ui.sel,'S','studio',[],{sport:'kickboxing',min:60})`);
+  const [bi2, ni2] = loc();
+  assert.equal(sess().blocks[bi2].items[ni2].target.kg, 40);
+  // in the training (list and card) – the plan page is a read-only preview
+  assert.match(a.run(`sessionBlockHtml(S.sessions[ui.sel],${bi2},false)`), new RegExp(`data-alt="${bi2}\\.${ni2}">Anderes Gerät<`));
+  assert.doesNotMatch(a.run(`sessionBlockHtml(S.sessions[ui.sel],${bi2},true)`), /data-alt=/);
+  await a.click({ dataset: { alt: `${bi2}.${ni2}` } });
+  let it = sess().blocks[bi2].items[ni2];
+  assert.equal(it.id, "str.bench_press");
+  assert.equal(it.alt, "str.chest_press_machine");
+  assert.equal(it.target.kg, 60, "the bench press weight – not the 40 kg of the machine");
+  // once a set is entered: no more swapping
+  a.run(`S.sessions[ui.sel].perf=S.sessions[ui.sel].perf||{};S.sessions[ui.sel].perf['${bi2}.${ni2}']=[{r:8,kg:60},{r:null,kg:null}]`);
+  assert.equal(a.run(`altBtn(S.sessions[ui.sel],${bi2},${ni2})`), "");
+  await a.click({ dataset: { alt: `${bi2}.${ni2}` } });
+  assert.equal(sess().blocks[bi2].items[ni2].id, "str.bench_press");
+  // cardio: all rounds of the machine move to the next one, the kettlebell rounds stay
+  const cb = sess().blocks.findIndex((b) => b.key === "cond"),
+    before = sess().blocks[cb].items.map((x) => x.id),
+    m = before[0];
+  await a.click({ dataset: { alt: `${cb}.0` } });
+  const after = sess().blocks[cb].items.map((x) => x.id);
+  assert.ok(after[0] !== m && after.filter((x) => x === after[0]).length === before.filter((x) => x === m).length, JSON.stringify([before, after]));
+  assert.deepEqual(after.filter((x) => x === "cond.kettlebell_swings"), before.filter((x) => x === "cond.kettlebell_swings"));
+  // never outside the fitness gym strength unit
+  a.run("S.sessions['2026-11-17']=buildSession('2026-11-17','S','gym',['weights'],{sport:'kickboxing',min:60})");
+  assert.equal(a.run("altBtn(S.sessions['2026-11-17'],1,0)"), "");
+  // plan logic 4: not begun units are rebuilt once, a begun one stays as it is
+  a.run("S.profile.planLogic=3;S.profile.days=[0,2,4];S.sessions={};S.sessions['2026-11-18']=buildSession('2026-11-18','S','studio',[],{sport:'kickboxing',min:60});S.sessions['2026-11-18'].blocks.unshift({key:'plyo',min:3,items:[{kind:'ex',id:'plyo.pogo_jumps'}]});S.sessions['2026-11-20']=JSON.parse(JSON.stringify(S.sessions['2026-11-18']));S.sessions['2026-11-20'].checked={'1.0':true}");
+  const begun = a.run("JSON.stringify(S.sessions['2026-11-20'])");
+  a.run("refreshLegacyPlans()");
+  assert.ok(!JSON.parse(a.run("JSON.stringify(S.sessions['2026-11-18'].blocks.map(b=>b.key))")).includes("plyo"), "rebuilt without the jump block");
+  assert.equal(a.run("JSON.stringify(S.sessions['2026-11-20'])"), begun, "begun unit unchanged");
+});
+test("18.11.2026 progression wording matches the code: +1 s per set (timed) or +1 repetition in one set, no promised 5 %", () => {
+  const a = app();
+  // the code: one step = +1 s per set (pogo 20 → 21 s), +1 repetition in one set (hop & stick 5 → 6 in one set)
+  assert.equal(a.run("plyoRx('plyo.pogo_jumps',{prog:{add:1,rest:0}}).on"), a.run("RX['plyo.pogo_jumps'].on") + 1);
+  assert.equal(a.run("plyoReps('plyo.hop_stick',{prog:{add:1}})"), a.run("plyoReps('plyo.hop_stick',{})") + 2);
+  assert.match(a.run("S.profile.lang='de';plyoDose('plyo.hop_stick',{prog:{add:1,rest:0}},true)"), /^6 · 5 · 5 pro Bein/);
+  // the texts say the same – no "5 %" and no "5 s" for the drills
+  for (const lg of ["de", "en"]) {
+    const h = JSON.parse(a.run(`(()=>{S.profile.lang='${lg}';return JSON.stringify(helpT().q.plyo)})()`));
+    const txt = Array.isArray(h) ? h.join(" ") : String(h);
+    assert.doesNotMatch(txt, /5\s?%|5\s?s\b|5 Sekunden|5 seconds/, txt);
+    assert.match(txt, lg === "de" ? /1 Sekunde mehr je Satz/ : /1 second more per set/);
+  }
 });
 test("17.11.2026 preparation comes from the same focus as the main part: its combo, footwork, defence or the kick of the focus", () => {
   const a = app();

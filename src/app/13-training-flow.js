@@ -151,7 +151,7 @@
   }
   // Repeated basic movements provide comparable logs; remaining slots retain the existing exercise variety.
   function strengthBasics(n, loc, eq, used, prefer) {
-    const groups = [
+    const groups = loc === "studio" ? studioBasics() : [
         ["str.barbell_back_squat", "str.goblet_squats", "str.leg_press", "str.lunges"],
         ["str.bench_press", "str.dumbbell_press", "str.push_ups"],
         [
@@ -167,7 +167,7 @@
     for (const group of groups) {
       const candidates = EX.filter(
         (e) => e.cat === "str" && group.includes(e.key) && okEx(e, loc, eq) && !used.has(e.id),
-      ).sort((a, b) => (prefer ? prefer(b) - prefer(a) : 0) || group.indexOf(a.key) - group.indexOf(b.key));
+      ).sort((a, b) => (prefer && !group.free ? prefer(b) - prefer(a) : 0) || group.indexOf(a.key) - group.indexOf(b.key));
       if (candidates[0] && selected.length < n) {
         selected.push({ kind: "ex", id: candidates[0].id, basic: true });
         used.add(candidates[0].id);
@@ -615,7 +615,7 @@ ${setupFields(setup, ty)}
         itemAttr = `data-item="${bi}.${n}"`;
       if (it.kind === "round" && it.k === "ex") {
         const x = exText(it.id);
-        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${exName(it.id, x.name)}<div>${esc(x.desc)}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true, preview) : ""}</div></div>`;
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${exName(it.id, x.name)}${altBtn(sess, bi, n, preview)}<div>${esc(x.desc)}</div>${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true, preview) : ""}</div></div>`;
       } else if (it.kind === "run") {
         const z3 = it.zone === 3;
         h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, "Z" + it.zone, preview)}<div class="tx"><b>${z3 ? t("z3set")(it.reps, it.on, it.off) : `${it.min} ${t("min")} · ${t("z2")}`}</b><div>${z3 ? t("z3d") : t("z2d")}</div></div></div>`;
@@ -641,7 +641,7 @@ ${setupFields(setup, ty)}
         const x = exText(it.id),
           tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
         const dz = it.target ? targetText(it.target, it.id) : doseTxt(it.id, b);
-        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${tr ? `<span class="num">${pad(n + 1)}</span>` : checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${exName(it.id, x.name)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${isFocusPrep(it) ? `<ol class="prepl">${prepLines(sess, it).map((l) => `<li>${esc(l.replace(/^\d+\. /, ""))}</li>`).join("")}</ol>` : ""}${tr ? setsHtml(sess, bi, n, b, it.id, false, preview) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true, preview) : ""}</div></div>`;
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${tr ? `<span class="num">${pad(n + 1)}</span>` : checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${exName(it.id, x.name)}${altBtn(sess, bi, n, preview)}${dz ? `<br><span class="dose">${esc(dz)}</span>` : ""}<div>${esc(x.desc)}</div>${isFocusPrep(it) ? `<ol class="prepl">${prepLines(sess, it).map((l) => `<li>${esc(l.replace(/^\d+\. /, ""))}</li>`).join("")}</ol>` : ""}${tr ? setsHtml(sess, bi, n, b, it.id, false, preview) : hasKg(it.id) ? setsHtml(sess, bi, n, b, it.id, true, preview) : ""}</div></div>`;
       }
       if (!preview && !b.rounds) h += exerciseTimerHtml(sess, bi, n);
     });

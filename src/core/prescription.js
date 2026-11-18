@@ -37,6 +37,7 @@ export const RX = {
   "cond.rope_intervals": { k: "alt", total: 120, on: 30, off: 30, onW: ["zügig", "fast"], offW: ["locker", "easy"] },
   "cond.rowing_machine_intervals": { k: "alt", total: 120, on: 30, off: 30, onW: ["zügig", "fast"], offW: ["locker", "easy"] },
   "cond.treadmill_intervals": { k: "alt", total: 120, on: 30, off: 30, onW: ["zügig", "fast"], offW: ["locker", "easy"] },
+  "cond.cross_trainer_intervals": { k: "alt", total: 120, on: 30, off: 30, onW: ["zügig", "fast"], offW: ["locker", "easy"] },
   "cond.stepping_and_light_footwork": { k: "hold", s: 180, sides: 1 },
   "cond.shadow_sprints": { k: "iv", n: 3, on: 20, off: 10, onW: ["Vollgas", "all-out"], offW: ["locker", "easy"] },
   "cond.bag_sprints": { k: "iv", n: 4, on: 15, off: 15, offW: ["Pause", "rest"] },

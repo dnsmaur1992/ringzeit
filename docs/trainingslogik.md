@@ -307,7 +307,7 @@ Entscheidungen E5, E30–E34. Code: `08b-plyo.js` (`plyoStep`, `plyoProg`, `plyo
 - **Automatisch und vorsichtig**, je Drill im Abschlussblock (nicht in Runden). Nachweis: die letzten 3 eigenen
   Einheiten mit dem Drill auf der aktuellen Stufe vollständig, Anstrengung ≤ 6, keine Beschwerden (Notiz mit
   Schmerz/Beschwerden oder aktive Knie-/Sprunggelenkgrenze) → eine Stufe hoch.
-- **Stufe ≈ +5 %:** +1 Wiederholung in einem Satz bzw. +5 s je Satz. Reihenfolge: Menge bis +4 Stufen (nur innerhalb
+- **Stufe:** +1 Wiederholung in einem Satz bzw. **+1 s je Satz** (korrigiert 18.11.2026; vorher stand hier „+5 s“). In Prozent hängt das vom Ausgangswert ab (20 → 21 s = +5 %, 30 → 31 s ≈ +3 %) – eine genaue 5-%-Steigerung wird nicht versprochen. Reihenfolge: Menge bis +4 Stufen (nur innerhalb
   der Grenzen), dann Pause −5/−10/−15 s, dann Kommandos 1 s schneller.
 - **Zurück:** Anstrengung ≥ 9, Beschwerden oder Drill nicht erledigt → eine Stufe zurück. Entlastungswoche: Stufe
   bleibt, ohne Zuschläge.
@@ -325,3 +325,23 @@ Code: `08e-load.js`; eingehängt in `rpeRange` und `buildSessionCore` (Zielanstr
 - **Eingeschaltet:** höchstens 3 harte Tage pro Woche; hart zählt nur ein Eintrag (eigen oder Verein) mit Anstrengung ≥ 7. Die harten Ringzeit-Tage markiert die Person (höchstens 3). Würde ein hartes Vereinstraining die 3 überschreiten, wird der nächste markierte, noch nicht begonnene Tag mittel. Ein verpasster harter Tag: die nächste offene Ringzeit-Einheit der Woche wird hart (nie direkt nach einem harten Tag). Eine verpasste mittlere/lockere Einheit: die nächste Technik- bzw. Technik-&-Kondition-Einheit bekommt eine Technikrunde mehr, die Minuten kommen aus dem Abschlussblock (mind. 4 bleiben). Die übrigen Einheiten abwechselnd mittel (bis 6) und locker (bis 4), Mobility bleibt bei 3. Dauer und Art der Tage bleiben; nur dieselbe Woche zählt.
 - Die Rolle steht an der Einheit (`ld`); ändert sie sich (Eintrag, verpasster Tag), wird eine nicht begonnene Einheit dieser Woche neu erstellt.
 - Hilfefrage „Was ist die automatische Lastverteilung?“. Kickbox-Vergleich unverändert (Schalter aus ist Standard).
+
+## Federn-Anteil der Vorbereitung in der Bilanz (18.11.2026, Prüfauftrag Punkt 2)
+
+- **Vorher:** Die Vorbereitung auf den Schwerpunkt „Federn & Antritt“ (und im Taekwondo das Steppen vor dem Kick-Schwerpunkt) enthielt Federn, zählte aber nicht in die Grenze je Einheit. Federzeit konnte dadurch über der Grenze liegen.
+- **Jetzt:** Jeder Teil der Vorbereitung trägt seinen Federn-Anteil (`f`, 0…1). Bei Federn-Schwerpunkt und TKD-Kick-Schwerpunkt gilt die Hälfte des ersten Teils als Federzeit (`PREP_FED_SHARE = 0.5`), alle anderen Teile 0. Der Anteil wird schon bei der Planung von der Grenze reserviert (`prepFedPlan`), so dass Federn-Runden und Abschlussblock nur den Rest bekommen. Anzeige („· davon N s Federn“), Timer und Bilanz (`prepFedOf`) lesen denselben Wert; Schätzungen bleiben als Schätzung gekennzeichnet.
+
+## Wortlaut der Steigerung (18.11.2026, Prüfauftrag Punkt 3)
+
+- Der Text versprach „etwa 5 %“ mehr. Der Code steigert je Schritt um **eine Wiederholung in einem Satz oder 1 Sekunde je Satz**. Hilfe (DE/EN), Kommentar in 08b-plyo.js und diese Dokumente sagen jetzt genau das; ein Test vergleicht Text und Code.
+
+## Kraft im Fitnessstudio (18.11.2026, Prüfauftrag Punkt 4, E59–E66)
+
+Nur Ort „Fitnessstudio“ (`studio`, nicht die Sporthalle `gym`) und nur die Krafteinheit. Technik- und Konditionseinheiten im Studio bleiben unverändert.
+- **Ausstattung:** feste Standardliste (Langhantel, Kurzhanteln, Kettlebell, Kabelzug, Latzug, Beinpresse, Brustpresse, Rudern am Kabel, Beinbeuger, Beinstrecker, Schulterpresse, Klimmzugstange; Rad, Laufband, Crosstrainer, Rudergerät), Matte in der Dehnecke. Kein Sack, kein Ring, keine Partner- oder Pratzenstation.
+- **Aufwärmen** (E61): Cardiogerät, danach Mobilisation im Stand. **Kein Abhärtungsblock**, **kein Sprungblock** (E60) – die Minuten gehen an die Kraft.
+- **Kraft** (E62, E66): Geräte zuerst je Bewegungsmuster. Grundübungen fest (Beinpresse, Brustpresse), damit der Verlauf vergleichbar bleibt; Zug wechselt Rudern am Kabel / Latzug; Hüftstreckung wechselt (Beinbeuger, rumänisches Kreuzheben, Hip Thrust). Langhantel bleibt Alternative.
+- **Kondition** (E59, E64): erst ein Cardiogerät, danach Kettlebell-Swings an einem Platz – höchstens ein Stationswechsel. Einschränkungen wählen das Gerät (Knie/Sprunggelenk: kein Laufband; Rücken: kein Rudergerät, keine Swings).
+- **„Anderes Gerät“** (E63): ein Tipp tauscht eine Übung gegen die nächste Alternative desselben Bewegungsmusters, die die Standardliste hat und die Einschränkungen erlauben – nur solange noch kein Satz eingetragen ist und nur im Training (die Planansicht ist eine Vorschau). Cardio tauscht alle Runden dieses Geräts. Gewichte werden nie übertragen: das Ziel kommt aus dem Verlauf der neuen Übung.
+- **Katalog:** sechs neue Übungen (IDs 108–113): Brustpresse, Beinbeuger, Beinstrecker, Schulterpresse (Maschine), Crosstrainer-Intervalle, Cardiogerät zum Aufwärmen – mit Skizze, Tipps und Dosierung.
+- **Bestand:** `PLAN_LOGIC = 4` – nicht begonnene Einheiten werden einmal neu erstellt; begonnene, erledigte und der Verlauf bleiben.

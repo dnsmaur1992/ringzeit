@@ -113,6 +113,13 @@ export const EX_KEYS = [
   "plyo.bounce_roll", // 106
   /* Vorbereitung auf den Schwerpunkt am Ende des Warm-ups (Betreiber 17.11.2026, E1/E21–E26) */
   "pre.focus_prep", // 107
+  // fitness gym standard machines (18.11.2026, E62/E63)
+  "str.chest_press_machine", // 108
+  "str.leg_curl_machine", // 109
+  "str.leg_extension_machine", // 110
+  "str.machine_shoulder_press", // 111
+  "cond.cross_trainer_intervals", // 112
+  "warm.cardio_machine", // 113
 ];
 const LEGACY = new Map(EX_KEYS.map((k, i) => [k, i]));
 /** old numeric id → stable id (anything else is returned unchanged) */

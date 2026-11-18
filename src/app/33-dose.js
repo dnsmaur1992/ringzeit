@@ -51,6 +51,7 @@
     "cond.strides": 1.5,
     "cond.rowing_machine_intervals": 2,
     "cond.treadmill_intervals": 2,
+    "cond.cross_trainer_intervals": 2,
     "cond.bike_sprints": 2,
     "cond.speed_rounds": 2,
     "cond.stepping_and_light_footwork": 3,

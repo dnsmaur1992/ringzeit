@@ -555,6 +555,7 @@
         // the focus has its own full page before (18.11.2026) – here only the parts
         h += `<ol class="prepl">${prepLines(sess, it).map((x) => `<li>${esc(x.replace(/^\d+\. /, ""))}</li>`).join("")}</ol><button type="button" class="btn sec prepgo" data-player="prepskip">${t("cues").skip}</button>`;
       }
+      if (st.bi != null && st.ni != null && !done) h += altBtn(sess, st.bi, st.ni); // fitness gym: "Anderes Gerät"
       if (st.kind === "timed" && cmdOf(it)) h += `<div class="ftcall cmdcall" id="cmdcall" aria-live="polite">${tm && tm.player === i && tm.running ? esc(tm.cmdTxt || "") : ""}</div>`;
       if (st.lap != null)
         h += `<ol class="plap">${b.items.map((x, k) => `<li class="${k === st.ni ? "on" : ""}">${esc(itemTitle(sess, st.bi, k))}</li>`).join("")}</ol>`;

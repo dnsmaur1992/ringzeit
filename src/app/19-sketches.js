@@ -2207,6 +2207,79 @@
   });
   // preparation for the focus: the fighting stance, bouncing lightly (17.11.2026)
   SKETCH["pre.focus_prep"] = SKETCH["plyo.stance_bounce"];
+  /* fitness gym machines (18.11.2026, E62/E63): own drawings – seat with backrest, the machine frame and the grips */
+  const MSEAT = { p: [112, 114], s: [112, 80], h: [114, 56], f: [142, 148], F: [138, 148], ka: [1, -1] },
+    MSEAT_P = [
+      ["rect", [98, 118], [36, 8]],
+      ["rect", [96, 60], [8, 60]],
+    ],
+    LEGM = { p: [104, 112], s: [104, 78], h: [106, 54], w: [116, 114], W: [114, 114], ea: [1, 0], EA: [1, 0] },
+    LEGM_P = [
+      ["rect", [84, 116], [44, 8]],
+      ["rect", [84, 64], [8, 54]],
+      ["line", [96, 124], [96, 149], 5],
+    ];
+  Object.assign(SKETCH, {
+    "str.chest_press_machine": {
+      a: { ...MSEAT, w: [134, 82], ea: [0, 1] },
+      b: { ...MSEAT, w: [154, 80], ea: [0, 1] },
+      props: [...MSEAT_P, ["line", [188, 30], [188, 149], 6], ["line", [136, 74], [136, 90], 5]],
+      pb: [...MSEAT_P, ["line", [188, 30], [188, 149], 6], ["line", [156, 72], [156, 88], 5]],
+      arrow: [
+        [146, 50],
+        [176, 50],
+      ],
+    },
+    "str.machine_shoulder_press": {
+      a: { ...MSEAT, w: [136, 74], ea: [0, 1] },
+      b: { ...MSEAT, w: [148, 50], ea: [1, 0] },
+      props: [...MSEAT_P, ["line", [90, 14], [90, 149], 6], ["line", [130, 74], [144, 74], 5]],
+      pb: [...MSEAT_P, ["line", [90, 14], [90, 149], 6], ["line", [142, 50], [156, 50], 5]],
+      arrow: [
+        [172, 70],
+        [172, 36],
+      ],
+    },
+    "str.leg_extension_machine": {
+      a: { ...LEGM, f: [134, 139], F: [130, 139], ka: [1, -1], KA: [1, -1] },
+      b: { ...LEGM, f: [158, 106], F: [156, 108], ka: [0, -1], KA: [0, -1] },
+      props: [...LEGM_P, ["rect", [128, 132], [14, 8]]],
+      pb: [...LEGM_P, ["rect", [152, 108], [14, 8]]],
+      arrow: [
+        [176, 142],
+        [182, 108],
+      ],
+    },
+    "str.leg_curl_machine": {
+      a: { ...LEGM, f: [158, 108], F: [156, 110], ka: [0, -1], KA: [0, -1] },
+      b: { ...LEGM, f: [128, 138], F: [124, 138], ka: [1, -1], KA: [1, -1] },
+      props: [...LEGM_P, ["rect", [112, 100], [22, 6]], ["rect", [152, 112], [14, 8]]],
+      pb: [...LEGM_P, ["rect", [112, 100], [22, 6]], ["rect", [122, 140], [14, 8]]],
+      arrow: [
+        [182, 108],
+        [158, 144],
+      ],
+    },
+    "cond.cross_trainer_intervals": {
+      a: { h: [120, 26], s: [118, 50], p: [116, 84], f: [132, 134], F: [104, 132], ka: [1, -0.2], KA: [1, -0.2], w: [146, 62], W: [110, 76], ea: [-1, 0.6], EA: [-1, 0.6] },
+      b: { h: [120, 26], s: [118, 50], p: [116, 84], f: [104, 132], F: [132, 134], ka: [1, -0.2], KA: [1, -0.2], w: [110, 76], W: [146, 62], ea: [-1, 0.6], EA: [-1, 0.6] },
+      props: [
+        ["rect", [70, 140], [116, 8]],
+        ["wheel", [176, 126], 12],
+        ["line", [166, 30], [176, 140], 5],
+        ["line", [150, 62], [166, 34], 4],
+      ],
+    },
+    "warm.cardio_machine": {
+      a: { h: [118, 30], s: [117, 54], p: [116, 86], f: [128, 139], F: [106, 139], ka: [1, 0], KA: [1, 0], w: [108, 94], W: [126, 94], ea: [0, 1], EA: [0, 1] },
+      b: { h: [118, 30], s: [117, 54], p: [116, 86], f: [106, 139], F: [128, 139], ka: [1, 0], KA: [1, 0], w: [126, 94], W: [108, 94], ea: [0, 1], EA: [0, 1] },
+      props: [
+        ["rect", [60, 140], [130, 9]],
+        ["line", [176, 140], [192, 72], 5],
+        ["rect", [180, 62], [26, 10]],
+      ],
+    },
+  });
   /* top view for self-defence in the circle */
   function sdCircleSvg() {
     let h = `<svg class="sketch" viewBox="0 0 240 156" role="img"><defs><marker id="skHead" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${SK.BRASS}"/></marker></defs><circle cx="120" cy="78" r="58" fill="none" stroke="#2b2f36" stroke-width="2" stroke-dasharray="5 6"/>`;

@@ -170,16 +170,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab Körper, Cross, Seitschritt – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab body, Cross, Side step – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab Körper, Cross, Seitschritt verbunden, kontrolliert.",
             "en": "Jab body, Cross, Side step linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab Körper, Cross, Seitschritt, danach heraus aus der Distanz.",
             "en": "Jab body, Cross, Side step, then out of range."
            }
@@ -638,16 +641,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Jab, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Jab, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Jab, High Kick Kopf verbunden, kontrolliert.",
             "en": "Front kick body, Jab, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Jab, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Jab, High kick head, then out of range."
            }
@@ -1085,16 +1091,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -1485,16 +1494,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Jab, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Jab, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Jab, Cross verbunden, kontrolliert.",
             "en": "Jab, Jab, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Jab, Cross, danach heraus aus der Distanz.",
             "en": "Jab, Jab, Cross, then out of range."
            }
@@ -2807,11 +2819,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -2822,7 +2834,7 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
@@ -2844,7 +2856,7 @@
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true,
           "target": {
            "kind": "lc:0:S:regular:studio:studio:8-12:3:r",
@@ -2862,7 +2874,7 @@
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true,
           "target": {
            "kind": "lc:0:S:regular:studio:studio:8-12:3:r",
@@ -2880,14 +2892,15 @@
          },
          {
           "kind": "ex",
-          "id": 35,
+          "id": 37,
+          "basic": true,
           "target": {
-           "kind": "lc:0:S:regular:studio:studio:8-12:3:r",
+           "kind": "lc:0:S:regular:studio:bb,studio:8-12:3:r",
            "cycle": "base:2026-11-02",
            "n": 3,
            "lo": 8,
            "hi": 12,
-           "eq": "studio",
+           "eq": "bb,studio",
            "r": 8,
            "kg": null,
            "timed": false,
@@ -2901,48 +2914,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 83
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
-         }
-        ],
-        "fitnessLevel": 0
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fFinger"
-         },
-         {
-          "kind": "hard",
-          "id": "shintap"
+          "id": 39
          }
         ],
         "fitnessLevel": 0
@@ -2953,7 +2951,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 73
          },
          {
           "kind": "ex",
@@ -3024,7 +3022,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -3033,7 +3031,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -3071,56 +3069,37 @@
       ],
       [
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "4 × (10 s / 20 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "30 s Belastung, 30 s Pause",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "pro Bein 10",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        }
       ],
       [
        {
-        "dose": null,
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 39,
-         "seconds": 117,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 3,
-         "seconds": 125,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          45
+          60,
+          90
          ],
-         "perSet": 45
+         "perSet": 60
         }
        },
        {
@@ -3545,16 +3524,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab Körper, Cross, Seitschritt – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab body, Cross, Side step – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab Körper, Cross, Seitschritt verbunden, kontrolliert.",
             "en": "Jab body, Cross, Side step linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab Körper, Cross, Seitschritt, danach heraus aus der Distanz.",
             "en": "Jab body, Cross, Side step, then out of range."
            }
@@ -3968,16 +3950,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Jab, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Jab, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Jab, High Kick Kopf verbunden, kontrolliert.",
             "en": "Front kick body, Jab, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Jab, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Jab, High kick head, then out of range."
            }
@@ -4382,16 +4367,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -4766,16 +4754,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross, Roundhouse Körper verbunden, kontrolliert.",
             "en": "Jab, Cross, Roundhouse body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Jab, Cross, Roundhouse body, then out of range."
            }
@@ -5978,11 +5969,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -5993,7 +5984,7 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
@@ -6002,17 +5993,18 @@
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 34
+          "id": 37,
+          "basic": true
          }
         ],
         "sets": "2× 8–10",
@@ -6020,28 +6012,28 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 39
          },
          {
           "kind": "round",
@@ -6052,27 +6044,12 @@
         "fitnessLevel": 0
        },
        {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fFinger"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
-         }
-        ],
-        "fitnessLevel": 0
-       },
-       {
         "key": "cool",
         "min": 8,
         "items": [
          {
           "kind": "ex",
-          "id": 75
+          "id": 73
          },
          {
           "kind": "ex",
@@ -6080,7 +6057,7 @@
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 75
          }
         ],
         "fitnessLevel": 0
@@ -6141,7 +6118,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -6150,7 +6127,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -6182,25 +6159,25 @@
         "timer": null
        },
        {
-        "dose": "2 × 8–10 Wdh. je Seite",
+        "dose": "2 × 8–10 Wdh.",
         "timer": null
        }
       ],
       [
        {
-        "dose": "30 s Belastung, 30 s Pause",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
@@ -6210,34 +6187,15 @@
       ],
       [
        {
-        "dose": null,
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 39,
-         "seconds": 117,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          30
+          60,
+          90
          ],
-         "perSet": 30
+         "perSet": 60
         }
        },
        {
@@ -6252,15 +6210,14 @@
         }
        },
        {
-        "dose": "60–90 s halten",
+        "dose": "je Seite 30 s",
         "timer": {
-         "phases": 1,
-         "seconds": 60,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          60,
-          90
+          30
          ],
-         "perSet": 60
+         "perSet": 30
         }
        }
       ]
@@ -6662,16 +6619,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper verbunden, kontrolliert.",
             "en": "Front kick body, Roundhouse body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Front kick body, Roundhouse body, then out of range."
            }
@@ -7133,16 +7093,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Roundhouse body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Front kick body, Roundhouse body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Roundhouse body, High kick head, then out of range."
            }
@@ -7573,16 +7536,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -7966,16 +7932,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross, Haken, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross, Hook, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross, Haken, Cross verbunden, kontrolliert.",
             "en": "Jab, Cross, Hook, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross, Haken, Cross, danach heraus aus der Distanz.",
             "en": "Jab, Cross, Hook, Cross, then out of range."
            }
@@ -9348,11 +9317,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -9363,29 +9332,11 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
-          "basic": true,
-          "target": {
-           "kind": "lc:1:S:regular:studio:bb,studio:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "bb,studio",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
-         },
-         {
-          "kind": "ex",
-          "id": 30,
+          "id": 33,
           "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
@@ -9403,7 +9354,7 @@
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 108,
           "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
@@ -9421,7 +9372,8 @@
          },
          {
           "kind": "ex",
-          "id": 36,
+          "id": 31,
+          "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
            "cycle": "base:2026-11-02",
@@ -9439,6 +9391,7 @@
          {
           "kind": "ex",
           "id": 29,
+          "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:bb,studio:8-12:3:r",
            "cycle": "base:2026-11-02",
@@ -9452,6 +9405,23 @@
            "reason": "initial",
            "baseR": 8
           }
+         },
+         {
+          "kind": "ex",
+          "id": 110,
+          "target": {
+           "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
+           "cycle": "base:2026-11-02",
+           "n": 3,
+           "lo": 8,
+           "hi": 12,
+           "eq": "studio",
+           "r": 8,
+           "kg": null,
+           "timed": false,
+           "reason": "initial",
+           "baseR": 8
+          }
          }
         ],
         "sets": "3× 8–12",
@@ -9459,48 +9429,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 15
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 9
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 12
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fFinger"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
          }
         ],
         "fitnessLevel": 1
@@ -9511,11 +9466,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
          },
          {
           "kind": "ex",
@@ -9582,7 +9537,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -9591,7 +9546,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -9637,54 +9592,23 @@
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
         "dose": "15 Wdh.",
         "timer": null
-       },
-       {
-        "dose": "40 s Belastung, 20 s Pause",
-        "timer": null
-       },
-       {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
-        "timer": null
        }
       ],
       [
-       {
-        "dose": null,
-        "timer": {
-         "phases": 39,
-         "seconds": 117,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -9694,6 +9618,17 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        },
        {
@@ -10107,16 +10042,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper verbunden, kontrolliert.",
             "en": "Front kick body, Roundhouse body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Front kick body, Roundhouse body, then out of range."
            }
@@ -10550,16 +10488,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Roundhouse Körper, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Roundhouse body, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, Cross verbunden, kontrolliert.",
             "en": "Front kick body, Roundhouse body, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, Cross, danach heraus aus der Distanz.",
             "en": "Front kick body, Roundhouse body, Cross, then out of range."
            }
@@ -10956,16 +10897,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -11340,16 +11284,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross, High Kick Kopf verbunden, kontrolliert.",
             "en": "Jab, Cross, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab, Cross, High kick head, then out of range."
            }
@@ -12519,11 +12466,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -12534,30 +12481,31 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
+          "id": 33,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 29,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 110
          }
         ],
         "sets": "2× 8–10",
@@ -12565,13 +12513,13 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
@@ -12581,32 +12529,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fPush"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
+          "id": 15
          }
         ],
         "fitnessLevel": 1
@@ -12617,15 +12550,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
           "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -12686,7 +12619,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -12695,7 +12628,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -12745,57 +12678,19 @@
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "15 Wdh.",
         "timer": null
        }
       ],
       [
-       {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "60–90 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -12805,6 +12700,28 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -13206,16 +13123,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, High Kick Kopf verbunden, kontrolliert.",
             "en": "Jab, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab, High kick head, then out of range."
            }
@@ -13671,16 +13591,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Cross, High Kick Kopf verbunden, kontrolliert.",
             "en": "Front kick body, Cross, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Cross, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Cross, High kick head, then out of range."
            }
@@ -14116,16 +14039,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -14517,16 +14443,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Jab Körper, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Jab body, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Jab Körper, Cross verbunden, kontrolliert.",
             "en": "Jab, Jab body, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Jab Körper, Cross, danach heraus aus der Distanz.",
             "en": "Jab, Jab body, Cross, then out of range."
            }
@@ -15768,11 +15697,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -15783,7 +15712,7 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
@@ -15792,17 +15721,18 @@
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 31
+          "id": 37,
+          "basic": true
          },
          {
           "kind": "ex",
@@ -15814,48 +15744,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 83
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fWring"
-         },
-         {
-          "kind": "hard",
-          "id": "brace"
+          "id": 112
          }
         ],
         "fitnessLevel": 1
@@ -15866,7 +15781,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 76
+          "id": 74
          },
          {
           "kind": "ex",
@@ -15874,7 +15789,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -15921,7 +15836,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -15930,7 +15845,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -15976,49 +15891,32 @@
         "timer": null
        },
        {
-        "dose": "4 × (10 s / 20 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "pro Bein 10",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        }
       ],
       [
        {
-        "dose": null,
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          20
+          45
          ],
-         "perSet": 20
-        }
-       },
-       {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
+         "perSet": 45
         }
        },
        {
@@ -16033,14 +15931,15 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 3,
-         "seconds": 65,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          30
+          60,
+          90
          ],
-         "perSet": 30
+         "perSet": 60
         }
        }
       ]
@@ -16443,16 +16342,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Roundhouse body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Roundhouse body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Roundhouse body, High kick head, then out of range."
            }
@@ -16869,16 +16771,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Cross, Haken – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Cross, Hook – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Cross, Haken verbunden, kontrolliert.",
             "en": "Front kick body, Cross, Hook linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Cross, Haken, danach heraus aus der Distanz.",
             "en": "Front kick body, Cross, Hook, then out of range."
            }
@@ -17271,16 +17176,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -17648,16 +17556,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Low Kick Oberschenkel, Jab, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Low kick thigh, Jab, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Low Kick Oberschenkel, Jab, Cross verbunden, kontrolliert.",
             "en": "Jab, Low kick thigh, Jab, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Low Kick Oberschenkel, Jab, Cross, danach heraus aus der Distanz.",
             "en": "Jab, Low kick thigh, Jab, Cross, then out of range."
            }
@@ -18820,11 +18731,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -18835,7 +18746,7 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
@@ -18844,21 +18755,22 @@
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 35
+          "id": 37,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 37
+          "id": 36
          }
         ],
         "sets": "2× 8–10",
@@ -18866,48 +18778,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fWring"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
+          "id": 112
          }
         ],
         "fitnessLevel": 1
@@ -18918,11 +18815,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 74
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
          },
          {
           "kind": "ex",
@@ -18974,7 +18871,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -18983,7 +18880,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -19025,15 +18922,7 @@
       ],
       [
        {
-        "dose": "pro Bein 10",
-        "timer": null
-       },
-       {
-        "dose": "40 s Belastung, 20 s Pause",
-        "timer": null
-       },
-       {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
@@ -19041,30 +18930,16 @@
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
-       }
-      ],
-      [
-       {
-        "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
        },
        {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
        }
       ],
       [
@@ -19080,14 +18955,14 @@
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          120
+          45
          ],
-         "perSet": 120
+         "perSet": 45
         }
        },
        {
@@ -19531,16 +19406,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Frontkick Körper, Fußfeger – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Front kick body, Foot sweep – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Frontkick Körper, Fußfeger verbunden, kontrolliert.",
             "en": "Jab, Front kick body, Foot sweep linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Frontkick Körper, Fußfeger, danach heraus aus der Distanz.",
             "en": "Jab, Front kick body, Foot sweep, then out of range."
            }
@@ -20097,16 +19975,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, High Kick Kopf, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, High kick head, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, High Kick Kopf, Cross verbunden, kontrolliert.",
             "en": "Front kick body, High kick head, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, High Kick Kopf, Cross, danach heraus aus der Distanz.",
             "en": "Front kick body, High kick head, Cross, then out of range."
            }
@@ -20601,16 +20482,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -21043,16 +20927,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Frontkick Körper, Jab, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Front kick body, Jab, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Frontkick Körper, Jab, Cross verbunden, kontrolliert.",
             "en": "Jab, Front kick body, Jab, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Frontkick Körper, Jab, Cross, danach heraus aus der Distanz.",
             "en": "Jab, Front kick body, Jab, Cross, then out of range."
            }
@@ -22385,11 +22272,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -22400,30 +22287,31 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
+          "id": 33,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 29,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 110
          }
         ],
         "sets": "3× 3–5 explosiv",
@@ -22431,49 +22319,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 15
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 9
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 12
-         }
-        ],
-        "fitnessLevel": 2
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fFinger"
-         },
-         {
-          "kind": "hard",
-          "id": "brace",
-          "h": 1
          }
         ],
         "fitnessLevel": 2
@@ -22484,15 +22356,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
           "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 74
          }
         ],
         "fitnessLevel": 2
@@ -22549,7 +22421,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -22558,7 +22430,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -22604,49 +22476,23 @@
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
         "dose": "15 Wdh.",
         "timer": null
-       },
-       {
-        "dose": "45 s Belastung, 15 s Pause",
-        "timer": null
-       },
-       {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
-        "timer": null
        }
       ],
       [
-       {
-        "dose": null,
-        "timer": {
-         "phases": 39,
-         "seconds": 117,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -22656,6 +22502,17 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        },
        {
@@ -23099,16 +22956,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab Körper, Frontkick Körper, Fußfeger – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab body, Front kick body, Foot sweep – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab Körper, Frontkick Körper, Fußfeger verbunden, kontrolliert.",
             "en": "Jab body, Front kick body, Foot sweep linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab Körper, Frontkick Körper, Fußfeger, danach heraus aus der Distanz.",
             "en": "Jab body, Front kick body, Foot sweep, then out of range."
            }
@@ -23589,16 +23449,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, High Kick Kopf, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, High kick head, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, High Kick Kopf, Cross verbunden, kontrolliert.",
             "en": "Front kick body, High kick head, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, High Kick Kopf, Cross, danach heraus aus der Distanz.",
             "en": "Front kick body, High kick head, Cross, then out of range."
            }
@@ -24034,16 +23897,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -24431,16 +24297,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Frontkick Körper, Jab, Cross Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Front kick body, Jab, Cross body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Frontkick Körper, Jab, Cross Körper verbunden, kontrolliert.",
             "en": "Jab, Front kick body, Jab, Cross body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Frontkick Körper, Jab, Cross Körper, danach heraus aus der Distanz.",
             "en": "Jab, Front kick body, Jab, Cross body, then out of range."
            }
@@ -25629,11 +25498,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -25644,30 +25513,31 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
+          "id": 33,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 29,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 110
          }
         ],
         "sets": "3× 3–5 explosiv",
@@ -25675,13 +25545,13 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
@@ -25691,34 +25561,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
-         }
-        ],
-        "fitnessLevel": 2
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fPush",
-          "h": 1
-         },
-         {
-          "kind": "hard",
-          "id": "brace",
-          "h": 1
+          "id": 15
          }
         ],
         "fitnessLevel": 2
@@ -25729,7 +25582,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
+          "id": 76
          },
          {
           "kind": "ex",
@@ -25737,7 +25590,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 74
          }
         ],
         "fitnessLevel": 2
@@ -25795,7 +25648,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -25804,7 +25657,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -25854,38 +25707,28 @@
         "timer": null
        },
        {
-        "dose": "45 s Belastung, 15 s Pause",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "45 s Belastung, 15 s Pause",
+        "dose": "15 Wdh.",
         "timer": null
        }
       ],
       [
        {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 45 s",
+        "dose": "2 Min.",
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 1,
+         "seconds": 120,
          "choices": [
-          45
+          120
          ],
-         "perSet": 45
+         "perSet": 120
         }
        },
        {
@@ -25900,14 +25743,14 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
         }
        }
       ]
@@ -26309,16 +26152,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross, Haken – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross, Hook – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross, Haken verbunden, kontrolliert.",
             "en": "Jab, Cross, Hook linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross, Haken, danach heraus aus der Distanz.",
             "en": "Jab, Cross, Hook, then out of range."
            }
@@ -26802,16 +26648,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross, Roundhouse Körper verbunden, kontrolliert.",
             "en": "Jab, Cross, Roundhouse body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Jab, Cross, Roundhouse body, then out of range."
            }
@@ -27252,16 +27101,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -27653,16 +27505,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab Körper, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab body, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab Körper, Cross, High Kick Kopf verbunden, kontrolliert.",
             "en": "Jab body, Cross, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab Körper, Cross, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab body, Cross, High kick head, then out of range."
            }
@@ -29084,26 +28939,26 @@
         "items": [
          {
           "kind": "ex",
-          "id": 3
-         },
-         {
-          "kind": "ex",
-          "id": 5
+          "id": 113
          },
          {
           "kind": "ex",
           "id": 2
+         },
+         {
+          "kind": "ex",
+          "id": 4
          }
         ],
         "fitnessLevel": 2
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true,
           "target": {
            "kind": "k1:2:S:regular:studio:studio:5-8:4:r",
@@ -29121,7 +28976,7 @@
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true,
           "target": {
            "kind": "k1:2:S:regular:studio:studio:5-8:4:r",
@@ -29140,6 +28995,7 @@
          {
           "kind": "ex",
           "id": 29,
+          "basic": true,
           "target": {
            "kind": "k1:2:S:regular:studio:bb,studio:5-8:4:r",
            "cycle": "base:2026-11-02",
@@ -29147,6 +29003,23 @@
            "lo": 5,
            "hi": 8,
            "eq": "bb,studio",
+           "r": 5,
+           "kg": null,
+           "timed": false,
+           "reason": "initial",
+           "baseR": 5
+          }
+         },
+         {
+          "kind": "ex",
+          "id": 32,
+          "target": {
+           "kind": "k1:2:S:regular:studio:studio:5-8:4:r",
+           "cycle": "base:2026-11-02",
+           "n": 4,
+           "lo": 5,
+           "hi": 8,
+           "eq": "studio",
            "r": 5,
            "kg": null,
            "timed": false,
@@ -29170,23 +29043,6 @@
            "reason": "initial",
            "baseR": 5
           }
-         },
-         {
-          "kind": "ex",
-          "id": 35,
-          "target": {
-           "kind": "k1:2:S:regular:studio:studio:5-8:4:r",
-           "cycle": "base:2026-11-02",
-           "n": 4,
-           "lo": 5,
-           "hi": 8,
-           "eq": "studio",
-           "r": 5,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 5
-          }
          }
         ],
         "sets": "4× 5–8",
@@ -29194,50 +29050,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 21
+          "id": 112
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 15
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 9
-         }
-        ],
-        "fitnessLevel": 2
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fTap",
-          "h": 1
-         },
-         {
-          "kind": "hard",
-          "id": "shintap",
-          "h": 1
          }
         ],
         "fitnessLevel": 2
@@ -29329,7 +29168,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -29338,7 +29177,7 @@
         }
        },
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min. · je Bewegung 10 Wdh.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -29348,6 +29187,10 @@
        }
       ],
       [
+       {
+        "dose": "4 × 5–8 Wdh.",
+        "timer": null
+       },
        {
         "dose": "4 × 5–8 Wdh.",
         "timer": null
@@ -29363,52 +29206,28 @@
        {
         "dose": "4 × 5–8 Wdh. je Seite",
         "timer": null
-       },
-       {
-        "dose": "4 × 5–8 Wdh.",
-        "timer": null
        }
       ],
       [
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "3 Min.",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
         "dose": "15 Wdh.",
         "timer": null
-       },
-       {
-        "dose": "45 s Belastung, 15 s Pause",
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": null,
-        "timer": {
-         "phases": 11,
-         "seconds": 295,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 3,
-         "seconds": 125,
-         "choices": [],
-         "perSet": 0
-        }
        }
       ],
       [
@@ -29853,16 +29672,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Sidekick Körper, Haken – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Side kick body, Hook – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Sidekick Körper, Haken verbunden, kontrolliert.",
             "en": "Jab, Side kick body, Hook linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Sidekick Körper, Haken, danach heraus aus der Distanz.",
             "en": "Jab, Side kick body, Hook, then out of range."
            }
@@ -30304,16 +30126,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross, Roundhouse Körper verbunden, kontrolliert.",
             "en": "Jab, Cross, Roundhouse body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Jab, Cross, Roundhouse body, then out of range."
            }
@@ -30708,16 +30533,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -31098,16 +30926,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Sidekick Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Side kick body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Sidekick Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Jab, Side kick body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Sidekick Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab, Side kick body, High kick head, then out of range."
            }
@@ -32431,44 +32262,45 @@
         "items": [
          {
           "kind": "ex",
-          "id": 3
-         },
-         {
-          "kind": "ex",
-          "id": 5
+          "id": 113
          },
          {
           "kind": "ex",
           "id": 2
+         },
+         {
+          "kind": "ex",
+          "id": 4
          }
         ],
         "fitnessLevel": 2
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 29,
+          "basic": true
+         },
+         {
+          "kind": "ex",
+          "id": 32
          },
          {
           "kind": "ex",
           "id": 34
-         },
-         {
-          "kind": "ex",
-          "id": 35
          }
         ],
         "sets": "2× 8–10",
@@ -32476,50 +32308,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 112
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 112
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 112
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 15
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 83
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 40
-         }
-        ],
-        "fitnessLevel": 2
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fPlank",
-          "h": 1
-         },
-         {
-          "kind": "hard",
-          "id": "shintap",
-          "h": 1
          }
         ],
         "fitnessLevel": 2
@@ -32530,7 +32345,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
+          "id": 74
          },
          {
           "kind": "ex",
@@ -32538,7 +32353,7 @@
          },
          {
           "kind": "ex",
-          "id": 74
+          "id": 75
          }
         ],
         "fitnessLevel": 2
@@ -32609,7 +32424,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -32618,7 +32433,7 @@
         }
        },
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min. · je Bewegung 10 Wdh.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -32628,6 +32443,10 @@
        }
       ],
       [
+       {
+        "dose": "2 × 8–10 Wdh.",
+        "timer": null
+       },
        {
         "dose": "2 × 8–10 Wdh.",
         "timer": null
@@ -32643,10 +32462,6 @@
        {
         "dose": "2 × 8–10 Wdh. je Seite",
         "timer": null
-       },
-       {
-        "dose": "2 × 8–10 Wdh.",
-        "timer": null
        }
       ],
       [
@@ -32655,55 +32470,32 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
         "dose": "15 Wdh.",
         "timer": null
-       },
-       {
-        "dose": "4 × (10 s / 20 s locker)",
-        "timer": null
-       },
-       {
-        "dose": "2 × (20 s / 40 s locker)",
-        "timer": null
        }
       ],
       [
        {
-        "dose": null,
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 5,
-         "seconds": 100,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          30,
           45
          ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 3,
-         "seconds": 125,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
+         "perSet": 45
         }
        },
        {
@@ -32718,14 +32510,14 @@
         }
        },
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
+         "perSet": 30
         }
        }
       ]
@@ -33135,11 +32927,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Sidekick Körper, Cross, Fußfeger – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Side kick body, Cross, Foot sweep – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Sidekick Körper, Cross, Fußfeger, danach heraus aus der Distanz.",
             "en": "Side kick body, Cross, Foot sweep, then out of range."
            }
@@ -33518,11 +33312,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Cross, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Cross, High kick head, then out of range."
            }
@@ -33882,11 +33678,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -34231,11 +34029,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, High kick head – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab, High kick head, then out of range."
            }
@@ -35283,11 +35083,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -35307,21 +35107,22 @@
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 34
+          "id": 109,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 32
          }
         ],
         "sets": "2× 8–10",
@@ -35335,17 +35136,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
+          "id": 39
          }
         ],
         "fitnessLevel": 1
@@ -35356,11 +35157,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
+          "id": 75
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 73
          },
          {
           "kind": "ex",
@@ -35411,7 +35212,7 @@
      "items": [
       [
        {
-        "dose": "3 Min. · je Gelenk 10 Kreise",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -35420,7 +35221,7 @@
         }
        },
        {
-        "dose": "3 Min.",
+        "dose": "3 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -35452,7 +35253,7 @@
         "timer": null
        },
        {
-        "dose": "2 × 8–10 Wdh. je Seite",
+        "dose": "2 × 8–10 Wdh.",
         "timer": null
        },
        {
@@ -35462,11 +35263,11 @@
       ],
       [
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
@@ -35475,6 +35276,17 @@
        }
       ],
       [
+       {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       },
        {
         "dose": "60–90 s halten",
         "timer": {
@@ -35485,17 +35297,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        },
        {
@@ -35909,11 +35710,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Haken, Frontkick Körper, Fußfeger – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Hook, Front kick body, Foot sweep – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Haken, Frontkick Körper, Fußfeger, danach heraus aus der Distanz.",
             "en": "Hook, Front kick body, Foot sweep, then out of range."
            }
@@ -36269,11 +36072,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Cross, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Cross, High kick head, then out of range."
            }
@@ -36609,11 +36414,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -36949,11 +36756,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, High kick head – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab, High kick head, then out of range."
            }
@@ -37957,11 +37766,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -37981,21 +37790,22 @@
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 34
+          "id": 109,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 32
          }
         ],
         "sets": "2× 8–10",
@@ -38009,17 +37819,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 39
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
+          "id": 39
          }
         ],
         "fitnessLevel": 1
@@ -38030,11 +37840,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
+          "id": 75
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 73
          },
          {
           "kind": "ex",
@@ -38086,7 +37896,7 @@
      "items": [
       [
        {
-        "dose": "3 Min. · je Gelenk 10 Kreise",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -38095,7 +37905,7 @@
         }
        },
        {
-        "dose": "3 Min.",
+        "dose": "3 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -38127,7 +37937,7 @@
         "timer": null
        },
        {
-        "dose": "2 × 8–10 Wdh. je Seite",
+        "dose": "2 × 8–10 Wdh.",
         "timer": null
        },
        {
@@ -38137,11 +37947,11 @@
       ],
       [
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
@@ -38150,6 +37960,17 @@
        }
       ],
       [
+       {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       },
        {
         "dose": "60–90 s halten",
         "timer": {
@@ -38160,17 +37981,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        },
        {
@@ -38583,16 +38393,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Roundhouse body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Roundhouse body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Roundhouse body, High kick head, then out of range."
            }
@@ -39062,16 +38875,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Cross, High Kick Kopf verbunden, kontrolliert.",
             "en": "Front kick body, Cross, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Cross, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Cross, High kick head, then out of range."
            }
@@ -39513,16 +39329,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -39896,16 +39715,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Low Kick Oberschenkel, Jab, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Low kick thigh, Jab, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Low Kick Oberschenkel, Jab, Cross verbunden, kontrolliert.",
             "en": "Jab, Low kick thigh, Jab, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Low Kick Oberschenkel, Jab, Cross, danach heraus aus der Distanz.",
             "en": "Jab, Low kick thigh, Jab, Cross, then out of range."
            }
@@ -41235,11 +41057,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -41250,29 +41072,11 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
-          "basic": true,
-          "target": {
-           "kind": "kl:1:S:regular:studio:bb,studio:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "bb,studio",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
-         },
-         {
-          "kind": "ex",
-          "id": 30,
+          "id": 33,
           "basic": true,
           "target": {
            "kind": "kl:1:S:regular:studio:studio:8-12:3:r",
@@ -41290,7 +41094,7 @@
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 108,
           "basic": true,
           "target": {
            "kind": "kl:1:S:regular:studio:studio:8-12:3:r",
@@ -41308,7 +41112,8 @@
          },
          {
           "kind": "ex",
-          "id": 36,
+          "id": 31,
+          "basic": true,
           "target": {
            "kind": "kl:1:S:regular:studio:studio:8-12:3:r",
            "cycle": "base:2026-11-02",
@@ -41326,6 +41131,7 @@
          {
           "kind": "ex",
           "id": 29,
+          "basic": true,
           "target": {
            "kind": "kl:1:S:regular:studio:bb,studio:8-12:3:r",
            "cycle": "base:2026-11-02",
@@ -41339,6 +41145,23 @@
            "reason": "initial",
            "baseR": 8
           }
+         },
+         {
+          "kind": "ex",
+          "id": 110,
+          "target": {
+           "kind": "kl:1:S:regular:studio:studio:8-12:3:r",
+           "cycle": "base:2026-11-02",
+           "n": 3,
+           "lo": 8,
+           "hi": 12,
+           "eq": "studio",
+           "r": 8,
+           "kg": null,
+           "timed": false,
+           "reason": "initial",
+           "baseR": 8
+          }
          }
         ],
         "sets": "3× 8–12",
@@ -41346,48 +41169,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 15
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 9
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 12
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fFinger"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
          }
         ],
         "fitnessLevel": 1
@@ -41398,11 +41206,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
          },
          {
           "kind": "ex",
@@ -41470,7 +41278,7 @@
      "items": [
       [
        {
-        "dose": "4 min · 10 circles per joint",
+        "dose": "4 min",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -41479,7 +41287,7 @@
         }
        },
        {
-        "dose": "4 min",
+        "dose": "4 min · 10 circles per joint",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -41525,54 +41333,23 @@
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s easy)",
+        "dose": "2 min alternating (30 s fast / 30 s easy)",
+        "timer": null
+       },
+       {
+        "dose": "2 min alternating (30 s fast / 30 s easy)",
+        "timer": null
+       },
+       {
+        "dose": "2 min alternating (30 s fast / 30 s easy)",
         "timer": null
        },
        {
         "dose": "15 reps",
         "timer": null
-       },
-       {
-        "dose": "40 s work, 20 s rest",
-        "timer": null
-       },
-       {
-        "dose": "3 × (20 s all-out / 10 s easy)",
-        "timer": null
        }
       ],
       [
-       {
-        "dose": null,
-        "timer": {
-         "phases": 39,
-         "seconds": 117,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "45 s per side",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 min",
         "timer": {
@@ -41582,6 +41359,17 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "45 s per side",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        },
        {
@@ -41995,16 +41783,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Roundhouse body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Roundhouse body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Roundhouse body, High kick head, then out of range."
            }
@@ -42427,16 +42218,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Cross, High Kick Kopf verbunden, kontrolliert.",
             "en": "Front kick body, Cross, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Cross, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Cross, High kick head, then out of range."
            }
@@ -42830,16 +42624,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -43204,16 +43001,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Low Kick Oberschenkel, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Low kick thigh, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Low Kick Oberschenkel, High Kick Kopf verbunden, kontrolliert.",
             "en": "Jab, Low kick thigh, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Low Kick Oberschenkel, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab, Low kick thigh, High kick head, then out of range."
            }
@@ -44389,11 +44189,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -44404,30 +44204,31 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
+          "id": 33,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 29,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 110
          }
         ],
         "sets": "2× 8–10",
@@ -44435,13 +44236,13 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
@@ -44451,32 +44252,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fPush"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
+          "id": 15
          }
         ],
         "fitnessLevel": 1
@@ -44487,15 +44273,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
           "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -44556,7 +44342,7 @@
      "items": [
       [
        {
-        "dose": "4 min · 10 circles per joint",
+        "dose": "4 min",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -44565,7 +44351,7 @@
         }
        },
        {
-        "dose": "4 min",
+        "dose": "4 min · 10 circles per joint",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -44615,57 +44401,19 @@
         "timer": null
        },
        {
-        "dose": "40 s work, 20 s rest",
+        "dose": "2 min alternating (30 s fast / 30 s easy)",
         "timer": null
        },
        {
-        "dose": "3 × (20 s all-out / 10 s easy)",
+        "dose": "2 min alternating (30 s fast / 30 s easy)",
         "timer": null
        },
        {
-        "dose": "40 s work, 20 s rest",
+        "dose": "15 reps",
         "timer": null
        }
       ],
       [
-       {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "30 s per side",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "hold 60–90 s",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
        {
         "dose": "2 min",
         "timer": {
@@ -44675,6 +44423,28 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "45 s per side",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "45 s per side",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -45076,16 +44846,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper verbunden, kontrolliert.",
             "en": "Front kick body, Roundhouse body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Front kick body, Roundhouse body, then out of range."
            }
@@ -45538,16 +45311,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Roundhouse Körper, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Roundhouse body, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, Cross verbunden, kontrolliert.",
             "en": "Front kick body, Roundhouse body, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, Cross, danach heraus aus der Distanz.",
             "en": "Front kick body, Roundhouse body, Cross, then out of range."
            }
@@ -45969,16 +45745,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -46360,16 +46139,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross, Haken, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross, Hook, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross, Haken, Cross verbunden, kontrolliert.",
             "en": "Jab, Cross, Hook, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross, Haken, Cross, danach heraus aus der Distanz.",
             "en": "Jab, Cross, Hook, Cross, then out of range."
            }
@@ -47753,11 +47535,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -47768,29 +47550,11 @@
        },
        {
         "key": "str",
-        "min": 31,
+        "min": 36,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
-          "basic": true,
-          "target": {
-           "kind": "lc:1:S:regular:studio:bb,studio:8-12:3:r",
-           "cycle": "block:mob:2026-10-19",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "bb,studio",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
-         },
-         {
-          "kind": "ex",
-          "id": 30,
+          "id": 33,
           "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
@@ -47808,7 +47572,7 @@
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 108,
           "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
@@ -47826,7 +47590,8 @@
          },
          {
           "kind": "ex",
-          "id": 36,
+          "id": 31,
+          "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
            "cycle": "block:mob:2026-10-19",
@@ -47844,6 +47609,7 @@
          {
           "kind": "ex",
           "id": 29,
+          "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:bb,studio:8-12:3:r",
            "cycle": "block:mob:2026-10-19",
@@ -47857,6 +47623,23 @@
            "reason": "initial",
            "baseR": 8
           }
+         },
+         {
+          "kind": "ex",
+          "id": 110,
+          "target": {
+           "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
+           "cycle": "block:mob:2026-10-19",
+           "n": 3,
+           "lo": 8,
+           "hi": 12,
+           "eq": "studio",
+           "r": 8,
+           "kg": null,
+           "timed": false,
+           "reason": "initial",
+           "baseR": 8
+          }
          }
         ],
         "sets": "3× 8–12",
@@ -47864,43 +47647,33 @@
        },
        {
         "key": "cond",
-        "min": 14,
+        "min": 15,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 15
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 9
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fFinger"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
          }
         ],
         "fitnessLevel": 1
@@ -47911,19 +47684,19 @@
         "items": [
          {
           "kind": "ex",
-          "id": 60
+          "id": 61
          },
          {
           "kind": "ex",
-          "id": 69
-         },
-         {
-          "kind": "ex",
-          "id": 73
+          "id": 62
          },
          {
           "kind": "ex",
           "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -47991,7 +47764,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -48000,7 +47773,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -48046,46 +47819,41 @@
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
         "dose": "15 Wdh.",
         "timer": null
-       },
-       {
-        "dose": "40 s Belastung, 20 s Pause",
-        "timer": null
        }
       ],
       [
        {
-        "dose": null,
-        "timer": {
-         "phases": 39,
-         "seconds": 117,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "10 Wechsel",
+        "dose": "je Seite 6",
         "timer": null
        },
        {
         "dose": "je Seite 5",
         "timer": null
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
        },
        {
         "dose": "60–90 s halten",
@@ -48097,17 +47865,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
         }
        }
       ]
@@ -48512,16 +48269,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Roundhouse body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Roundhouse body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Roundhouse body, High kick head, then out of range."
            }
@@ -48949,16 +48709,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Roundhouse body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Front kick body, Roundhouse body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Roundhouse body, High kick head, then out of range."
            }
@@ -49346,16 +49109,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -49723,16 +49489,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross, High Kick Kopf verbunden, kontrolliert.",
             "en": "Jab, Cross, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab, Cross, High kick head, then out of range."
            }
@@ -50915,11 +50684,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -50930,30 +50699,31 @@
        },
        {
         "key": "str",
-        "min": 31,
+        "min": 36,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
+          "id": 33,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 29,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 110
          }
         ],
         "sets": "2× 8–10",
@@ -50961,13 +50731,13 @@
        },
        {
         "key": "cond",
-        "min": 14,
+        "min": 15,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
@@ -50977,27 +50747,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fPush"
+          "id": 38
          },
          {
-          "kind": "hard",
-          "id": "neck"
+          "kind": "round",
+          "k": "ex",
+          "id": 15
          }
         ],
         "fitnessLevel": 1
@@ -51008,7 +50768,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 60
+          "id": 61
          },
          {
           "kind": "ex",
@@ -51016,11 +50776,11 @@
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 72
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -51086,7 +50846,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -51095,7 +50855,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -51145,37 +50905,37 @@
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "15 Wdh.",
         "timer": null
        }
       ],
       [
        {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "10 Wechsel",
+        "dose": "je Seite 6",
         "timer": null
        },
        {
         "dose": "je Seite 5",
         "timer": null
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
        },
        {
         "dose": "60–90 s halten",
@@ -51187,17 +50947,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
         }
        }
       ]
@@ -51601,16 +51350,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper verbunden, kontrolliert.",
             "en": "Front kick body, Roundhouse body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Front kick body, Roundhouse body, then out of range."
            }
@@ -52057,16 +51809,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf, Low Kick Oberschenkel – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Roundhouse body, High kick head, Low kick thigh – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, Low Kick Oberschenkel verbunden, kontrolliert.",
             "en": "Roundhouse body, High kick head, Low kick thigh linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, Low Kick Oberschenkel, danach heraus aus der Distanz.",
             "en": "Roundhouse body, High kick head, Low kick thigh, then out of range."
            }
@@ -52490,16 +52245,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -52878,16 +52636,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Sidekick Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Side kick body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Sidekick Körper verbunden, kontrolliert.",
             "en": "Front kick body, Side kick body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Sidekick Körper, danach heraus aus der Distanz.",
             "en": "Front kick body, Side kick body, then out of range."
            }
@@ -54208,11 +53969,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -54223,7 +53984,7 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
@@ -54264,6 +54025,7 @@
          {
           "kind": "ex",
           "id": 37,
+          "basic": true,
           "target": {
            "kind": "kl:1:S:regular:studio:bb,studio:8-12:3:r",
            "cycle": "base:2026-11-02",
@@ -54280,7 +54042,7 @@
          },
          {
           "kind": "ex",
-          "id": 36,
+          "id": 109,
           "target": {
            "kind": "kl:1:S:regular:studio:studio:8-12:3:r",
            "cycle": "base:2026-11-02",
@@ -54297,14 +54059,14 @@
          },
          {
           "kind": "ex",
-          "id": 54,
+          "id": 110,
           "target": {
-           "kind": "kl:1:S:regular:studio::8-12:3:r",
+           "kind": "kl:1:S:regular:studio:studio:8-12:3:r",
            "cycle": "base:2026-11-02",
            "n": 3,
            "lo": 8,
            "hi": 12,
-           "eq": "",
+           "eq": "studio",
            "r": 8,
            "kg": null,
            "timed": false,
@@ -54318,7 +54080,7 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
@@ -54329,37 +54091,22 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 40
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 40
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 21
+          "id": 40
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fPlank"
-         },
-         {
-          "kind": "hard",
-          "id": "brace"
+          "id": 40
          }
         ],
         "fitnessLevel": 1
@@ -54370,15 +54117,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
           "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -54441,7 +54188,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -54450,7 +54197,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -54486,7 +54233,7 @@
         "timer": null
        },
        {
-        "dose": "3 × 8–12 Wdh. pro Bein",
+        "dose": "3 × 8–12 Wdh.",
         "timer": null
        }
       ],
@@ -54496,41 +54243,34 @@
         "timer": null
        },
        {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "dose": "2 × (20 s / 40 s locker)",
         "timer": null
        },
        {
-        "dose": "pro Bein 10",
+        "dose": "2 × (20 s / 40 s locker)",
         "timer": null
        },
        {
-        "dose": "3 Min.",
+        "dose": "2 × (20 s / 40 s locker)",
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "2 × (20 s / 40 s locker)",
         "timer": null
        }
       ],
       [
        {
-        "dose": null,
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          20,
-          30
+          45
          ],
-         "perSet": 20
+         "perSet": 45
         }
        },
-       {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
        {
         "dose": "2 Min.",
         "timer": {
@@ -54552,17 +54292,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
         }
        }
       ]
@@ -54967,16 +54696,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Cross Körper, Frontkick Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Cross body, Front kick body, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Cross Körper, Frontkick Körper, Roundhouse Körper verbunden, kontrolliert.",
             "en": "Cross body, Front kick body, Roundhouse body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Cross Körper, Frontkick Körper, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Cross body, Front kick body, Roundhouse body, then out of range."
            }
@@ -55401,16 +55133,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf, Low Kick Oberschenkel – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Roundhouse body, High kick head, Low kick thigh – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, Low Kick Oberschenkel verbunden, kontrolliert.",
             "en": "Roundhouse body, High kick head, Low kick thigh linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, Low Kick Oberschenkel, danach heraus aus der Distanz.",
             "en": "Roundhouse body, High kick head, Low kick thigh, then out of range."
            }
@@ -55807,16 +55542,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -56186,16 +55924,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross Körper, Low Kick Oberschenkel – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross body, Low kick thigh – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross Körper, Low Kick Oberschenkel verbunden, kontrolliert.",
             "en": "Jab, Cross body, Low kick thigh linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross Körper, Low Kick Oberschenkel, danach heraus aus der Distanz.",
             "en": "Jab, Cross body, Low kick thigh, then out of range."
            }
@@ -57386,11 +57127,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -57401,7 +57142,7 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
@@ -57415,15 +57156,16 @@
          },
          {
           "kind": "ex",
-          "id": 37
+          "id": 37,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 109
          },
          {
           "kind": "ex",
-          "id": 52
+          "id": 110
          }
         ],
         "sets": "2× 8–10",
@@ -57431,48 +57173,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 40
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 18
+          "id": 40
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 83
+          "id": 40
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
+          "id": 40
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 16
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fWring"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
+          "id": 40
          }
         ],
         "fitnessLevel": 1
@@ -57483,15 +57210,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 76
          },
          {
           "kind": "ex",
           "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -57552,7 +57279,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -57561,7 +57288,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -57597,69 +57324,53 @@
         "timer": null
        },
        {
-        "dose": "2 × je Richtung 10 s (Stirn, Hinterkopf, links, rechts)",
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 10
-        }
-       }
-      ],
-      [
-       {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
-        "timer": null
-       },
-       {
-        "dose": "pro Bein 10",
-        "timer": null
-       },
-       {
-        "dose": "4 × (10 s / 20 s locker)",
-        "timer": null
-       },
-       {
-        "dose": "40 s Belastung, 20 s Pause",
-        "timer": null
-       },
-       {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "2 × 8–10 Wdh.",
         "timer": null
        }
       ],
       [
        {
-        "dose": null,
-        "timer": {
-         "phases": 5,
-         "seconds": 70,
-         "choices": [
-          20
-         ],
-         "perSet": 20
-        }
+        "dose": "2 × (20 s / 40 s locker)",
+        "timer": null
        },
        {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
+        "dose": "2 × (20 s / 40 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 × (20 s / 40 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 × (20 s / 40 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 × (20 s / 40 s locker)",
+        "timer": null
        }
       ],
       [
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        },
        {
@@ -57672,17 +57383,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
         }
        }
       ]
@@ -58086,11 +57786,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross, Brazilian Kick Kopf, Fußfeger – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross, Brazilian kick head, Foot sweep – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross, Brazilian Kick Kopf, Fußfeger, danach heraus aus der Distanz.",
             "en": "Jab, Cross, Brazilian kick head, Foot sweep, then out of range."
            }
@@ -58415,11 +58117,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Haken, Cross Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Hook, Cross body – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Haken, Cross Körper, danach heraus aus der Distanz.",
             "en": "Front kick body, Hook, Cross body, then out of range."
            }
@@ -58724,11 +58428,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -59026,11 +58732,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross body, Roundhouse body – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross Körper, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Jab, Cross body, Roundhouse body, then out of range."
            }
@@ -60139,11 +59847,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -60158,25 +59866,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 28,
-          "basic": true,
-          "target": {
-           "kind": "lc:1:S:regular:studio:bb,studio:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "bb,studio",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
-         },
-         {
-          "kind": "ex",
-          "id": 30,
+          "id": 33,
           "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
@@ -60194,7 +59884,7 @@
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 108,
           "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
@@ -60212,7 +59902,8 @@
          },
          {
           "kind": "ex",
-          "id": 36,
+          "id": 31,
+          "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
            "cycle": "base:2026-11-02",
@@ -60230,6 +59921,7 @@
          {
           "kind": "ex",
           "id": 29,
+          "basic": true,
           "target": {
            "kind": "lc:1:S:regular:studio:bb,studio:8-12:3:r",
            "cycle": "base:2026-11-02",
@@ -60237,6 +59929,23 @@
            "lo": 8,
            "hi": 12,
            "eq": "bb,studio",
+           "r": 8,
+           "kg": null,
+           "timed": false,
+           "reason": "initial",
+           "baseR": 8
+          }
+         },
+         {
+          "kind": "ex",
+          "id": 110,
+          "target": {
+           "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
+           "cycle": "base:2026-11-02",
+           "n": 3,
+           "lo": 8,
+           "hi": 12,
+           "eq": "studio",
            "r": 8,
            "kg": null,
            "timed": false,
@@ -60256,12 +59965,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 15
          }
         ],
         "fitnessLevel": 1
@@ -60280,7 +59989,7 @@
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -60344,7 +60053,7 @@
      "items": [
       [
        {
-        "dose": "3 Min. · je Gelenk 10 Kreise",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -60353,7 +60062,7 @@
         }
        },
        {
-        "dose": "3 Min.",
+        "dose": "3 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -60399,7 +60108,7 @@
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "15 Wdh.",
         "timer": null
        }
       ],
@@ -60427,14 +60136,14 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
         }
        }
       ]
@@ -60797,11 +60506,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross Körper, Brazilian Kick Kopf, Fußfeger – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross body, Brazilian kick head, Foot sweep – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross Körper, Brazilian Kick Kopf, Fußfeger, danach heraus aus der Distanz.",
             "en": "Jab, Cross body, Brazilian kick head, Foot sweep, then out of range."
            }
@@ -61099,11 +60810,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab Körper, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab body, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab Körper, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Jab body, Cross, Roundhouse body, then out of range."
            }
@@ -61388,11 +61101,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -61681,11 +61396,13 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross body, Roundhouse body – back into your stance after each."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross Körper, Roundhouse Körper, danach heraus aus der Distanz.",
             "en": "Jab, Cross body, Roundhouse body, then out of range."
            }
@@ -62662,11 +62379,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -62681,26 +62398,27 @@
         "items": [
          {
           "kind": "ex",
-          "id": 28,
+          "id": 33,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 29,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 110
          }
         ],
         "sets": "2× 8–10",
@@ -62714,12 +62432,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
+          "id": 15
          }
         ],
         "fitnessLevel": 1
@@ -62730,15 +62448,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
-         },
-         {
-          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -62800,7 +62518,7 @@
      "items": [
       [
        {
-        "dose": "3 Min. · je Gelenk 10 Kreise",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -62809,7 +62527,7 @@
         }
        },
        {
-        "dose": "3 Min.",
+        "dose": "3 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -62855,22 +62573,11 @@
         "timer": null
        },
        {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "dose": "15 Wdh.",
         "timer": null
        }
       ],
       [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -62883,15 +62590,25 @@
         }
        },
        {
-        "dose": "60–90 s halten",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 60,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          60,
-          90
+          45
          ],
-         "perSet": 60
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -63253,16 +62970,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Roundhouse Körper, Cross, Fußfeger – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Roundhouse body, Cross, Foot sweep – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Roundhouse Körper, Cross, Fußfeger verbunden, kontrolliert.",
             "en": "Roundhouse body, Cross, Foot sweep linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Roundhouse Körper, Cross, Fußfeger, danach heraus aus der Distanz.",
             "en": "Roundhouse body, Cross, Foot sweep, then out of range."
            }
@@ -63739,16 +63459,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Cross, Haken – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Cross, Hook – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Cross, Haken verbunden, kontrolliert.",
             "en": "Front kick body, Cross, Hook linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Cross, Haken, danach heraus aus der Distanz.",
             "en": "Front kick body, Cross, Hook, then out of range."
            }
@@ -64192,16 +63915,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -64593,16 +64319,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Low Kick Oberschenkel, Jab, Cross Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Low kick thigh, Jab, Cross body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Low Kick Oberschenkel, Jab, Cross Körper verbunden, kontrolliert.",
             "en": "Jab, Low kick thigh, Jab, Cross body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Low Kick Oberschenkel, Jab, Cross Körper, danach heraus aus der Distanz.",
             "en": "Jab, Low kick thigh, Jab, Cross body, then out of range."
            }
@@ -65973,11 +65702,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -65988,29 +65717,11 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
-          "basic": true,
-          "target": {
-           "kind": "kl:2:S:regular:studio:bb,studio:5-8:4:r",
-           "cycle": "base:2026-11-02",
-           "n": 4,
-           "lo": 5,
-           "hi": 8,
-           "eq": "bb,studio",
-           "r": 5,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 5
-          }
-         },
-         {
-          "kind": "ex",
-          "id": 30,
+          "id": 33,
           "basic": true,
           "target": {
            "kind": "kl:2:S:regular:studio:studio:5-8:4:r",
@@ -66028,7 +65739,7 @@
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 108,
           "basic": true,
           "target": {
            "kind": "kl:2:S:regular:studio:studio:5-8:4:r",
@@ -66046,7 +65757,8 @@
          },
          {
           "kind": "ex",
-          "id": 36,
+          "id": 31,
+          "basic": true,
           "target": {
            "kind": "kl:2:S:regular:studio:studio:5-8:4:r",
            "cycle": "base:2026-11-02",
@@ -66064,6 +65776,7 @@
          {
           "kind": "ex",
           "id": 29,
+          "basic": true,
           "target": {
            "kind": "kl:2:S:regular:studio:bb,studio:5-8:4:r",
            "cycle": "base:2026-11-02",
@@ -66077,6 +65790,23 @@
            "reason": "initial",
            "baseR": 5
           }
+         },
+         {
+          "kind": "ex",
+          "id": 110,
+          "target": {
+           "kind": "kl:2:S:regular:studio:studio:5-8:4:r",
+           "cycle": "base:2026-11-02",
+           "n": 4,
+           "lo": 5,
+           "hi": 8,
+           "eq": "studio",
+           "r": 5,
+           "kg": null,
+           "timed": false,
+           "reason": "initial",
+           "baseR": 5
+          }
          }
         ],
         "sets": "4× 5–8",
@@ -66084,48 +65814,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 15
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 9
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 12
-         }
-        ],
-        "fitnessLevel": 2
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fFinger"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
          }
         ],
         "fitnessLevel": 2
@@ -66136,11 +65851,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
          },
          {
           "kind": "ex",
@@ -66208,7 +65923,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -66217,7 +65932,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -66263,54 +65978,23 @@
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
         "dose": "15 Wdh.",
         "timer": null
-       },
-       {
-        "dose": "45 s Belastung, 15 s Pause",
-        "timer": null
-       },
-       {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
-        "timer": null
        }
       ],
       [
-       {
-        "dose": null,
-        "timer": {
-         "phases": 39,
-         "seconds": 117,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -66320,6 +66004,17 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        },
        {
@@ -66733,16 +66428,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross Körper, Haken, Fußfeger – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross body, Hook, Foot sweep – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross Körper, Haken, Fußfeger verbunden, kontrolliert.",
             "en": "Jab, Cross body, Hook, Foot sweep linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross Körper, Haken, Fußfeger, danach heraus aus der Distanz.",
             "en": "Jab, Cross body, Hook, Foot sweep, then out of range."
            }
@@ -67194,16 +66892,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Cross, Haken – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Cross, Hook – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Cross, Haken verbunden, kontrolliert.",
             "en": "Front kick body, Cross, Hook linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Cross, Haken, danach heraus aus der Distanz.",
             "en": "Front kick body, Cross, Hook, then out of range."
            }
@@ -67613,16 +67314,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -67990,16 +67694,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab Körper, Low Kick Oberschenkel, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab body, Low kick thigh, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab Körper, Low Kick Oberschenkel, High Kick Kopf verbunden, kontrolliert.",
             "en": "Jab body, Low kick thigh, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab Körper, Low Kick Oberschenkel, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab body, Low kick thigh, High kick head, then out of range."
            }
@@ -69197,11 +68904,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -69212,30 +68919,31 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
+          "id": 33,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 29,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 110
          }
         ],
         "sets": "2× 8–10",
@@ -69243,13 +68951,13 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
@@ -69259,32 +68967,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
-         }
-        ],
-        "fitnessLevel": 2
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fPush"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
+          "id": 15
          }
         ],
         "fitnessLevel": 2
@@ -69295,15 +68988,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
           "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 74
          }
         ],
         "fitnessLevel": 2
@@ -69364,7 +69057,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -69373,7 +69066,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -69423,57 +69116,19 @@
         "timer": null
        },
        {
-        "dose": "45 s Belastung, 15 s Pause",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "45 s Belastung, 15 s Pause",
+        "dose": "15 Wdh.",
         "timer": null
        }
       ],
       [
-       {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "60–90 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -69483,6 +69138,28 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -69888,16 +69565,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Roundhouse body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Roundhouse body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Roundhouse body, High kick head, then out of range."
            }
@@ -70347,16 +70027,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Jab, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Jab, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Jab, High Kick Kopf verbunden, kontrolliert.",
             "en": "Front kick body, Jab, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Jab, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Front kick body, Jab, High kick head, then out of range."
            }
@@ -70783,16 +70466,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -71209,16 +70895,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Haken, Cross, Frontkick Körper – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Hook, Cross, Front kick body – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Haken, Cross, Frontkick Körper verbunden, kontrolliert.",
             "en": "Jab, Hook, Cross, Front kick body linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Haken, Cross, Frontkick Körper, danach heraus aus der Distanz.",
             "en": "Jab, Hook, Cross, Front kick body, then out of range."
            }
@@ -72533,11 +72222,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -72548,30 +72237,31 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
+          "id": 33,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 29,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 110
          }
         ],
         "sets": "3× 8–12",
@@ -72579,48 +72269,33 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 40
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
           "id": 15
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 9
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 12
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fFinger"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
          }
         ],
         "fitnessLevel": 1
@@ -72631,11 +72306,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
          },
          {
           "kind": "ex",
@@ -72698,7 +72373,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -72707,7 +72382,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -72753,54 +72428,23 @@
         "timer": null
        },
        {
-        "dose": "2 × (20 s / 40 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
         "dose": "15 Wdh.",
         "timer": null
-       },
-       {
-        "dose": "40 s Belastung, 20 s Pause",
-        "timer": null
-       },
-       {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
-        "timer": null
        }
       ],
       [
-       {
-        "dose": null,
-        "timer": {
-         "phases": 39,
-         "seconds": 117,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -72810,6 +72454,17 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        },
        {
@@ -73227,16 +72882,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Roundhouse body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Roundhouse body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Roundhouse body, High kick head, then out of range."
            }
@@ -73660,16 +73318,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Frontkick Körper, Jab, Cross – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Front kick body, Jab, Cross – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Frontkick Körper, Jab, Cross verbunden, kontrolliert.",
             "en": "Front kick body, Jab, Cross linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Frontkick Körper, Jab, Cross, danach heraus aus der Distanz.",
             "en": "Front kick body, Jab, Cross, then out of range."
            }
@@ -74065,16 +73726,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
             "en": "Fighting stance: steps forward, back and sideways, guard up."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Schritt hinein mit Jab, heraus und in den Winkel.",
             "en": "Step in with the Jab, out and to an angle."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
             "en": "In sparring rhythm: attack, defend, get out – loose."
            }
@@ -74462,16 +74126,19 @@
           "steps": [
            {
             "t": "slow",
+            "f": 0,
             "de": "Die Techniken einzeln: Jab, Cross Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
             "en": "The techniques one by one: Jab, Cross body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
+            "f": 0,
             "de": "Jab, Cross Körper, High Kick Kopf verbunden, kontrolliert.",
             "en": "Jab, Cross body, High kick head linked, with control."
            },
            {
             "t": "work",
+            "f": 0,
             "de": "Jab, Cross Körper, High Kick Kopf, danach heraus aus der Distanz.",
             "en": "Jab, Cross body, High kick head, then out of range."
            }
@@ -75684,11 +75351,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 2
+          "id": 113
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 2
          },
          {
           "kind": "ex",
@@ -75699,30 +75366,31 @@
        },
        {
         "key": "str",
-        "min": 35,
+        "min": 39,
         "items": [
          {
           "kind": "ex",
-          "id": 28,
+          "id": 33,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 30,
+          "id": 108,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 32,
+          "id": 31,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 29
+          "id": 29,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 36
+          "id": 110
          }
         ],
         "sets": "2× 8–10",
@@ -75730,13 +75398,13 @@
        },
        {
         "key": "cond",
-        "min": 15,
+        "min": 17,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 39
+          "id": 38
          },
          {
           "kind": "round",
@@ -75746,32 +75414,17 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 38
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 20
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "hard",
-        "min": 6,
-        "items": [
-         {
-          "kind": "hard",
-          "id": "fPush"
-         },
-         {
-          "kind": "hard",
-          "id": "neck"
+          "id": 15
          }
         ],
         "fitnessLevel": 1
@@ -75782,15 +75435,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
           "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -75850,7 +75503,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -75859,7 +75512,7 @@
         }
        },
        {
-        "dose": "4 Min.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -75909,57 +75562,19 @@
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "15 Wdh.",
         "timer": null
        }
       ],
       [
-       {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": {
-         "phases": 7,
-         "seconds": 55,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "60–90 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -75969,6 +75584,28 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]

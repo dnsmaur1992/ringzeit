@@ -6,6 +6,31 @@
      full page first, then this page with the parts and a timer with calls, then the main part; "Direkt los" starts the
      main part at once. It does not count for the Grundabdeckung – the fixed rounds stay. */
   const PREP_MIN = 2;
+  /* Federn in the preparation (18.11.2026, Prüfauftrag Punkt 2): a structured share per part, never read from the text.
+     The first part of the bounce focus ("bounce lightly, then steps …") and the Taekwondo stepping before the chamber
+     count half of their time as Federzeit (Betreiber: "halber Teil"); everything else 0. The same share goes into the
+     part (st.f), the dose line, the balance (plyoBudget) and the reservation at planning (prepFedPlan). */
+  const PREP_FED_SHARE = 0.5;
+  const prepParts = (min) => (min <= 45 ? 2 : 3);
+  const prepSecs = (parts) => (parts === 2 ? 45 : 40);
+  /* which template a focus gets – the same decision as in prepSteps, without the rounds */
+  function prepKind(th, sp) {
+    th = th || {};
+    if (th.kinds === "foot" || th.kinds === "bounce" || th.id === "foot" || th.id === "bounce") return th.id === "bounce" || th.kinds === "bounce" ? "bounce" : "foot";
+    // a Taekwondo kick focus may fall back to the kick template (no evade rounds) – reserved as such, on the safe side
+    if (sp === "taekwondo" && th.kick) return "kick";
+    if (th.kinds === "evade" || th.id === "def" || !!th.counters) return "def";
+    return "other";
+  }
+  /* the Federzeit of the first part (the other parts have none) */
+  const prepFedFirst = (kind, secs) => (kind === "bounce" || kind === "kick" ? Math.round(secs * PREP_FED_SHARE) : 0);
+  /* planned before the rounds are built: the Federzeit a preparation of this unit will take (reserved in the budget) */
+  function prepFedPlan(type, theme, min, sp) {
+    if (!["T", "C", "P"].includes(type)) return 0;
+    return prepFedFirst(prepKind(theme, sp), prepSecs(prepParts(min)));
+  }
+  /* the Federzeit of a built preparation item: from its parts (old units without the share count 0) */
+  const prepFedOf = (it) => (it && it.steps ? it.steps.reduce((a, st) => a + (+st.f || 0) * (it.s || 0), 0) : 0);
   const PREP_TEMPO = {
     de: { slow: "Langsam und einzeln", link: "Verbunden", work: "Arbeitstempo" },
     en: { slow: "Slow, one by one", link: "Linked", work: "Working pace" },
@@ -76,8 +101,11 @@
     }
     // 2 parts: slow → working pace; 3 parts: slow → linked → working pace
     const pick = parts === 2 ? [0, 2] : [0, 1, 2],
-      tempi = parts === 2 ? ["slow", "work"] : ["slow", "link", "work"];
-    return pick.map((k, i) => ({ t: tempi[i], ...both((de) => tpl[k](de)) }));
+      tempi = parts === 2 ? ["slow", "work"] : ["slow", "link", "work"],
+      // the Federzeit share of a part: only the first one of the bounce focus and of the Taekwondo stepping
+      kind = foot ? (th.id === "bounce" || th.kinds === "bounce" ? "bounce" : "foot") : def && (ev || reactR) ? "def" : kick ? "kick" : "other",
+      share = (k) => (k === 0 && (kind === "bounce" || kind === "kick") ? PREP_FED_SHARE : 0);
+    return pick.map((k, i) => ({ t: tempi[i], f: share(k), ...both((de) => tpl[k](de)) }));
   }
   /* adds the preparation block right after the warm-up (called in buildSession while the unit's sport is active) */
   function addPrep(s) {
@@ -85,11 +113,11 @@
     const wi = s.blocks.findIndex((b) => b.key === "warm"),
       ri = s.blocks.findIndex((b) => b.rounds);
     if (wi < 0 || ri < 0 || ri < wi || s.blocks[wi].min - PREP_MIN < 6) return;
-    const parts = s.min <= 45 ? 2 : 3,
+    const parts = prepParts(s.min),
       steps = prepSteps(s, parts);
     if (!steps) return;
     s.blocks[wi].min -= PREP_MIN;
-    s.blocks.splice(wi + 1, 0, { key: "prep", lbl: "prep", min: PREP_MIN, items: [{ kind: "ex", id: "pre.focus_prep", n: parts, s: parts === 2 ? 45 : 40, steps }] });
+    s.blocks.splice(wi + 1, 0, { key: "prep", lbl: "prep", min: PREP_MIN, items: [{ kind: "ex", id: "pre.focus_prep", n: parts, s: prepSecs(parts), steps }] });
   }
   const isFocusPrep = (it) => !!(it && it.id === "pre.focus_prep" && it.steps);
   /* the timer: the parts with 5 s change between them */
@@ -102,7 +130,12 @@
     });
     return out;
   }
-  const prepDose = (it) => (S.profile.lang === "de" ? `${it.n} × ${it.s} s · langsam → Arbeitstempo` : `${it.n} × ${it.s} s · slow → working pace`);
+  /* the dose line; with Federn the share is named – the same seconds as in the balance */
+  const prepDose = (it) => {
+    const f = Math.round(prepFedOf(it)),
+      de = S.profile.lang === "de";
+    return (de ? `${it.n} × ${it.s} s · langsam → Arbeitstempo` : `${it.n} × ${it.s} s · slow → working pace`) + (f ? (de ? ` · davon ${f} s Federn` : ` · incl. ${f} s bouncing`) : "");
+  };
   /* the text on the card: guiding sentence, then the parts */
   function prepLines(sess, it) {
     const lg = S.profile.lang === "de" ? "de" : "en",

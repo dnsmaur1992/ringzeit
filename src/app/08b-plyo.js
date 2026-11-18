@@ -79,6 +79,11 @@
     const o = { fed: 0, land: 0, int: 0, est: 0 };
     for (const b of (sess && sess.blocks) || [])
       for (const it of b.items || []) {
+        // the preparation on the focus: only its structured Federn share (18.11.2026)
+        if (isFocusPrep(it)) {
+          o.fed += prepFedOf(it);
+          continue;
+        }
         const e = it.id && EX[it.id] && PLYO[EX[it.id].key] ? EX[it.id].key : null;
         if (b.rounds && (it.k === "bounce" || e)) o.fed += b.w || 180;
         else if (e) {
@@ -95,8 +100,9 @@
     cur.fed + c.fed <= L.fed && cur.land + c.land <= L.land && cur.int + c.int <= L.int && !(c.single && L.int <= 0);
   /* a "Federn & Antritt" unit: only as many bounce rounds as the Federzeit allows – the rest stay footwork rounds
      without the bouncing; the closing block then gets what is left */
-  function plyoLimitRounds(items, w) {
-    const allowed = Math.floor(plyoLimits().fed / (w || 180));
+  function plyoLimitRounds(items, w, reserve = 0) {
+    // reserve: Federzeit already planned elsewhere in the unit (the preparation on the focus)
+    const allowed = Math.floor(Math.max(0, plyoLimits().fed - reserve) / (w || 180));
     let k = 0;
     for (const r of items) if (r.k === "bounce" && ++k > allowed) r.k = "foot";
     return items;
@@ -104,8 +110,9 @@
   /* ---- Progression (Schritt 7, E5/E30–E34, Betreiber 17.11.2026) ----
      Automatic and cautious, per drill of the closing block (not in rounds). Evidence: the last 3 own units with this
      drill at the current step all complete, effort (RPE) ≤ 6 and no complaints (a note with pain/complaints or an active
-     knee/ankle limit) → one step up. One step is about +5 %: +1 repetition in one set (rep drills) or +5 s per set (timed
-     drills). Order: first the amount up to +4 steps (and only within the unit's limits), then the rest −5 s per step to
+     knee/ankle limit) → one step up. One step is +1 repetition in one set (rep drills) or +1 s per set (timed drills) –
+     cautious on purpose; in per cent that depends on the starting value (20 → 21 s is +5 %, 30 → 31 s about +3 %), so
+     no exact percentage is promised (corrected 18.11.2026; the plan of 17.11. said "+5 s"). Order: first the amount up to +4 steps (and only within the unit's limits), then the rest −5 s per step to
      −15 s at most, then the commands 1 s faster (once). A signal – RPE ≥ 9, complaints or the drill not done (aborted) –
      goes one step back. A deload week keeps the step reached but trains it without the additions. The step is stored
      with the drill in the unit and in the log entry ("plyo": id, step, done); older entries without it start at 0.

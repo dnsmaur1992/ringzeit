@@ -1066,6 +1066,42 @@
       "Hohlkreuz beim Drücken",
       "Arching the lower back to press",
     ],
+    "str.chest_press_machine": [
+      ["Sitz so einstellen, dass die Griffe auf Brusthöhe sind", "Schulterblätter bleiben an der Lehne", "Ausatmen beim Drücken"],
+      ["Set the seat so the handles are at chest height", "Shoulder blades stay against the pad", "Breathe out as you press"],
+      "Schultern ziehen nach vorn, Ellbogen schnappen durch",
+      "Shoulders rolling forward, elbows snapping straight",
+    ],
+    "str.leg_curl_machine": [
+      ["Knie genau auf der Drehachse", "Hüfte bleibt am Polster", "Langsam zurück, nicht fallen lassen"],
+      ["Knees exactly on the pivot", "Hips stay on the pad", "Return slowly, don't let it drop"],
+      "Mit Schwung ziehen, Hüfte hebt ab",
+      "Swinging the weight, hips lifting off",
+    ],
+    "str.leg_extension_machine": [
+      ["Knie genau auf der Drehachse", "Oben eine Sekunde halten", "Langsam ablassen"],
+      ["Knees exactly on the pivot", "Hold one second at the top", "Lower slowly"],
+      "Zu schwer mit Schwung – bei Kniebeschwerden weglassen",
+      "Too heavy with momentum – skip it with knee problems",
+    ],
+    "str.machine_shoulder_press": [
+      ["Griffe auf Schulterhöhe starten", "Rücken und Kopf an der Lehne", "Oben nicht ganz durchdrücken"],
+      ["Start with the handles at shoulder height", "Back and head against the pad", "Don't lock out fully at the top"],
+      "Hohlkreuz, um mehr Gewicht zu schaffen",
+      "Arching the lower back to move more weight",
+    ],
+    "cond.cross_trainer_intervals": [
+      ["Aufrecht, Blick nach vorn", "Arme arbeiten mit", "Zügig heißt: sprechen nur noch in kurzen Sätzen"],
+      ["Upright, eyes forward", "Arms work along", "Hard means: only short sentences still possible"],
+      "Auf den Griffen abstützen und mitziehen lassen",
+      "Leaning on the handles and letting the machine carry you",
+    ],
+    "warm.cardio_machine": [
+      ["Locker beginnen, langsam steigern", "Zum Ende leicht schwitzen", "Danach Aufwärmsätze an der ersten Übung"],
+      ["Start easy, build up slowly", "Light sweat by the end", "Then warm-up sets on the first exercise"],
+      "Gleich zu schnell starten",
+      "Starting too fast",
+    ],
     "str.leg_press": [
       ["Füße schulterbreit mittig auf der Platte", "Unterer Rücken bleibt am Polster", "Knie oben nicht durchdrücken"],
       ["Feet shoulder-width, centred on the plate", "Lower back stays on the pad", "Don't lock the knees at the top"],
