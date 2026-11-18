@@ -1980,8 +1980,9 @@ test("18.11.2026 E41–E58 automatic load distribution: dialog from 5 days, mark
   const a = app();
   a.setDate("2026-11-09"); // Monday
   a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.example=false;S.profile.days=[0,1,2,3,4,5];S.profile.minutes=60;S.profile.club={days:[],minutes:90};S.log=[];S.sessions={};S.ov={};S.profile.planStart='2026-10-05';S.profile.comps=[];S.profile.loadAsked=true;S.profile.toured=true;S.profile.newsSeen=99");
-  const roles = () => JSON.parse(a.run("JSON.stringify(loadWeek(iso(today())).role)"));
-  const ex = () => JSON.parse(a.run("JSON.stringify(loadWeek(iso(today())).extra)"));
+  // each scenario starts with an empty make-up ledger (the ledger itself has its own test below)
+  const roles = () => JSON.parse(a.run("S.profile.ldClaims={};loadAssign(iso(today()));JSON.stringify(loadWeek(iso(today())).role)"));
+  const ex = () => JSON.parse(a.run("S.profile.ldClaims={};loadAssign(iso(today()));JSON.stringify(loadWeek(iso(today())).extra)"));
   // switched off: no roles, the effort as before (E57)
   const before = a.run("['2026-11-10','2026-11-12'].map(d=>rpeRange(planOn(d),d).txt).join()");
   assert.equal(a.run("JSON.stringify(loadRole('2026-11-10'))"), "null");
@@ -2023,7 +2024,7 @@ test("18.11.2026 E41–E58 automatic load distribution: dialog from 5 days, mark
   // E53: a missed moderate unit – the next technique unit gets one round more, the duration stays
   a.run("S.profile.hardDays=[0,3];S.log=[{id:'a',date:'2026-11-09',src:'own',type:'T',minutes:60,rpe:7}]");
   assert.deepEqual(ex(), { "2026-11-13": 1 }, "Tuesday missed → Friday's technique unit");
-  const fri = (on) => JSON.parse(a.run(`(()=>{S.profile.autoLoad=${on};Math.random=(()=>{let x=7;return()=>((x=(x*16807)%2147483647)/2147483647)})();const s=buildSession('2026-11-13','T','gym',['bag'],{sport:'kickboxing',min:60});return JSON.stringify({n:s.blocks.find(b=>b.rounds).items.length,min:s.blocks.reduce((a,b)=>a+b.min,0),notes:s.notes,ld:s.ld||''})})()`));
+  const fri = (on) => JSON.parse(a.run(`(()=>{S.profile.autoLoad=${on};S.profile.ldClaims={};Math.random=(()=>{let x=7;return()=>((x=(x*16807)%2147483647)/2147483647)})();const s=buildSession('2026-11-13','T','gym',['bag'],{sport:'kickboxing',min:60});return JSON.stringify({n:s.blocks.find(b=>b.rounds).items.length,min:s.blocks.reduce((a,b)=>a+b.min,0),notes:s.notes,ld:s.ld||''})})()`));
   const f0 = fri(false), f1 = fri(true);
   assert.equal(f1.n, f0.n + 1, JSON.stringify([f0, f1]));
   assert.equal(f1.min, f0.min, "same duration");
@@ -2035,7 +2036,7 @@ test("18.11.2026 E41–E58 automatic load distribution: dialog from 5 days, mark
   assert.deepEqual(ex(), {});
   assert.equal(roles()["2026-11-16"], "hard");
   // loadRefresh: a not begun unit whose role changed is rebuilt, a begun one stays
-  a.run("S.log=[];S.sessions={};S.sessions['2026-11-18']=buildSession('2026-11-18','P','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-20']=buildSession('2026-11-20','T','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-20'].checked={'0.0':true}");
+  a.run("S.log=[];S.profile.ldClaims={};S.sessions={};S.sessions['2026-11-18']=buildSession('2026-11-18','P','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-20']=buildSession('2026-11-20','T','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-20'].checked={'0.0':true}");
   assert.equal(a.run("S.sessions['2026-11-18'].ld"), "hard");
   a.run("S.log=[{id:'c1',date:'2026-11-16',src:'own',type:'T',minutes:60,rpe:8},{id:'c2',date:'2026-11-17',src:'club',type:'T',minutes:90,rpe:8}];loadRefreshKey=''");
   a.setDate("2026-11-18");
@@ -2078,6 +2079,61 @@ test("18.11.2026 E41–E58 automatic load distribution: dialog from 5 days, mark
   // English
   a.run("S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.lang='en'");
   assert.match(a.run("loadAskHtml()"), /How should Ringzeit spread the load\?[\s\S]*Switch on/);
+});
+
+test("18.11.2026 make-up only once: a missed hard day triggers one replacement, a missed moderate unit one extra round – recomputing, reopening or restarting adds nothing, a begun replacement stays", () => {
+  const a = app();
+  a.setDate("2026-11-10"); // Tuesday
+  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.example=false;S.profile.days=[0,1,2,3,4,5];S.profile.minutes=60;S.profile.club={days:[],minutes:90};S.log=[];S.sessions={};S.ov={};S.profile.planStart='2026-10-05';S.profile.comps=[];S.profile.loadAsked=true;S.profile.toured=true;S.profile.newsSeen=99;S.profile.autoLoad=true;S.profile.hardDays=[0];S.profile.ldClaims={}");
+  const week = () => JSON.parse(a.run("JSON.stringify(loadWeek(iso(today())))"));
+  const claims = () => JSON.parse(a.run("JSON.stringify(S.profile.ldClaims)"));
+  // the report: Monday marked hard, missed → Tuesday takes over …
+  assert.equal(a.run("loadRole('2026-11-10').role"), "hard");
+  assert.deepEqual(claims(), { "2026-11-09": { to: "2026-11-10", k: "hard" } });
+  // … and is done; on Thursday the missed Monday must not be made up a second time
+  a.run("S.log=[{id:'t',date:'2026-11-10',src:'own',type:'S',minutes:60,rpe:8},{id:'w',date:'2026-11-11',src:'own',type:'P',minutes:60,rpe:6}]"); // Wednesday trained as planned
+  a.setDate("2026-11-12");
+  for (let i = 0; i < 3; i++) a.run("loadRefreshKey='';loadRefresh();loadAssign(iso(today()))");
+  let w = week();
+  assert.notEqual(w.role["2026-11-12"], "hard", JSON.stringify(w));
+  assert.equal(Object.keys(claims()).length, 1, "recomputing adds no claim");
+  // restarting (state saved and loaded again) adds none either
+  a.run("S.profile=JSON.parse(JSON.stringify(S.profile));loadRefreshKey='';loadRefresh()");
+  assert.equal(Object.keys(claims()).length, 1);
+  assert.notEqual(week().role["2026-11-12"], "hard");
+  // the replacement done with a lower effort still used up the claim
+  a.run("S.log=[{id:'t',date:'2026-11-10',src:'own',type:'S',minutes:60,rpe:5},{id:'w',date:'2026-11-11',src:'own',type:'P',minutes:60,rpe:6}];loadAssign(iso(today()))");
+  assert.notEqual(week().role["2026-11-12"], "hard");
+  // a missed replacement does not start a chain: neither Monday again nor Tuesday as a new miss
+  a.run("S.log=[{id:'w',date:'2026-11-11',src:'own',type:'P',minutes:60,rpe:6}]");
+  w = week();
+  assert.notEqual(w.role["2026-11-12"], "hard");
+  assert.deepEqual(w.extra, {});
+  assert.equal(Object.keys(claims()).length, 1);
+  // the weekly limit still holds: three hard days already logged – a miss gets no replacement (settled with to: null)
+  a.run("S.profile.ldClaims={};S.profile.hardDays=[0,3];S.log=[{id:'x',date:'2026-11-10',src:'club',type:'T',minutes:90,rpe:8},{id:'y',date:'2026-11-11',src:'own',type:'P',minutes:60,rpe:9}]");
+  a.setDate("2026-11-12");
+  a.run("loadAssign(iso(today()))");
+  assert.deepEqual(claims()["2026-11-09"], { to: null, k: "hard" });
+  assert.ok(Object.values(week().role).filter((x) => x === "hard").length <= 3);
+  // extra technique round: Tuesday (moderate) missed → the next technique unit once, not the following one again
+  a.setDate("2026-11-11");
+  a.run("S.profile.ldClaims={};S.profile.hardDays=[];S.ov={'2026-11-12':{t:'C'}};S.log=[{id:'m',date:'2026-11-09',src:'own',type:'T',minutes:60,rpe:6}]");
+  a.run("loadAssign(iso(today()))");
+  assert.deepEqual(week().extra, { "2026-11-12": 1 });
+  a.run("S.log.push({id:'w2',date:'2026-11-11',src:'own',type:'P',minutes:60,rpe:6},{id:'c',date:'2026-11-12',src:'own',type:'C',minutes:60,rpe:6})");
+  a.setDate("2026-11-13");
+  for (let i = 0; i < 3; i++) a.run("loadRefreshKey='';loadRefresh()");
+  assert.deepEqual(week().extra, {}, "Friday gets no second extra round for the same miss");
+  assert.equal(Object.values(claims()).filter((c) => c.k === "x").length, 1);
+  // a begun replacement stays as it is when its role would change
+  a.setDate("2026-11-17");
+  a.run("S.profile.ldClaims={};S.profile.hardDays=[0];S.ov={};S.log=[];S.sessions={}");
+  a.run("loadAssign(iso(today()));S.sessions['2026-11-17']=buildSession('2026-11-17','S','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-17'].perf={'1.0':[{kg:10,reps:8}]}");
+  assert.equal(a.run("S.sessions['2026-11-17'].ld"), "hard");
+  const kept = a.run("JSON.stringify(S.sessions['2026-11-17'])");
+  a.run("S.profile.hardDays=[1];loadRefreshKey='';loadRefresh()");
+  assert.equal(a.run("JSON.stringify(S.sessions['2026-11-17'])"), kept);
 });
 
 test("voice: the best installed voice is used – premium before enhanced before default, no novelty or online-only voices", () => {

@@ -9,7 +9,7 @@
      - the person marks the hard weekdays (E47); a hard club entry that would make it more than 3 turns the next marked,
        not yet begun day into a moderate one (E48);
      - a marked hard day that passed without an entry: the next not begun Ringzeit unit of the same week becomes hard –
-       never right after a hard day, never more than 3 (E52);
+       never right after a hard day, never more than 3 (E52); each missed day is made up at most once (ledger below);
      - a missed moderate unit: the next technique unit of the week gets one technique round more, the duration stays –
        the minutes come from the closing block (E53);
      - the other units alternate moderate (target up to 6) and easy (up to 4); mobility stays at 3 (E50); durations and
@@ -28,53 +28,86 @@
     const ty = planOn(ds);
     return ty && ty !== "M" ? ty : null;
   };
-  /* the roles of the whole week of a date: { [date]: "hard" | "mid" | "easy" }, extra: { [date]: 1 } (E53) */
-  function loadWeek(ds) {
+  /* ---- make-up ledger (18.11.2026, report "Nachholbedarf nur einmal erfüllen") ----
+     A missed day may trigger at most ONE replacement. The replacement is written down once, in S.profile.ldClaims
+     { [missed date]: { to: replacement date | null, k: "hard" | "x" } }, and from then on only read: opening, recomputing
+     or restarting never creates a second claim. A replacement that is done (or missed itself) has used up the claim; a
+     missed replacement day never triggers a further one (no chain). A claim without a free slot is stored with to: null
+     and is settled as well. Claims older than 5 weeks are dropped. */
+  const ldClaims = () => (S.profile.ldClaims = S.profile.ldClaims || {});
+  const isClaimTarget = (d, C = ldClaims()) => Object.values(C).some((c) => c && c.to === d);
+  function loadAssign(ds) {
+    if (!loadOn()) return false;
+    const C = ldClaims(),
+      w = loadWeekBase(ds),
+      td = iso(today());
+    let changed = false;
+    // hard days first: the next open unit, never right after a hard day, within the weekly limit
+    for (const d of w.missed) {
+      if (C[d] || isClaimTarget(d, C) || !w.marked.has(wd(d))) continue;
+      const hardNow = (x) => hardEntry(x) || w.H.has(x) || Object.values(C).some((c) => c && c.k === "hard" && c.to === x);
+      const used = w.settledHard.length + w.open.filter((x) => hardNow(x)).length;
+      let to = null;
+      if (used < LOAD_HARD_MAX)
+        to = w.open.find((x) => x >= td && !hardNow(x) && !isClaimTarget(x, C) && !hardNow(iso(addDays(parse(x), -1)))) || null;
+      C[d] = { to, k: "hard" };
+      changed = true;
+    }
+    // then the moderate/easy ones: one technique round more in the next open technique unit
+    for (const d of w.missed) {
+      if (C[d] || isClaimTarget(d, C) || w.marked.has(wd(d))) continue;
+      const hardNow = (x) => hardEntry(x) || w.H.has(x) || Object.values(C).some((c) => c && c.k === "hard" && c.to === x);
+      const to = w.open.find((x) => ["T", "C"].includes(planOn(x)) && !hardNow(x) && !isClaimTarget(x, C)) || null;
+      C[d] = { to, k: "x" };
+      changed = true;
+    }
+    // old claims go
+    const old = iso(addDays(monday(today()), -35));
+    for (const d of Object.keys(C)) if (d < old) {
+      delete C[d];
+      changed = true;
+    }
+    if (changed) store.save();
+    return changed;
+  }
+  /* the facts of a week, without claims: dates, settled hard days, open and missed own units, marked days (E48 applied) */
+  function loadWeekBase(ds) {
     const mon = monday(parse(ds)),
       td = iso(today()),
       dates = [0, 1, 2, 3, 4, 5, 6].map((i) => iso(addDays(mon, i))),
       marked = new Set(S.profile.hardDays || []),
-      role = {},
-      extra = {};
-    const settledHard = dates.filter((d) => hardEntry(d)),
+      C = ldClaims(),
+      settledHard = dates.filter((d) => hardEntry(d)),
       open = dates.filter((d) => d >= td && ownUnit(d) && !doneOn(d)),
       missed = dates.filter((d) => d < td && ownUnit(d) && !doneOn(d)),
-      missedHard = missed.filter((d) => marked.has(wd(d))).length,
-      missedMid = missed.filter((d) => !marked.has(wd(d))).length,
-      allowed = Math.max(0, LOAD_HARD_MAX - settledHard.length);
+      openClaimsHard = open.filter((d) => Object.values(C).some((c) => c && c.k === "hard" && c.to === d)).length,
+      allowed = Math.max(0, LOAD_HARD_MAX - settledHard.length - openClaimsHard);
     // E48: too many marked days left for the allowed number – the next ones (in date order) become moderate
-    const R = open.filter((d) => marked.has(wd(d))),
-      H = new Set(R.slice(Math.max(0, R.length - allowed))),
-      isHard = (d) => hardEntry(d) || H.has(d);
-    // E52: missed hard days are taken over by the next open units, never right after a hard day
-    let k = Math.min(missedHard, allowed - H.size);
-    for (const d of open) {
-      if (k <= 0) break;
-      if (H.has(d) || isHard(iso(addDays(parse(d), -1)))) continue;
-      H.add(d);
-      k--;
-    }
-    // E50: the others alternate moderate and easy, in date order over the whole week
+    const R = open.filter((d) => marked.has(wd(d)) && !Object.values(C).some((c) => c && c.k === "hard" && c.to === d)),
+      H = new Set(R.slice(Math.max(0, R.length - allowed)));
+    return { dates, marked, settledHard, open, missed, H };
+  }
+  /* the roles of the whole week of a date: { [date]: "hard" | "mid" | "easy" }, extra: { [date]: 1 } (E50, E52, E53) –
+     only read from the ledger, so the same state always gives the same week */
+  function loadWeek(ds) {
+    const w = loadWeekBase(ds),
+      C = ldClaims(),
+      role = {},
+      extra = {},
+      claimed = (d, k) => Object.values(C).some((c) => c && c.k === k && c.to === d);
     let i = 0;
-    for (const d of dates) {
+    for (const d of w.dates) {
       if (!ownUnit(d)) continue;
-      if (H.has(d) || hardEntry(d)) role[d] = "hard";
+      if (w.H.has(d) || hardEntry(d) || claimed(d, "hard")) role[d] = "hard";
       else role[d] = i++ % 2 === 0 ? "mid" : "easy";
-    }
-    // E53: each missed moderate unit gives the next open technique unit one round more
-    let m = missedMid;
-    for (const d of open) {
-      if (m <= 0) break;
-      if (role[d] !== "hard" && ["T", "C"].includes(planOn(d))) {
-        extra[d] = 1;
-        m--;
-      }
+      if (claimed(d, "x") && role[d] !== "hard" && w.open.includes(d)) extra[d] = 1;
     }
     return { role, extra };
   }
   /* role and extra round of one date (null when the switch is off or the day has no own unit) */
   function loadRole(ds) {
     if (!ds || !loadOn() || !ownUnit(ds)) return null;
+    loadAssign(ds);
     const w = loadWeek(ds);
     return { role: w.role[ds] || "mid", extra: w.extra[ds] || 0 };
   }
@@ -89,6 +122,7 @@
       key = [td, S.log.length, last && last.id, last && last.rpe, !!S.profile.autoLoad, (S.profile.hardDays || []).join(""), Object.keys(S.sessions).length].join("|");
     if (key === loadRefreshKey) return false;
     loadRefreshKey = key;
+    loadAssign(td); // write down make-up claims once (never twice for the same missed day)
     const resume = typeof resumeRead === "function" ? resumeRead() : null,
       sun = iso(addDays(monday(today()), 6));
     let changed = false;

@@ -825,3 +825,8 @@ Code: `08e-load.js`; eingehängt in `rpeRange` und `buildSessionCore` (Zielanstr
 
 - Wunsch nach Sichtung: der Schwerpunkt wieder als eigene Vollseite. Mit Vorbereitungsblock kommt die Schwerpunkt-Seite jetzt **vor** der Vorbereitung (Kopfzeile: Hauptteil, Leitsatz, „Los geht's“), danach die Vorbereitung mit ihren Teilen (ohne Leitsatz), dann der Hauptteil. Ohne Vorbereitung bleibt die Seite vor den Runden.
 - Der Leitsatz wird einmal gesagt (auf seiner Seite); der Timer der Vorbereitung sagt nur noch die Teile. Zurückblättern nach „Los geht's“ zeigt die Seite nicht erneut.
+
+## Korrektur Lastverteilung: Nachholbedarf nur einmal (18.11.2026, Prüfauftrag Punkt 1)
+
+- **Fehler (nachgestellt):** Montag markiert hart, ausgefallen → Dienstag übernimmt und wird erledigt → am Donnerstag wurde Montag erneut als offener Nachholbedarf gezählt und Donnerstag hart. Dasselbe galt für die Extra-Technikrunde.
+- **Lösung:** ein Nachhol-Verzeichnis im Profil (`ldClaims`: verpasster Tag → Ersatztag, Art hart/Extra-Runde). Jeder verpasste Tag bekommt höchstens einmal einen Ersatz; danach wird nur noch gelesen. Ein erledigter oder selbst verpasster Ersatztag hat den Anspruch verbraucht, ein verpasster Ersatz löst keinen weiteren aus. Ohne freien Platz (Wochengrenze, Tag nach hartem Tag) wird der Anspruch als erledigt ohne Ersatz eingetragen. Einträge älter als 5 Wochen entfallen. Wochengrenze (3 harte Tage), E48 und Schutzregeln unverändert; begonnene Einheiten werden nicht neu erstellt.
