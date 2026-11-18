@@ -799,3 +799,24 @@ Entscheidungen E5, E30–E34. Code: `08b-plyo.js` (`plyoStep`, `plyoProg`, `plyo
   im Eintrag (`plyo`: id, Stufe, erledigt). Ältere Einträge ohne Angabe beginnen bei 0; Neuerstellen ändert nichts.
 - **Kickbox-Vergleich unverändert** (keine Verlaufsdaten mit Drills).
 - **Hilfe:** zwei neue Fragen („Vorbereitung auf den Schwerpunkt“, „Federn & Antritt heute“).
+
+## Energiebedarf & Gewichtsklasse im Ratgeber (18.11.2026, E37–E40)
+
+Code: `34g-energy.js`; eingehängt in `readsFor` (letztes Thema in jeder Sportart), `guideSheetHtml`, Klick-/Eingabe-Handler in `38-events.js`.
+
+- **Lesetext je Sport (E37):** Kickboxen (WAKO-Gewichtsklassen), Boxen (DBV), Taekwondo WT/DTU bzw. ITF (Prüfungen ohne Gewicht); gemeinsam: genug Energie (REDs), Eiweiß verteilen, Trinken. Keine Anleitungen zum Abkochen oder Entwässern.
+- **Rechner:** Grundumsatz nach Mifflin-St Jeor (Geschlecht männlich/weiblich/keine Angabe = Mittelwert) × Arbeit (sitzend 1,4 · stehend 1,6 · körperlich 1,8; E40, vorbelegt aus „Alltag & Pausen“) + Training der Woche aus dem Plan (Ringzeit-Tage × Dauer, Vereinstage × Vereinsdauer; netto 5 MET). Anzeige als Spanne (±7,5 %, auf 50 kcal gerundet), Eiweiß 1,6–2,2 g/kg.
+- **Ziele (E38):** Halten · Leicht abnehmen (−300 bis −500 kcal, nie unter dem Grundumsatz) · Aufbauen (+200 bis +300 kcal).
+- **Nichts gespeichert (E39):** Geschlecht, Arbeit und geänderte Zahlen leben nur im offenen Blatt; Größe, Gewicht und Alter werden aus Profil und Verlauf vorbelegt.
+- **Schutz:** unter 18 (oder ohne Geburtsdatum in einer jungen Altersgruppe) kein Rechner, nur der Lesetext mit Hinweis auf Trainer und Eltern; liegt das Gewicht über der Gewichtsklasse des nächsten Turniers, erscheint die bekannte Warnung – ohne Abnehm-Tempo.
+- Hilfefrage „Wie viel sollte ich essen?“. Kickbox-Vergleich unverändert (der Plan ist nicht betroffen).
+
+## Automatische Lastverteilung (18.11.2026, E41–E58)
+
+Code: `08e-load.js`; eingehängt in `rpeRange` und `buildSessionCore` (Zielanstrengung, Hinweis, Extra-Technikrunde), `render` (Neuaufbau nicht begonnener Einheiten mit geänderter Rolle, Dialog), Profil → Training (Schalter, harte Tage), Blatt-Arten `loadask`/`loadhard`.
+
+- **Frage statt Umstellung:** ab 5 Trainingstagen pro Woche (Ringzeit- und Vereinstage zusammen, ein Tag mit beidem einmal) einmal je Überschreiten – nach Tour und „Was ist neu“, nie für Kinder und Jugendliche; bestehende Profile mit ≥ 5 Tagen sehen sie beim nächsten Start. „Aktivieren“ schaltet ein und öffnet die Wahl der harten Tage; „Wie bisher“ lässt alles beim Alten.
+- **Schalter** „Automatische Lastverteilung“ unter Profil → Training; aus = alles Neue entfällt, Ringzeit plant wie bisher.
+- **Eingeschaltet:** höchstens 3 harte Tage pro Woche; hart zählt nur ein Eintrag (eigen oder Verein) mit Anstrengung ≥ 7. Die harten Ringzeit-Tage markiert die Person (höchstens 3). Würde ein hartes Vereinstraining die 3 überschreiten, wird der nächste markierte, noch nicht begonnene Tag mittel. Ein verpasster harter Tag: die nächste offene Ringzeit-Einheit der Woche wird hart (nie direkt nach einem harten Tag). Eine verpasste mittlere/lockere Einheit: die nächste Technik- bzw. Technik-&-Kondition-Einheit bekommt eine Technikrunde mehr, die Minuten kommen aus dem Abschlussblock (mind. 4 bleiben). Die übrigen Einheiten abwechselnd mittel (bis 6) und locker (bis 4), Mobility bleibt bei 3. Dauer und Art der Tage bleiben; nur dieselbe Woche zählt.
+- Die Rolle steht an der Einheit (`ld`); ändert sie sich (Eintrag, verpasster Tag), wird eine nicht begonnene Einheit dieser Woche neu erstellt.
+- Hilfefrage „Was ist die automatische Lastverteilung?“. Kickbox-Vergleich unverändert (Schalter aus ist Standard).

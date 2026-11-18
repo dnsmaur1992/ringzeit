@@ -315,3 +315,13 @@ Entscheidungen E5, E30–E34. Code: `08b-plyo.js` (`plyoStep`, `plyoProg`, `plyo
   im Eintrag (`plyo`: id, Stufe, erledigt). Ältere Einträge ohne Angabe beginnen bei 0; Neuerstellen ändert nichts.
 - **Kickbox-Vergleich unverändert** (keine Verlaufsdaten mit Drills).
 - **Hilfe:** zwei neue Fragen („Vorbereitung auf den Schwerpunkt“, „Federn & Antritt heute“).
+
+## Automatische Lastverteilung (18.11.2026, E41–E58)
+
+Code: `08e-load.js`; eingehängt in `rpeRange` und `buildSessionCore` (Zielanstrengung, Hinweis, Extra-Technikrunde), `render` (Neuaufbau nicht begonnener Einheiten mit geänderter Rolle, Dialog), Profil → Training (Schalter, harte Tage), Blatt-Arten `loadask`/`loadhard`.
+
+- **Frage statt Umstellung:** ab 5 Trainingstagen pro Woche (Ringzeit- und Vereinstage zusammen, ein Tag mit beidem einmal) einmal je Überschreiten – nach Tour und „Was ist neu“, nie für Kinder und Jugendliche; bestehende Profile mit ≥ 5 Tagen sehen sie beim nächsten Start. „Aktivieren“ schaltet ein und öffnet die Wahl der harten Tage; „Wie bisher“ lässt alles beim Alten.
+- **Schalter** „Automatische Lastverteilung“ unter Profil → Training; aus = alles Neue entfällt, Ringzeit plant wie bisher.
+- **Eingeschaltet:** höchstens 3 harte Tage pro Woche; hart zählt nur ein Eintrag (eigen oder Verein) mit Anstrengung ≥ 7. Die harten Ringzeit-Tage markiert die Person (höchstens 3). Würde ein hartes Vereinstraining die 3 überschreiten, wird der nächste markierte, noch nicht begonnene Tag mittel. Ein verpasster harter Tag: die nächste offene Ringzeit-Einheit der Woche wird hart (nie direkt nach einem harten Tag). Eine verpasste mittlere/lockere Einheit: die nächste Technik- bzw. Technik-&-Kondition-Einheit bekommt eine Technikrunde mehr, die Minuten kommen aus dem Abschlussblock (mind. 4 bleiben). Die übrigen Einheiten abwechselnd mittel (bis 6) und locker (bis 4), Mobility bleibt bei 3. Dauer und Art der Tage bleiben; nur dieselbe Woche zählt.
+- Die Rolle steht an der Einheit (`ld`); ändert sie sich (Eintrag, verpasster Tag), wird eine nicht begonnene Einheit dieser Woche neu erstellt.
+- Hilfefrage „Was ist die automatische Lastverteilung?“. Kickbox-Vergleich unverändert (Schalter aus ist Standard).

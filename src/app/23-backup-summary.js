@@ -388,6 +388,7 @@
   }
   function render(enter) {
     loadCache = {};
+    if (loadOn()) loadRefresh(); // automatic load distribution: units whose role changed are rebuilt before drawing
     const app = document.getElementById("app");
     if (enter && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
       app.classList.remove("enter");
@@ -414,5 +415,6 @@
     else ui.focus = false;
     renderFocus();
     renderOnb();
+    loadAskCheck(); // automatic load distribution: the question from 5 training days (once per crossing)
   }
 

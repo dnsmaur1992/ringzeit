@@ -370,6 +370,9 @@
   }
   function rpeRange(type, ds) {
     let r = baseRpe(type, ds);
+    // automatic load distribution (E50): moderate up to 6, easy up to 4 – a hard day keeps the value of the phase
+    const lr = type !== "M" ? loadRole(ds || iso(today())) : null;
+    if (lr) r = Math.min(r, loadCap(lr.role));
     if (type !== "M" && ramadanOn(ds)) r -= 1;
     if (type !== "M" && weekMood(ds) === "hard") r -= 1;
     if (type !== "M") r -= [1.5, 0.5, 0][formOn(ds || iso(today()))];
@@ -2076,6 +2079,9 @@
     if (s.sport === "taekwondo") s.tstyle = opts.tstyle || tkdStyle();
     if (s.sport === "kickboxing" && opts.disc && opts.disc !== S.profile.disc) s.disc = opts.disc;
     unitStyle = null;
+    // automatic load distribution: the role it was built with (a changed role rebuilds a not begun unit, loadRefresh)
+    const lr = s.type !== "M" ? loadRole(dateStr) : null;
+    if (lr) s.ld = ldSig(lr);
     s.id = s.id || "s" + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36);
     return s;
   }
@@ -2153,6 +2159,8 @@
       blk = bi ? { k: bi.k, wk: bi.wk } : null,
       byName = (list, base) => (e) => (list.includes(e.key) ? 3 : 0) + (base ? base(e) : 0);
     if (bi) notes.push(t("blk").note[bi.k][bi.st]);
+    const lrole = type !== "M" ? loadRole(dateStr) : null;
+    if (lrole) notes.push(t("loadDist").note[lrole.role]);
     if (type === "M") {
       // sport focus (7b): WT active flexibility in the full range of motion, boxing loose footwork/shadow, ITF loose hand-foot links
       const wtM = isTkd() && tkdUnitStyle() === "wt",
@@ -2431,6 +2439,16 @@
           Math.max(2, Math.floor(((rest - exMin - 5) * 60) / (fw + rb))),
         );
         main = Math.round((nR * (fw + rb)) / 60);
+      }
+      // automatic load distribution (E53): a missed moderate unit this week – one technique round more, the minutes come
+      // from the closing block (at least 4 stay), the duration of the unit stays
+      if (lrole && lrole.extra && type !== "P") {
+        const x = Math.ceil((fw + rb) / 60);
+        if (rest - exMin - main - x >= 4) {
+          nR += 1;
+          main += x;
+          notes.push(t("loadDist").note.extra);
+        }
       }
       const sup = rest - exMin - main;
       if (type === "P" && eq.includes("partner")) {

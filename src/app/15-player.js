@@ -1348,6 +1348,7 @@
       const X = t("onbx");
       train += `<div class="panel"><div class="field"><span class="lab">${X.locLbl}</span><div class="seg g2">${["gym", "studio", "home", "out", ""].map((k) => `<button type="button" data-ploc="${k}" aria-pressed="${(p.loc || "") === k}">${k ? t("locs")[k] : X.locAny}</button>`).join("")}</div><span class="sub">${X.locDesc[p.loc || ""]} ${X.locHint}</span></div></div>`;
     }
+    train += loadProfHtml(p);
     train += blockProfHtml();
     goals += profGoalsHtml(p) + arcProfileHtml();
     const note = `<p class="sub" style="text-align:center;margin:-4px 0 0">${p.days.length ? t("autoSave") : t("needDay")}</p>`;

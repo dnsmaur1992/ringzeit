@@ -121,8 +121,11 @@
       },
     },
   ];
-  const readsFor = () =>
-    isTkdMain() ? [...tkdReads(), ...READS.filter((r) => !r.only && r.k !== "mistakes").map(tkdShared)] : isBoxMain() ? [...BOX_READS, ...READS.filter((r) => !r.only)] : READS.filter((r) => r.only !== "b");
+  // the energy topic with its calculator closes the list in every sport (E37, 18.11.2026)
+  const readsFor = () => [
+    ...(isTkdMain() ? [...tkdReads(), ...READS.filter((r) => !r.only && r.k !== "mistakes").map(tkdShared)] : isBoxMain() ? [...BOX_READS, ...READS.filter((r) => !r.only)] : READS.filter((r) => r.only !== "b")),
+    ENERGY_READ,
+  ];
   const BOX_CARE_SKIP = 2; // shin and foot guards
   function guideSecs(kind) {
     const G = t("guide");

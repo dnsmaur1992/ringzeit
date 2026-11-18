@@ -62,6 +62,10 @@
       h += `<h3>${t("moveTo")}</h3><div class="mlist">${rows.join("")}</div><div class="acts2">${cancel}</div>`;
     } else if (o.kind === "guide") {
       h += guideSheetHtml(o);
+    } else if (o.kind === "loadask") {
+      h += loadAskHtml();
+    } else if (o.kind === "loadhard") {
+      h += loadHardHtml(S.profile, true);
     } else if (o.kind === "pack") {
       h += packSheetHtml(o);
     } else if (o.kind === "blk") {

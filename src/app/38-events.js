@@ -125,7 +125,8 @@
     if (ds.newsOk) {
       S.profile.newsSeen = NEWS_V;
       store.save();
-      return closeSheet();
+      closeSheet();
+      return loadAskCheck(); // automatic load distribution: the question follows "what's new"
     }
     if (ds.news) return showNews();
     if (ds.legal) {
@@ -145,6 +146,8 @@
         run: resetAll,
       });
     if (ds.mood || ds.low || ds.work || ds.form) return lifeAction(ds);
+    if (ds.en) return energyAction(ds);
+    if (ds.ld || ds.ldon != null || ds.hday != null) return loadAction(ds);
     if (ds.guide || ds.wstep != null || ds.packOpen || ds.pack || ds.packAdd || ds.packReset)
       return guideAction(ds);
     if (ds.fast) {
@@ -1222,6 +1225,7 @@
     true,
   );
   document.addEventListener("change", (ev) => {
+    if (ev.target.dataset && ev.target.dataset.enf) return energyInput(ev.target);
     if (ev.target.dataset && ev.target.dataset.rxchk && ui.relax) {
       ui.relax[ev.target.dataset.rxchk] = ev.target.checked;
       return;

@@ -37,6 +37,7 @@
     }
     const RL = readsFor(),
       rd = RL.findIndex((r) => r.k === o.id);
+    if (rd >= 0 && RL[rd].k === "energy") return energySheetHtml(o, RL[(rd + 1) % RL.length]);
     if (rd >= 0) {
       const R = RL[rd][S.profile.lang === "de" ? "de" : "en"],
         nx = RL[(rd + 1) % RL.length];

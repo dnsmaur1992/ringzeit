@@ -1897,9 +1897,187 @@ test("guide: ten articles in German and English, each opens and leads to the nex
   await a.click({ dataset: { guide: "myths" } });
   assert.match(a.run("guideSheetHtml(ui.sheet)"), /Mythen-Check[\s\S]*data-guide="round"/);
   await a.click({ dataset: { guide: "gloves" } });
-  assert.match(a.run("guideSheetHtml(ui.sheet)"), /Handschuhe erklärt[\s\S]*data-guide="myths"/);
+  // since 18.11.2026 the energy topic closes the list, then it starts again with the myths
+  assert.match(a.run("guideSheetHtml(ui.sheet)"), /Handschuhe erklärt[\s\S]*data-guide="energy"/);
+  await a.click({ dataset: { guide: "energy" } });
+  assert.match(a.run("guideSheetHtml(ui.sheet)"), /Energiebedarf &amp; Gewichtsklasse[\s\S]*data-guide="myths"/);
+  await a.click({ dataset: { guide: "gloves" } });
   a.run("S.profile.lang='en'");
   assert.match(a.run("guideSheetHtml(ui.sheet)"), /Gloves explained/);
+});
+
+test("18.11.2026 E37–E40 energy topic: one calculation for all sports, own text per sport, ranges, limits, nothing stored, none under 18", async () => {
+  const a = app();
+  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.height=178;S.weights=[{date:'2026-11-10',kg:80}];S.profile.days=[0,2,4];S.profile.minutes=60;S.profile.club={days:[1,3],minutes:90};S.profile.work='phys';S.profile.comps=[]");
+  // every sport lists it last, with its own text (E37)
+  const txt = {};
+  for (const [sp, st] of [["kickboxing", "wt"], ["boxing", "wt"], ["taekwondo", "wt"], ["taekwondo", "itf"]]) {
+    a.run(`S.profile.sport='${sp}';S.profile.tkd=Object.assign(S.profile.tkd||{},{style:'${st}'})`);
+    const ks = JSON.parse(a.run("JSON.stringify(readsFor().map(r=>r.k))"));
+    assert.equal(ks[ks.length - 1], "energy", sp);
+    const de = JSON.parse(a.run("JSON.stringify(ENERGY_READ.de.secs)")), en = JSON.parse(a.run("JSON.stringify(ENERGY_READ.en.secs)"));
+    assert.equal(de.length, en.length, sp);
+    txt[sp + st] = de.map((x) => x.join(" ")).join(" ");
+  }
+  assert.match(txt.kickboxingwt, /WAKO/);
+  assert.match(txt.boxingwt, /DBV/);
+  assert.match(txt.taekwondowt, /World Taekwondo und DTU[\s\S]*Gürtelprüfungen|Gürtelprüfungen[\s\S]*World Taekwondo und DTU/);
+  assert.match(txt.taekwondoitf, /ITF/);
+  for (const v of Object.values(txt)) assert.doesNotMatch(v, /\d+\s*kg in|Liter|Sauna (hilft|nutzen)/, "no making-weight instructions");
+  a.run("S.profile.sport='kickboxing'");
+  // the starting values come from profile and history; job prefilled from everyday life (E40)
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(energyStart())")), { sex: "x", age: 36, cm: 178, kg: 80, work: "phys", goal: "keep" });
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(energyWeek())")), { r: 3, rm: 60, c: 2, cm: 90, min: 360 });
+  // Mifflin-St Jeor: 10·80 + 6.25·178 − 5·36 + 5 = 1737.5 → 1750; × 1.8 + 5·80·360/60/7 (342.9) = 3470 → 3200–3750
+  const calc = (v) => JSON.parse(a.run(`JSON.stringify(energyCalc(${JSON.stringify(v)},energyWeek()))`));
+  const base = { sex: "m", age: 36, cm: 178, kg: 80, work: "phys", goal: "keep" };
+  let r = calc(base);
+  assert.equal(r.bmr, 1750);
+  assert.deepEqual(r.need, [3200, 3750]);
+  assert.deepEqual(r.goal, r.need);
+  assert.deepEqual(r.protein, [128, 176]);
+  assert.ok(calc({ ...base, sex: "f" }).bmr < r.bmr && calc({ ...base, sex: "x" }).bmr < r.bmr && calc({ ...base, sex: "x" }).bmr > calc({ ...base, sex: "f" }).bmr);
+  assert.ok(calc({ ...base, work: "sit" }).need[0] < calc({ ...base, work: "stand" }).need[0] && calc({ ...base, work: "stand" }).need[0] < r.need[0], "job changes the needs");
+  // E38: lose a little = −300 to −500 kcal, never below the resting rate; build +200 to +300
+  assert.deepEqual(calc({ ...base, goal: "lose" }).goal, [2950, 3150]);
+  assert.deepEqual(calc({ ...base, goal: "gain" }).goal, [3650, 3750]);
+  const tiny = calc({ sex: "f", age: 60, cm: 150, kg: 45, work: "sit", goal: "lose" });
+  a.run("S.profile.days=[];S.profile.club={days:[],minutes:90}");
+  const tiny0 = JSON.parse(a.run(`JSON.stringify(energyCalc(${JSON.stringify({ sex: "f", age: 60, cm: 150, kg: 45, work: "sit", goal: "lose" })},energyWeek()))`));
+  assert.ok(tiny0.goal[0] >= tiny0.bmr && tiny0.goal[1] >= tiny0.bmr && tiny0.floor, JSON.stringify(tiny0));
+  assert.ok(tiny.goal[0] >= tiny.bmr);
+  a.run("S.profile.days=[0,2,4];S.profile.club={days:[1,3],minutes:90}");
+  // missing values: no number, a hint
+  assert.equal(a.run(`JSON.stringify(energyCalc({sex:'m',age:36,cm:'',kg:80,work:'sit',goal:'keep'},energyWeek()))`), "null");
+  // the sheet: taps and inputs change only the open sheet; nothing is stored (E39)
+  const before = a.run("JSON.stringify([S.profile,S.weights])");
+  await a.click({ dataset: { guide: "energy" } });
+  let h = a.run("guideSheetHtml(ui.sheet)");
+  assert.match(h, /Rechner[\s\S]*Bedarf mit Alltag und Training: ca\. /);
+  assert.match(h, /3 × Ringzeit à 60 Min\. und 2 × Verein à 90 Min\./);
+  await a.click({ dataset: { en: "goal:lose" } });
+  await a.click({ dataset: { en: "sex:m" } });
+  assert.match(a.run("guideSheetHtml(ui.sheet)"), /Leicht abnehmen: ca\. 2\.950–3\.150 kcal pro Tag/);
+  a.run("energyInput({dataset:{enf:'kg'},value:'82,5'})");
+  assert.equal(+a.run("ui.sheet.en.kg"), 82.5);
+  assert.equal(a.run("JSON.stringify([S.profile,S.weights])"), before, "nothing stored");
+  assert.doesNotMatch(a.run("JSON.stringify(store.snapshot ? store.snapshot() : S)"), /"en":\{/);
+  // weight class above the current weight: the warning, no rate of loss
+  a.run("S.profile.comps=[{id:'c1',date:'2026-12-12',kind:'comp',name:'Cup',wc:75}];S.comps=S.profile.comps");
+  h = a.run("guideSheetHtml(ui.sheet)");
+  assert.match(h, /über deiner Gewichtsklasse \(−75 kg\)[\s\S]*nicht aus, wie schnell/);
+  // English
+  a.run("S.profile.lang='en'");
+  assert.match(a.run("guideSheetHtml(ui.sheet)"), /Energy needs &amp; weight class[\s\S]*Lose a little: approx\. /);
+  // under 18: only the text, no calculator
+  a.run("S.profile.lang='de';S.profile.birth='2010-03-01';S.profile.birthYear=2010;ui.sheet={kind:'guide',id:'energy'}");
+  h = a.run("guideSheetHtml(ui.sheet)");
+  assert.match(h, /Bis 18 gibt es hier keinen Rechner/);
+  assert.doesNotMatch(h, /data-en=|data-enf=/);
+});
+
+test("18.11.2026 E41–E58 automatic load distribution: dialog from 5 days, marked hard days, only what took place counts, misses are made up within the week, switch off = as before", async () => {
+  const a = app();
+  a.setDate("2026-11-09"); // Monday
+  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.example=false;S.profile.days=[0,1,2,3,4,5];S.profile.minutes=60;S.profile.club={days:[],minutes:90};S.log=[];S.sessions={};S.ov={};S.profile.planStart='2026-10-05';S.profile.comps=[];S.profile.loadAsked=true;S.profile.toured=true;S.profile.newsSeen=99");
+  const roles = () => JSON.parse(a.run("JSON.stringify(loadWeek(iso(today())).role)"));
+  const ex = () => JSON.parse(a.run("JSON.stringify(loadWeek(iso(today())).extra)"));
+  // switched off: no roles, the effort as before (E57)
+  const before = a.run("['2026-11-10','2026-11-12'].map(d=>rpeRange(planOn(d),d).txt).join()");
+  assert.equal(a.run("JSON.stringify(loadRole('2026-11-10'))"), "null");
+  a.run("S.profile.autoLoad=true;S.profile.hardDays=[0,2,4]");
+  // Mon T, Tue S, Wed P, Thu K, Fri T, Sat M: marked Mon/Wed/Fri hard, Tue moderate, Thu easy, mobility outside (E43, E47, E50)
+  assert.deepEqual(roles(), { "2026-11-09": "hard", "2026-11-10": "mid", "2026-11-11": "hard", "2026-11-12": "easy", "2026-11-13": "hard" });
+  assert.equal(a.run("rpeRange(planOn('2026-11-10'),'2026-11-10').hi"), 6);
+  assert.equal(a.run("rpeRange(planOn('2026-11-12'),'2026-11-12').hi"), 4);
+  assert.equal(a.run("rpeRange('M','2026-11-14').txt"), a.run("(()=>{S.profile.autoLoad=false;const r=rpeRange('M','2026-11-14').txt;S.profile.autoLoad=true;return r})()"));
+  assert.ok(+a.run("rpeRange(planOn('2026-11-09'),'2026-11-09').hi") >= 7, "a hard day keeps the phase value");
+  a.run("S.profile.autoLoad=false");
+  assert.equal(a.run("['2026-11-10','2026-11-12'].map(d=>rpeRange(planOn(d),d).txt).join()"), before, "off = as before");
+  a.run("S.profile.autoLoad=true");
+  // E44/E48/E51: Monday trained hard, a hard club session on Tuesday – the next marked day (Wed) becomes moderate, Fri stays hard
+  a.setDate("2026-11-11");
+  a.run("S.log=[{id:'a',date:'2026-11-09',src:'own',type:'T',minutes:60,rpe:8},{id:'b',date:'2026-11-10',src:'club',type:'T',minutes:90,rpe:8}]");
+  let r = roles();
+  assert.equal(r["2026-11-09"], "hard");
+  assert.equal(r["2026-11-10"], "hard", "the club session counts once logged");
+  assert.equal(r["2026-11-11"], "mid");
+  assert.equal(r["2026-11-13"], "hard");
+  assert.equal(Object.values(r).filter((x) => x === "hard").length, 3);
+  // planned is not done: a club day without an entry does not count
+  a.run("S.log=[{id:'a',date:'2026-11-09',src:'own',type:'T',minutes:60,rpe:8}];S.profile.club={days:[1],minutes:90}");
+  assert.equal(roles()["2026-11-11"], "hard");
+  a.run("S.profile.club={days:[],minutes:90}");
+  // E52: a marked hard day missed – the next open unit takes over, never right after a hard day
+  a.run("S.profile.hardDays=[0,3];S.log=[]");
+  a.setDate("2026-11-10");
+  r = roles();
+  assert.equal(r["2026-11-10"], "hard", "Tuesday takes over the missed Monday");
+  assert.equal(r["2026-11-12"], "hard");
+  assert.ok(Object.values(r).filter((x) => x === "hard").length <= 3);
+  a.run("S.profile.hardDays=[0,2,4]");
+  a.setDate("2026-11-11"); // Mon missed, Wed and Fri marked: Thu is right after Wed – nothing to take over
+  r = roles();
+  assert.notEqual(r["2026-11-12"], "hard");
+  assert.equal(Object.values(r).filter((x) => x === "hard").length, 2, "nothing taken over");
+  // E53: a missed moderate unit – the next technique unit gets one round more, the duration stays
+  a.run("S.profile.hardDays=[0,3];S.log=[{id:'a',date:'2026-11-09',src:'own',type:'T',minutes:60,rpe:7}]");
+  assert.deepEqual(ex(), { "2026-11-13": 1 }, "Tuesday missed → Friday's technique unit");
+  const fri = (on) => JSON.parse(a.run(`(()=>{S.profile.autoLoad=${on};Math.random=(()=>{let x=7;return()=>((x=(x*16807)%2147483647)/2147483647)})();const s=buildSession('2026-11-13','T','gym',['bag'],{sport:'kickboxing',min:60});return JSON.stringify({n:s.blocks.find(b=>b.rounds).items.length,min:s.blocks.reduce((a,b)=>a+b.min,0),notes:s.notes,ld:s.ld||''})})()`));
+  const f0 = fri(false), f1 = fri(true);
+  assert.equal(f1.n, f0.n + 1, JSON.stringify([f0, f1]));
+  assert.equal(f1.min, f0.min, "same duration");
+  assert.ok(f1.notes.some((x) => /Technikrunde mehr/.test(x)));
+  assert.equal(f1.ld, "mid+");
+  // E54: a new week counts afresh
+  a.setDate("2026-11-16");
+  a.run("S.profile.hardDays=[0,2,4]");
+  assert.deepEqual(ex(), {});
+  assert.equal(roles()["2026-11-16"], "hard");
+  // loadRefresh: a not begun unit whose role changed is rebuilt, a begun one stays
+  a.run("S.log=[];S.sessions={};S.sessions['2026-11-18']=buildSession('2026-11-18','P','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-20']=buildSession('2026-11-20','T','gym',['bag'],{sport:'kickboxing',min:60});S.sessions['2026-11-20'].checked={'0.0':true}");
+  assert.equal(a.run("S.sessions['2026-11-18'].ld"), "hard");
+  a.run("S.log=[{id:'c1',date:'2026-11-16',src:'own',type:'T',minutes:60,rpe:8},{id:'c2',date:'2026-11-17',src:'club',type:'T',minutes:90,rpe:8}];loadRefreshKey=''");
+  a.setDate("2026-11-18");
+  a.run("loadRefresh()");
+  assert.equal(a.run("S.sessions['2026-11-18'].ld"), "mid", "rebuilt with its new role");
+  assert.equal(a.run("JSON.stringify(S.sessions['2026-11-20'].checked)"), '{"0.0":true}', "a begun unit stays");
+  // the dialog: from 5 days (the harness has no drawing – render() runs loadAskCheck() at its end), once per crossing (E41, E42, E55, E58)
+  a.run("S.profile.autoLoad=undefined;S.profile.loadAsked=false;S.profile.hardDays=[];ui.sheet=null;S.profile.days=[0,2,4];S.profile.club={days:[1],minutes:90}");
+  a.run("loadAskCheck()");
+  assert.equal(a.run("ui.sheet&&ui.sheet.kind"), null, "4 days: no question");
+  a.run("S.profile.newsSeen=0;S.profile.club={days:[1,3],minutes:90};loadAskCheck()");
+  assert.equal(a.run("ui.sheet&&ui.sheet.kind"), null, "\"what's new\" first");
+  a.run("S.profile.newsSeen=99;loadAskCheck()");
+  assert.equal(a.run("ui.sheet.kind"), "loadask");
+  assert.match(a.run("loadAskHtml()"), /an 5 Tagen pro Woche[\s\S]*data-ld="yes"/);
+  await a.click({ dataset: { ld: "no" } });
+  assert.equal(a.run("!!S.profile.autoLoad"), false);
+  a.run("ui.sheet=null;loadAskCheck()");
+  assert.equal(a.run("ui.sheet&&ui.sheet.kind"), null, "asked once");
+  a.run("S.profile.club={days:[1],minutes:90};loadAskCheck();S.profile.club={days:[1,3],minutes:90};loadAskCheck()");
+  assert.equal(a.run("ui.sheet.kind"), "loadask", "below the threshold and back: asked again");
+  await a.click({ dataset: { ld: "yes" } });
+  assert.equal(a.run("!!S.profile.autoLoad"), true);
+  assert.equal(a.run("ui.sheet.kind"), "loadhard");
+  for (const d of [0, 2, 4]) await a.click({ dataset: { hday: String(d) } });
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(S.profile.hardDays)")), [0, 2, 4]);
+  a.run("S.profile.days=[0,2,4,5]");
+  await a.click({ dataset: { hday: "5" } });
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(S.profile.hardDays)")), [0, 2, 4], "at most 3");
+  // the switch in the profile (E56/E57)
+  assert.match(a.run("loadProfHtml(S.profile)"), /Automatische Lastverteilung[\s\S]*data-hday/);
+  await a.click({ dataset: { ldon: "0" } });
+  assert.equal(a.run("!!S.profile.autoLoad"), false);
+  assert.doesNotMatch(a.run("loadProfHtml(S.profile)"), /data-hday/);
+  // children and youth: never asked, never active
+  a.run("S.profile.birth='2010-03-01';S.profile.birthYear=2010;S.profile.loadAsked=false;S.profile.autoLoad=true;ui.sheet=null;loadAskCheck()");
+  assert.equal(a.run("ui.sheet&&ui.sheet.kind"), null);
+  assert.equal(a.run("JSON.stringify(loadRole('2026-11-20'))"), "null");
+  assert.equal(a.run("loadProfHtml(S.profile)"), "");
+  // English
+  a.run("S.profile.birth='1990-05-01';S.profile.birthYear=1990;S.profile.lang='en'");
+  assert.match(a.run("loadAskHtml()"), /How should Ringzeit spread the load\?[\s\S]*Switch on/);
 });
 
 test("voice: the best installed voice is used – premium before enhanced before default, no novelty or online-only voices", () => {
