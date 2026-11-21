@@ -887,3 +887,11 @@ Grundsatz (Betreiber): **nur eingetragene Anstrengung und Belastungen steuern di
 - **Aufwärmen in voller Länge:** 12 Minuten vor Kick-Einheiten (inkl. Vorbereitung), sonst 10; Ausklang 4.
 - **Kraft erhalten:** 3 Grundübungen, 2 schwere Sätze (schwerste saubere Variante, 1–2 Wdh. vor Schluss aufhören), kein Sprungblock. **Technik:** statt Kraftteil kurze Intervalle am Ende.
 - Baseline: nur das Testprofil mit Wenig-Zeit-Modus ändert sich (Ausrüstung nur Sandsack, Aufwärmen 6→10 + 2 Vorbereitung, Intervalle statt Kraftteil).
+
+## Update auf Wunsch (21.11.2026, Teil 40)
+
+- **Profil → App & Daten → „App-Version“:** zeigt die installierte Version und „Nach Update suchen“. Ein Tipp fragt den Server (der Browser prüft sw.js an allen Caches vorbei); eine neue Version installiert sich, übernimmt (skipWaiting) und die Seite lädt neu – sonst „Du hast die neueste Version.“ Offline: „Keine Verbindung – später erneut versuchen.“ Sicherheitsnetz: nach 10 s wird neu geladen.
+- **Ohne Tipp:** kommt die App in den Vordergrund (höchstens alle 30 Minuten), prüft sie leise; ist eine neue Version übernommen, steht auf der Startseite „Neue Version verfügbar. – Neu laden“ (kein Neuladen von selbst, eine Einheit könnte laufen). Die allererste Installation zählt nicht als Update.
+- **Daten bleiben:** Verlauf, Plan und Einstellungen liegen im lokalen Speicher, nicht im App-Cache; vor dem Neuladen wird gespeichert und eine laufende Einheit gesichert (Fortsetzen wie gewohnt).
+- **Service Worker:** die App-Seite wird am HTTP-Cache des Browsers vorbei geholt („no-cache“ – GitHub Pages hält Seiten 10 Minuten, sonst kam nach dem Neuladen noch die alte Version); eine neue Version legt ihre Dateien ebenso frisch ab. Geprüft mit echtem Service Worker im Browser (alte → neue Version per Knopf und per Hinweis, Daten erhalten, offline).
+- Hilfe: „Wie bekomme ich die neueste Version?“ (DE/EN).

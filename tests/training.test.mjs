@@ -7162,3 +7162,69 @@ test("21.11.2026 short on time: the week plan – with club days strength and co
   assert.deepEqual(week(), normal);
   assert.match(a.run("renderSession()"), /data-pb="partner"/);
 });
+
+test("21.11.2026 update on request: 'Nach Update suchen' in App & Daten – newest version, new version loads and reloads (data saved first), offline message; the quiet check shows a note on the home page; the first install is no update; the service worker fetches the app page past the HTTP cache", async () => {
+  const a = app();
+  a.setDate("2026-11-21");
+  a.run("S.profile.lang='de';S.profile.toured=true;S.profile.newsSeen=99;S.profile.example=false;globalThis.toasts=[];toast=(m)=>toasts.push(m);globalThis.reloads=0;globalThis.location={reload(){reloads++}};globalThis.saves=0;const sv=store.save;store.save=(...x)=>{saves++;return sv(...x)}");
+  // the panel
+  let h = a.run("updPanelHtml()");
+  assert.match(h, /App-Version[\s\S]*Installiert:[\s\S]*data-upd="check"[^>]*>Nach Update suchen</);
+  // no service worker (e.g. an old browser): a short message
+  await a.run("updCheck()");
+  assert.match(a.run("toasts.pop()"), /installierten App/);
+  // a registration without a new version
+  a.run("globalThis.reg={installing:null,waiting:null,update:async()=>{}};navigator.onLine=true;navigator.serviceWorker={controller:{},getRegistration:async()=>reg,_l:{},addEventListener(n,f){this._l[n]=f}}");
+  await a.run("updCheck()");
+  assert.equal(a.run("toasts.pop()"), "Du hast die neueste Version.");
+  assert.equal(a.run("ui.updBusy"), false);
+  assert.equal(a.run("reloads"), 0);
+  // offline
+  a.run("navigator.onLine=false");
+  await a.run("updCheck()");
+  assert.match(a.run("toasts.pop()"), /Keine Verbindung/);
+  a.run("navigator.onLine=true;reg.update=async()=>{throw new Error('net')}");
+  await a.run("updCheck()");
+  assert.match(a.run("toasts.pop()"), /Keine Verbindung/);
+  // a new version: it installs, takes over (controllerchange) and the page reloads – data saved before
+  a.run("updInit();reg.update=async()=>{reg.installing={}}");
+  await a.run("updCheck()");
+  assert.match(a.run("toasts.pop()"), /Neue Version gefunden/);
+  const s0 = +a.run("saves");
+  a.run("navigator.serviceWorker._l.controllerchange()");
+  assert.equal(a.run("reloads"), 1);
+  assert.ok(+a.run("saves") > s0, "saved before the reload");
+  // the safety net reloads when the worker does not take over
+  a.advance(10000);
+  assert.equal(a.run("reloads"), 2);
+  // the quiet check: a new version took over in the background → the note on the home page, not reloaded by itself
+  const b = app();
+  b.setDate("2026-11-21");
+  b.run("S.profile.lang='de';S.profile.toured=true;S.profile.newsSeen=99;S.profile.example=false;globalThis.reloads=0;globalThis.location={reload(){reloads++}};globalThis.reg={installing:null,waiting:null,updates:0,update:async()=>{reg.updates++}};navigator.serviceWorker={controller:{},getRegistration:async()=>reg,_l:{},addEventListener(n,f){this._l[n]=f}};updInit()");
+  assert.doesNotMatch(b.run("renderWeek()"), /updnote/);
+  b.run("navigator.serviceWorker._l.controllerchange()");
+  assert.equal(b.run("ui.updReady"), true);
+  assert.equal(b.run("reloads"), 0, "no reload by itself – maybe a unit is running");
+  assert.match(b.run("renderWeek()"), /class="note updnote"><span>Neue Version verfügbar\.<\/span><button type="button" class="btn sec" data-upd="go">Neu laden</);
+  assert.match(b.run("updPanelHtml()"), /data-upd="go"[^>]*>Neu laden/);
+  await b.click({ dataset: { upd: "go" } });
+  assert.equal(b.run("reloads"), 1);
+  // coming back to the foreground checks quietly – at most every 30 minutes
+  b.advance(10 * 60 * 1000);
+  await b.emit("visibilitychange");
+  assert.equal(+b.run("reg.updates"), 0, "10 minutes after the start: no check yet");
+  b.advance(25 * 60 * 1000);
+  await b.emit("visibilitychange");
+  assert.equal(+b.run("reg.updates"), 1);
+  await b.emit("visibilitychange");
+  assert.equal(+b.run("reg.updates"), 1, "not again right away");
+  // the first install changes the controller too – no note then
+  const c = app();
+  c.run("S.profile.lang='en';globalThis.reg={update:async()=>{}};navigator.serviceWorker={controller:null,getRegistration:async()=>reg,_l:{},addEventListener(n,f){this._l[n]=f}};updInit();navigator.serviceWorker._l.controllerchange()");
+  assert.equal(c.run("!!ui.updReady"), false);
+  assert.match(c.run("updPanelHtml()"), /App version[\s\S]*Check for updates/);
+  // the service worker: the app page and a new version's files past the HTTP cache
+  const sw = readFileSync(new URL("../pwa/sw.js", import.meta.url), "utf8");
+  assert.match(sw, /fetch\(e\.request\.url, \{ cache: "no-cache", credentials: "same-origin" \}\)/);
+  assert.match(sw, /c\.addAll\(FILES\.map\(\(f\) => new Request\(f, \{ cache: "no-cache" \}\)\)\)/);
+});

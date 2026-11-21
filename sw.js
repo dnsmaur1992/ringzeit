@@ -1,10 +1,11 @@
 /* Ringzeit service worker: the app works offline; updates are fetched in the background and used on the next start.
    Only caches with this app's own prefix are touched: the stable Ringzeit app shares the origin and keeps its own caches. */
 const PREFIX = "ringzeit-";
-const CACHE = PREFIX + "202611211135";
+const CACHE = PREFIX + "202611211200";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-180.png", "icon-192.png", "icon-512.png", "icon-maskable-512.png"];
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // the new version's files straight from the server, not from the browser's HTTP cache (21.11.2026)
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: "no-cache" })))).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil(
@@ -24,7 +25,9 @@ self.addEventListener("fetch", (e) => {
   if (e.request.mode === "navigate") {
     e.respondWith(
       caches.open(CACHE).then((c) => {
-        const net = fetch(e.request).then((r) => {
+        // past the browser's HTTP cache (GitHub Pages keeps pages 10 minutes): an update shows right after the reload;
+        // "no-cache" asks the server every time, which answers "unchanged" cheaply when nothing is new (21.11.2026)
+        const net = fetch(e.request.url, { cache: "no-cache", credentials: "same-origin" }).then((r) => {
           if (r && r.ok) c.put("index.html", r.clone());
           return r;
         });

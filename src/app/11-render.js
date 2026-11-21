@@ -242,6 +242,7 @@
     const pose = nty === "T" || nty === "C" || nty === "P" ? "kick" : "box";
     let h = header(t("todayTitle"));
     h += installHtml();
+    h += updNoteHtml(); // a new version is waiting (21.11.2026)
     h += todayCard(nd, nty, pose);
     h += arcCardHtml(); // 7n Winter Arc
     // prompts that need an answer: at most two at once, by importance; the rest follow once one is done

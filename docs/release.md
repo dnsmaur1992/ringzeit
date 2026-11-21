@@ -220,3 +220,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 18.11. | Lastverteilung: Schalter für Erwachsene immer im Profil (Trainingswoche), Hinweis unter 5 Tagen, Frage weiter ab 5 Tagen; Hilfe um Teil 36 ergänzt | 326 |
 | 21.11. | Wenig-Zeit-Modus: geöffnete leere Einheit wird sofort gekürzt (vorher unverändert), Knopf „Wenig Zeit“ an der Einheit, Eintrag oben im Profil bis zum Ausschalten | 327 |
 | 21.11. | Wenig-Zeit-Modus Teil 39: Planart automatisch (Kraft erhalten / kurze Intervalle), nur Körpergewicht + Sandsack/Klimmzugstange, kein Partner, keine Kopfkicks, Aufwärmen voll | 329 |
+| 21.11. | Update auf Wunsch: „Nach Update suchen“ unter App & Daten, Hinweis „Neue Version verfügbar“ beim Zurückkehren, Service Worker holt die App-Seite am HTTP-Cache vorbei | 330 |

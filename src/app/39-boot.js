@@ -101,6 +101,7 @@
       window.addEventListener("pageshow", later);
       document.addEventListener("visibilitychange", () => !document.hidden && later());
     }
+    updInit(); // update on request and the quiet check when the app comes back (21.11.2026)
     store.init().then(async () => {
       if (await store.loadCloud()) {
         if (!S.profile.planStart) S.profile.planStart = iso(today());
