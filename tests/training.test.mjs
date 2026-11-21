@@ -7081,3 +7081,84 @@ test("21.11.2026 short-on-time mode: also the unit already opened with Start (no
   a.run("ui.sel='2026-11-30'");
   assert.match(a.run("renderSession()"), /Short on time/);
 });
+
+test("21.11.2026 short on time: body weight only (bag or pull-up bar if chosen), never a partner, no head kick in any sport, the full warm-up; strength kept with 3 exercises, technique with an interval finish", () => {
+  const a = app();
+  a.setDate("2026-11-23");
+  a.run("S.profile.lang='de';S.profile.birthYear=1990;S.profile.example=false;S.profile.days=[0,2,4,5];S.profile.minutes=90;S.profile.level=2;S.profile.limits=[];S.sessions={};S.log=[];S.ov={};S.profile.lowTime={on:true,since:'2026-11-21'}");
+  const r = JSON.parse(a.run(`(()=>{
+    const bad=[], warm=[], kinds=new Set(), lbl=new Set(), HEADKB=new Set(['roundh','axe','hookk','brazil','shook','tornado','jknee']), HEADTKD=new Set(['dolh','nae','dhu']);
+    const all=['bag','bar','partner','pads','rope','weights','kb','bb','bands','studio'];
+    for (const [sport,disc,tstyle] of [['kickboxing','kl'],['kickboxing','lc'],['kickboxing','fc'],['boxing'],['taekwondo',null,'wt'],['taekwondo',null,'itf']])
+      for (const ty of ['T','C','P','S','K']) for (const loc of ['gym','home','studio','out']) for (let i=0;i<4;i++) {
+        S.profile.sport=sport; if(disc)S.profile.disc=disc;
+        const s=buildSession('2026-11-23',ty,loc,all,{sport,disc,tstyle,min:30});
+        kinds.add(ty+'>'+s.type);
+        for (const b of s.blocks) { if (b.lbl) lbl.add(b.lbl); for (const it of b.items) {
+          const e=EX[it.id]; if (e && e.eq && !e.eq.split('|').some(q=>q==='bag'||q==='bar')) bad.push('eq '+it.id+' '+e.eq);
+          if (['partner','pads','spar'].includes(it.k)) bad.push('partner '+sport+' '+ty);
+          for (const x of (it.combo||[]).concat(it.chain||[])) if (HEADKB.has(x)||HEADTKD.has(x)) bad.push('head '+sport+' '+x);
+        } }
+        if (s.eq.some(q=>q!=='bag'&&q!=='bar')) bad.push('unit eq '+s.eq.join());
+        const w=s.blocks.filter(b=>b.key==='warm'||b.key==='prep').reduce((t,b)=>t+b.min,0); warm.push(s.type+':'+w);
+      }
+    return JSON.stringify({bad:[...new Set(bad)].slice(0,8),kinds:[...kinds],lbl:[...lbl],warm:[...new Set(warm)]});
+  })()`));
+  assert.deepEqual(r.bad, []);
+  assert.ok(r.kinds.includes("P>T") && !r.kinds.some((k) => k.endsWith(">P")), "sparring needs a partner – it becomes technique");
+  for (const w of r.warm) {
+    const [ty, m] = w.split(":");
+    assert.ok(+m >= (["T", "C"].includes(ty) ? 12 : 10), "full warm-up: " + w);
+  }
+  assert.ok(r.lbl.includes("lowstr") && r.lbl.includes("lowiv"));
+  // the strength unit keeps strength: 3 basic exercises, 2 hard sets, a pull-up bar used when chosen
+  const st = JSON.parse(a.run("(()=>{S.profile.sport='kickboxing';const s=buildSession('2026-11-23','S','home',['bar','weights'],{sport:'kickboxing',min:30});const b=s.blocks.find(x=>x.key==='str');return JSON.stringify({n:b.items.length,sets:b.sets,ids:b.items.map(i=>i.id),blocks:s.blocks.map(x=>x.key)})})()"));
+  assert.equal(st.n, 3);
+  assert.match(st.sets, /^2 schwere Sätze/);
+  assert.ok(!st.blocks.includes("plyo"), "no jump block – the minutes go to strength");
+  // technique: an interval finish instead of the strength part
+  const tq = JSON.parse(a.run("(()=>{const s=buildSession('2026-11-23','T','gym',['bag'],{sport:'kickboxing',min:30});return JSON.stringify(s.blocks.map(b=>[b.key,b.lbl||'',b.min,!!b.rounds]))})()"));
+  assert.ok(tq.some(([k, l, m, r]) => k === "cond" && l === "lowiv" && m >= 4 && r), JSON.stringify(tq));
+  assert.ok(!tq.some(([k, l]) => l === "tstr"));
+  // the note says it
+  assert.ok(JSON.parse(a.run("JSON.stringify(buildSession('2026-11-23','T','gym',['bag'],{sport:'kickboxing',min:30}).notes)")).some((x) => /kein Partner, alle Kicks auf Körperhöhe/.test(x)));
+  // switched off: partner and head kicks as before
+  a.run("S.profile.lowTime={on:false};S.profile.sport='kickboxing';S.profile.disc='kl'");
+  const off = JSON.parse(a.run("(()=>{let p=0,h=0;for(let i=0;i<20;i++){const s=buildSession('2026-11-23','T','gym',['partner','bag'],{sport:'kickboxing',min:60});for(const b of s.blocks)for(const it of b.items){if(it.k==='partner')p++;if((it.combo||[]).includes('roundh'))h++;}}return JSON.stringify([p,h])})()"));
+  assert.ok(off[0] > 0 && off[1] > 0);
+});
+test("21.11.2026 short on time: the week plan – with club days strength and conditioning alternate, without club strength once and technique otherwise; mobility stays; tournament preparation and children keep their plan; the unit settings offer no partner and no sparring", () => {
+  const a = app();
+  a.setDate("2026-11-23");
+  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.disc='kl';S.profile.birthYear=1990;S.profile.example=false;S.profile.days=[0,1,2,3,4,5];S.profile.minutes=60;S.profile.comps=[];S.sessions={};S.log=[];S.ov={}");
+  const week = () => JSON.parse(a.run("JSON.stringify([23,24,25,26,27,28].map(d=>planOn('2026-11-'+d)))"));
+  const normal = week();
+  a.run("S.profile.lowTime={on:true};S.profile.club={days:[],minutes:90}");
+  const noClub = week();
+  a.run("S.profile.club={days:[6],minutes:90}");
+  const club = week();
+  const own = (w) => w.filter((x, i) => normal[i] !== "M");
+  assert.deepEqual(own(noClub), ["S", ...own(noClub).slice(1).map(() => "T")]);
+  assert.deepEqual(own(club), own(club).map((_, i) => (i % 2 === 0 ? "S" : "K")));
+  normal.forEach((x, i) => x === "M" && assert.equal(club[i], "M", "mobility stays"));
+  // tournament preparation: the plan as before, only shorter
+  a.run("S.profile.comps=[{date:'2026-12-12',name:'Cup'}]");
+  assert.equal(a.run("isPrep(phaseInfo('2026-11-23'))"), true, 'tournament preparation 3 weeks before');
+  assert.deepEqual(week(), JSON.parse(a.run("JSON.stringify([23,24,25,26,27,28].map(d=>suggestOn('2026-11-'+d,true)))")));
+  a.run("S.profile.comps=[]");
+  // children: only shorter
+  a.run("S.profile.birthYear=2016;S.profile.birth='2016-05-01'");
+  assert.deepEqual(week(), JSON.parse(a.run("JSON.stringify([23,24,25,26,27,28].map(d=>suggestOn('2026-11-'+d,true)))")));
+  a.run("S.profile.birthYear=1990;S.profile.birth='1990-05-01'");
+  // the unit settings: no partner button, no sparring, only the pull-up bar as extra equipment
+  a.run("ui.sel='2026-11-23';ui.tab='session';ui.setup=null");
+  const h = a.run("renderSession()");
+  assert.doesNotMatch(h, /data-pb="partner"/);
+  assert.doesNotMatch(h, /data-stype="P"|data-type="P"/);
+  assert.match(h, /nur Körpergewicht, Sandsack oder Klimmzugstange – ohne Partner/);
+  for (const k of ["weights", "kb", "bb", "rope", "bands"]) assert.doesNotMatch(h, new RegExp(`data-eq="${k}"`));
+  // switched off: as before
+  a.run("S.profile.lowTime={on:false};ui.setup=null");
+  assert.deepEqual(week(), normal);
+  assert.match(a.run("renderSession()"), /data-pb="partner"/);
+});

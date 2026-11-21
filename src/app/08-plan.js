@@ -130,11 +130,37 @@
     for (const i of rest) out[i] = calm.length ? calm.shift() : hot.shift();
     return out;
   }
+  /* short on time (Betreiber 21.11.2026): what keeps the most in 30 minutes – strength is kept with little volume, short
+     intervals are the most time-saving conditioning, technique comes from the club. With club days the own days alternate
+     strength (body weight) and conditioning; without club the first own day of the week is strength, the others technique
+     with an interval finish. Mobility stays; tournament and grading phases only get shorter; children only get shorter. */
+  function lowTypeWeek(ds) {
+    const mon = monday(parse(ds)),
+      dates = [0, 1, 2, 3, 4, 5, 6].map((i) => iso(addDays(mon, i))),
+      base = dates.map((d) => {
+        const b = blockInfo(d);
+        return dayTypes(b && b.k)[wd(d)] || null;
+      }),
+      club = ((S.profile.club || {}).days || []).length > 0;
+    let k = 0;
+    return base.map((ty) => {
+      if (!ty || ty === "M") return ty;
+      const out = club ? (k % 2 === 0 ? "S" : "K") : k === 0 ? "S" : "T";
+      k++;
+      return out;
+    });
+  }
+  const lowTypesOn = (ds) => {
+    if (!lowTime() || ageGroup() === "kids" || young()) return false;
+    const ph = phaseInfo(ds);
+    return !isPrep(ph) && !["taper", "peak", "grade", "recover"].includes(ph.phase);
+  };
   function suggestOn(ds, raw) {
     const bi = blockInfo(ds);
     let ty = dayTypes(bi && bi.k)[wd(ds)];
     if (!ty) return null;
-    if (!raw && ty !== "M" && typeof loadOn === "function" && loadOn() && (S.profile.hardDays || []).length) ty = loadTypeWeek(ds)[wd(ds)] || ty;
+    if (!raw && ty !== "M" && lowTypesOn(ds)) ty = lowTypeWeek(ds)[wd(ds)] || ty;
+    else if (!raw && ty !== "M" && typeof loadOn === "function" && loadOn() && (S.profile.hardDays || []).length) ty = loadTypeWeek(ds)[wd(ds)] || ty;
     if (ramadanOn(ds) && (ty === "K" || ty === "C")) ty = "T";
     // a stressful week: technique instead of sparring and hard conditioning
     if (weekMood(ds) === "hard" && (ty === "K" || ty === "C" || ty === "P")) ty = "T";
@@ -1312,7 +1338,7 @@
       if (extra.length && Math.random() < 0.2) pool = extra;
     }
     if (lim.includes("wrist") || lim.includes("shoulder")) pool = pool.filter((c) => !c.some((x) => TKDT.HANDS.has(x) || (M.HANDS && M.HANDS.has(x))));
-    if (noHead) pool = pool.filter((c) => !c.some((x) => M.HEAD.has(x)));
+    if (noHead || lowTime()) pool = pool.filter((c) => !c.some((x) => M.HEAD.has(x)));
     if (ctx.kid) pool = pool.filter((c) => c.length <= 3);
     // the fitter, the longer the kick chains: advanced at least 3 kicks, competition level at least 4 (most of the time).
     // 7f: warm-up rounds without head kicks and ITF (hand-foot, weaker form) need one kick less: 2 / 3
@@ -1652,6 +1678,8 @@
         [r.mine, o.mine] = [o.mine, r.mine];
       } else r.combo = r.combo.map((x) => LOWER[x] || x);
     }
+    // short on time (21.11.2026): no head kicks at all – every kick to body height, own combos too
+    if (lowTime()) for (const r of out) if (r.combo) r.combo = r.combo.map((x) => LOWER[x] || x);
     // kids: at most 3 techniques (the opener and the finishing technique stay)
     if (ageGroup() === "kids")
       for (const r of out) if (r.combo && !r.mine) while (r.combo.length > 3) r.combo.splice(1, 1);
@@ -2093,6 +2121,11 @@
     try {
       s = buildSessionCore(dateStr, type, loc, eqIn, opts);
       addPrep(s); // preparation for the focus at the end of the warm-up (17.11.2026)
+      // short on time: no head kick anywhere – a safety net behind the round builders (also own combos, preparation)
+      if (lowTime()) {
+        const TKD_LOW = { dolh: "dol", nae: "ap", dhu: "dwi" };
+        s.blocks.forEach((b) => b.items.forEach((it) => ["combo", "chain"].forEach((f) => Array.isArray(it[f]) && (it[f] = it[f].map((x) => LOWER[x] || TKD_LOW[x] || x)))));
+      }
       s.techniqueLevel = techniqueLevel();
       s.fitnessLevel = fitnessLevel();
       s.blocks.forEach(b => { b.fitnessLevel = s.fitnessLevel; });
@@ -2116,6 +2149,11 @@
   }
   function buildSessionCore(dateStr, type, loc, eqIn, opts = {}) {
     loadCache = {};
+    // short on time (21.11.2026): body weight only – a bag or a pull-up bar if chosen, nothing else, no partner anywhere;
+    // sparring needs a partner, so it becomes technique; the fitness gym brings no machines along
+    const low = lowTime();
+    if (low && type === "P") type = "T";
+    if (low && loc === "studio") loc = "gym";
     // the fitness gym only exists for strength and conditioning; it brings its standard equipment along
     if (loc === "studio" && type !== "S" && type !== "K") loc = "gym";
     const studio = loc === "studio",
@@ -2131,6 +2169,7 @@
       ramp = rampOn(dateStr);
     if (ko && type === "P") type = "T";
     if (ko) eq = eq.filter((x) => x !== "partner" && x !== "pads");
+    if (low) eq = eq.filter((x) => x === "bag" || x === "bar");
     const p = S.profile,
       D = Math.min(opts.min || sessMin(type), type === "M" ? 45 : 240),
       used = new Set(),
@@ -2293,8 +2332,9 @@
         created: Date.now(),
       });
     }
-    const warmMin = Math.max(8, Math.round(D * 0.15)),
-      coolMin = Math.max(5, Math.round(D * 0.1)) + (bk === "mob" ? 5 : 0),
+    // short on time: the warm-up is never cut – 12 minutes before kicking (incl. the preparation), 10 otherwise
+    const warmMin = low ? (["T", "C", "P"].includes(type) ? 12 : 10) : Math.max(8, Math.round(D * 0.15)),
+      coolMin = (low ? 4 : Math.max(5, Math.round(D * 0.1))) + (bk === "mob" ? 5 : 0),
       // 30-minute sessions skip the hardening block, so the main part keeps enough time; in the fitness gym the strength
       // unit has none at all – shin taps and knuckle push-ups belong to the hall and home (Betreiber 18.11.2026)
       hardMin = D <= 30 || (ageGroup() === "kids" && !box) || (studio && type === "S") ? 0 : 6,
@@ -2347,7 +2387,7 @@
     if (type === "S") {
       // Federn & Antritt (Betreiber 17.11.2026): in about every second strength unit a short block of jumps first, while fresh
       // not in the fitness gym: the minutes go to strength (E60)
-      const plyo = !studio && !load.deload && ageGroup() !== "kids" && Math.random() < 0.5 ? plyoPick(2, loc, eq, used, "pow") : [],
+      const plyo = !low && !studio && !load.deload && ageGroup() !== "kids" && Math.random() < 0.5 ? plyoPick(2, loc, eq, used, "pow") : [],
         plyoMin = 3 * plyo.length;
       if (plyo.length) blocks.push({ key: "plyo", lbl: "plyo", min: plyoMin, items: plyo });
       // boxing: a longer strength-endurance finisher (≈ 24 / 15 min of 39, 7b B7)
@@ -2355,7 +2395,10 @@
         fin = rest - plyoMin - main,
         light = fitnessLevel() === 0 || young(),
         B = t("blk").sets;
-      if (bk === "pow" && bi.st > 0 && !load.deload) {
+      if (low && !taper && !prep) {
+        // short on time: strength is kept, not built – 3 basic exercises, 2 hard sets each, own body weight
+        blocks.push({ key: "str", lbl: "lowstr", min: main, items: strengthBasics(3, loc, eq, used, machines), sets: t("life").lowSets });
+      } else if (bk === "pow" && bi.st > 0 && !load.deload) {
         // explosive transfer / contrast: power work first, while fresh
         const pm = Math.round(main * 0.4);
         blocks.push({
@@ -2465,8 +2508,9 @@
         rb = br ? br.b : restB;
       // technique: about 10 min strength for the technique of the focus at the end – fewer fitting exercises, fewer minutes,
       // none at all: the whole time goes to technique rounds (Betreiber 14.11.2026)
-      let tItems = type === "T" ? focusEx(theme, loc, eq, used, 3) : null;
-      const tMin = tItems ? Math.min([0, 4, 7, 10][tItems.length], Math.round((rest - exMin) * 0.3)) : 0;
+      let tItems = type === "T" && !low ? focusEx(theme, loc, eq, used, 3) : null;
+      // short on time: a short interval finish instead (about a third of what is left, at least 4 minutes)
+      const tMin = type === "T" && low ? Math.max(4, Math.round((rest - exMin) * 0.3)) : tItems ? Math.min([0, 4, 7, 10][tItems.length], Math.round((rest - exMin) * 0.3)) : 0;
       let main = type === "T" ? rest - exMin - tMin : Math.round((rest - exMin) * share),
         nR = roundsFor(main, (fw + rb) / 60);
       // fixed fight-pace rounds at the end of the round block, technique rounds before them
@@ -2520,12 +2564,15 @@
           // the preparation on the focus bounces too: its share is reserved before the rounds (18.11.2026)
           const reserve = prepFedPlan(type, theme, D, buildSport);
           plyoLimitRounds(items, fw, reserve);
-          tItems.forEach((x) => used.delete(x.id));
-          const base = plyoBudget({ blocks: [{ rounds: true, w: fw, items }] });
-          base.fed += reserve;
-          tItems = plyoPick(3, loc, eq, used, "pow", base);
-          // the rounds used up the cap: lower-leg strength without more jumps keeps the minutes of the closing block
-          if (!tItems.length) tItems = focusEx({ id: "bounceStr" }, loc, eq, used, 3);
+          // (short on time there is no closing strength block – the interval finish stays)
+          if (tItems) {
+            tItems.forEach((x) => used.delete(x.id));
+            const base = plyoBudget({ blocks: [{ rounds: true, w: fw, items }] });
+            base.fed += reserve;
+            tItems = plyoPick(3, loc, eq, used, "pow", base);
+            // the rounds used up the cap: lower-leg strength without more jumps keeps the minutes of the closing block
+            if (!tItems.length) tItems = focusEx({ id: "bounceStr" }, loc, eq, used, 3);
+          }
         }
         // WT full contact: every second bag or pad round with impact (7e)
         if (wtFull(soft)) {
@@ -2557,7 +2604,16 @@
         const pr = examProgress(targetStage());
         notes.push(t("examNote")(beltName(stageBelt(targetStage())), pr.ok, pr.n));
       }
-      if (type === "T") {
+      if (type === "T" && low) {
+        if (sup > 0)
+          blocks.push({
+            key: "cond",
+            lbl: "lowiv",
+            min: sup,
+            rounds: true,
+            items: pickEx("cond", Math.max(2, Math.floor(sup / 2)), loc, eq, used).map((x) => ({ kind: "round", k: "ex", id: x.id })),
+          });
+      } else if (type === "T") {
         if (tItems.length && sup > 0)
           blocks.push(
             theme && theme.id === "bounce" && tItems.some((x) => EX[x.id] && EX[x.id].cat === "plyo")

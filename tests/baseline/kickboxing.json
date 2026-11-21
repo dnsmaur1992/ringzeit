@@ -57639,7 +57639,7 @@
    "age": "adult",
    "days": {
     "2026-11-02": [
-     "T",
+     "S",
      false
     ],
     "2026-11-03": [
@@ -57647,7 +57647,7 @@
      false
     ],
     "2026-11-04": [
-     "S",
+     "T",
      false
     ],
     "2026-11-05": [
@@ -57655,7 +57655,7 @@
      false
     ],
     "2026-11-06": [
-     "P",
+     "T",
      false
     ],
     "2026-11-07": [
@@ -57667,7 +57667,7 @@
      false
     ],
     "2026-11-09": [
-     "T",
+     "S",
      false
     ],
     "2026-11-10": [
@@ -57675,7 +57675,7 @@
      false
     ],
     "2026-11-11": [
-     "S",
+     "T",
      false
     ],
     "2026-11-12": [
@@ -57683,7 +57683,7 @@
      false
     ],
     "2026-11-13": [
-     "P",
+     "T",
      false
     ],
     "2026-11-14": [
@@ -57744,19 +57744,317 @@
       "type": "T",
       "loc": "gym",
       "eq": [
-       "partner",
-       "bag",
-       "pads",
-       "rope"
+       "bag"
       ],
       "blocks": [
        {
         "key": "warm",
-        "min": 6,
+        "min": 10,
         "items": [
          {
           "kind": "ex",
           "id": 1
+         },
+         {
+          "kind": "ex",
+          "id": 4
+         },
+         {
+          "kind": "ex",
+          "id": 87
+         },
+         {
+          "kind": "ex",
+          "id": 5
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "prep",
+        "lbl": "prep",
+        "min": 2,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 107,
+          "n": 2,
+          "s": 45,
+          "steps": [
+           {
+            "t": "slow",
+            "f": 0,
+            "de": "Die Techniken einzeln: Jab, Cross Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Cross body, Roundhouse body – back into your stance after each."
+           },
+           {
+            "t": "work",
+            "f": 0,
+            "de": "Jab, Cross Körper, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Jab, Cross body, Roundhouse body, then out of range."
+           }
+          ]
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "main",
+        "min": 10,
+        "rounds": true,
+        "w": 180,
+        "b": 67,
+        "items": [
+         {
+          "kind": "round",
+          "k": "shadow",
+          "combo": [
+           "front",
+           "round"
+          ],
+          "ease": 1
+         },
+         {
+          "kind": "round",
+          "k": "dist",
+          "combo": [
+           "jab",
+           "crossb",
+           "round"
+          ],
+          "dist": {
+           "i": "pivotIn",
+           "o": null
+          }
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cond",
+        "lbl": "lowiv",
+        "min": 4,
+        "rounds": true,
+        "items": [
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 21
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cool",
+        "min": 4,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 75
+         }
+        ],
+        "fitnessLevel": 1
+       }
+      ],
+      "notes": [
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
+       "Belastungszyklus: Woche 1/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+       "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+       "Für eine langfristige Zyklussteigerung fehlen noch regelmäßig erfasste Einheiten.",
+       "Gleiche Rundenzeit, angepasste Pausen: 60 → 67 s; innerhalb deiner Trainingszeit."
+      ],
+      "rpe": "6–7",
+      "tHi": 7,
+      "theme": "shortOpp",
+      "min": 30,
+      "blk": null,
+      "progression": {
+       "v": 1,
+       "id": "base:2026-11-02",
+       "start": "2026-11-02",
+       "end": "2026-12-06",
+       "week": 1,
+       "weeks": 5,
+       "block": null,
+       "signature": "lc:1:T:regular",
+       "step": 0,
+       "reason": "initial",
+       "eligible": true,
+       "data": {
+        "level": "collecting",
+        "reason": "few",
+        "count": 0,
+        "weeks": 0,
+        "planned": 0,
+        "coverage": 0,
+        "completeness": 0,
+        "planKnown": 0,
+        "worsening": false
+       },
+       "plannedDates": [
+        "2026-11-04",
+        "2026-11-06",
+        "2026-11-11",
+        "2026-11-13",
+        "2026-11-18",
+        "2026-11-20",
+        "2026-11-25",
+        "2026-11-27"
+       ],
+       "plannedMin": 30
+      },
+      "effortDose": {
+       "v": 1,
+       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"T\",1]",
+       "eligible": true,
+       "setRest": 60,
+       "factor": 1,
+       "active": false,
+       "source": null,
+       "roundRest": 67
+      },
+      "techniqueLevel": 1,
+      "fitnessLevel": 1
+     },
+     "items": [
+      [
+       {
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "3 Min. · je Bewegung 10 Wdh.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "je Muskel 15–30 s · ca. 2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       }
+      ],
+      [
+       {
+        "dose": "2 × 45 s · langsam → Arbeitstempo",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [],
+         "perSet": 95
+        }
+       }
+      ],
+      [
+       {
+        "dose": null,
+        "timer": null
+       },
+       {
+        "dose": null,
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "3 Min.",
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       }
+      ]
+     ]
+    },
+    "T-home": {
+     "session": {
+      "date": "2026-11-04",
+      "type": "T",
+      "loc": "home",
+      "eq": [
+       "bag"
+      ],
+      "blocks": [
+       {
+        "key": "warm",
+        "min": 10,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 3
          },
          {
           "kind": "ex",
@@ -57787,14 +58085,14 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross, Brazilian Kick Kopf, Fußfeger – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross, Brazilian kick head, Foot sweep – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab body, Roundhouse body – back into your stance after each."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross, Brazilian Kick Kopf, Fußfeger, danach heraus aus der Distanz.",
-            "en": "Jab, Cross, Brazilian kick head, Foot sweep, then out of range."
+            "de": "Jab Körper, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Jab body, Roundhouse body, then out of range."
            }
           ]
          }
@@ -57803,96 +58101,76 @@
        },
        {
         "key": "main",
-        "min": 12,
+        "min": 10,
         "rounds": true,
         "w": 180,
         "b": 67,
         "items": [
          {
           "kind": "round",
-          "k": "partner",
+          "k": "shadow",
           "combo": [
-           "jab",
-           "upper",
-           "hook",
-           "sweep"
+           "jabb",
+           "round"
           ],
           "ease": 1
          },
          {
           "kind": "round",
-          "k": "partner",
+          "k": "evade",
           "combo": [
-           "jab",
-           "crossb",
+           "cross",
+           "hook",
            "round"
           ],
-          "ease": 1,
-          "react": {
-           "mid": {
-            "at": 1,
-            "a": "side",
-            "d": "step"
-           }
-          }
-         },
-         {
-          "kind": "round",
-          "k": "partner",
-          "combo": [
-           "jab",
-           "cross",
-           "brazil",
-           "sweep"
-          ],
-          "dist": {
-           "i": "jab",
-           "o": "side"
+          "evade": {
+           "d": "parry"
           }
          }
         ],
         "fitnessLevel": 1
        },
        {
-        "key": "str",
-        "lbl": "tstr",
-        "min": 5,
+        "key": "cond",
+        "lbl": "lowiv",
+        "min": 4,
+        "rounds": true,
         "items": [
          {
-          "kind": "ex",
-          "id": 55
+          "kind": "round",
+          "k": "ex",
+          "id": 9
          },
          {
-          "kind": "ex",
-          "id": 56
+          "kind": "round",
+          "k": "ex",
+          "id": 8
          }
         ],
-        "sets": "3×",
         "fitnessLevel": 1
        },
        {
         "key": "cool",
-        "min": 5,
+        "min": 4,
         "items": [
-         {
-          "kind": "ex",
-          "id": 73
-         },
          {
           "kind": "ex",
           "id": 74
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 1
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
-       "Partnerübungen: Mundschutz tragen; wer die Pratze hält, hält sie fest mit beiden Händen; bei Kontakt die passenden Schützer.",
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
        "Belastungszyklus: Woche 1/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
        "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
        "Für eine langfristige Zyklussteigerung fehlen noch regelmäßig erfasste Einheiten.",
@@ -57927,11 +58205,14 @@
         "worsening": false
        },
        "plannedDates": [
-        "2026-11-02",
         "2026-11-04",
-        "2026-11-09",
-        "2026-11-16",
-        "2026-11-23"
+        "2026-11-06",
+        "2026-11-11",
+        "2026-11-13",
+        "2026-11-18",
+        "2026-11-20",
+        "2026-11-25",
+        "2026-11-27"
        ],
        "plannedMin": 30
       },
@@ -57951,21 +58232,21 @@
      "items": [
       [
        {
-        "dose": "2 Min.",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        },
        {
@@ -57980,12 +58261,12 @@
         }
        },
        {
-        "dose": "2 Min. · je Bewegung 10 Wdh.",
+        "dose": "3 Min. · je Bewegung 10 Wdh.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        }
       ],
@@ -58008,339 +58289,15 @@
        {
         "dose": null,
         "timer": null
-       },
-       {
-        "dose": null,
-        "timer": null
        }
       ],
       [
        {
-        "dose": "30–45 s je Seite halten",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30,
-          45
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "10–12 Wdh. pro Bein",
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "60–90 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       }
-      ]
-     ]
-    },
-    "T-home": {
-     "session": {
-      "date": "2026-11-04",
-      "type": "T",
-      "loc": "home",
-      "eq": [
-       "bag",
-       "rope",
-       "bands"
-      ],
-      "blocks": [
-       {
-        "key": "warm",
-        "min": 6,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 4
-         },
-         {
-          "kind": "ex",
-          "id": 0
-         },
-         {
-          "kind": "ex",
-          "id": 87
-         },
-         {
-          "kind": "ex",
-          "id": 3
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "prep",
-        "lbl": "prep",
-        "min": 2,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 107,
-          "n": 2,
-          "s": 45,
-          "steps": [
-           {
-            "t": "slow",
-            "f": 0,
-            "de": "Die Techniken einzeln: Frontkick Körper, Haken, Cross Körper – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Front kick body, Hook, Cross body – back into your stance after each."
-           },
-           {
-            "t": "work",
-            "f": 0,
-            "de": "Frontkick Körper, Haken, Cross Körper, danach heraus aus der Distanz.",
-            "en": "Front kick body, Hook, Cross body, then out of range."
-           }
-          ]
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "main",
-        "min": 12,
-        "rounds": true,
-        "w": 180,
-        "b": 67,
-        "items": [
-         {
-          "kind": "round",
-          "k": "shadow",
-          "combo": [
-           "front",
-           "hook",
-           "crossb"
-          ],
-          "ease": 1
-         },
-         {
-          "kind": "round",
-          "k": "bag",
-          "combo": [
-           "front",
-           "jab",
-           "cross",
-           "back"
-          ],
-          "ease": 1
-         },
-         {
-          "kind": "round",
-          "k": "evade",
-          "combo": [
-           "cross",
-           "roundh"
-          ],
-          "evade": {
-           "d": "deflect"
-          }
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "str",
-        "lbl": "tstr",
-        "min": 5,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 47
-         },
-         {
-          "kind": "ex",
-          "id": 86
-         }
-        ],
-        "sets": "3×",
-        "fitnessLevel": 1
-       },
-       {
-        "key": "cool",
-        "min": 5,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 76
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         }
-        ],
-        "fitnessLevel": 1
-       }
-      ],
-      "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
-       "Belastungszyklus: Woche 1/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
-       "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
-       "Für eine langfristige Zyklussteigerung fehlen noch regelmäßig erfasste Einheiten.",
-       "Gleiche Rundenzeit, angepasste Pausen: 60 → 67 s; innerhalb deiner Trainingszeit."
-      ],
-      "rpe": "6–7",
-      "tHi": 7,
-      "theme": "frontStart",
-      "min": 30,
-      "blk": null,
-      "progression": {
-       "v": 1,
-       "id": "base:2026-11-02",
-       "start": "2026-11-02",
-       "end": "2026-12-06",
-       "week": 1,
-       "weeks": 5,
-       "block": null,
-       "signature": "lc:1:T:regular",
-       "step": 0,
-       "reason": "initial",
-       "eligible": true,
-       "data": {
-        "level": "collecting",
-        "reason": "few",
-        "count": 0,
-        "weeks": 0,
-        "planned": 0,
-        "coverage": 0,
-        "completeness": 0,
-        "planKnown": 0,
-        "worsening": false
-       },
-       "plannedDates": [
-        "2026-11-02",
-        "2026-11-04",
-        "2026-11-09",
-        "2026-11-16",
-        "2026-11-23"
-       ],
-       "plannedMin": 30
-      },
-      "effortDose": {
-       "v": 1,
-       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"T\",1]",
-       "eligible": true,
-       "setRest": 60,
-       "factor": 1,
-       "active": false,
-       "source": null,
-       "roundRest": 67
-      },
-      "techniqueLevel": 1,
-      "fitnessLevel": 1
-     },
-     "items": [
-      [
-       {
-        "dose": "2 Min. · je Bewegung 10 Wdh.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "je Muskel 15–30 s · ca. 2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       }
-      ],
-      [
-       {
-        "dose": "2 × 45 s · langsam → Arbeitstempo",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [],
-         "perSet": 95
-        }
-       }
-      ],
-      [
-       {
-        "dose": null,
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "10–12 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "je Seite 8",
+        "dose": "10 Wdh.",
         "timer": null
        }
       ],
@@ -58385,16 +58342,15 @@
     "P-gym": {
      "session": {
       "date": "2026-11-04",
-      "type": "P",
+      "type": "T",
       "loc": "gym",
       "eq": [
-       "partner",
        "bag"
       ],
       "blocks": [
        {
         "key": "warm",
-        "min": 6,
+        "min": 10,
         "items": [
          {
           "kind": "ex",
@@ -58429,14 +58385,14 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
-            "en": "Fighting stance: steps forward, back and sideways, guard up."
+            "de": "Die Techniken einzeln: Jab, Jab, Cross Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross body – back into your stance after each."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
-            "en": "In sparring rhythm: attack, defend, get out – loose."
+            "de": "Jab, Jab, Cross Körper, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross body, then out of range."
            }
           ]
          }
@@ -58445,59 +58401,60 @@
        },
        {
         "key": "main",
-        "min": 12,
+        "min": 10,
         "rounds": true,
         "w": 180,
-        "b": 60,
+        "b": 67,
         "items": [
          {
           "kind": "round",
-          "k": "task",
-          "id": "lead",
-          "m": "p"
+          "k": "shadow",
+          "combo": [
+           "jab",
+           "hook",
+           "round",
+           "round"
+          ],
+          "ease": 1
          },
          {
           "kind": "round",
-          "k": "task",
-          "id": "firsthit",
-          "m": "p"
-         },
-         {
-          "kind": "round",
-          "k": "task",
-          "id": "control",
-          "m": "p"
+          "k": "dist",
+          "combo": [
+           "jab",
+           "jab",
+           "crossb"
+          ],
+          "dist": {
+           "i": "backIn",
+           "o": null
+          }
          }
         ],
         "fitnessLevel": 1
        },
        {
-        "key": "str",
-        "min": 5,
+        "key": "cond",
+        "lbl": "lowiv",
+        "min": 4,
+        "rounds": true,
         "items": [
          {
-          "kind": "ex",
-          "id": 10
+          "kind": "round",
+          "k": "ex",
+          "id": 20
          },
          {
-          "kind": "ex",
+          "kind": "round",
+          "k": "ex",
           "id": 8
-         },
-         {
-          "kind": "ex",
-          "id": 41
-         },
-         {
-          "kind": "ex",
-          "id": 48
          }
         ],
-        "sets": "3×",
         "fitnessLevel": 1
        },
        {
         "key": "cool",
-        "min": 5,
+        "min": 4,
         "items": [
          {
           "kind": "ex",
@@ -58505,20 +58462,22 @@
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 76
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 73
          }
         ],
         "fitnessLevel": 1
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
-       "Sparring mit Partner nur mit kompletter Schutzausrüstung und unter Aufsicht eines Trainers.",
-       "Schutzausrüstung Kickboxen: Kopfschutz, Mundschutz, Handschuhe, Tiefschutz, Schienbein- und Fußschutz."
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
+       "Belastungszyklus: Woche 1/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
+       "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
+       "Für eine langfristige Zyklussteigerung fehlen noch regelmäßig erfasste Einheiten.",
+       "Gleiche Rundenzeit, angepasste Pausen: 60 → 67 s; innerhalb deiner Trainingszeit."
       ],
       "rpe": "6–7",
       "tHi": 7,
@@ -58533,10 +58492,10 @@
        "week": 1,
        "weeks": 5,
        "block": null,
-       "signature": "lc:1:P:regular",
+       "signature": "lc:1:T:regular",
        "step": 0,
        "reason": "initial",
-       "eligible": false,
+       "eligible": true,
        "data": {
         "level": "collecting",
         "reason": "few",
@@ -58548,31 +58507,49 @@
         "planKnown": 0,
         "worsening": false
        },
-       "plannedDates": [],
+       "plannedDates": [
+        "2026-11-04",
+        "2026-11-06",
+        "2026-11-11",
+        "2026-11-13",
+        "2026-11-18",
+        "2026-11-20",
+        "2026-11-25",
+        "2026-11-27"
+       ],
        "plannedMin": 30
       },
-      "effortDose": null,
+      "effortDose": {
+       "v": 1,
+       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"T\",1]",
+       "eligible": true,
+       "setRest": 60,
+       "factor": 1,
+       "active": false,
+       "source": null,
+       "roundRest": 67
+      },
       "techniqueLevel": 1,
       "fitnessLevel": 1
      },
      "items": [
       [
        {
-        "dose": "2 Min. · je Bewegung 10 Wdh.",
+        "dose": "3 Min. · je Bewegung 10 Wdh.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        },
        {
@@ -58587,12 +58564,12 @@
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        }
       ],
@@ -58615,36 +58592,16 @@
        {
         "dose": null,
         "timer": null
-       },
-       {
-        "dose": null,
-        "timer": null
        }
       ],
       [
        {
-        "dose": "4 Läufe à 20 m",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
         "dose": "10 Wdh.",
         "timer": null
-       },
-       {
-        "dose": "10–12 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "30–45 s pro Bein halten · ein Satz = erst links, dann rechts",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30,
-          45
-         ],
-         "perSet": 30
-        }
        }
       ],
       [
@@ -58660,17 +58617,6 @@
         }
        },
        {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
-       {
         "dose": "2 Min.",
         "timer": {
          "phases": 1,
@@ -58679,6 +58625,18 @@
           120
          ],
          "perSet": 120
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        }
       ]
@@ -58690,23 +58648,20 @@
       "type": "C",
       "loc": "gym",
       "eq": [
-       "partner",
-       "bag",
-       "pads",
-       "rope"
+       "bag"
       ],
       "blocks": [
        {
         "key": "warm",
-        "min": 6,
+        "min": 10,
         "items": [
          {
           "kind": "ex",
-          "id": 0
+          "id": 4
          },
          {
           "kind": "ex",
-          "id": 1
+          "id": 2
          },
          {
           "kind": "ex",
@@ -58714,7 +58669,7 @@
          },
          {
           "kind": "ex",
-          "id": 4
+          "id": 1
          }
         ],
         "fitnessLevel": 1
@@ -58733,14 +58688,14 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross body, Roundhouse body – back into your stance after each."
+            "de": "Die Techniken einzeln: Cross, Haken, Körperhaken, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Cross, Hook, Body hook, Roundhouse body – back into your stance after each."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross Körper, Roundhouse Körper, danach heraus aus der Distanz.",
-            "en": "Jab, Cross body, Roundhouse body, then out of range."
+            "de": "Cross, Haken, Körperhaken, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Cross, Hook, Body hook, Roundhouse body, then out of range."
            }
           ]
          }
@@ -58749,58 +58704,36 @@
        },
        {
         "key": "main",
-        "min": 8,
+        "min": 6,
         "rounds": true,
         "w": 180,
         "b": 67,
         "items": [
          {
           "kind": "round",
-          "k": "partner",
+          "k": "shadow",
           "combo": [
-           "jab",
-           "crossb",
+           "cross",
+           "hook",
+           "hookb",
            "round"
           ],
-          "ease": 1,
-          "react": {
-           "mid": {
-            "at": 1,
-            "a": "upper",
-            "d": "step"
-           }
-          }
-         },
-         {
-          "kind": "round",
-          "k": "rope"
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "plyo",
-        "lbl": "plyo",
-        "min": 4,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 92
+          "ease": 1
          }
         ],
         "fitnessLevel": 1
        },
        {
         "key": "cond",
-        "min": 5,
+        "min": 8,
         "items": [
          {
           "kind": "ex",
-          "id": 10
+          "id": 18
          },
          {
           "kind": "ex",
-          "id": 12
+          "id": 20
          },
          {
           "kind": "ex",
@@ -58816,27 +58749,26 @@
        },
        {
         "key": "cool",
-        "min": 5,
+        "min": 4,
         "items": [
          {
           "kind": "ex",
-          "id": 76
+          "id": 75
+         },
+         {
+          "kind": "ex",
+          "id": 73
          },
          {
           "kind": "ex",
           "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 75
          }
         ],
         "fitnessLevel": 1
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
-       "Partnerübungen: Mundschutz tragen; wer die Pratze hält, hält sie fest mit beiden Händen; bei Kontakt die passenden Schützer.",
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
        "Belastungszyklus: Woche 1/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
        "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
        "Für eine langfristige Zyklussteigerung fehlen noch regelmäßig erfasste Einheiten.",
@@ -58844,7 +58776,7 @@
       ],
       "rpe": "6–7",
       "tHi": 7,
-      "theme": "startJab",
+      "theme": "bodyHead",
       "min": 30,
       "blk": null,
       "progression": {
@@ -58891,21 +58823,21 @@
      "items": [
       [
        {
-        "dose": "2 Min.",
+        "dose": "3 Min. · je Bewegung 10 Wdh.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "3 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        },
        {
@@ -58920,12 +58852,12 @@
         }
        },
        {
-        "dose": "2 Min. · je Bewegung 10 Wdh.",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        }
       ],
@@ -58944,33 +58876,18 @@
        {
         "dose": null,
         "timer": null
-       },
-       {
-        "dose": null,
-        "timer": null
        }
       ],
       [
        {
-        "dose": "3 × (15 s / 30 s Pause)",
-        "timer": {
-         "phases": 6,
-         "seconds": 135,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "4 Läufe à 20 m",
+        "dose": "pro Bein 10",
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": {
-         "phases": 6,
-         "seconds": 90,
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -58991,14 +58908,26 @@
       ],
       [
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       },
+       {
+        "dose": "60–90 s halten",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 60,
          "choices": [
-          120
+          60,
+          90
          ],
-         "perSet": 120
+         "perSet": 60
         }
        },
        {
@@ -59011,17 +58940,6 @@
          ],
          "perSet": 45
         }
-       },
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
        }
       ]
      ]
@@ -59031,18 +58949,15 @@
       "date": "2026-11-04",
       "type": "K",
       "loc": "gym",
-      "eq": [
-       "rope",
-       "kb"
-      ],
+      "eq": [],
       "blocks": [
        {
         "key": "warm",
-        "min": 8,
+        "min": 10,
         "items": [
          {
           "kind": "ex",
-          "id": 0
+          "id": 5
          },
          {
           "kind": "ex",
@@ -59050,14 +58965,14 @@
          },
          {
           "kind": "ex",
-          "id": 5
+          "id": 2
          }
         ],
         "fitnessLevel": 1
        },
        {
         "key": "cond",
-        "min": 13,
+        "min": 12,
         "rounds": true,
         "w": 120,
         "b": 67,
@@ -59065,13 +58980,13 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 15,
+          "id": 21,
           "pace": false
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 95,
+          "id": 96,
           "pace": false
          },
          {
@@ -59083,7 +58998,7 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 16,
+          "id": 20,
           "pace": false
          }
         ],
@@ -59095,15 +59010,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 41
-         },
-         {
-          "kind": "ex",
-          "id": 54
+          "id": 56
          },
          {
           "kind": "ex",
           "id": 42
+         },
+         {
+          "kind": "ex",
+          "id": 52
          }
         ],
         "sets": "3×",
@@ -59111,7 +59026,7 @@
        },
        {
         "key": "cool",
-        "min": 5,
+        "min": 4,
         "items": [
          {
           "kind": "ex",
@@ -59119,18 +59034,18 @@
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 74
          },
          {
           "kind": "ex",
-          "id": 74
+          "id": 75
          }
         ],
         "fitnessLevel": 1
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
        "Belastungszyklus: Woche 1/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
        "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
        "Für eine langfristige Zyklussteigerung fehlen noch regelmäßig erfasste Einheiten.",
@@ -59203,7 +59118,7 @@
         }
        },
        {
-        "dose": "3 Min.",
+        "dose": "3 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -59214,11 +59129,11 @@
       ],
       [
        {
-        "dose": "15 Wdh.",
+        "dose": "3 Min.",
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 40 s Pause)",
+        "dose": "4 × (20 s / 40 s Pause)",
         "timer": null
        },
        {
@@ -59226,15 +59141,11 @@
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 10 s Pause)",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        }
       ],
       [
-       {
-        "dose": "10–12 Wdh.",
-        "timer": null
-       },
        {
         "dose": "10–12 Wdh. pro Bein",
         "timer": null
@@ -59242,6 +59153,15 @@
        {
         "dose": "10–12 Wdh. je Seite",
         "timer": null
+       },
+       {
+        "dose": "je Richtung 10 s (Stirn, Hinterkopf, links, rechts)",
+        "timer": {
+         "phases": 7,
+         "seconds": 55,
+         "choices": [],
+         "perSet": 10
+        }
        }
       ],
       [
@@ -59269,14 +59189,14 @@
         }
        },
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
+         "perSet": 30
         }
        }
       ]
@@ -59350,7 +59270,7 @@
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche."
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge."
       ],
       "rpe": "3–4",
       "tHi": 4,
@@ -59471,15 +59391,12 @@
       "type": "S",
       "loc": "gym",
       "eq": [
-       "weights",
-       "kb",
-       "bar",
-       "bands"
+       "bar"
       ],
       "blocks": [
        {
         "key": "warm",
-        "min": 8,
+        "min": 10,
         "items": [
          {
           "kind": "ex",
@@ -59491,144 +59408,56 @@
          },
          {
           "kind": "ex",
-          "id": 3
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "plyo",
-        "lbl": "plyo",
-        "min": 6,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 92
-         },
-         {
-          "kind": "ex",
-          "id": 88
+          "id": 1
          }
         ],
         "fitnessLevel": 1
        },
        {
         "key": "str",
-        "min": 8,
+        "lbl": "lowstr",
+        "min": 11,
         "items": [
          {
           "kind": "ex",
-          "id": 44,
-          "basic": true,
-          "target": {
-           "kind": "lc:1:S:regular:gym:kb,weights:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "kb,weights",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
+          "id": 43,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 46,
-          "basic": true,
-          "target": {
-           "kind": "lc:1:S:regular:gym:weights:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "weights",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
+          "id": 22,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 45,
-          "basic": true,
-          "target": {
-           "kind": "lc:1:S:regular:gym:bands:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "bands",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
-         },
-         {
-          "kind": "ex",
-          "id": 27,
-          "target": {
-           "kind": "lc:1:S:regular:gym:bar:30-45:3:s",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 30,
-           "hi": 45,
-           "eq": "bar",
-           "r": 30,
-           "kg": null,
-           "timed": true,
-           "reason": "initial",
-           "baseR": 30
-          }
-         },
-         {
-          "kind": "ex",
-          "id": 26,
-          "target": {
-           "kind": "lc:1:S:regular:gym:bar:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "bar",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
+          "id": 24,
+          "basic": true
          }
         ],
-        "sets": "3× 8–12",
+        "sets": "2 schwere Sätze: die schwerste Variante, die du sauber schaffst – 1–2 Wiederholungen vor Schluss aufhören",
         "fitnessLevel": 1
        },
        {
         "key": "cond",
-        "min": 3,
+        "min": 5,
         "rounds": true,
         "items": [
          {
           "kind": "round",
           "k": "ex",
-          "id": 21
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 14
+          "id": 19
          }
         ],
         "fitnessLevel": 1
        },
        {
         "key": "cool",
-        "min": 5,
+        "min": 4,
         "items": [
          {
           "kind": "ex",
@@ -59647,7 +59476,7 @@
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
        "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
        "Belastungszyklus: Woche 1/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
        "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
@@ -59682,10 +59511,11 @@
         "worsening": false
        },
        "plannedDates": [
+        "2026-11-02",
         "2026-11-04",
-        "2026-11-11",
-        "2026-11-18",
-        "2026-11-25"
+        "2026-11-09",
+        "2026-11-16",
+        "2026-11-23"
        ],
        "plannedMin": 30
       },
@@ -59733,60 +59563,25 @@
       ],
       [
        {
-        "dose": "3 × (15 s / 30 s Pause)",
-        "timer": {
-         "phases": 6,
-         "seconds": 135,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": "3 × (20 s / 40 s Pause)",
-        "timer": {
-         "phases": 6,
-         "seconds": 180,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "3 × 8–12 Wdh.",
+        "dose": "3 × 10–12 Wdh. pro Bein",
         "timer": null
        },
        {
-        "dose": "3 × 8–12 Wdh.",
+        "dose": "3 × 10–12 Wdh.",
         "timer": null
        },
        {
-        "dose": "3 × 8–12 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "3 × 30–45 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 30,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "3 × 8–12 Wdh.",
+        "dose": "3 × so viele saubere wie möglich",
         "timer": null
        }
       ],
       [
        {
-        "dose": "3 Min.",
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "40 s (ca. 10 m hin und zurück), 20 s Pause",
         "timer": null
        }
       ],
@@ -59832,26 +59627,20 @@
      "session": {
       "date": "2026-11-04",
       "type": "S",
-      "loc": "studio",
-      "eq": [
-       "weights",
-       "kb",
-       "bb",
-       "bar",
-       "studio"
-      ],
+      "loc": "gym",
+      "eq": [],
       "blocks": [
        {
         "key": "warm",
-        "min": 8,
+        "min": 10,
         "items": [
          {
           "kind": "ex",
-          "id": 113
+          "id": 2
          },
          {
           "kind": "ex",
-          "id": 2
+          "id": 3
          },
          {
           "kind": "ex",
@@ -59862,99 +59651,39 @@
        },
        {
         "key": "str",
-        "min": 12,
+        "lbl": "lowstr",
+        "min": 11,
         "items": [
          {
           "kind": "ex",
-          "id": 33,
-          "basic": true,
-          "target": {
-           "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "studio",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
+          "id": 43,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 108,
-          "basic": true,
-          "target": {
-           "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "studio",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
+          "id": 22,
+          "basic": true
          },
          {
           "kind": "ex",
-          "id": 31,
+          "id": 23,
           "basic": true,
           "target": {
-           "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
+           "kind": "lc:1:S:regular:gym::30-45:2:s",
            "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "studio",
-           "r": 8,
+           "n": 2,
+           "lo": 30,
+           "hi": 45,
+           "eq": "",
+           "r": 30,
            "kg": null,
-           "timed": false,
+           "timed": true,
            "reason": "initial",
-           "baseR": 8
-          }
-         },
-         {
-          "kind": "ex",
-          "id": 29,
-          "basic": true,
-          "target": {
-           "kind": "lc:1:S:regular:studio:bb,studio:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "bb,studio",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
-          }
-         },
-         {
-          "kind": "ex",
-          "id": 110,
-          "target": {
-           "kind": "lc:1:S:regular:studio:studio:8-12:3:r",
-           "cycle": "base:2026-11-02",
-           "n": 3,
-           "lo": 8,
-           "hi": 12,
-           "eq": "studio",
-           "r": 8,
-           "kg": null,
-           "timed": false,
-           "reason": "initial",
-           "baseR": 8
+           "baseR": 30
           }
          }
         ],
-        "sets": "3× 8–12",
+        "sets": "2 schwere Sätze: die schwerste Variante, die du sauber schaffst – 1–2 Wiederholungen vor Schluss aufhören",
         "fitnessLevel": 1
        },
        {
@@ -59965,19 +59694,19 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 38
+          "id": 9
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 15
+          "id": 19
          }
         ],
         "fitnessLevel": 1
        },
        {
         "key": "cool",
-        "min": 5,
+        "min": 4,
         "items": [
          {
           "kind": "ex",
@@ -59985,18 +59714,18 @@
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 73
          },
          {
           "kind": "ex",
-          "id": 74
+          "id": 72
          }
         ],
         "fitnessLevel": 1
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
        "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
        "Belastungszyklus: Woche 1/5. Ausgangsniveau: zuerst vergleichbare Einheiten vollständig absolvieren und Anstrengung eintragen.",
        "Datengrundlage: im Aufbau · 0 vergleichbare Einheiten in 0 Wochen.",
@@ -60031,10 +59760,11 @@
         "worsening": false
        },
        "plannedDates": [
+        "2026-11-02",
         "2026-11-04",
-        "2026-11-11",
-        "2026-11-18",
-        "2026-11-25"
+        "2026-11-09",
+        "2026-11-16",
+        "2026-11-23"
        ],
        "plannedMin": 30
       },
@@ -60053,7 +59783,7 @@
      "items": [
       [
        {
-        "dose": "3 Min.",
+        "dose": "3 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -60062,7 +59792,7 @@
         }
        },
        {
-        "dose": "3 Min. · je Gelenk 10 Kreise",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -60082,33 +59812,32 @@
       ],
       [
        {
-        "dose": "3 × 8–12 Wdh.",
+        "dose": "3 × 10–12 Wdh. pro Bein",
         "timer": null
        },
        {
-        "dose": "3 × 8–12 Wdh.",
+        "dose": "3 × 10–12 Wdh.",
         "timer": null
        },
        {
-        "dose": "3 × 8–12 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "3 × 8–12 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "3 × 8–12 Wdh.",
-        "timer": null
+        "dose": "3 × 30–45 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 30,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
        }
       ],
       [
        {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": null
        },
        {
-        "dose": "15 Wdh.",
+        "dose": "40 s (ca. 10 m hin und zurück), 20 s Pause",
         "timer": null
        }
       ],
@@ -60125,14 +59854,15 @@
         }
        },
        {
-        "dose": "je Seite 45 s",
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          45
+          60,
+          90
          ],
-         "perSet": 45
+         "perSet": 60
         }
        },
        {
@@ -60154,9 +59884,7 @@
       "date": "2026-11-04",
       "type": "M",
       "loc": "home",
-      "eq": [
-       "bands"
-      ],
+      "eq": [],
       "blocks": [
        {
         "key": "warm",
@@ -60164,11 +59892,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 6
+          "id": 2
          },
          {
           "kind": "ex",
-          "id": 2
+          "id": 3
          }
         ],
         "fitnessLevel": 1
@@ -60179,15 +59907,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 65
-         },
-         {
-          "kind": "ex",
-          "id": 68
-         },
-         {
-          "kind": "ex",
-          "id": 62
+          "id": 70
          },
          {
           "kind": "ex",
@@ -60195,7 +59915,15 @@
          },
          {
           "kind": "ex",
-          "id": 84
+          "id": 61
+         },
+         {
+          "kind": "ex",
+          "id": 69
+         },
+         {
+          "kind": "ex",
+          "id": 59
          }
         ],
         "sets": "je 60–90 s, ruhig atmen",
@@ -60207,7 +59935,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
+          "id": 75
+         },
+         {
+          "kind": "ex",
+          "id": 72
          },
          {
           "kind": "ex",
@@ -60218,7 +59950,7 @@
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche."
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge."
       ],
       "rpe": "3–4",
       "tHi": 4,
@@ -60257,7 +59989,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Übung 15 Wdh.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -60266,7 +59998,7 @@
         }
        },
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -60277,16 +60009,31 @@
       ],
       [
        {
-        "dose": "10 Wdh. · insgesamt ca. 3 Min.",
+        "dose": "60–90 s halten · insgesamt ca. 1–2 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 180,
-         "choices": [],
-         "perSet": 180
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        },
        {
-        "dose": "10 Wdh. · insgesamt ca. 3 Min.",
+        "dose": "je Seite 5 × 3–5 s · im Wechsel links/rechts, ca. 4–5 Min.",
+        "timer": {
+         "phases": 87,
+         "seconds": 275,
+         "choices": [
+          3,
+          5
+         ],
+         "perSet": 3
+        }
+       },
+       {
+        "dose": "je Seite 6 · insgesamt ca. 3 Min.",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -60304,19 +60051,7 @@
         }
        },
        {
-        "dose": "je Seite 5 × 3–5 s · im Wechsel links/rechts, ca. 4–5 Min.",
-        "timer": {
-         "phases": 87,
-         "seconds": 275,
-         "choices": [
-          3,
-          5
-         ],
-         "perSet": 3
-        }
-       },
-       {
-        "dose": "je Seite 10 · insgesamt ca. 3 Min.",
+        "dose": "je Seite 6 Kreise · insgesamt ca. 3 Min.",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -60327,15 +60062,25 @@
       ],
       [
        {
-        "dose": "60–90 s halten",
+        "dose": "je Seite 30 s",
         "timer": {
-         "phases": 1,
-         "seconds": 60,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          60,
-          90
+          30
          ],
-         "perSet": 60
+         "perSet": 30
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        },
        {
@@ -60358,7 +60103,7 @@
    "age": "adult",
    "days": {
     "2026-11-02": [
-     "T",
+     "S",
      false
     ],
     "2026-11-03": [
@@ -60366,7 +60111,7 @@
      false
     ],
     "2026-11-04": [
-     "S",
+     "T",
      false
     ],
     "2026-11-05": [
@@ -60374,7 +60119,7 @@
      false
     ],
     "2026-11-06": [
-     "P",
+     "T",
      false
     ],
     "2026-11-07": [
@@ -60386,7 +60131,7 @@
      false
     ],
     "2026-11-09": [
-     "T",
+     "S",
      false
     ],
     "2026-11-10": [
@@ -60394,7 +60139,7 @@
      false
     ],
     "2026-11-11": [
-     "S",
+     "T",
      false
     ],
     "2026-11-12": [
@@ -60402,7 +60147,7 @@
      false
     ],
     "2026-11-13": [
-     "P",
+     "T",
      false
     ],
     "2026-11-14": [
@@ -60464,618 +60209,20 @@
       "type": "T",
       "loc": "gym",
       "eq": [
-       "partner",
-       "bag",
-       "pads",
-       "rope"
-      ],
-      "blocks": [
-       {
-        "key": "warm",
-        "min": 6,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 1
-         },
-         {
-          "kind": "ex",
-          "id": 5
-         },
-         {
-          "kind": "ex",
-          "id": 87
-         },
-         {
-          "kind": "ex",
-          "id": 4
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "prep",
-        "lbl": "prep",
-        "min": 2,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 107,
-          "n": 2,
-          "s": 45,
-          "steps": [
-           {
-            "t": "slow",
-            "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross Körper, Brazilian Kick Kopf, Fußfeger – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross body, Brazilian kick head, Foot sweep – back into your stance after each."
-           },
-           {
-            "t": "work",
-            "f": 0,
-            "de": "Jab, Cross Körper, Brazilian Kick Kopf, Fußfeger, danach heraus aus der Distanz.",
-            "en": "Jab, Cross body, Brazilian kick head, Foot sweep, then out of range."
-           }
-          ]
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "main",
-        "min": 12,
-        "rounds": true,
-        "w": 180,
-        "b": 60,
-        "items": [
-         {
-          "kind": "round",
-          "k": "partner",
-          "combo": [
-           "round",
-           "round",
-           "round"
-          ],
-          "ease": 1
-         },
-         {
-          "kind": "round",
-          "k": "partner",
-          "combo": [
-           "jab",
-           "crossb",
-           "brazil",
-           "sweep"
-          ],
-          "dist": {
-           "i": "angle",
-           "o": "pivot"
-          }
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "str",
-        "lbl": "tstr",
-        "min": 5,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 55
-         },
-         {
-          "kind": "ex",
-          "id": 56
-         }
-        ],
-        "sets": "2×",
-        "fitnessLevel": 1
-       },
-       {
-        "key": "cool",
-        "min": 5,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 74
-         }
-        ],
-        "fitnessLevel": 1
-       }
-      ],
-      "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
-       "Partnerübungen: Mundschutz tragen; wer die Pratze hält, hält sie fest mit beiden Händen; bei Kontakt die passenden Schützer.",
-       "Entlastungswoche: Runden und Sätze reduziert.",
-       "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
-      ],
-      "rpe": "4–6",
-      "tHi": 6,
-      "theme": "sweepFinish",
-      "min": 30,
-      "blk": null,
-      "progression": {
-       "v": 1,
-       "id": "base:2026-11-02",
-       "start": "2026-11-02",
-       "end": "2026-12-06",
-       "week": 1,
-       "weeks": 5,
-       "block": null,
-       "signature": "lc:1:T:regular",
-       "step": 0,
-       "reason": "initial",
-       "eligible": false,
-       "data": {
-        "level": "collecting",
-        "reason": "few",
-        "count": 0,
-        "weeks": 0,
-        "planned": 0,
-        "coverage": 0,
-        "completeness": 0,
-        "planKnown": 0,
-        "worsening": false
-       },
-       "plannedDates": [
-        "2026-11-09",
-        "2026-11-16",
-        "2026-11-23"
-       ],
-       "plannedMin": 30
-      },
-      "effortDose": {
-       "v": 1,
-       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"T\",1]",
-       "eligible": false,
-       "setRest": 60,
-       "factor": 1,
-       "active": false,
-       "source": null
-      },
-      "techniqueLevel": 1,
-      "fitnessLevel": 1
-     },
-     "items": [
-      [
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "je Muskel 15–30 s · ca. 2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "2 Min. · je Bewegung 10 Wdh.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       }
-      ],
-      [
-       {
-        "dose": "2 × 45 s · langsam → Arbeitstempo",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [],
-         "perSet": 95
-        }
-       }
-      ],
-      [
-       {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "30–45 s je Seite halten",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30,
-          45
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "10–12 Wdh. pro Bein",
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "60–90 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       }
-      ]
-     ]
-    },
-    "T-home": {
-     "session": {
-      "date": "2026-11-04",
-      "type": "T",
-      "loc": "home",
-      "eq": [
-       "bag",
-       "rope",
-       "bands"
-      ],
-      "blocks": [
-       {
-        "key": "warm",
-        "min": 6,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 4
-         },
-         {
-          "kind": "ex",
-          "id": 0
-         },
-         {
-          "kind": "ex",
-          "id": 87
-         },
-         {
-          "kind": "ex",
-          "id": 3
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "prep",
-        "lbl": "prep",
-        "min": 2,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 107,
-          "n": 2,
-          "s": 45,
-          "steps": [
-           {
-            "t": "slow",
-            "f": 0,
-            "de": "Die Techniken einzeln: Jab Körper, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab body, Cross, Roundhouse body – back into your stance after each."
-           },
-           {
-            "t": "work",
-            "f": 0,
-            "de": "Jab Körper, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
-            "en": "Jab body, Cross, Roundhouse body, then out of range."
-           }
-          ]
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "main",
-        "min": 12,
-        "rounds": true,
-        "w": 180,
-        "b": 60,
-        "items": [
-         {
-          "kind": "round",
-          "k": "shadow",
-          "combo": [
-           "jabb",
-           "cross",
-           "round"
-          ],
-          "ease": 1
-         },
-         {
-          "kind": "round",
-          "k": "evade",
-          "combo": [
-           "cross",
-           "hook",
-           "round"
-          ],
-          "evade": {
-           "d": "parry"
-          }
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "str",
-        "lbl": "tstr",
-        "min": 5,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 47
-         },
-         {
-          "kind": "ex",
-          "id": 86
-         }
-        ],
-        "sets": "2×",
-        "fitnessLevel": 1
-       },
-       {
-        "key": "cool",
-        "min": 5,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 72
-         },
-         {
-          "kind": "ex",
-          "id": 74
-         }
-        ],
-        "fitnessLevel": 1
-       }
-      ],
-      "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
-       "Entlastungswoche: Runden und Sätze reduziert.",
-       "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
-      ],
-      "rpe": "4–6",
-      "tHi": 6,
-      "theme": "frontStart",
-      "min": 30,
-      "blk": null,
-      "progression": {
-       "v": 1,
-       "id": "base:2026-11-02",
-       "start": "2026-11-02",
-       "end": "2026-12-06",
-       "week": 1,
-       "weeks": 5,
-       "block": null,
-       "signature": "lc:1:T:regular",
-       "step": 0,
-       "reason": "initial",
-       "eligible": false,
-       "data": {
-        "level": "collecting",
-        "reason": "few",
-        "count": 0,
-        "weeks": 0,
-        "planned": 0,
-        "coverage": 0,
-        "completeness": 0,
-        "planKnown": 0,
-        "worsening": false
-       },
-       "plannedDates": [
-        "2026-11-09",
-        "2026-11-16",
-        "2026-11-23"
-       ],
-       "plannedMin": 30
-      },
-      "effortDose": {
-       "v": 1,
-       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"T\",1]",
-       "eligible": false,
-       "setRest": 60,
-       "factor": 1,
-       "active": false,
-       "source": null
-      },
-      "techniqueLevel": 1,
-      "fitnessLevel": 1
-     },
-     "items": [
-      [
-       {
-        "dose": "2 Min. · je Bewegung 10 Wdh.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "je Muskel 15–30 s · ca. 2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       }
-      ],
-      [
-       {
-        "dose": "2 × 45 s · langsam → Arbeitstempo",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [],
-         "perSet": 95
-        }
-       }
-      ],
-      [
-       {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "10–12 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "je Seite 8",
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       }
-      ]
-     ]
-    },
-    "P-gym": {
-     "session": {
-      "date": "2026-11-04",
-      "type": "P",
-      "loc": "gym",
-      "eq": [
-       "partner",
        "bag"
       ],
       "blocks": [
        {
         "key": "warm",
-        "min": 6,
+        "min": 10,
         "items": [
          {
           "kind": "ex",
-          "id": 4
+          "id": 1
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 4
          },
          {
           "kind": "ex",
@@ -61083,302 +60230,7 @@
          },
          {
           "kind": "ex",
-          "id": 1
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "prep",
-        "lbl": "prep",
-        "min": 2,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 107,
-          "n": 2,
-          "s": 45,
-          "steps": [
-           {
-            "t": "slow",
-            "f": 0,
-            "de": "Kampfstellung: Schritte vor, zurück und seitlich, Deckung oben.",
-            "en": "Fighting stance: steps forward, back and sideways, guard up."
-           },
-           {
-            "t": "work",
-            "f": 0,
-            "de": "Im Sparring-Rhythmus: angreifen, abwehren, heraus – locker.",
-            "en": "In sparring rhythm: attack, defend, get out – loose."
-           }
-          ]
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "main",
-        "min": 12,
-        "rounds": true,
-        "w": 180,
-        "b": 60,
-        "items": [
-         {
-          "kind": "round",
-          "k": "task",
-          "id": "firsthit",
-          "m": "p"
-         },
-         {
-          "kind": "round",
-          "k": "task",
-          "id": "control",
-          "m": "p"
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "str",
-        "min": 5,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 8
-         },
-         {
-          "kind": "ex",
-          "id": 10
-         },
-         {
-          "kind": "ex",
-          "id": 23
-         },
-         {
-          "kind": "ex",
-          "id": 51
-         }
-        ],
-        "sets": "2×",
-        "fitnessLevel": 1
-       },
-       {
-        "key": "cool",
-        "min": 5,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 72
-         },
-         {
-          "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 76
-         }
-        ],
-        "fitnessLevel": 1
-       }
-      ],
-      "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
-       "Sparring mit Partner nur mit kompletter Schutzausrüstung und unter Aufsicht eines Trainers.",
-       "Schutzausrüstung Kickboxen: Kopfschutz, Mundschutz, Handschuhe, Tiefschutz, Schienbein- und Fußschutz.",
-       "Entlastungswoche: Runden und Sätze reduziert."
-      ],
-      "rpe": "4–6",
-      "tHi": 6,
-      "theme": "headFinish",
-      "min": 30,
-      "blk": null,
-      "progression": {
-       "v": 1,
-       "id": "base:2026-11-02",
-       "start": "2026-11-02",
-       "end": "2026-12-06",
-       "week": 1,
-       "weeks": 5,
-       "block": null,
-       "signature": "lc:1:P:regular",
-       "step": 0,
-       "reason": "initial",
-       "eligible": false,
-       "data": {
-        "level": "collecting",
-        "reason": "few",
-        "count": 0,
-        "weeks": 0,
-        "planned": 0,
-        "coverage": 0,
-        "completeness": 0,
-        "planKnown": 0,
-        "worsening": false
-       },
-       "plannedDates": [],
-       "plannedMin": 30
-      },
-      "effortDose": null,
-      "techniqueLevel": 1,
-      "fitnessLevel": 1
-     },
-     "items": [
-      [
-       {
-        "dose": "2 Min. · je Bewegung 10 Wdh.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "je Muskel 15–30 s · ca. 2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 120
-        }
-       }
-      ],
-      [
-       {
-        "dose": "2 × 45 s · langsam → Arbeitstempo",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [],
-         "perSet": 95
-        }
-       }
-      ],
-      [
-       {
-        "dose": null,
-        "timer": null
-       },
-       {
-        "dose": null,
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "10 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "4 Läufe à 20 m",
-        "timer": null
-       },
-       {
-        "dose": "30–45 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 30,
-         "choices": [
-          30,
-          45
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "10–12 Wdh. pro Bein",
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       }
-      ]
-     ]
-    },
-    "C-gym": {
-     "session": {
-      "date": "2026-11-04",
-      "type": "C",
-      "loc": "gym",
-      "eq": [
-       "partner",
-       "bag",
-       "pads",
-       "rope"
-      ],
-      "blocks": [
-       {
-        "key": "warm",
-        "min": 6,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 0
-         },
-         {
-          "kind": "ex",
-          "id": 1
-         },
-         {
-          "kind": "ex",
-          "id": 87
-         },
-         {
-          "kind": "ex",
-          "id": 4
+          "id": 5
          }
         ],
         "fitnessLevel": 1
@@ -61413,58 +60265,936 @@
        },
        {
         "key": "main",
-        "min": 8,
+        "min": 10,
         "rounds": true,
         "w": 180,
         "b": 60,
         "items": [
          {
           "kind": "round",
-          "k": "partner",
+          "k": "shadow",
+          "combo": [
+           "front",
+           "round"
+          ],
+          "ease": 1
+         },
+         {
+          "kind": "round",
+          "k": "dist",
           "combo": [
            "jab",
            "crossb",
            "round"
           ],
-          "ease": 1,
-          "react": {
-           "mid": {
-            "at": 1,
-            "a": "upper",
-            "d": "step"
-           }
+          "dist": {
+           "i": "pivotIn",
+           "o": null
           }
-         },
-         {
-          "kind": "round",
-          "k": "rope"
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "plyo",
-        "lbl": "plyo",
-        "min": 4,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 92
          }
         ],
         "fitnessLevel": 1
        },
        {
         "key": "cond",
-        "min": 5,
+        "lbl": "lowiv",
+        "min": 4,
+        "rounds": true,
+        "items": [
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 12
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 21
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cool",
+        "min": 4,
         "items": [
          {
           "kind": "ex",
-          "id": 10
+          "id": 76
          },
          {
           "kind": "ex",
-          "id": 12
+          "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 75
+         }
+        ],
+        "fitnessLevel": 1
+       }
+      ],
+      "notes": [
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
+       "Entlastungswoche: Runden und Sätze reduziert.",
+       "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
+      ],
+      "rpe": "4–6",
+      "tHi": 6,
+      "theme": "shortOpp",
+      "min": 30,
+      "blk": null,
+      "progression": {
+       "v": 1,
+       "id": "base:2026-11-02",
+       "start": "2026-11-02",
+       "end": "2026-12-06",
+       "week": 1,
+       "weeks": 5,
+       "block": null,
+       "signature": "lc:1:T:regular",
+       "step": 0,
+       "reason": "initial",
+       "eligible": false,
+       "data": {
+        "level": "collecting",
+        "reason": "few",
+        "count": 0,
+        "weeks": 0,
+        "planned": 0,
+        "coverage": 0,
+        "completeness": 0,
+        "planKnown": 0,
+        "worsening": false
+       },
+       "plannedDates": [
+        "2026-11-11",
+        "2026-11-13",
+        "2026-11-18",
+        "2026-11-20",
+        "2026-11-25",
+        "2026-11-27"
+       ],
+       "plannedMin": 30
+      },
+      "effortDose": {
+       "v": 1,
+       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"T\",1]",
+       "eligible": false,
+       "setRest": 60,
+       "factor": 1,
+       "active": false,
+       "source": null
+      },
+      "techniqueLevel": 1,
+      "fitnessLevel": 1
+     },
+     "items": [
+      [
+       {
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "3 Min. · je Bewegung 10 Wdh.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "je Muskel 15–30 s · ca. 2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       }
+      ],
+      [
+       {
+        "dose": "2 × 45 s · langsam → Arbeitstempo",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [],
+         "perSet": 95
+        }
+       }
+      ],
+      [
+       {
+        "dose": null,
+        "timer": null
+       },
+       {
+        "dose": null,
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "timer": null
+       },
+       {
+        "dose": "3 Min.",
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       }
+      ]
+     ]
+    },
+    "T-home": {
+     "session": {
+      "date": "2026-11-04",
+      "type": "T",
+      "loc": "home",
+      "eq": [
+       "bag"
+      ],
+      "blocks": [
+       {
+        "key": "warm",
+        "min": 10,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 3
+         },
+         {
+          "kind": "ex",
+          "id": 5
+         },
+         {
+          "kind": "ex",
+          "id": 87
+         },
+         {
+          "kind": "ex",
+          "id": 4
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "prep",
+        "lbl": "prep",
+        "min": 2,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 107,
+          "n": 2,
+          "s": 45,
+          "steps": [
+           {
+            "t": "slow",
+            "f": 0,
+            "de": "Die Techniken einzeln: Jab Körper, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab body, Roundhouse body – back into your stance after each."
+           },
+           {
+            "t": "work",
+            "f": 0,
+            "de": "Jab Körper, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Jab body, Roundhouse body, then out of range."
+           }
+          ]
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "main",
+        "min": 10,
+        "rounds": true,
+        "w": 180,
+        "b": 60,
+        "items": [
+         {
+          "kind": "round",
+          "k": "shadow",
+          "combo": [
+           "jabb",
+           "round"
+          ],
+          "ease": 1
+         },
+         {
+          "kind": "round",
+          "k": "evade",
+          "combo": [
+           "cross",
+           "hook",
+           "round"
+          ],
+          "evade": {
+           "d": "parry"
+          }
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cond",
+        "lbl": "lowiv",
+        "min": 4,
+        "rounds": true,
+        "items": [
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 8
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cool",
+        "min": 4,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 73
+         }
+        ],
+        "fitnessLevel": 1
+       }
+      ],
+      "notes": [
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
+       "Entlastungswoche: Runden und Sätze reduziert.",
+       "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
+      ],
+      "rpe": "4–6",
+      "tHi": 6,
+      "theme": "sweepFinish",
+      "min": 30,
+      "blk": null,
+      "progression": {
+       "v": 1,
+       "id": "base:2026-11-02",
+       "start": "2026-11-02",
+       "end": "2026-12-06",
+       "week": 1,
+       "weeks": 5,
+       "block": null,
+       "signature": "lc:1:T:regular",
+       "step": 0,
+       "reason": "initial",
+       "eligible": false,
+       "data": {
+        "level": "collecting",
+        "reason": "few",
+        "count": 0,
+        "weeks": 0,
+        "planned": 0,
+        "coverage": 0,
+        "completeness": 0,
+        "planKnown": 0,
+        "worsening": false
+       },
+       "plannedDates": [
+        "2026-11-11",
+        "2026-11-13",
+        "2026-11-18",
+        "2026-11-20",
+        "2026-11-25",
+        "2026-11-27"
+       ],
+       "plannedMin": 30
+      },
+      "effortDose": {
+       "v": 1,
+       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"T\",1]",
+       "eligible": false,
+       "setRest": 60,
+       "factor": 1,
+       "active": false,
+       "source": null
+      },
+      "techniqueLevel": 1,
+      "fitnessLevel": 1
+     },
+     "items": [
+      [
+       {
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "je Muskel 15–30 s · ca. 2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "3 Min. · je Bewegung 10 Wdh.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       }
+      ],
+      [
+       {
+        "dose": "2 × 45 s · langsam → Arbeitstempo",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [],
+         "perSet": 95
+        }
+       }
+      ],
+      [
+       {
+        "dose": null,
+        "timer": null
+       },
+       {
+        "dose": null,
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "40 s Belastung, 20 s Pause",
+        "timer": null
+       },
+       {
+        "dose": "10 Wdh.",
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
+        }
+       }
+      ]
+     ]
+    },
+    "P-gym": {
+     "session": {
+      "date": "2026-11-04",
+      "type": "T",
+      "loc": "gym",
+      "eq": [
+       "bag"
+      ],
+      "blocks": [
+       {
+        "key": "warm",
+        "min": 10,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 4
+         },
+         {
+          "kind": "ex",
+          "id": 3
+         },
+         {
+          "kind": "ex",
+          "id": 87
+         },
+         {
+          "kind": "ex",
+          "id": 1
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "prep",
+        "lbl": "prep",
+        "min": 2,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 107,
+          "n": 2,
+          "s": 45,
+          "steps": [
+           {
+            "t": "slow",
+            "f": 0,
+            "de": "Die Techniken einzeln: Jab, Jab, Cross Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross body – back into your stance after each."
+           },
+           {
+            "t": "work",
+            "f": 0,
+            "de": "Jab, Jab, Cross Körper, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross body, then out of range."
+           }
+          ]
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "main",
+        "min": 10,
+        "rounds": true,
+        "w": 180,
+        "b": 60,
+        "items": [
+         {
+          "kind": "round",
+          "k": "shadow",
+          "combo": [
+           "jab",
+           "hook",
+           "round",
+           "round"
+          ],
+          "ease": 1
+         },
+         {
+          "kind": "round",
+          "k": "dist",
+          "combo": [
+           "jab",
+           "jab",
+           "crossb"
+          ],
+          "dist": {
+           "i": "backIn",
+           "o": null
+          }
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cond",
+        "lbl": "lowiv",
+        "min": 4,
+        "rounds": true,
+        "items": [
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 20
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 8
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cool",
+        "min": 4,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 75
+         },
+         {
+          "kind": "ex",
+          "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 73
+         }
+        ],
+        "fitnessLevel": 1
+       }
+      ],
+      "notes": [
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
+       "Entlastungswoche: Runden und Sätze reduziert.",
+       "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
+      ],
+      "rpe": "4–6",
+      "tHi": 6,
+      "theme": "headFinish",
+      "min": 30,
+      "blk": null,
+      "progression": {
+       "v": 1,
+       "id": "base:2026-11-02",
+       "start": "2026-11-02",
+       "end": "2026-12-06",
+       "week": 1,
+       "weeks": 5,
+       "block": null,
+       "signature": "lc:1:T:regular",
+       "step": 0,
+       "reason": "initial",
+       "eligible": false,
+       "data": {
+        "level": "collecting",
+        "reason": "few",
+        "count": 0,
+        "weeks": 0,
+        "planned": 0,
+        "coverage": 0,
+        "completeness": 0,
+        "planKnown": 0,
+        "worsening": false
+       },
+       "plannedDates": [
+        "2026-11-11",
+        "2026-11-13",
+        "2026-11-18",
+        "2026-11-20",
+        "2026-11-25",
+        "2026-11-27"
+       ],
+       "plannedMin": 30
+      },
+      "effortDose": {
+       "v": 1,
+       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"T\",1]",
+       "eligible": false,
+       "setRest": 60,
+       "factor": 1,
+       "active": false,
+       "source": null
+      },
+      "techniqueLevel": 1,
+      "fitnessLevel": 1
+     },
+     "items": [
+      [
+       {
+        "dose": "3 Min. · je Bewegung 10 Wdh.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "je Muskel 15–30 s · ca. 2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       }
+      ],
+      [
+       {
+        "dose": "2 × 45 s · langsam → Arbeitstempo",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [],
+         "perSet": 95
+        }
+       }
+      ],
+      [
+       {
+        "dose": null,
+        "timer": null
+       },
+       {
+        "dose": null,
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "40 s Belastung, 20 s Pause",
+        "timer": null
+       },
+       {
+        "dose": "10 Wdh.",
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
+        }
+       }
+      ]
+     ]
+    },
+    "C-gym": {
+     "session": {
+      "date": "2026-11-04",
+      "type": "C",
+      "loc": "gym",
+      "eq": [
+       "bag"
+      ],
+      "blocks": [
+       {
+        "key": "warm",
+        "min": 10,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 4
+         },
+         {
+          "kind": "ex",
+          "id": 2
+         },
+         {
+          "kind": "ex",
+          "id": 87
+         },
+         {
+          "kind": "ex",
+          "id": 1
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "prep",
+        "lbl": "prep",
+        "min": 2,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 107,
+          "n": 2,
+          "s": 45,
+          "steps": [
+           {
+            "t": "slow",
+            "f": 0,
+            "de": "Die Techniken einzeln: Cross, Haken, Körperhaken, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Cross, Hook, Body hook, Roundhouse body – back into your stance after each."
+           },
+           {
+            "t": "work",
+            "f": 0,
+            "de": "Cross, Haken, Körperhaken, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Cross, Hook, Body hook, Roundhouse body, then out of range."
+           }
+          ]
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "main",
+        "min": 6,
+        "rounds": true,
+        "w": 180,
+        "b": 60,
+        "items": [
+         {
+          "kind": "round",
+          "k": "shadow",
+          "combo": [
+           "cross",
+           "hook",
+           "hookb",
+           "round"
+          ],
+          "ease": 1
+         },
+         {
+          "kind": "round",
+          "k": "evade",
+          "combo": [
+           "cross",
+           "round"
+          ],
+          "evade": {
+           "d": "block"
+          }
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cond",
+        "min": 8,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 18
+         },
+         {
+          "kind": "ex",
+          "id": 20
          },
          {
           "kind": "ex",
@@ -61480,33 +61210,32 @@
        },
        {
         "key": "cool",
-        "min": 5,
+        "min": 4,
         "items": [
          {
           "kind": "ex",
-          "id": 76
+          "id": 75
+         },
+         {
+          "kind": "ex",
+          "id": 73
          },
          {
           "kind": "ex",
           "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 75
          }
         ],
         "fitnessLevel": 1
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
-       "Partnerübungen: Mundschutz tragen; wer die Pratze hält, hält sie fest mit beiden Händen; bei Kontakt die passenden Schützer.",
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
        "Entlastungswoche: Runden und Sätze reduziert.",
        "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
       ],
       "rpe": "4–6",
       "tHi": 6,
-      "theme": "startJab",
+      "theme": "bodyHead",
       "min": 30,
       "blk": null,
       "progression": {
@@ -61550,21 +61279,21 @@
      "items": [
       [
        {
-        "dose": "2 Min.",
+        "dose": "3 Min. · je Bewegung 10 Wdh.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "3 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        },
        {
@@ -61579,12 +61308,12 @@
         }
        },
        {
-        "dose": "2 Min. · je Bewegung 10 Wdh.",
+        "dose": "3 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 180,
          "choices": [],
-         "perSet": 120
+         "perSet": 180
         }
        }
       ],
@@ -61611,25 +61340,14 @@
       ],
       [
        {
-        "dose": "3 × (15 s / 30 s Pause)",
-        "timer": {
-         "phases": 6,
-         "seconds": 135,
-         "choices": [],
-         "perSet": 0
-        }
-       }
-      ],
-      [
-       {
-        "dose": "4 Läufe à 20 m",
+        "dose": "pro Bein 10",
         "timer": null
        },
        {
-        "dose": "3 × (20 s Vollgas / 10 s locker)",
+        "dose": "40 s Belastung, 20 s Pause",
         "timer": {
-         "phases": 6,
-         "seconds": 90,
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -61650,14 +61368,26 @@
       ],
       [
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       },
+       {
+        "dose": "60–90 s halten",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 60,
          "choices": [
-          120
+          60,
+          90
          ],
-         "perSet": 120
+         "perSet": 60
         }
        },
        {
@@ -61670,17 +61400,6 @@
          ],
          "perSet": 45
         }
-       },
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
        }
       ]
      ]
@@ -61690,18 +61409,15 @@
       "date": "2026-11-04",
       "type": "K",
       "loc": "gym",
-      "eq": [
-       "rope",
-       "kb"
-      ],
+      "eq": [],
       "blocks": [
        {
         "key": "warm",
-        "min": 8,
+        "min": 10,
         "items": [
          {
           "kind": "ex",
-          "id": 0
+          "id": 5
          },
          {
           "kind": "ex",
@@ -61709,14 +61425,14 @@
          },
          {
           "kind": "ex",
-          "id": 5
+          "id": 2
          }
         ],
         "fitnessLevel": 1
        },
        {
         "key": "cond",
-        "min": 13,
+        "min": 12,
         "rounds": true,
         "w": 120,
         "b": 60,
@@ -61724,13 +61440,13 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 15,
+          "id": 21,
           "pace": false
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 95,
+          "id": 96,
           "pace": false
          },
          {
@@ -61748,15 +61464,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 41
-         },
-         {
-          "kind": "ex",
-          "id": 54
+          "id": 56
          },
          {
           "kind": "ex",
           "id": 42
+         },
+         {
+          "kind": "ex",
+          "id": 52
          }
         ],
         "sets": "2×",
@@ -61764,7 +61480,7 @@
        },
        {
         "key": "cool",
-        "min": 5,
+        "min": 4,
         "items": [
          {
           "kind": "ex",
@@ -61772,18 +61488,18 @@
          },
          {
           "kind": "ex",
-          "id": 72
+          "id": 74
          },
          {
           "kind": "ex",
-          "id": 74
+          "id": 75
          }
         ],
         "fitnessLevel": 1
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
        "Entlastungswoche: Runden und Sätze reduziert.",
        "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
       ],
@@ -61851,7 +61567,7 @@
         }
        },
        {
-        "dose": "3 Min.",
+        "dose": "3 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -61862,11 +61578,11 @@
       ],
       [
        {
-        "dose": "15 Wdh.",
+        "dose": "3 Min.",
         "timer": null
        },
        {
-        "dose": "3 × (20 s / 40 s Pause)",
+        "dose": "4 × (20 s / 40 s Pause)",
         "timer": null
        },
        {
@@ -61876,16 +61592,21 @@
       ],
       [
        {
-        "dose": "10–12 Wdh.",
-        "timer": null
-       },
-       {
         "dose": "10–12 Wdh. pro Bein",
         "timer": null
        },
        {
         "dose": "10–12 Wdh. je Seite",
         "timer": null
+       },
+       {
+        "dose": "je Richtung 10 s (Stirn, Hinterkopf, links, rechts)",
+        "timer": {
+         "phases": 7,
+         "seconds": 55,
+         "choices": [],
+         "perSet": 10
+        }
        }
       ],
       [
@@ -61913,14 +61634,14 @@
         }
        },
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
+         "perSet": 30
         }
        }
       ]
@@ -61994,7 +61715,7 @@
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche."
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge."
       ],
       "rpe": "3–4",
       "tHi": 4,
@@ -62113,15 +61834,12 @@
       "type": "S",
       "loc": "gym",
       "eq": [
-       "weights",
-       "kb",
-       "bar",
-       "bands"
+       "bar"
       ],
       "blocks": [
        {
         "key": "warm",
-        "min": 8,
+        "min": 10,
         "items": [
          {
           "kind": "ex",
@@ -62133,40 +61851,33 @@
          },
          {
           "kind": "ex",
-          "id": 3
+          "id": 1
          }
         ],
         "fitnessLevel": 1
        },
        {
         "key": "str",
-        "min": 12,
+        "lbl": "lowstr",
+        "min": 11,
         "items": [
          {
           "kind": "ex",
-          "id": 44,
+          "id": 43,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 46,
+          "id": 22,
           "basic": true
          },
          {
           "kind": "ex",
-          "id": 45,
+          "id": 24,
           "basic": true
-         },
-         {
-          "kind": "ex",
-          "id": 25
-         },
-         {
-          "kind": "ex",
-          "id": 24
          }
         ],
-        "sets": "2× 8–10",
+        "sets": "2 schwere Sätze: die schwerste Variante, die du sauber schaffst – 1–2 Wiederholungen vor Schluss aufhören",
         "fitnessLevel": 1
        },
        {
@@ -62177,27 +61888,27 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 15
+          "id": 12
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 12
+          "id": 19
          }
         ],
         "fitnessLevel": 1
        },
        {
         "key": "cool",
-        "min": 5,
+        "min": 4,
         "items": [
          {
           "kind": "ex",
-          "id": 72
+          "id": 73
          },
          {
           "kind": "ex",
-          "id": 73
+          "id": 75
          },
          {
           "kind": "ex",
@@ -62208,7 +61919,7 @@
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
        "Entlastungswoche: Runden und Sätze reduziert.",
        "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
        "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
@@ -62242,9 +61953,9 @@
         "worsening": false
        },
        "plannedDates": [
-        "2026-11-11",
-        "2026-11-18",
-        "2026-11-25"
+        "2026-11-09",
+        "2026-11-16",
+        "2026-11-23"
        ],
        "plannedMin": 30
       },
@@ -62292,37 +62003,52 @@
       ],
       [
        {
-        "dose": "2 × 8–10 Wdh.",
+        "dose": "3 × 10–12 Wdh. pro Bein",
         "timer": null
        },
        {
-        "dose": "2 × 8–10 Wdh.",
+        "dose": "3 × 10–12 Wdh.",
         "timer": null
        },
        {
-        "dose": "2 × 8–10 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "2 × 3–5 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "2 × so viele saubere wie möglich",
+        "dose": "3 × so viele saubere wie möglich",
         "timer": null
        }
       ],
       [
-       {
-        "dose": "15 Wdh.",
-        "timer": null
-       },
        {
         "dose": "3 × (20 s Vollgas / 10 s locker)",
         "timer": null
+       },
+       {
+        "dose": "40 s (ca. 10 m hin und zurück), 20 s Pause",
+        "timer": null
        }
       ],
       [
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       },
        {
         "dose": "je Seite 45 s",
         "timer": {
@@ -62332,6 +62058,224 @@
           45
          ],
          "perSet": 45
+        }
+       }
+      ]
+     ]
+    },
+    "S-studio": {
+     "session": {
+      "date": "2026-11-04",
+      "type": "S",
+      "loc": "gym",
+      "eq": [],
+      "blocks": [
+       {
+        "key": "warm",
+        "min": 10,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 2
+         },
+         {
+          "kind": "ex",
+          "id": 3
+         },
+         {
+          "kind": "ex",
+          "id": 4
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "str",
+        "lbl": "lowstr",
+        "min": 11,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 43,
+          "basic": true
+         },
+         {
+          "kind": "ex",
+          "id": 22,
+          "basic": true
+         },
+         {
+          "kind": "ex",
+          "id": 23,
+          "basic": true
+         }
+        ],
+        "sets": "2 schwere Sätze: die schwerste Variante, die du sauber schaffst – 1–2 Wiederholungen vor Schluss aufhören",
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cond",
+        "min": 5,
+        "rounds": true,
+        "items": [
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 9
+         },
+         {
+          "kind": "round",
+          "k": "ex",
+          "id": 19
+         }
+        ],
+        "fitnessLevel": 1
+       },
+       {
+        "key": "cool",
+        "min": 4,
+        "items": [
+         {
+          "kind": "ex",
+          "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         }
+        ],
+        "fitnessLevel": 1
+       }
+      ],
+      "notes": [
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge.",
+       "Entlastungswoche: Runden und Sätze reduziert.",
+       "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
+       "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
+      ],
+      "rpe": "4–5",
+      "tHi": 5,
+      "theme": null,
+      "min": 30,
+      "blk": null,
+      "progression": {
+       "v": 1,
+       "id": "base:2026-11-02",
+       "start": "2026-11-02",
+       "end": "2026-12-06",
+       "week": 1,
+       "weeks": 5,
+       "block": null,
+       "signature": "lc:1:S:regular",
+       "step": 0,
+       "reason": "initial",
+       "eligible": false,
+       "data": {
+        "level": "collecting",
+        "reason": "few",
+        "count": 0,
+        "weeks": 0,
+        "planned": 0,
+        "coverage": 0,
+        "completeness": 0,
+        "planKnown": 0,
+        "worsening": false
+       },
+       "plannedDates": [
+        "2026-11-09",
+        "2026-11-16",
+        "2026-11-23"
+       ],
+       "plannedMin": 30
+      },
+      "effortDose": {
+       "v": 1,
+       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"S\",1]",
+       "eligible": false,
+       "setRest": 60,
+       "factor": 1,
+       "active": false,
+       "source": null
+      },
+      "techniqueLevel": 1,
+      "fitnessLevel": 1
+     },
+     "items": [
+      [
+       {
+        "dose": "3 Min. · je Gelenk 10 Kreise",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "3 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       },
+       {
+        "dose": "3 Min. · je Bewegung 10 Wdh.",
+        "timer": {
+         "phases": 1,
+         "seconds": 180,
+         "choices": [],
+         "perSet": 180
+        }
+       }
+      ],
+      [
+       {
+        "dose": "3 × 10–12 Wdh. pro Bein",
+        "timer": null
+       },
+       {
+        "dose": "3 × 10–12 Wdh.",
+        "timer": null
+       },
+       {
+        "dose": "3 × 30–45 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 30,
+         "choices": [
+          30,
+          45
+         ],
+         "perSet": 30
+        }
+       }
+      ],
+      [
+       {
+        "dose": "40 s Belastung, 20 s Pause",
+        "timer": null
+       },
+       {
+        "dose": "40 s (ca. 10 m hin und zurück), 20 s Pause",
+        "timer": null
+       }
+      ],
+      [
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        },
        {
@@ -62360,268 +62304,12 @@
       ]
      ]
     },
-    "S-studio": {
-     "session": {
-      "date": "2026-11-04",
-      "type": "S",
-      "loc": "studio",
-      "eq": [
-       "weights",
-       "kb",
-       "bb",
-       "bar",
-       "studio"
-      ],
-      "blocks": [
-       {
-        "key": "warm",
-        "min": 8,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 113
-         },
-         {
-          "kind": "ex",
-          "id": 2
-         },
-         {
-          "kind": "ex",
-          "id": 4
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "str",
-        "min": 12,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 33,
-          "basic": true
-         },
-         {
-          "kind": "ex",
-          "id": 108,
-          "basic": true
-         },
-         {
-          "kind": "ex",
-          "id": 31,
-          "basic": true
-         },
-         {
-          "kind": "ex",
-          "id": 29,
-          "basic": true
-         },
-         {
-          "kind": "ex",
-          "id": 110
-         }
-        ],
-        "sets": "2× 8–10",
-        "fitnessLevel": 1
-       },
-       {
-        "key": "cond",
-        "min": 5,
-        "rounds": true,
-        "items": [
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 38
-         },
-         {
-          "kind": "round",
-          "k": "ex",
-          "id": 15
-         }
-        ],
-        "fitnessLevel": 1
-       },
-       {
-        "key": "cool",
-        "min": 5,
-        "items": [
-         {
-          "kind": "ex",
-          "id": 76
-         },
-         {
-          "kind": "ex",
-          "id": 72
-         },
-         {
-          "kind": "ex",
-          "id": 74
-         }
-        ],
-        "fitnessLevel": 1
-       }
-      ],
-      "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche.",
-       "Entlastungswoche: Runden und Sätze reduziert.",
-       "Diese Grundübungen bleiben für vergleichbare Kraftprotokolle wiederkehrend im Plan.",
-       "Heute haben Entlastung, Vorbereitung oder Erholung Vorrang vor einer Steigerung."
-      ],
-      "rpe": "4–5",
-      "tHi": 5,
-      "theme": null,
-      "min": 30,
-      "blk": null,
-      "progression": {
-       "v": 1,
-       "id": "base:2026-11-02",
-       "start": "2026-11-02",
-       "end": "2026-12-06",
-       "week": 1,
-       "weeks": 5,
-       "block": null,
-       "signature": "lc:1:S:regular",
-       "step": 0,
-       "reason": "initial",
-       "eligible": false,
-       "data": {
-        "level": "collecting",
-        "reason": "few",
-        "count": 0,
-        "weeks": 0,
-        "planned": 0,
-        "coverage": 0,
-        "completeness": 0,
-        "planKnown": 0,
-        "worsening": false
-       },
-       "plannedDates": [
-        "2026-11-11",
-        "2026-11-18",
-        "2026-11-25"
-       ],
-       "plannedMin": 30
-      },
-      "effortDose": {
-       "v": 1,
-       "scope": "[1,\"kickboxing\",\"\",\"lc\",\"S\",1]",
-       "eligible": false,
-       "setRest": 60,
-       "factor": 1,
-       "active": false,
-       "source": null
-      },
-      "techniqueLevel": 1,
-      "fitnessLevel": 1
-     },
-     "items": [
-      [
-       {
-        "dose": "3 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [],
-         "perSet": 180
-        }
-       },
-       {
-        "dose": "3 Min. · je Gelenk 10 Kreise",
-        "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [],
-         "perSet": 180
-        }
-       },
-       {
-        "dose": "3 Min. · je Bewegung 10 Wdh.",
-        "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [],
-         "perSet": 180
-        }
-       }
-      ],
-      [
-       {
-        "dose": "2 × 8–10 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "2 × 8–10 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "2 × 8–10 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "2 × 8–10 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "2 × 8–10 Wdh.",
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
-        "timer": null
-       },
-       {
-        "dose": "15 Wdh.",
-        "timer": null
-       }
-      ],
-      [
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       }
-      ]
-     ]
-    },
     "M-home": {
      "session": {
       "date": "2026-11-04",
       "type": "M",
       "loc": "home",
-      "eq": [
-       "bands"
-      ],
+      "eq": [],
       "blocks": [
        {
         "key": "warm",
@@ -62629,11 +62317,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 6
+          "id": 2
          },
          {
           "kind": "ex",
-          "id": 2
+          "id": 3
          }
         ],
         "fitnessLevel": 1
@@ -62644,15 +62332,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 65
-         },
-         {
-          "kind": "ex",
-          "id": 68
-         },
-         {
-          "kind": "ex",
-          "id": 62
+          "id": 70
          },
          {
           "kind": "ex",
@@ -62660,7 +62340,15 @@
          },
          {
           "kind": "ex",
-          "id": 84
+          "id": 61
+         },
+         {
+          "kind": "ex",
+          "id": 69
+         },
+         {
+          "kind": "ex",
+          "id": 59
          }
         ],
         "sets": "je 60–90 s, ruhig atmen",
@@ -62672,7 +62360,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
+          "id": 75
+         },
+         {
+          "kind": "ex",
+          "id": 72
          },
          {
           "kind": "ex",
@@ -62683,7 +62375,7 @@
        }
       ],
       "notes": [
-       "Wenig-Zeit-Modus: nur das Wesentliche."
+       "Wenig-Zeit-Modus: nur das Wesentliche – eigenes Körpergewicht (Sandsack oder Klimmzugstange, falls gewählt), kein Partner, alle Kicks auf Körperhöhe, Aufwärmen in voller Länge."
       ],
       "rpe": "3–4",
       "tHi": 4,
@@ -62722,7 +62414,7 @@
      "items": [
       [
        {
-        "dose": "4 Min. · je Übung 15 Wdh.",
+        "dose": "4 Min. · je Gelenk 10 Kreise",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -62731,7 +62423,7 @@
         }
        },
        {
-        "dose": "4 Min. · je Gelenk 10 Kreise",
+        "dose": "4 Min.",
         "timer": {
          "phases": 1,
          "seconds": 240,
@@ -62742,16 +62434,31 @@
       ],
       [
        {
-        "dose": "10 Wdh. · insgesamt ca. 3 Min.",
+        "dose": "60–90 s halten · insgesamt ca. 1–2 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 180,
-         "choices": [],
-         "perSet": 180
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        },
        {
-        "dose": "10 Wdh. · insgesamt ca. 3 Min.",
+        "dose": "je Seite 5 × 3–5 s · im Wechsel links/rechts, ca. 4–5 Min.",
+        "timer": {
+         "phases": 87,
+         "seconds": 275,
+         "choices": [
+          3,
+          5
+         ],
+         "perSet": 3
+        }
+       },
+       {
+        "dose": "je Seite 6 · insgesamt ca. 3 Min.",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -62769,19 +62476,7 @@
         }
        },
        {
-        "dose": "je Seite 5 × 3–5 s · im Wechsel links/rechts, ca. 4–5 Min.",
-        "timer": {
-         "phases": 87,
-         "seconds": 275,
-         "choices": [
-          3,
-          5
-         ],
-         "perSet": 3
-        }
-       },
-       {
-        "dose": "je Seite 10 · insgesamt ca. 3 Min.",
+        "dose": "je Seite 6 Kreise · insgesamt ca. 3 Min.",
         "timer": {
          "phases": 1,
          "seconds": 180,
@@ -62792,15 +62487,25 @@
       ],
       [
        {
-        "dose": "60–90 s halten",
+        "dose": "je Seite 30 s",
         "timer": {
-         "phases": 1,
-         "seconds": 60,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          60,
-          90
+          30
          ],
-         "perSet": 60
+         "perSet": 30
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        },
        {

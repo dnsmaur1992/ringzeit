@@ -878,3 +878,12 @@ Grundsatz (Betreiber): **nur eingetragene Anstrengung und Belastungen steuern di
 - **Direkt an der Einheit:** Knopf „⏱ Wenig Zeit“ unter der Überschrift der Einheit (nicht an erledigten Tagen); ein Tipp schaltet den Modus dauerhaft an oder aus.
 - **Im Profil:** solange der Modus an ist, steht oben ein Eintrag „Wenig-Zeit-Modus: An (seit …)“ mit „Ausschalten“ – bis er entfernt wird. Der Schalter unter Alltag & Pausen bleibt.
 - Hilfe („Ich habe heute wenig Zeit.“) DE/EN angepasst.
+
+## Wenig-Zeit-Modus: was trainiert wird (21.11.2026, Teil 39)
+
+- **Planart automatisch** (nicht in Turniervorbereitung, Prüfungsphase, Taper/Erholung, nicht für Kinder und Jugendliche – dort nur kürzer): mit Vereinstagen wechseln die eigenen Tage zwischen Kraft erhalten (S) und kurzen Intervallen (K); ohne Verein ist der erste eigene Tag der Woche Kraft, die übrigen Technik mit Intervall-Abschluss. Mobilität bleibt. Begründung: Kraft lässt sich mit wenig Volumen halten, kurze Intervalle sind die zeitsparendste Kondition, Technik und Sparring liefert der Verein.
+- **Ausrüstung:** überall nur Körpergewicht, dazu Sandsack oder Klimmzugstange, falls gewählt – auch in Halle und Fitnessstudio (keine Geräte). **Kein Partner:** Sparring wird Technik, Partnerrunden entfallen; in „Einheit anpassen“ gibt es weder Partner noch Sparring.
+- **Keine Kopfkicks** in allen Sportarten (Kickboxen: auf Körperhöhe, Taekwondo: keine Kopf-Kombinationen; Sicherheitsnetz für eigene Kombis und Vorbereitung).
+- **Aufwärmen in voller Länge:** 12 Minuten vor Kick-Einheiten (inkl. Vorbereitung), sonst 10; Ausklang 4.
+- **Kraft erhalten:** 3 Grundübungen, 2 schwere Sätze (schwerste saubere Variante, 1–2 Wdh. vor Schluss aufhören), kein Sprungblock. **Technik:** statt Kraftteil kurze Intervalle am Ende.
+- Baseline: nur das Testprofil mit Wenig-Zeit-Modus ändert sich (Ausrüstung nur Sandsack, Aufwärmen 6→10 + 2 Vorbereitung, Intervalle statt Kraftteil).

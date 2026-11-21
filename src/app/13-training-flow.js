@@ -447,17 +447,20 @@
     const has = (k) => setup.eq.includes(k),
       fight = ty === "T" || ty === "C" || ty === "P";
     let h = "";
+    // short on time: no partner, only a bag or a pull-up bar (21.11.2026)
+    const low = lowTime();
+    if (low) h += `<div class="field"><span class="sub">${t("life").lowSetup}</span></div>`;
     if (fight)
-      h += `<div class="field"><span class="lab">${t("pbQ")}</span><div class="seg">${["partner", "bag", "none"].map((k) => `<button type="button" data-pb="${k}" aria-pressed="${k === "none" ? !has("partner") && !has("bag") : has(k)}">${t("pb")[k]}</button>`).join("")}</div></div>`;
+      h += `<div class="field"><span class="lab">${t("pbQ")}</span><div class="seg">${(low ? ["bag", "none"] : ["partner", "bag", "none"]).map((k) => `<button type="button" data-pb="${k}" aria-pressed="${k === "none" ? !has("partner") && !has("bag") : has(k)}">${t("pb")[k]}</button>`).join("")}</div></div>`;
     if (ty === "K" && setup.loc === "out")
       h += `<div class="field"><span class="lab">${t("runQ")}</span><div class="seg">${["iv", "run", "free"].map((k) => `<button type="button" data-run="${k}" aria-pressed="${k === "free" ? setup.run === "free" : setup.run !== "free" && (k === "run") === (!!setup.run && !kneeAnk())}" ${k !== "iv" && kneeAnk() ? "disabled" : ""}>${t("runOpt")[k]}</button>`).join("")}</div>${setup.run === "free" ? `<span class="sub">${t("freeRunHint")}</span>` : ""}${kneeAnk() ? `<span class="sub">${t("runLock")}</span>` : ""}</div>`;
     const runOnly = !!setup.run && setup.run !== "free" && canRun(ty, setup.loc),
-      studio = setup.loc === "studio" && (ty === "S" || ty === "K");
+      studio = !low && setup.loc === "studio" && (ty === "S" || ty === "K");
     if (studio) h += `<div class="field"><span class="sub">${t("studioNote")}</span></div>`;
     const chips =
       ty === "P" || runOnly || studio || simpleView()
         ? []
-        : EQ_FOR[ty].filter((k) => t("equip")[k] && (k !== "pads" || has("partner")));
+        : EQ_FOR[ty].filter((k) => t("equip")[k] && (k !== "pads" || has("partner")) && (!low || k === "bar"));
     if (chips.length)
       h += `<div class="field"><span class="lab">${ty === "T" || ty === "C" ? t("suppEq") : t("equipQ")}</span><div class="chips">${chips.map((k) => `<button type="button" class="chip" data-eq="${k}" aria-pressed="${has(k)}">${t("equip")[k]}</button>`).join("")}</div></div>`;
     return h;
@@ -546,7 +549,7 @@
     const durs = [...new Set(lowTime() ? [20, 30] : [30, 45, 60, S.profile.minutes])]
       .filter((m) => (ty !== "M" || m <= 45) && (kidAge() == null || m <= (kidAge() <= 9 ? 30 : 45)))
       .sort((a, b) => a - b);
-    h += `<div class="panel">${sportRow("data-usport", setup.sport)}${unitSubRow(setup)}<div class="field"><span class="lab">${t("sessType")}</span><div class="seg g3">${["T", "C", "P", "S", "K", "M"].map((k) => `<button type="button" data-stype="${k}" aria-pressed="${ty === k}" ${k === "P" && (koLock(ds) || ageGroup() === "kids") ? "disabled" : ""}>${t("types")[k]}${k === planned ? `<small>${t("suggested")}</small>` : ""}</button>`).join("")}</div>${koLock(ds) ? `<span class="sub">${t("koNote")}</span>` : ""}</div>
+    h += `<div class="panel">${sportRow("data-usport", setup.sport)}${unitSubRow(setup)}<div class="field"><span class="lab">${t("sessType")}</span><div class="seg g3">${(lowTime() ? ["T", "C", "S", "K", "M"] : ["T", "C", "P", "S", "K", "M"]).map((k) => `<button type="button" data-stype="${k}" aria-pressed="${ty === k}" ${k === "P" && (koLock(ds) || ageGroup() === "kids") ? "disabled" : ""}>${t("types")[k]}${k === planned ? `<small>${t("suggested")}</small>` : ""}</button>`).join("")}</div>${koLock(ds) ? `<span class="sub">${t("koNote")}</span>` : ""}</div>
  <div class="field"><span class="lab">${t("dur")}</span><div class="seg">${durs.map((m) => `<button type="button" data-dur="${m}" aria-pressed="${setup.min === m}">${m}</button>`).join("")}</div></div>
  <div class="field"><span class="lab">${t("where")}</span><div class="seg ${ty === "S" || ty === "K" ? "g2" : ""}">${(ty === "S" || ty === "K" ? ["gym", "studio", "home", "out"] : ["gym", "home", "out"]).map((l) => `<button type="button" data-loc="${l}" aria-pressed="${setup.loc === l}">${t("locs")[l]}</button>`).join("")}</div></div>
 ${setupFields(setup, ty)}
