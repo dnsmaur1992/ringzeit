@@ -871,3 +871,10 @@ Grundsatz (Betreiber): **nur eingetragene Anstrengung und Belastungen steuern di
 
 - Der Schalter „Automatische Lastverteilung“ steht für alle ab 18 immer unter Profil → Trainingswoche, unabhängig von der Zahl der Trainingstage. Unter 5 Tagen (Ringzeit und Verein zusammen) steht ein Hinweis darunter, dass es ab 5 Tagen am meisten bringt. Ringzeit fragt weiterhin nur von selbst ab 5 Tagen (einmal je Überschreiten). Unter 18 gesperrt wie bisher.
 - Texte: Frage und Hilfe nennen „Profil → Trainingswoche“; die Hilfe beschreibt jetzt auch die 3-Tage-Regel, die Tagesform und die harten Tagesarten aus Teil 36.
+
+## Wenig-Zeit-Modus: Fehler behoben, leichter zu finden (21.11.2026)
+
+- **Fehler:** Eine Einheit, die schon einmal mit „Start“ geöffnet war (auch ohne jede Eingabe), behielt beim Einschalten ihre alte Länge – genau die Einheit vor dir änderte sich also nicht. Jetzt wird jede geöffnete, aber leere Einheit ab heute sofort in der neuen Länge neu gebaut (gleiche Art, Ort und Ausstattung). Einheiten mit Eingaben (Satzwerte, Haken, Runden, Anstrengung) bleiben unverändert; eingetragene Daten gehen nie verloren. Beim Ausschalten genauso zurück zur üblichen Länge.
+- **Direkt an der Einheit:** Knopf „⏱ Wenig Zeit“ unter der Überschrift der Einheit (nicht an erledigten Tagen); ein Tipp schaltet den Modus dauerhaft an oder aus.
+- **Im Profil:** solange der Modus an ist, steht oben ein Eintrag „Wenig-Zeit-Modus: An (seit …)“ mit „Ausschalten“ – bis er entfernt wird. Der Schalter unter Alltag & Pausen bleibt.
+- Hilfe („Ich habe heute wenig Zeit.“) DE/EN angepasst.

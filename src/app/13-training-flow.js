@@ -538,6 +538,8 @@
     ui.setup = setup;
     const ty = setup.type;
     h += `<h2>${t("weekday")[i]} · ${t("types")[ty]} · ${setup.min} ${t("min")}</h2>`;
+    // short on time: right at the unit, visible without opening the settings (not for a day already done)
+    if (ds >= iso(today()) && !doneOn(ds)) h += lowChipHtml(ds);
     h += `<details class="panel session-settings" data-session-settings="${ds}" ${!sess || ui.sessionSettings?.[ds]?"open":""}><summary>${flowText().adjust}</summary><div>`;
     h += formHtml(ds, sess);
     // duration options: 30/45/60 and the usual length; mobility never longer than 45 minutes

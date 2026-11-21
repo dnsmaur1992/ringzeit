@@ -1459,7 +1459,7 @@
         guide: isTkdMain() ? PS.guideTkd : PS.guide[1],
         app: PS.app[1],
       };
-    let h = header(t("profTitle")) + `<div class="panel plist">`;
+    let h = header(t("profTitle")) + lowProfEntry() + `<div class="panel plist">`;
     ["me", "train", "goals", "life", "guide", "app"].forEach((k) => {
       h += `<button type="button" class="grow" data-psec="${k}"><span class="gico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${PSEC_ICO[k]}</svg></span><span class="gtx"><b>${PS[k][0]}</b><small>${esc(sum[k])}</small></span><span class="chev">›</span></button>`;
     });

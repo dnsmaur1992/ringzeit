@@ -7,6 +7,46 @@
     ["weekMood", "lowTime", "work", "form"].forEach((k) => draft && (draft[k] = S.profile[k]));
     store.save();
   }
+  /* short-on-time mode on or off (profile, unit page, profile entry – 21.11.2026): it stays until it is switched off.
+     Units from today on are built anew – also one that was only opened with "Start" and has nothing entered yet
+     (before, such a unit kept its old length, so the unit in front of you did not change). Entered data stays. */
+  function lowEmpty(sess) {
+    // anything entered: a value in a set row, a tick, an effort, a lap (index 0 too) – empty rows and zero counts are not
+    const filled = (x) => (Array.isArray(x) ? x.some((e) => e != null && (typeof e !== "object" || filled(e))) : x && typeof x === "object" ? Object.values(x).some(filled) : x != null && x !== "" && x !== false && x !== 0),
+      any = (m) => !!m && Object.values(m).some(filled);
+    return !!sess && !sess.rdone && !any(sess.perf) && !any(sess.checked) && !any(sess.roundChecks) && !any(sess.exerciseEffort) && !any(sess.lapsDone) && !any(sess.timedLaps);
+  }
+  function lowSet(on) {
+    const was = lowTime();
+    S.profile.lowTime = on ? { on: true, since: was ? S.profile.lowTime.since || iso(today()) : iso(today()) } : { on: false, since: iso(today()) };
+    const td = iso(today()),
+      r = typeof resumeRead === "function" ? resumeRead() : null,
+      opened = [];
+    for (const [d, sess] of Object.entries(S.sessions))
+      if (d >= td && !doneOn(d) && sess && sess.flow && lowEmpty(sess) && !(ui.timer && ui.timer.ds === d) && !(ui.workout && ui.workout.ds === d)) {
+        opened.push([d, sess]);
+        delete S.sessions[d];
+        if (r && r.ds === d) resumeClear();
+      }
+    lifeReplan();
+    // the opened unit comes straight back in the new length – same kind, place and equipment, nothing to rebuild by hand
+    for (const [d, x] of opened)
+      S.sessions[d] = buildSession(d, x.type, x.loc, x.eq, { run: !!x.run, sport: x.sport || mainSport(), tstyle: x.tstyle, disc: x.disc, min: sessMin(x.type) });
+    store.save();
+  }
+  /* the switch at the unit: one tap, persistent like the one in the profile */
+  function lowChipHtml(ds) {
+    const L = t("life"),
+      on = lowTime();
+    return `<div class="lowrow"><button type="button" class="btn sec lowchip" data-low="${on ? "off" : "on"}" aria-pressed="${on}"><span class="lowic" aria-hidden="true">⏱</span><span>${on ? L.lowChipOn : L.lowChip}</span></button><span class="sub">${on ? L.lowChipOnS : L.lowChipS}</span></div>`;
+  }
+  /* the persistent entry at the top of the profile while the mode is on */
+  function lowProfEntry() {
+    if (!lowTime()) return "";
+    const L = t("life"),
+      since = S.profile.lowTime.since;
+    return `<div class="panel lowent"><div class="field"><span class="lab"><span aria-hidden="true">⏱</span> ${L.lowLbl}: ${t("onOff")[0]}</span><span class="sub">${esc(L.lowEnt(since ? fmtDate(since) : ""))}</span><div class="acts2"><button type="button" class="btn sec" data-low="off">${L.lowEntOff}</button></div></div></div>`;
+  }
   /* Today: one question per week, asked until it is answered (from Monday on) */
   function weekCheckHtml() {
     const key = iso(monday(today()));
@@ -48,8 +88,7 @@
       return toast(L.moodToast[ds.mood]);
     }
     if (ds.low) {
-      S.profile.lowTime = { on: ds.low === "on", since: iso(today()) };
-      lifeReplan();
+      lowSet(ds.low === "on");
       render();
       return toast(ds.low === "on" ? L.lowOn : L.lowOff);
     }

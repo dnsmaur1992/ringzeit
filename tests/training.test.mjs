@@ -7035,3 +7035,49 @@ test("Teil 36: progress in the history only from entries – load per week by ef
   a.run("S.profile.lang='en'");
   assert.match(a.run("progressHtml()"), /Progress[\s\S]*Load of the last 4 weeks/);
 });
+
+test("21.11.2026 short-on-time mode: also the unit already opened with Start (nothing entered) gets 30 minutes; a unit with entries stays; switch at the unit and a persistent entry in the profile; DE/EN", async () => {
+  const a = app();
+  a.setDate("2026-11-21"); // Saturday
+  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.birthYear=1990;S.profile.example=false;S.profile.days=[0,2,4,5];S.profile.minutes=90;S.profile.toured=true;S.profile.newsSeen=99;S.profile.lowTime=null;S.sessions={};S.log=[];S.ov={};ui.sel='2026-11-21';ui.tab='session'");
+  const ty = a.run("planOn('2026-11-21')");
+  assert.ok(ty && ty !== "M");
+  // opened with Start, nothing entered – the report: the mode did not change it
+  a.run(`S.sessions['2026-11-21']=buildSession('2026-11-21','${ty}','gym',['bag'],{sport:'kickboxing',min:sessMin('${ty}')});S.sessions['2026-11-21'].flow={block:0,step:0,startedAt:1};S.sessions['2026-11-21'].perf={'1.0':[{r:null,kg:null}]}`);
+  // a later unit with an entry
+  a.run(`S.sessions['2026-11-23']=buildSession('2026-11-23',planOn('2026-11-23'),'gym',['bag'],{sport:'kickboxing',min:90});S.sessions['2026-11-23'].flow={block:1,step:3};S.sessions['2026-11-23'].perf={'1.0':[{r:8,kg:null}]}`);
+  assert.equal(+a.run("S.sessions['2026-11-21'].min"), 90);
+  // the switch sits at the unit, visible without opening the settings
+  let h = a.run("renderSession()");
+  assert.match(h, /<\/h2><div class="lowrow"><button type="button" class="btn sec lowchip" data-low="on" aria-pressed="false">[\s\S]*Wenig Zeit</);
+  await a.click({ dataset: { low: "on" } });
+  assert.equal(a.run("lowTime()"), true);
+  assert.equal(+a.run("S.sessions['2026-11-21'].min"), 30, "the opened, empty unit comes straight back with 30 minutes");
+  assert.equal(a.run("S.sessions['2026-11-21'].flow"), undefined, "as a fresh unit");
+  assert.equal(a.run("S.sessions['2026-11-21'].type"), ty);
+  assert.equal(+a.run("sessDur('2026-11-21',planOn('2026-11-21'))"), 30);
+  h = a.run("renderSession()");
+  assert.match(h, /· 30 min<\/h2>/);
+  assert.match(h, /data-low="off" aria-pressed="true">[\s\S]*Wenig Zeit: an/);
+  assert.equal(+a.run("S.sessions['2026-11-23'].min"), 90, "entered data is never thrown away");
+  assert.equal(a.run("S.sessions['2026-11-23'].perf['1.0'][0].r"), 8);
+  // the persistent entry at the top of the profile, until it is switched off
+  a.run("ui.tab='profile';ui.profSec=null");
+  assert.match(a.run("profOverview(S.profile)"), /class="panel lowent"[\s\S]*Wenig-Zeit-Modus: An[\s\S]*\(seit [^)]+\) – bleibt an/);
+  a.setDate("2026-11-28");
+  assert.equal(a.run("lowTime()"), true, "stays on");
+  assert.match(a.run("profOverview(S.profile)"), /lowent/);
+  a.run("S.sessions['2026-11-28']=buildSession('2026-11-28',planOn('2026-11-28')||'T','gym',['bag'],{sport:'kickboxing',min:30});S.sessions['2026-11-28'].flow={block:0,step:0}");
+  await a.click({ dataset: { low: "off" } });
+  assert.equal(a.run("lowTime()"), false);
+  assert.equal(+a.run("S.sessions['2026-11-28'].min"), +a.run("sessMin(S.sessions['2026-11-28'].type)"), "switched off: back to the usual length");
+  assert.ok(+a.run("S.sessions['2026-11-28'].min") > 30);
+  assert.doesNotMatch(a.run("profOverview(S.profile)"), /lowent/);
+  // the old switch in "Alltag & Pausen" still works the same way
+  assert.match(a.run("lifePanelHtml()"), /data-low="on"/);
+  // a day that is done shows no switch
+  a.run("S.profile.lang='en';ui.tab='session';ui.sel='2026-11-28';S.log.push({id:'d',date:'2026-11-28',src:'own',type:'T',minutes:30,rpe:5})");
+  assert.doesNotMatch(a.run("renderSession()"), /lowchip/);
+  a.run("ui.sel='2026-11-30'");
+  assert.match(a.run("renderSession()"), /Short on time/);
+});

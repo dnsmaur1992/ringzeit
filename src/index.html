@@ -5323,6 +5323,36 @@
   .prog .pchip.e {
     border-color: var(--done);
   }
+  /* short on time at the unit and in the profile (21.11.2026): a clear secondary button, symbol and text */
+  .lowrow {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin: -4px 0 12px;
+  }
+  .btn.sec.lowchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+    min-height: 44px;
+    padding: 8px 14px;
+    border: 1.5px solid var(--line);
+    font-size: 15px;
+  }
+  .btn.sec.lowchip[aria-pressed="true"] {
+    border-color: var(--ice);
+    background: var(--ice-dim);
+    color: var(--frost);
+  }
+  .lowchip .lowic {
+    font-size: 17px;
+    line-height: 1;
+  }
+  .lowent {
+    border-color: var(--ice);
+  }
   /* fitness gym: "Gerät wechseln" – a clear secondary button below the exercise and its target (18.11.2026):
      frame and a quiet accent surface, swap symbol and text, at least 44 × 44 px, below the main action */
   .altrow {
