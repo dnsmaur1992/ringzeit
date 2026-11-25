@@ -42,7 +42,8 @@
   const sessDur = (ds, ty) => (S.sessions[ds] && S.sessions[ds].min) || sessMin(ty);
   const own = (e) => e.src !== "club";
   /* Numbers with the decimal separator of the chosen language */
-  const numF = (n) => (S.profile.lang === "de" ? String(n).replace(".", ",") : String(n));
+  // always escaped: numbers from stored data are shown as text (security review 25.11.2026)
+  const numF = (n) => esc(S.profile.lang === "de" ? String(n).replace(".", ",") : String(n));
   /* log entries by date; rebuilt only when the log changes (instead of scanning the whole log per day) */
   let logIdxArr = null,
     logIdxKey = "",

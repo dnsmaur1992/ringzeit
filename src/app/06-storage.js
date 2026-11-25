@@ -121,14 +121,27 @@
     (st.log || []).forEach((e) => (e.perf || []).forEach(fix));
     return st;
   }
+  /* the containers first, so the migrations below never stumble over a wrong type (security review 25.11.2026) */
+  function hydratePre(d) {
+    const o = d && typeof d === "object" && !Array.isArray(d) ? { ...d } : {},
+      obj = (v) => v && typeof v === "object" && !Array.isArray(v);
+    o.profile = obj(o.profile) ? o.profile : {};
+    o.sessions = obj(o.sessions) ? Object.fromEntries(Object.entries(o.sessions).filter(([k, v]) => obj(v) && !SAN_BAD_KEYS.has(k))) : {};
+    for (const k of ["log", "weights", "tests", "pauses"]) o[k] = Array.isArray(o[k]) ? o[k].filter(obj) : [];
+    for (const k of ["ov", "cov"]) o[k] = obj(o[k]) ? o[k] : {};
+    return o;
+  }
+  /* entries the last load left out because they could not be repaired (shown when a backup is loaded) */
+  let sanDropped = 0;
   function hydrate(d) {
+    d = hydratePre(d);
     const log = d.log || [];
     const oldDose = [0,1,2].includes(d.profile?.level) ? d.profile.level : 0;
     for (const sess of Object.values(d.sessions || {})) {
       if (![0,1,2].includes(sess.fitnessLevel)) sess.fitnessLevel = oldDose;
       for (const b of sess.blocks || []) if (![0,1,2].includes(b.fitnessLevel)) b.fitnessLevel = sess.fitnessLevel;
     }
-    return migrateExIds({
+    const st = migrateExIds({
       v: 2,
       profile: migrate({ ...DEFAULT_PROFILE, ...(d.profile || {}) }),
       sessions: slimSessions(d.sessions || {}, log),
@@ -140,5 +153,9 @@
       pauses: d.pauses || [],
       ko: d.ko || "",
     });
+    // every value checked: numbers stay numbers, unknown kinds and broken entries are left out
+    const c = sanitizeData(st);
+    sanDropped = c.dropped;
+    return c.data;
   }
 

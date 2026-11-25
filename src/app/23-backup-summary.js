@@ -5,7 +5,7 @@
   function feedbackUrl() {
     const dev = isIOS() ? "iPhone/iPad" : isAndroid() ? "Android" : "Computer",
       mode = isStandalone() ? (S.profile.lang === "de" ? "installiert" : "installed") : "Browser";
-    return `${FEEDBACK_URL}?version=${encodeURIComponent(`${APP_ID} ${APP_VER}`)}&geraet=${encodeURIComponent(`${dev}, ${mode}`)}&sprache=${S.profile.lang}`;
+    return `${FEEDBACK_URL}?version=${encodeURIComponent(`${APP_ID} ${APP_VER}`)}&geraet=${encodeURIComponent(`${dev}, ${mode}`)}&sprache=${encodeURIComponent(S.profile.lang)}`;
   }
   const isStandalone = () => {
     try {
@@ -72,30 +72,10 @@
   function importFile(file) {
     const r = new FileReader();
     r.onload = () => {
-      let o;
-      try {
-        o = JSON.parse(r.result);
-      } catch (e) {
-        o = null;
-      }
-      if (!o || o.app !== APP_ID || !o.data || !o.data.profile) return toast(t("impBad"));
-      const when = o.exported ? fmtDate(iso(new Date(o.exported))) : "?";
-      openSheet({
-        kind: "confirm",
-        title: t("imp"),
-        lines: [t("impConfirm")(when)],
-        run: () => {
-          S = hydrate(o.data);
-          resumeClear();
-          ui.sel = null;
-          ui.setup = null;
-          clearSessionTimer();
-          draft = null;
-          store.save(true);
-          toast(t("impDone"));
-          render(true);
-        },
-      });
+      // checked before anything is asked or replaced (security review 25.11.2026)
+      const o = importParse(r.result);
+      if (!o) return toast(t("impBad"));
+      importAsk(o);
     };
     r.readAsText(file);
   }

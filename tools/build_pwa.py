@@ -79,7 +79,18 @@ if ESB:
     js_s=body.rindex('<script>')+8; js_e=body.rindex('</script>')
     body=body[:js_s]+mini(body[js_s:js_e],'js')+body[js_e:]
 os.makedirs('pwa',exist_ok=True)
-open('pwa/index.html','w').write(head+body+tail)
+# Content-Security-Policy (security review 25.11.2026): only the app's own two inline scripts may run – each by the
+# hash of its exact text, computed here after minifying – no other script, no inline event handler, no eval; network
+# only to the app's own address; pictures and sounds the app makes itself (data:/blob:). Styles stay inline.
+import hashlib, base64
+page=head+body+tail
+hashes=["'sha256-"+base64.b64encode(hashlib.sha256(m.encode('utf-8')).digest()).decode()+"'" for m in re.findall(r'<script>(.*?)</script>',page,flags=re.S)]
+if len(hashes)!=2: raise SystemExit('expected 2 inline scripts for the CSP, found '+str(len(hashes)))
+CSP=("default-src 'self'; script-src "+' '.join(hashes)+"; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; "
+     "media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; "
+     "object-src 'none'; base-uri 'none'; form-action 'none'")
+page=page.replace('<meta charset="utf-8" />\n','<meta charset="utf-8" />\n<meta http-equiv="Content-Security-Policy" content="'+CSP+'" />\n',1)
+open('pwa/index.html','w').write(page)
 man={"id":"./","name":APP_NAME,"short_name":APP_NAME,"description":DESC,"lang":"de","start_url":"./","scope":"./","display":"standalone","orientation":"portrait","background_color":"#0b0c0f","theme_color":"#0b0c0f",
  "icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"},{"src":"icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}
 open('pwa/manifest.webmanifest','w').write(json.dumps(man,ensure_ascii=False,indent=2))

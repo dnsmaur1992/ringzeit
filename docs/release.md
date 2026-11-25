@@ -221,3 +221,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 21.11. | Wenig-Zeit-Modus: geöffnete leere Einheit wird sofort gekürzt (vorher unverändert), Knopf „Wenig Zeit“ an der Einheit, Eintrag oben im Profil bis zum Ausschalten | 327 |
 | 21.11. | Wenig-Zeit-Modus Teil 39: Planart automatisch (Kraft erhalten / kurze Intervalle), nur Körpergewicht + Sandsack/Klimmzugstange, kein Partner, keine Kopfkicks, Aufwärmen voll | 329 |
 | 21.11. | Update auf Wunsch: „Nach Update suchen“ unter App & Daten, Hinweis „Neue Version verfügbar“ beim Zurückkehren, Service Worker holt die App-Seite am HTTP-Cache vorbei | 330 |
+| 25.11. | Security: Datenprüfung bei Import und Start, Escaping, Sicherheitskopie + Rückgängig beim Laden, Content-Security-Policy, esbuild 0.25.12 | 333 |

@@ -147,6 +147,7 @@
       });
     if (ds.mood || ds.low || ds.work || ds.form) return lifeAction(ds);
     if (ds.upd) return ds.upd === "go" ? updReload() : updCheck();
+    if (ds.undo) return undoAction(ds.undo);
     if (ds.en) return energyAction(ds);
     if (ds.alt) return altAction(ds.alt);
     if (ds.ld || ds.ldon != null || ds.hday != null) return loadAction(ds);

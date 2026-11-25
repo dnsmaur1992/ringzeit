@@ -739,7 +739,7 @@
       if (arcHas(a, "test"))
         h += `<div class="panel wapan"><span class="lab">${A.testH}</span>${
           T.first && T.last
-            ? `<table class="arctab"><tr><td>${A.testTotal}</td><td>${T.first.total}</td><td class="${T.last.total > T.first.total ? "up" : ""}">${T.last.total}${T.last.total > T.first.total ? " ↑" : ""}</td></tr>${TCATS.filter((k) => T.first.scores[k] != null && T.last.scores[k] != null)
+            ? `<table class="arctab"><tr><td>${A.testTotal}</td><td>${esc(T.first.total)}</td><td class="${T.last.total > T.first.total ? "up" : ""}">${esc(T.last.total)}${T.last.total > T.first.total ? " ↑" : ""}</td></tr>${TCATS.filter((k) => T.first.scores[k] != null && T.last.scores[k] != null)
                 .map((k) => `<tr><td>${t("cats")[k]}</td><td>${T.first.scores[k]}</td><td class="${T.last.scores[k] > T.first.scores[k] ? "up" : ""}">${T.last.scores[k]}${T.last.scores[k] > T.first.scores[k] ? " ↑" : ""}</td></tr>`)
                 .join("")}</table>`
             : `<span class="sub">${A.testMissing}</span>`

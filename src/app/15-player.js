@@ -1052,7 +1052,7 @@
     if (!last) {
       h += `<div class="empty"><b>${t("testNone")}</b>${t("testNoneT")}</div>`;
     } else {
-      h += `<div><h2>${t("testLast")} · ${fmtDate(last.date)}</h2><div class="radar">${radar(last, prev)}<div class="lvl"><div class="score">${last.total}<small> / 25 ${t("testTotal")}</small></div>
+      h += `<div><h2>${t("testLast")} · ${fmtDate(last.date)}</h2><div class="radar">${radar(last, prev)}<div class="lvl"><div class="score">${esc(last.total)}<small> / 25 ${t("testTotal")}</small></div>
   ${TCATS.map((k) => `<div class="sub">${t("cats")[k]}: <span class="res">${last.scores[k] ?? "–"}</span>${prev && prev.scores[k] && last.scores[k] ? ` <span class="sub">(${last.scores[k] - prev.scores[k] >= 0 ? "+" : ""}${last.scores[k] - prev.scores[k]})</span>` : ""}</div>`).join("")}
   ${prev ? `<div class="sub">- - - ${t("testPrev")}</div>` : ""}</div></div></div>`;
     }
@@ -1066,7 +1066,7 @@
           .reverse()
           .map(
             (x) =>
-              `<div class="logi"><span class="rpe">${x.total}</span><div style="flex:1;min-width:0"><b>${fmtDate(x.date)}</b><div class="sub">${TCATS.map((k) => `${t("cats")[k]} ${x.scores[k] ?? "–"}`).join(" · ")}${x.complete ? "" : ` · ${t("testIncomplete")}`}</div></div><button type="button" class="btn ghost" data-tdel="${x.id}">${t("del")}</button></div>`,
+              `<div class="logi"><span class="rpe">${esc(x.total)}</span><div style="flex:1;min-width:0"><b>${fmtDate(x.date)}</b><div class="sub">${TCATS.map((k) => `${t("cats")[k]} ${x.scores[k] ?? "–"}`).join(" · ")}${x.complete ? "" : ` · ${t("testIncomplete")}`}</div></div><button type="button" class="btn ghost" data-tdel="${x.id}">${t("del")}</button></div>`,
           )
           .join("") +
         `</div></div>`;
@@ -1165,7 +1165,7 @@
     return `<div><h2>${t("prs")}</h2><div class="panel">${list
       .map(
         (b) =>
-          `<div class="pr"><span class="medal">★</span><span style="min-width:0"><b>${esc(b.name)}</b><div class="sub">${fmtDate(b.date)}</div></span><span class="v">${b.v}</span></div>`,
+          `<div class="pr"><span class="medal">★</span><span style="min-width:0"><b>${esc(b.name)}</b><div class="sub">${fmtDate(b.date)}</div></span><span class="v">${esc(b.v)}</span></div>`,
       )
       .join("")}</div></div>`;
   }
@@ -1239,7 +1239,7 @@
     if (S.weights.length >= 2)
       h += `<div class="chart">${lineChart(S.weights.slice(-20), ncw && ncw.wc ? ncw.wc : null, wp)}</div>`;
     else if (S.weights.length === 1)
-      h += `<div class="empty">${S.weights[0].kg.toFixed(1)} kg · ${fmtDate(S.weights[0].date)}</div>`;
+      h += `<div class="empty">${numF((+S.weights[0].kg || 0).toFixed(1))} kg · ${fmtDate(S.weights[0].date)}</div>`;
     else h += `<div class="empty">${t("emptyW")}</div>`;
     if (wp) h += `<div class="note wcpath">${esc(wcText(wp))}${wp.steep ? `<br><small class="sub">${esc(t("wcp").steep)}</small>` : ""}</div>`;
     h += progressHtml(); // Teil 36: progress from what was entered
@@ -1254,7 +1254,7 @@
           .slice(0, 25)
           .map(
             (e) =>
-              `<div class="logi"><span class="rpe" style="color:${e.rpe >= 8 ? "var(--ember)" : e.rpe >= 5 ? "var(--frost)" : "var(--done)"}">${e.rpe}</span><div style="flex:1;min-width:0"><b>${t("types")[e.type] || ""}${e.ck ? ` · ${t("clubKinds")[e.ck] || ""}` : ""}${logTag(e)}</b><div class="sub">${fmtDate(e.date)} · ${e.minutes} ${t("min")}${e.perf ? ` · ${t("exDone")(e.perf.length)}` : ""}${perfVolume(e.perf) ? ` · ${t("volume")} ${Math.round(perfVolume(e.perf)).toLocaleString(S.profile.lang === "de" ? "de-DE" : "en-GB")} kg` : ""}${runInfo(e)}${e.note ? ` · ${esc(e.note)}` : ""}</div></div><button type="button" class="btn ghost" data-edit="${e.id}">${t("edit")}</button><button type="button" class="btn ghost" data-del="${e.id}">${t("del")}</button></div>`,
+              `<div class="logi"><span class="rpe" style="color:${e.rpe >= 8 ? "var(--ember)" : e.rpe >= 5 ? "var(--frost)" : "var(--done)"}">${esc(e.rpe)}</span><div style="flex:1;min-width:0"><b>${t("types")[e.type] || ""}${e.ck ? ` · ${t("clubKinds")[e.ck] || ""}` : ""}${logTag(e)}</b><div class="sub">${fmtDate(e.date)} · ${esc(e.minutes)} ${t("min")}${e.perf ? ` · ${t("exDone")(e.perf.length)}` : ""}${perfVolume(e.perf) ? ` · ${t("volume")} ${Math.round(perfVolume(e.perf)).toLocaleString(S.profile.lang === "de" ? "de-DE" : "en-GB")} kg` : ""}${runInfo(e)}${e.note ? ` · ${esc(e.note)}` : ""}</div></div><button type="button" class="btn ghost" data-edit="${e.id}">${t("edit")}</button><button type="button" class="btn ghost" data-del="${e.id}">${t("del")}</button></div>`,
           )
           .join("") +
         `</div></div>`;
@@ -1348,7 +1348,7 @@
     const cap = 120,
       mv = Math.min(p.minutes, cap);
     train += `<div class="panel"><div class="field"><span class="lab">${t("days")} · ${p.days.length}</span><div class="chips">${[0, 1, 2, 3, 4, 5, 6].map((i) => `<button type="button" class="chip${(p.club || { days: [] }).days.includes(i) ? " clubday" : ""}" data-day="${i}" aria-pressed="${p.days.includes(i)}">${t("dayNames")[i]}</button>`).join("")}</div><span class="sub">${t("ownHint")}</span></div>
- <div class="field"><label class="lab" for="pMin">${t("minutes")}: <span id="pMinV">${mv}</span></label><input id="pMin" type="range" min="30" max="${cap}" step="15" value="${mv}"><span class="sub">${t("minCap")}</span></div>
+ <div class="field"><label class="lab" for="pMin">${t("minutes")}: <span id="pMinV">${esc(mv)}</span></label><input id="pMin" type="range" min="30" max="${cap}" step="15" value="${esc(mv)}"><span class="sub">${t("minCap")}</span></div>
  </div>`;
     {
       const X = t("onbx");
@@ -1416,6 +1416,7 @@
         .join("")}</div><span class="sub">${t("music").hint}</span></div></div>`;
     app = mycHtml() + app;
     app += updPanelHtml(); // update on request (21.11.2026)
+    app += undoPanelHtml(); // back to the data before the last loaded backup (25.11.2026)
     app += `<div class="panel"><div class="field"><span class="lab">${t("dataSec")}</span><span class="sub">${t("expHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="exp">${t("exp")}</button><button type="button" class="btn sec" data-io="imp">${t("imp")}</button></div><input id="impFile" type="file" accept=".json,application/json" hidden></div><div class="field"><span class="lab">${t("sumTitle")}</span><span class="sub">${t("sumHint")}</span><div class="acts2"><button type="button" class="btn sec" data-io="img">${t("sumImg")}</button><button type="button" class="btn sec" data-io="txt">${t("sumTxt")}</button></div></div>${installable() ? `<div class="field"><span class="lab">${t("inst").share}</span><span class="sub">${t("inst").shareHint}</span><button type="button" class="btn sec" data-inst="share">${t("inst").share}</button></div>` : ""}<div class="field"><span class="lab">${t("fb").lbl}</span><span class="sub">${t("fb").hint}</span><a class="btn sec" data-fb="1" href="${esc(feedbackUrl())}" target="_blank" rel="noopener">${t("fb").btn}</a></div><div class="field"><span class="lab">${t("tourLbl")}</span><span class="sub">${t("tourHint")}</span><button type="button" class="btn sec" data-restart-tour="1">${t("tourStart")}</button></div><div class="field"><span class="lab">${t("resetLbl")}</span><span class="sub">${t("resetHint")}</span><button type="button" class="btn ghost danger" data-reset-all="1">${t("resetBtn")}</button></div></div>`;
     app += `<div class="panel"><button type="button" class="row legal-entry" data-news="1"><span class="legal-entry-text"><b>${t("news").row}</b><span class="sub">${t("news").sub}</span></span><span class="chev" aria-hidden="true">›</span></button></div>`;
     app += `<div class="panel"><button type="button" class="row legal-entry" data-legal="1"><span class="legal-entry-text"><b>${t("legal").row}</b><span class="sub">${t("legal").sub}</span></span><span class="chev" aria-hidden="true">›</span></button></div>`;

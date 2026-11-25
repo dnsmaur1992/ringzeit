@@ -7228,3 +7228,156 @@ test("21.11.2026 update on request: 'Nach Update suchen' in App & Daten – newe
   assert.match(sw, /fetch\(e\.request\.url, \{ cache: "no-cache", credentials: "same-origin" \}\)/);
   assert.match(sw, /c\.addAll\(FILES\.map\(\(f\) => new Request\(f, \{ cache: "no-cache" \}\)\)\)/);
 });
+
+/* ---- security review 25.11.2026 ---- */
+const XSS = (f) => `<img src=x onerror="window.__x='${f}'">`;
+const xssData = (day) => ({
+  profile: { lang: "de", sport: "kickboxing", disc: "kl", level: 1, birthYear: 1995, birth: "1995-05-01", days: [0, 2, 4], minutes: XSS("minutes"), example: false, toured: true, newsSeen: "9999", height: XSS("height"),
+    club: { days: [3, XSS("cd")], minutes: XSS("cm") }, limits: ["knee", XSS("lim")],
+    comps: [{ id: "c1", date: day(20), kind: "comp", name: "Cup <b>", wc: XSS("wc") }, { id: "c0", date: day(-20), kind: XSS("kind"), name: "Alt", result: { wins: XSS("w"), bouts: 2, place: XSS("pl"), good: "gut & schön", grade: XSS("gr") } }, { date: XSS("cdate") }],
+    myc: [{ on: true, c: ["jab", XSS("myc")] }], lowTime: { on: XSS("lt"), since: XSS("lts") }, form: { [day(0)]: { sleep: XSS("sl"), energy: 2 } }, __proto__x: 1 },
+  sessions: { [day(0)]: { type: "T", loc: "gym", eq: ["bag", XSS("eq")], min: XSS("smin"), notes: ["ok", 5], rpe: XSS("srpe"),
+      blocks: [{ key: "warm", min: 10, items: [{ kind: "ex", id: "warm.joint_mobility" }, { kind: "ex", id: XSS("exid") }, { kind: "hard", id: "fWraps" }] },
+               { key: "main", min: 30, lbl: XSS("lbl"), rounds: true, items: [{ kind: "round", k: "bag", combo: ["jab", XSS("combo")], sec: XSS("sec") }] },
+               { key: "str", min: 10, items: [{ kind: "ex", id: "str.push_ups", target: { kind: "reps", r: XSS("tr"), kg: "12,5" } }] }],
+      perf: { "2.0": [{ r: XSS("pr"), kg: "20", rL: 5 }], [XSS("pk")]: [] }, exerciseEffort: { "2.0": XSS("ef") } },
+    [XSS("sdate")]: { type: "T", blocks: [] }, "2026-13-45": { type: "T", blocks: [] }, [day(1)]: "nonsense", [day(2)]: { type: XSS("ty"), blocks: [] } },
+  log: [{ id: "l1", date: day(-1), src: XSS("src"), type: XSS("lt"), minutes: XSS("lm"), rpe: XSS("lr"), note: "<b>meine</b> Notiz", ck: XSS("ck"),
+          perf: [{ id: "str.push_ups", sets: [{ r: XSS("lpr"), kg: "7.5" }] }, { id: XSS("lpid"), sets: [] }], run: { km: XSS("km"), min: 30 } },
+        { id: "l2", date: day(-3), src: "club", type: "T", minutes: "90", rpe: "8" }, { date: XSS("ld") }, "x", null],
+  weights: [{ date: day(-1), kg: XSS("kg") }, { date: day(-2), kg: "71,5" }],
+  tests: [{ date: day(-10), total: XSS("tt"), scores: {} }, { date: day(-5), total: 17, scores: { str: 4, spd: XSS("ts") }, raw: { push: XSS("raw"), __proto__: 1 } }],
+  ov: { [day(3)]: { t: XSS("ovt"), from: XSS("ovf") }, [day(4)]: { t: "S", from: day(0), x: XSS("ovx") }, __proto__: { polluted: 1 } },
+  cov: { [day(5)]: { on: true, min: XSS("covm") } },
+  pauses: [{ from: day(8), to: XSS("pt"), why: "ill" }, { from: day(9), to: null, why: XSS("pw") }],
+  ko: XSS("ko"),
+});
+test("security 25.11.2026: a crafted backup cannot put code into the page – numbers stay numbers, unknown kinds and broken entries are left out (and counted), texts are escaped, nothing crashes; a normal backup loads unchanged", () => {
+  const a = app();
+  a.setDate("2026-11-25");
+  const day = (k) => { const d = new Date(Date.UTC(2026, 10, 25 + k)); return d.toISOString().slice(0, 10); };
+  a.run("globalThis.CRAFT=" + JSON.stringify(xssData(day)));
+  a.run("S=hydrate(JSON.parse(JSON.stringify(CRAFT)));ui.sel=iso(today())");
+  const S = JSON.parse(a.run("JSON.stringify(S)"));
+  assert.ok(+a.run("sanDropped") >= 10, "broken entries are counted: " + a.run("sanDropped"));
+  // numbers
+  assert.equal(S.profile.minutes, 75);
+  assert.equal(S.profile.height, undefined);
+  assert.deepEqual(S.profile.club.days, [3]);
+  assert.equal(S.log.length, 2);
+  assert.equal(S.log[0].rpe, undefined);
+  assert.equal(S.log[0].minutes, 0);
+  assert.equal(S.log[0].src, "own");
+  assert.equal(S.log[0].type, undefined, "an unknown kind is removed, not guessed (older entries have none either)");
+  assert.equal(S.log[0].note, "<b>meine</b> Notiz", "texts stay texts");
+  assert.deepEqual(S.log[0].perf.map((p) => p.id), ["str.push_ups"]);
+  assert.deepEqual(S.log[0].perf[0].sets, [{ r: null, kg: 7.5 }]);
+  assert.deepEqual([S.log[1].minutes, S.log[1].rpe], [90, 8], "numeric texts of older versions become numbers");
+  assert.deepEqual(S.weights.map((w) => w.kg), [71.5]);
+  assert.deepEqual(S.tests.map((x) => x.total), [17]);
+  assert.equal(S.tests[0].scores.spd, null);
+  // dates and kinds
+  assert.deepEqual(Object.keys(S.sessions), [day(0)]);
+  assert.equal(S.ko, "");
+  assert.deepEqual(S.ov, { [day(4)]: { t: "S", from: day(0) } });
+  assert.equal(a.run("({}).polluted"), undefined, "no prototype taken over");
+  assert.deepEqual(S.pauses.map((x) => x.why), ["ill"]);
+  const sess = S.sessions[day(0)];
+  assert.deepEqual(sess.blocks[0].items.map((x) => x.id), ["warm.joint_mobility", "fWraps"], "unknown exercise out, hardening ids stay");
+  assert.deepEqual(sess.blocks[1].items[0].combo, ["jab"]);
+  assert.deepEqual(sess.perf, { "2.0": [{ r: null, kg: 20, rL: 5 }] });
+  assert.equal(S.profile.comps.length, 2);
+  assert.equal(S.profile.comps[0].wc, undefined);
+  assert.equal(S.profile.comps[1].kind, "comp");
+  assert.equal(S.profile.comps[1].result.place, undefined);
+  assert.deepEqual(S.profile.myc[0].c, ["jab"]);
+  // every view renders, nothing executable in it
+  const views = ["renderWeek()", "renderSession()", "renderTest()", "renderLog()", "progressHtml()", "prsHtml()", ...["me", "train", "goals", "life", "guide", "app"].map((s) => `(ui.profSec='${s}',renderProfile())`), "(ui.profSec=null,renderProfile())"];
+  for (const v of views) {
+    const h = a.run(v);
+    assert.doesNotMatch(h, /<img src=x|onerror=/i, v);
+  }
+  assert.match(a.run("(ui.profSec=null,renderLog())"), /&lt;b&gt;meine&lt;\/b&gt; Notiz|meine/);
+  // the guided unit too
+  a.run("ui.workout={ds:iso(today()),block:2,step:0,player:true}");
+  assert.doesNotMatch(a.run("playerHtml()"), /onerror=/);
+  // a real backup: unchanged by the check
+  const real = { profile: { lang: "de", sport: "taekwondo", disc: "lc", level: 2, days: [1, 3], minutes: 90, birthYear: 1990, comps: [{ id: "a", date: day(30), kind: "comp", name: "Open", wc: 68 }] }, log: [{ id: "x", date: day(-2), src: "own", type: "S", minutes: 60, rpe: 7, perf: [{ id: "str.push_ups", sets: [{ r: 12, kg: null }] }] }], weights: [{ date: day(-2), kg: 68.4 }], tests: [], ov: { [day(2)]: { t: "T", from: day(1) } }, cov: {}, pauses: [], ko: "" };
+  const c = JSON.parse(a.run(`JSON.stringify(sanitizeData(${JSON.stringify(real)}))`));
+  assert.equal(c.dropped, 0);
+  assert.deepEqual(c.data.log, real.log);
+  assert.deepEqual(c.data.weights, real.weights);
+  assert.deepEqual(c.data.ov, real.ov);
+  assert.deepEqual(c.data.profile.comps, real.profile.comps);
+});
+test("security 25.11.2026: loading a backup – checked before the question (left-out entries are named), a safety copy before replacing, 'Rückgängig' and 'Verwerfen' under App & Daten; no copy possible: asked once more", async () => {
+  const a = app();
+  a.setDate("2026-11-25");
+  a.run("S.profile.lang='de';S.profile.toured=true;S.profile.newsSeen=99;S.profile.example=false;S.log=[{id:'mine',date:'2026-11-24',src:'own',type:'T',minutes:60,rpe:6}];globalThis.toasts=[];toast=(m)=>toasts.push(m);localStorage.removeItem(UNDO_KEY)");
+  const id = a.run("APP_ID");
+  assert.equal(a.run("importParse('not json')"), null);
+  assert.equal(a.run(`importParse(JSON.stringify({app:'other',data:{profile:{}}}))`), null, "another app's file");
+  const file = JSON.stringify({ app: id, exported: "2026-11-20T10:00:00Z", data: { profile: { lang: "de", sport: "boxing", days: [1, 3], minutes: 60 }, log: [{ id: "f1", date: "2026-11-19", src: "own", type: "T", minutes: 45, rpe: 5 }, { date: "kaputt" }, { id: "f3", date: "2026-11-18", rpe: XSS("r"), minutes: 30 }] } });
+  a.run(`importAsk(importParse(${JSON.stringify(file)}))`);
+  const sh = JSON.parse(a.run("JSON.stringify(ui.sheet.lines)"));
+  assert.match(sh[0], /Sicherung vom .* laden\?/);
+  assert.match(sh[1], /vorher auf diesem Gerät gesichert/);
+  assert.match(sh[2], /^1 Eintrag ist fehlerhaft/);
+  assert.equal(a.run("S.log[0].id"), "mine", "nothing replaced before the answer");
+  a.run("ui.sheet.run()");
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(S.log.map(e=>[e.id,e.rpe??null]))")), [["f1", 5], ["f3", null]]);
+  assert.match(a.run("toasts.pop()"), /Rückgängig unter Profil/);
+  // the panel and undo
+  let h = a.run("undoPanelHtml()");
+  assert.match(h, /Vor dem Laden gesichert[\s\S]*data-undo="drop"[\s\S]*data-undo="back"/);
+  await a.click({ dataset: { undo: "back" } });
+  assert.match(a.run("ui.sheet.lines[0]"), /seitdem eingetragen hast, geht dabei verloren/);
+  a.run("ui.sheet.run()");
+  assert.equal(a.run("S.log.map(e=>e.id).join()"), "mine");
+  assert.equal(a.run("undoPanelHtml()"), "", "the copy is used up");
+  // discard
+  a.run(`importAsk(importParse(${JSON.stringify(file)}));ui.sheet.run()`);
+  await a.click({ dataset: { undo: "drop" } });
+  assert.equal(a.run("undoPanelHtml()"), "");
+  assert.equal(a.run("S.log[0].id"), "f1", "discarding keeps the loaded data");
+  // storage full: asked once more, nothing replaced without the second yes
+  a.run("S.log=[{id:'mine',date:'2026-11-24',src:'own',type:'T',minutes:60,rpe:6}];globalThis.__set=localStorage.setItem;localStorage.setItem=(k,v)=>{if(k===UNDO_KEY)throw new Error('full');return __set.call(localStorage,k,v)}");
+  a.run(`importAsk(importParse(${JSON.stringify(file)}));ui.sheet.run()`);
+  assert.match(a.run("ui.sheet.lines[0]"), /können nicht gesichert werden \(Speicher voll\)/);
+  assert.equal(a.run("S.log[0].id"), "mine");
+  a.run("ui.sheet.run()");
+  assert.equal(a.run("S.log[0].id"), "f1");
+  a.run("localStorage.setItem=__set;S.profile.lang='en'");
+  assert.match(a.run("t('impSafe').kept"), /undo the loading/);
+});
+test("security 25.11.2026: the installable page has a Content-Security-Policy – exactly the two inline scripts by hash, no unsafe-inline/unsafe-eval for scripts, network only to the own address", async () => {
+  const { createHash } = await import("node:crypto");
+  const page = readFileSync(new URL("../pwa/index.html", import.meta.url), "utf8");
+  const m = page.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)" \/>/);
+  assert.ok(m, "CSP meta present");
+  const csp = m[1];
+  const scripts = [...page.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((x) => "'sha256-" + createHash("sha256").update(x[1], "utf8").digest("base64") + "'");
+  assert.equal(scripts.length, 2);
+  const src = csp.match(/script-src ([^;]+)/)[1].trim().split(/\s+/);
+  assert.deepEqual(src.sort(), scripts.sort());
+  assert.doesNotMatch(csp, /script-src[^;]*unsafe/);
+  assert.match(csp, /connect-src 'self'/);
+  assert.match(csp, /object-src 'none'/);
+  assert.match(csp, /base-uri 'none'/);
+  assert.ok(page.indexOf("Content-Security-Policy") < page.indexOf("<script>"), "before the first script");
+  // no inline event handlers in the app's markup (they would be blocked)
+  assert.doesNotMatch(page, /\son(click|load|error|input|change|submit)="/);
+});
+test("security 25.11.2026: older backups keep their shapes – no type on club entries, results as free text, sessions without type – nothing is added or lost", () => {
+  const a = app();
+  const old = { profile: { lang: "de", comps: [{ id: "c", date: "2026-10-01", kind: "comp", result: "2 von 3 gewonnen" }] }, log: [{ id: "a", date: "2026-10-02", src: "club", minutes: 90, rpe: 7 }, { date: "2026-10-03", src: "own", type: "S", rpe: 6, perf: [{ id: 1, sets: [{ r: 10, kg: 20 }] }] }], sessions: { "2026-10-03": { blocks: [{ items: [{}] }], checked: { "0.0": true } } } };
+  const S = JSON.parse(a.run(`JSON.stringify(hydrate(${JSON.stringify(old)}))`));
+  assert.equal(S.log[0].type, undefined);
+  assert.equal(S.log[0].minutes, 90);
+  assert.equal(S.profile.comps[0].result, "2 von 3 gewonnen");
+  assert.equal(S.log[1].minutes, undefined, "not added");
+  assert.equal(typeof S.log[1].perf[0].id, "string", "old numeric ids migrated, then kept");
+  assert.equal(S.log[1].perf[0].sets[0].kg, 20);
+  assert.deepEqual(S.sessions["2026-10-03"].checked, { "0.0": true });
+  assert.equal(+a.run("sanDropped"), 0);
+});
