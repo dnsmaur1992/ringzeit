@@ -100,7 +100,7 @@
     }
   }
   /* round cue: fight-pace intervals or the block's pace hint */
-  const paceTxt = (it) => (it.cue ? t("blk").cue[it.cue] || "" : it.pace ? t("paceIv") : it.ease ? t(it.box ? "easeRoundBox" : "easeRound") : "");
+  const paceTxt = (it) => (it.cue ? t("blk").cue[it.cue] || "" : it.pace ? t("paceIv") : it.ease ? (it.pb ? t("pBlk")[isBox() ? "easeBox" : "ease"] : t(it.box ? "easeRoundBox" : "easeRound")) : "");
   /* weakest physical area of the latest test (technique doesn't pick a block) */
   function blockSuggest() {
     const tt = S.tests[S.tests.length - 1];

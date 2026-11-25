@@ -740,68 +740,13 @@
     { d: "check", att: "lowk", c: ["cross", "lowk"], lvl: 1, low: true },
     { d: "duck", att: "hook", c: ["cross", "hook", "roundh"], lvl: 2 },
   ];
+  /* one combo for a round – built by movement rules (08g-flow.js, Teil 43) instead of drawn from fixed lists */
   function combo(kind, theme) {
-    if (isBox()) return boxCombo(kind, theme);
-    if (isTkd()) return tkdCombo(kind, false, theme);
-    const p = S.profile,
-      lim = p.limits,
-      ka = kneeAnk(),
-      focus = techniqueLevel() === 0 ? "bal" : p.focus;
-    let pool,
-      kickOnly = false;
-    if (kind === "bag" && lim.includes("wrist")) {
-      pool = KICK_ONLY.filter((c) => !ka || c.every((x) => !RISKY.has(x)));
-      kickOnly = true;
-    } else if (lim.includes("shoulder") && (kind === "bag" || kind === "pads")) {
-      pool = KICK_ONLY;
-      kickOnly = true;
-    } else {
-      pool = COMBOS.slice(0, techniqueLevel() + 1).flat();
-      if (EXTRA[discOf()] && !ka && Math.random() < 0.35) pool = EXTRA[discOf()];
-      if (ka) pool = pool.filter((c) => c.every((x) => !RISKY.has(x)));
-      if (ka && kind === "bag") pool = HAND_ONLY;
-      if (young()) pool = pool.filter((c) => !c.includes("back"));
-      if (ageGroup() === "kids") pool = pool.filter((c) => c.length <= 3 && !c.some((x) => ADV.has(x)));
-      if (techniqueLevel() < 2) pool = pool.filter((c) => !c.includes("jknee"));
-      if (!pool.length) pool = HAND_ONLY;
-    }
-    // 7f: from level 1 about every fifth combo is a kick chain (2 kicks, from level 2 also 3); low kicks only where the
-    // discipline allows them (Kick Light, K1); not for children, not with a knee/ankle limit
-    // 7g: the plan focus steers the share too – more boxing fewer chains, more kicks more chains
-    const chainP = p.focus === "box" ? 0.08 : p.focus === "kick" ? 0.3 : 0.22;
-    if (!kickOnly && techniqueLevel() >= 1 && ageGroup() !== "kids" && !ka && Math.random() < chainP) {
-      const ch = KICK_CHAINS.filter((x) => x.lvl <= techniqueLevel() && (!x.low || ["kl", "k1"].includes(discOf()))).map((x) => x.c);
-      if (ch.length) return partnerClean(rnd(ch).slice());
-    }
-    let c = weightedPick(pool, focus).slice();
-    if (theme && theme.ap && (!kickOnly || theme.kick)) {
-      c = theme.ap(c, p);
-      const maxLen = ageGroup() === "kids" ? 3 : techniqueLevel() + 3;
-      while (c.length > maxLen) c.splice(1, 1);
-      if (ka) c = c.filter((x) => !RISKY.has(x));
-      if (c.length < 2) c.push("cross");
-    }
-    return partnerClean(c);
+    return flowCombo(kind, theme);
   }
   /* boxing: punches only; with a wrist or shoulder limit short light work instead of bag and pad load */
   function boxCombo(kind, theme) {
-    const p = S.profile,
-      lim = p.limits,
-      load = kind === "bag" || kind === "pads";
-    let pool =
-      load && (lim.includes("wrist") || lim.includes("shoulder"))
-        ? BOXT.BOX_LIGHT
-        : BOXT.BOX_COMBOS.slice(0, techniqueLevel() + 1).flat();
-    if (ageGroup() === "kids") pool = pool.filter((c) => c.length <= 3);
-    if (!pool.length) pool = BOXT.BOX_LIGHT;
-    let c = rnd(pool).slice();
-    if (theme && theme.ap && pool !== BOXT.BOX_LIGHT) {
-      c = theme.ap(c, p);
-      const maxLen = ageGroup() === "kids" ? 3 : techniqueLevel() + 3;
-      while (c.length > maxLen) c.splice(1, 1);
-      if (c.length < 2) c.push("cross");
-    }
-    return partnerClean(c);
+    return flowCombo(kind, theme);
   }
   /* a defence needs a reason: the generated own combos (shadow, bag, partner, coach) hold no slip or block at all –
      defending happens only against a real counter action of the partner; a side step only as the exit at the end.
@@ -1326,56 +1271,7 @@
   /* active flexibility in the full range of motion (WT focus, 7b) */
   const ACTIVE_MOB = ["mob.kick_holds", "mob.slow_motion_kicks", "mob.controlled_leg_swings", "mob.active_leg_raises"];
   function tkdCombo(kind, noHead, theme) {
-    const p = S.profile,
-      ctx = tkdCtx(),
-      lim = p.limits;
-    const M = tkm();
-    let pool = M.COMBOS.slice(0, (techniqueLevel() || 0) + 1).flat();
-    pool = pool.filter((c) => c.every((x) => M.allowed(x, ctx)));
-    // 7g: a technique released by the grade alone (level OR grade) also brings the higher combos that carry it – 7h: about
-    // every fifth combo, so the level pool stays the core
-    if (ctx.kup != null) {
-      const extra = M.COMBOS.slice((techniqueLevel() || 0) + 1).flat().filter((c) => c.some((x) => M.byGrade(x, ctx)) && c.every((x) => M.allowed(x, ctx)));
-      if (extra.length && Math.random() < 0.2) pool = extra;
-    }
-    if (lim.includes("wrist") || lim.includes("shoulder")) pool = pool.filter((c) => !c.some((x) => TKDT.HANDS.has(x) || (M.HANDS && M.HANDS.has(x))));
-    if (noHead || lowTime()) pool = pool.filter((c) => !c.some((x) => M.HEAD.has(x)));
-    if (ctx.kid) pool = pool.filter((c) => c.length <= 3);
-    // the fitter, the longer the kick chains: advanced at least 3 kicks, competition level at least 4 (most of the time).
-    // 7f: warm-up rounds without head kicks and ITF (hand-foot, weaker form) need one kick less: 2 / 3
-    const lvl = techniqueLevel() || 0,
-      need = (noHead || M === ITFT ? 1 : 2) + lvl,
-      longer = pool.filter((c) => M.kickCount(c) >= need);
-    // ITF (7b B8): from level 1 about every second combo carries a jumping or spinning kick, as far as grade, age and limits allow
-    const spect = M === ITFT && lvl >= 1 ? pool.filter((c) => c.some((x) => ITF_SPECT.has(x))) : [];
-    if (lvl >= 1 && longer.length && Math.random() < 0.75) pool = longer;
-    if (spect.length && Math.random() < 0.45) {
-      const sl = spect.filter((c) => pool.includes(c));
-      pool = sl.length ? sl : spect;
-    }
-    if (!pool.length) pool = M.LIGHT.filter((c) => c.every((x) => M.allowed(x, ctx)));
-    if (!pool.length) pool = [["ap", "dol"]];
-    // focus kick of the unit: about three in four combos carry it – swapped for a focus combo of about the same
-    // length, so the chain lengths (and the kick counts per level) stay as they were
-    let pick = rnd(pool);
-    // tactical focus: about three in four combos with one of its techniques, again of about the same length
-    if (theme && theme.prefer && !pick.some((x) => theme.prefer.includes(x)) && Math.random() < 0.75) {
-      const size = (c) => (M.kickCount ? M.kickCount(c) : c.length),
-        len = size(pick),
-        fk = pool.filter((c) => c.some((x) => theme.prefer.includes(x))),
-        same = fk.filter((c) => size(c) === len),
-        near = same.length ? same : fk.filter((c) => Math.abs(size(c) - len) <= 1);
-      if (near.length) pick = rnd(near);
-    }
-    if (theme && theme.kick && !hasKick(pick, theme.kick, M) && Math.random() < 0.75) {
-      const len = M.kickCount ? M.kickCount(pick) : pick.length,
-        size = (c) => (M.kickCount ? M.kickCount(c) : c.length),
-        fk = pool.filter((c) => hasKick(c, theme.kick, M)),
-        same = fk.filter((c) => size(c) === len),
-        near = same.length ? same : fk.filter((c) => Math.abs(size(c) - len) <= 1);
-      if (near.length) pick = rnd(near);
-    }
-    return pick.slice();
+    return tkdFlow(kind, noHead, theme);
   }
   /* taekwondo technique and conditioning rounds: shadow kicks, bag, pad drills, footwork and evade & counter rounds */
   function tkdRounds(type, n, loc, eq, easy, theme) {
@@ -1600,14 +1496,6 @@
     const need = ["roundh"];
     // K1 knees – except when the focus keeps it long against a smaller opponent (no close range, 17.11.2026)
     if (EXTRA[discOf()] && !ka) need.push(...(discOf() === "k1" && !(theme && theme.id === "shortOpp") ? ["lowk", "knee"] : ["lowk"]));
-    const highPool = COMBOS.slice(0, techniqueLevel() + 1)
-      .flat()
-      .filter(
-        (c) =>
-          c.includes("roundh") &&
-          c.every((x) => !ka || !RISKY.has(x)) &&
-          !(ageGroup() === "kids" && c.some((x) => ADV.has(x))),
-      );
     need.forEach((tech, j) => {
       const cnt = out.filter((r) => r.combo && r.combo.includes(tech)).length,
         want = tech === "roundh" ? Math.max(1, Math.round(n / 4)) : 1;
@@ -1618,17 +1506,13 @@
         // the range & exit round takes it first: its combo is free-form, so the focus rounds keep their shape (17.11.2026)
         const dr = pool.find((x) => x.dist && !(x.dist.i === "low" && tech !== "lowk") && !(x.dist.i === "knee" && tech !== "knee"));
         if (dr) {
-          dr.combo = [...dr.combo.filter((x) => x !== tech).slice(0, 2), tech];
+          dr.combo = flowCombo("shadow", theme, { must: tech, len: [2, 3] });
           continue;
         }
-        const r = pool[(j + m * 2 + 1) % pool.length];
-        const src = tech === "roundh" ? (highPool.length ? highPool : [["jab", "cross", "roundh"]]) : EXTRA[discOf()].filter((c) => c.includes(tech)),
-          have = new Set(out.map((x) => x.combo && x.combo.join())),
-          fresh = src.filter((c) => !have.has(partnerClean(c).join()));
-        // all fitting combos are in use already (few at Grundlage): this round's combo ends in the high kick instead
-        // Light Contact keeps its limit of 4 here too – the added high kick is the last technique and stays (18.11.2026)
-        if (!fresh.length && tech === "roundh") r.combo = lcShort(fill2([...r.combo.filter((x) => x !== "round" && x !== "step" && !HIGHK.has(x)).slice(0, techniqueLevel() + 2), "roundh"]));
-        else r.combo = lcShort(partnerClean(rnd(fresh.length ? fresh : src)));
+        const r = pool[(j + m * 2 + 1) % pool.length],
+          have = new Set(out.map((x) => x.combo && x.combo.join()));
+        // a combo of the same kind that carries the technique, built by the movement rules (Teil 43)
+        r.combo = flowCombo(r.k === "bag" || r.k === "shadow" ? r.k : "pads", theme, { must: tech, avoid: have });
       }
     });
     // every session has punches to the body: without one, a cross (or jab) of one combo goes to the body
@@ -1644,10 +1528,12 @@
       } else {
         // 7g: only kick combos left (kick chains, 7f) – one of them opens with a cross to the body (not the 6-kick round, not my combos)
         const kc = withC.filter((r) => !r.combo.some((x) => BODY.includes(x)) && !r.six && !r.mine);
-        // Light Contact: still at most 4 – the body cross opens, the finishing technique stays (18.11.2026)
+        // a new combo with a body shot, built by the movement rules (Teil 43)
         if (kc.length) {
-          const r = rnd(kc);
-          r.combo = lcShort(["crossb", ...r.combo]);
+          const r = rnd(kc),
+            kk = r.k === "bag" || r.k === "shadow" ? r.k : "pads";
+          r.combo = flowCombo(kk, theme, { must: "crossb" });
+          if (!r.combo.some((x) => BODY.includes(x))) r.combo = flowCombo(kk, theme, { must: "jabb" });
         }
       }
     }
@@ -1677,10 +1563,10 @@
         const o = out[j];
         [r.combo, o.combo] = [o.combo, r.combo];
         [r.mine, o.mine] = [o.mine, r.mine];
-      } else r.combo = r.combo.map((x) => LOWER[x] || x);
+      } else r.combo = lowerFlow(r.combo, r.k, theme, r.mine);
     }
     // short on time (21.11.2026): no head kicks at all – every kick to body height, own combos too
-    if (lowTime()) for (const r of out) if (r.combo) r.combo = r.combo.map((x) => LOWER[x] || x);
+    if (lowTime()) for (const r of out) if (r.combo) r.combo = lowerFlow(r.combo, r.k, theme, r.mine);
     // kids: at most 3 techniques (the opener and the finishing technique stay)
     if (ageGroup() === "kids")
       for (const r of out) if (r.combo && !r.mine) while (r.combo.length > 3) r.combo.splice(1, 1);
@@ -2533,6 +2419,9 @@
           notes.push(t("loadDist").note.extra);
         }
       }
+      // with a partner (technique and conditioning): theme blocks of 8–12 minutes in one go instead of rounds (Teil 43)
+      const pbL = (type === "T" || type === "C") && eq.includes("partner") && !lowTime() ? pbLayout(main, rb) : null;
+      if (pbL) main = Math.round((pbL.n * pbL.w + (pbL.n - 1) * rb) / 60);
       const sup = rest - exMin - main;
       if (type === "P" && eq.includes("partner")) {
         notes.push(t("gearNote"));
@@ -2557,7 +2446,12 @@
               beg: techniqueLevel() === 0,
             });
       } else if (type === "P") items = sparRounds(nR, loc, eq, soft || ph.phase === "grade");
-      else {
+      else if (pbL) {
+        items = pbUnit(type, pbL, theme);
+        // tournament pace / focus block: the pace stage and the last stage at fight pace
+        if ((fmtR && !taper) || (br && br.pace)) items.forEach((it) => (it.pace = true));
+        if (br && br.cue) items.forEach((it) => (it.cue = br.cue));
+      } else {
         // short sessions have a short warm-up: two easy opening rounds instead of one
         items = fightRounds(type, nR, loc, eq, theme, D <= 45 ? 2 : 1);
         // Federn & Antritt: the bounce rounds count against the cap, the closing block takes what is left
@@ -2596,8 +2490,9 @@
         key: "main",
         min: main,
         rounds: true,
-        w: fw,
+        w: pbL ? pbL.w : fw,
         b: rb,
+        ...(pbL ? { pblk: 1 } : {}),
         items,
       });
       if (exItems.length) {

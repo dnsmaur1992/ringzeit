@@ -382,3 +382,40 @@ Grundsatz (Betreiber): **nur eingetragene Anstrengung und Belastungen steuern di
 - **Aufwärmen in voller Länge:** 12 Minuten vor Kick-Einheiten (inkl. Vorbereitung), sonst 10; Ausklang 4.
 - **Kraft erhalten:** 3 Grundübungen, 2 schwere Sätze (schwerste saubere Variante, 1–2 Wdh. vor Schluss aufhören), kein Sprungblock. **Technik:** statt Kraftteil kurze Intervalle am Ende.
 - Baseline: nur das Testprofil mit Wenig-Zeit-Modus ändert sich (Ausrüstung nur Sandsack, Aufwärmen 6→10 + 2 Vorbereitung, Intervalle statt Kraftteil).
+
+## Partnerdrills in Blöcken (25.11.2026, Teil 42 – ersetzt durch Teil 43)
+
+Partnertraining mit Partnerübung (Kickboxen, Boxen, Taekwondo; Technik- und Konditionseinheiten): weniger verschiedene Kombinationen, länger an einer, von leicht zu schwer, ein gemeinsames Konzept für die Einheit.
+- **3 Runden je Kombination**, höchstens 3 Kombinationen pro Einheit (lange Einheiten 4 Runden, ein Rest von 2 Runden ist ein eigener Block). Ein neuer Block ist immer eine neue Kombination.
+- **Stufen im Block:** Runde 1 langsam und sauber → Runde 2 mit Tempo → Runde 3 mit Gegenaktion des Partners. Konditionseinheit: Rhythmus finden → hohes Tempo → mit Gegenaktion. Gegenaktion: Grundlage und Kinder einmal pro Einheit (im letzten Block), ab Fortgeschritten in jedem Block, Wettkampf und Abwehr-Schwerpunkt schon in Runde 2. Taekwondo ohne Partner-Gegenaktion: dritte Runde im Wettkampftempo gegen einen beweglichen Partner. Kinder ohne Wettkampftempo (bleibt „mit Tempo“).
+- **Roter Faden:** Die Blöcke bauen eine Kombination auf – Block 1 ihr Anfang, jeder weitere Block eine Technik mehr, der letzte Block die ganze Kombination (eigene Vereinskombination zuerst, sonst die schwerste der Einheit; Taekwondo: Kickserie bevorzugt). Ein Anfang endet nie mit Abwehr oder Schritt. Ist die Kombination zu kurz (Kinder, Grundlage, Leichtkontakt), folgen dem gemeinsamen Anfang zwei Enden aus der Einheit, das leichtere zuerst („Jab, Cross“ → „Jab, Cross, Low Kick“ → „Jab, Cross, High Kick“). Geht beides nicht, nehmen die Blöcke die Kombinationen der Einheit von leicht nach schwer.
+- **Regeln der Einheit bleiben:** Einstiegsrunde (70 %) mit Kicks höchstens auf Körperhöhe – der Kopfkick kommt ab Runde 2; Körpertreffer bleiben in der Einheit (über alle Blöcke mit demselben Anfang); Kinder höchstens 3 Techniken; Kickserien in Taekwondo bleiben; Full Contact: 6-Kick-Regel auf einer Partnerrunde (nicht die Einstiegsrunde).
+- **Distanzrunde** (Eingang/Ausgang) bleibt eine eigene Aufgabe und steht nach dem Block, in dem sie lag (ein Block wird nicht geteilt); ihre Aufgabe steht jetzt auch in der Liste.
+- **Anzeige:** „Kombination 1 · Runde 2 von 3: jetzt mit Tempo“ in der Liste und im geführten Training (DE/EN). Rollentausch nach 3–5 Wiederholungen bleibt unverändert.
+- Ohne Partner, im Wenig-Zeit-Modus und ohne Partnerrunden: keine Blöcke.
+- **Weniger Runden durch die Dichte-Steigerung** (Progression kürzt Runden am Ende): „Runde i von n“ stimmt danach; die weggefallene Gegenaktion kommt auf die letzte Runde des Blocks (Fortgeschritten+, Grundlage/Kinder nur wenn die Einheit sonst keine hat); ein Block mit nur einer Runde wird Zusatzrunde des Blocks davor.
+- Baseline: nur Profile mit Partnerrunden ändern sich (Stufen, roter Faden, Distanzrunde nach dem Block, Einstiegsrunde mit Kicks auf Körperhöhe, Körpertreffer im Faden, gekürzter letzter Block „von 2“ mit Gegenaktion).
+
+## Teil 43: Kombinationen nach Bewegung, Partner-Einheiten in Themenblöcken (25.11.2026)
+
+Ersetzt die Partnerdrills in 3er-Runden aus Teil 42 (Blöcke, Stufen und roter Faden bleiben als Idee, jetzt als Zeitblöcke).
+
+**Kombinationen nach Bewegung (alle drei Sportarten, `src/app/08g-flow.js`).** Keine festen Listen mehr: jede Kombination wird Schritt für Schritt gebaut, und jeder Schritt muss aus der Körperposition der vorigen Technik folgen (Rechtsauslage, V = vorne, H = hinten):
+- Seiten wechseln: eine hintere Technik dreht die Hüfte und lädt die vordere Seite (Cross → Führhand-Haken, -Uppercut, -Roundhouse), der Führhand-Haken dreht zurück und lädt die hintere (→ Cross, hinterer Uppercut, Roundhouse/Low Kick hinten, Knie). Dieselbe Seite zweimal nur als echte Doppelung: Jab–Jab, Jab Körper–Jab, Jab–Führhand-Haken, Körperhaken–Kopfhaken (auch die V/H-Anzeige folgt dieser Regel).
+- Distanz: nach Front-/Side-/Rückwärtstritt (schiebt weg) kein Haken, Uppercut, Knie; aus der Nahdistanz kein Front-, Side-, Rückwärts-, Axt- oder Hakentritt.
+- Gewicht: nach einem hinteren Schlag kein vorderer Stoß-, Axt- oder Hakentritt.
+- Drehtritte nur aus der Gegendrehung davor (Jab, Führhand-Haken, vorderer Side-/Roundhouse-Kick), nie zwei Drehungen; Sprungtechniken nur aus einer Handtechnik.
+- Eröffnung mit einer reichenden Technik (Jab, Kick, selten Cross/Haken; Grundlage nie mit Kopfkick), Abschluss mit einer Wirkungstechnik oder einem Kick – nie mit dem Jab. Kicks hintereinander: Grundlage einer, sonst zwei (Trittketten ab Fortgeschritten).
+- Häufigkeit nach Trainingsalltag (Jab, Cross, Haken, Roundhouse zuerst; Dreh-, Sprung- und Brazilian Kicks selten); „mehr Boxen/mehr Kicks“ verschiebt die Anteile; ITF Hand-Fuß-betont.
+- Taekwondo: Tritte landen vorn, die Beine wechseln von selbst; Drehtritte aus einem drehenden Tritt (oder Drehschritt), Sprungtritte aus Tritt oder Schritt, kein Fauststoß nach einem Schiebetritt, Schritte nur am Anfang, höchstens eine Serie.
+- Der Schwerpunkt der Einheit ist eine Bauregel (Eröffnung, Abschluss, Körper–Kopf …) statt einer nachträglichen Änderung; Abdeckung (Kopfkick, Low Kick, Knie, Körpertreffer) baut eine neue passende Kombination, statt Techniken anzuhängen. Eigene Vereinskombinationen bleiben unverändert.
+
+**Partner-Einheiten in Themenblöcken (`src/app/08h-pblocks.js`).** Mit Partner (Technik und Kondition, alle Sportarten, auch Turniervorbereitung, nicht im Wenig-Zeit-Modus):
+- Ein sichtbares Thema für die ganze Einheit (der Schwerpunkt, z. B. „Körper – Kopf“, „Low Kick nach der Hand“).
+- Hauptteil = Blöcke am Stück von 8–12 Min. (Kinder 5–6, bis 10 Blöcke); ein kurzer Hauptteil bleibt ein Block. Pausen zwischen den Blöcken wie bisher die Rundenpausen.
+- Leicht → schwer: die Blöcke bauen eine Kombination auf (Kern des Themas, je Block eine Technik mehr, zuletzt die ganze Kombination); reicht sie nicht, Kombinationen desselben Anfangs (bzw. desselben Abschlusses), nie schwerer als die letzte.
+- Stufen nach Zeit im Block (ca. 30/35/35 %): langsam und sauber → mit Tempo + Eingang/Ausgang (frühere Distanzrunde) → mit Gegenaktion des Partners (frühere Abwehrrunde). Grundlage und Kinder: Gegenaktion nur im letzten Block, sonst Wettkampftempo (Kinder: zwei Stufen, ohne Wettkampftempo); Taekwondo: keine Gegenaktion, Wettkampftempo. Kondition: Rhythmus finden → hohes Tempo → Gegenaktion.
+- Rollentausch unverändert nach 3–5 Wiederholungen. Einstieg: Stufe 1 des ersten Blocks mit 70 % und Kicks auf Körperhöhe. Full Contact: 6-Kick-Regel in der Tempo-Stufe eines Blocks.
+- Anzeige: Thema über den Blöcken, je Block „Block 1 von 4 · 9,5 Min. am Stück“ mit Stufenplan; Training: aktuelle Stufe, beim Stufenwechsel Doppelglocke und Ansage; A/B-Rahmen erst in der Gegenaktions-Stufe.
+- Progression: längere Pause → Blöcke werden kürzer, keiner fällt weg.
+- Baseline: neu aufgenommen – alle Kombinationen kommen aus dem Baukasten, Partner-Einheiten bestehen aus Blöcken.

@@ -233,10 +233,12 @@
     tm.called = round;
     const info = roundInfo(it),
       de = S.profile.lang === "de",
-      d = it.dist && distOf(it.dist.i),
-      o = it.dist && it.dist.o && distOf(it.dist.o),
+      // partner theme block (Teil 43): the block, its first stage and the combo – entry/exit comes with the pace stage
+      pbText = it.pb ? `${info.title}. ${pbNow(it, 0, de ? 0 : 1).replace(/\.?$/, ".")} ${comboWords(it.combo)}.` : null,
+      d = !it.pb && it.dist && distOf(it.dist.i),
+      o = !it.pb && it.dist && it.dist.o && distOf(it.dist.o),
       // range & exit round: entry (or exit first), combo, exit – said in that order
-      text = `${de ? "Runde" : "Round"} ${round}. ${info.title}.${d ? ` ${d[de ? "de" : "en"]}.` : ""}${it.combo ? " " + comboWords(it.combo) + "." : ""}${o ? ` ${o[de ? "de" : "en"]}.` : ""}`; // counter actions are shown, not spoken
+      text = pbText || `${de ? "Runde" : "Round"} ${round}. ${info.title}.${d ? ` ${d[de ? "de" : "en"]}.` : ""}${it.combo ? " " + comboWords(it.combo) + "." : ""}${o ? ` ${o[de ? "de" : "en"]}.` : ""}`; // counter actions are shown, not spoken
     queueTimerSpeech(
       text,
       300,

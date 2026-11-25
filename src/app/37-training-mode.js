@@ -1,7 +1,19 @@
   /* ============ Training mode (full screen) ============ */
   /* Title, description and combo of one round item, used by the training mode */
-  function roundInfo(it) {
+  function roundInfo(it, el = 0) {
     const lg = S.profile.lang === "de" ? 0 : 1;
+    // partner theme block (Teil 43): the stage that runs now, the swap rule, the theme of the unit
+    if (it.pb) {
+      const i = pbStageAt(it, el),
+        sess = S.sessions[ui.sel];
+      return {
+        title: pbHead(it),
+        desc: [pbNow(it, i, lg).replace(/\.?$/, "."), t("partnerNote"), it.six && it.pb.st[i][0] === "tempo" ? t("pBlk").six : "", guardCue(it), i === 0 ? paceTxt(it) : it.pace ? t("paceIv") : ""].filter(Boolean).join(" "),
+        combo: it.combo,
+        item: it.pb.st[i][0] === "react" ? it : null,
+        label: (it.mine ? "★ " + t("myc").lbl + " · " : "") + pbTheme(sess),
+      };
+    }
     if (it.k === "ex") {
       const x = exText(it.id);
       return {
@@ -59,7 +71,7 @@
       /* in the rest the card already shows the coming round */
       show = rest ? items[tm.round] : cur,
       nxt = items[tm.round + (rest ? 1 : 0)],
-      info = roundInfo(show),
+      info = roundInfo(show, !rest && tm.phase === "work" ? tm.work - tm.left : 0),
       sk = show && show.k === "ex" && hasSketch(show.id),
       big = tm.phase !== "work";
     // rest is green, the lead-in brass, the round in the session colour
@@ -74,7 +86,7 @@
     } else {
       const C = 2 * Math.PI * 130;
       h += `<div class="fring"><svg viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle id="farc" class="arc" cx="140" cy="140" r="130" fill="none" stroke="var(--tc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/><g class="fknob" id="fknob"><circle cx="270" cy="140" r="9" fill="var(--tc)" stroke="#0a0b0d" stroke-width="4"/></g></svg>
-   <div class="mid"><span class="ph" id="fph"></span><span class="clk" id="fclock">${fmt(tm.left)}</span><span class="sub">${t("roundOf")(Math.min(tm.round, tm.total), tm.total)}</span></div></div>`;
+   <div class="mid"><span class="ph" id="fph"></span><span class="clk" id="fclock">${fmt(tm.left)}</span><span class="sub">${(rb.pblk ? t("pBlk").of : t("roundOf"))(Math.min(tm.round, tm.total), tm.total)}</span></div></div>`;
       const lbl = rest ? t("nextLbl") : info.label || t("roundOf")(Math.min(tm.round, tm.total), tm.total);
       h += `<div class="fcur${sk ? (big ? " skb" : " sks") : ""}">${sk && big ? `<div class="fsk">${sketchSvg(EX[show.id].key, true)}</div>` : ""}<div class="fct"><small>${esc(lbl)}</small><b>${esc(info.title)}</b><p>${esc(info.desc)}</p>${info.combo ? `<div id="fcall">${info.item ? reactHtml(info.item) : comboHtml(info.combo)}</div>` : ""}${!rest && cmdOf(show) ? `<div class="ftcall cmdcall" id="cmdcall" aria-live="polite">${tm.phase === "work" && tm.running ? esc(tm.cmdTxt || "") : ""}</div>` : ""}</div>${sk && !big ? `<div class="fsk">${sketchSvg(EX[show.id].key, true)}</div>` : ""}</div>`;
       h += `<div class="fnext">${nxt ? `${t(rest ? "afterLbl" : "nextLbl")}: <b>${esc(roundInfo(nxt).title)}</b>` : t("lastRound")}</div>`;
@@ -204,10 +216,12 @@
   function timerStep(tm, quiet) {
     tm.left--;
     if (!quiet && tm.phase === "work" && tm.left > 0) cmdTickRound(tm); // Federn & Antritt: commands in the round
+    // partner theme block: the next stage starts – signal, voice and the card (Teil 43)
+    const stageNew = tm.phase === "work" && tm.left > 0 && !quiet && pbTick(tm);
     if (!quiet && tm.left === 10 && tm.phase === "work") beep(660, 0.12, 1);
     if (!quiet && ["prep", "rest"].includes(tm.phase) && tm.left > 0 && tm.left <= 3) beep(740, 0.08, 1);
     if (!quiet && tm.phase === "rest" && tm.left === Math.min(10, tm.rest - 1)) callTick(tm);
-    if (tm.left > 0) return false;
+    if (tm.left > 0) return !!stageNew;
     const W = t("win"),
       fx = (k, txt) => !quiet && ui.focus && timerFx(k, txt);
     if (tm.phase === "prep") {

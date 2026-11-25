@@ -669,7 +669,14 @@
             : 1 + pr.step * 0.05) * wave;
         b.b = Math.max(30, Math.round(old / factor));
         const maxRounds = Math.max(1, Math.floor((b.min * 60 + b.b) / (b.w + b.b)));
-        if (b.items.length > maxRounds) b.items = b.items.slice(0, maxRounds);
+        // partner theme blocks (Teil 43): none falls out – the blocks get shorter so the unit keeps its time
+        if (b.pblk) {
+          const w = Math.floor((b.min * 60 - (b.items.length - 1) * b.b) / b.items.length / 30) * 30;
+          if (w < b.w) {
+            b.w = Math.max(60, w);
+            pbRescale(b.items, b.w);
+          }
+        } else if (b.items.length > maxRounds) b.items = b.items.slice(0, maxRounds);
         if (sess.effortDose) sess.effortDose.roundRest = b.b;
         const prev = sess.effortDose?.source && S.log.find(e => e.id === sess.effortDose.source)?.effortDose?.roundRest;
         if ((prev || old) !== b.b) sess.notes.push(txt.density(prev || old, b.b));

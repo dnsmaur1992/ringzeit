@@ -85,8 +85,8 @@
       first = techniqueLevel() >= 1 && ageGroup() !== "kids" && Math.random() < 0.35,
       entry = first ? rnd(DIST_FIRST.filter(fits)) : rnd(DIST_IN.filter(fits)),
       exit = first ? null : rnd(DIST_OUT.filter(distOk));
-    let c = combo("shadow", theme).slice(0, 3);
-    if (entry.need && !c.includes(entry.need)) c = [...c.slice(0, 2), entry.need];
+    // a short combo (2–3) by the movement rules, with the technique the entry needs (Teil 43)
+    const c = isTkd() ? combo("shadow", theme).slice(0, 3) : flowCombo("shadow", theme, { len: [2, 3], must: entry.need, noExit: true });
     return { combo: c, dist: { i: entry.id, o: exit ? exit.id : null } };
   }
   const distOf = (id) => [...DIST_IN, ...DIST_OUT, ...DIST_FIRST].find((x) => x.id === id);

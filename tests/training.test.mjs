@@ -3006,7 +3006,7 @@ test("17.11.2026 new planning logic: untouched planned units are rebuilt once wi
   assert.equal(a.run("JSON.stringify(S.sessions['2026-11-11'])"), again, "not again on the next start");
 });
 
-test("17.11.2026 seeded: Grundabdeckung Kickboxen – range & exit and defence in every technique unit, below 4 rounds and in technique & conditioning one in turn, the focus covers its own kind", () => {
+test("17.11.2026 seeded: Grundabdeckung Kickboxen – range & exit and defence in every technique unit, below 4 rounds and in technique & conditioning one in turn, the focus covers its own kind; with a partner (Teil 43) both are stages of every theme block", () => {
   const a = app();
   const kinds = (s) => {
     const rb = s.blocks.find((b) => b.rounds);
@@ -3029,6 +3029,14 @@ test("17.11.2026 seeded: Grundabdeckung Kickboxen – range & exit and defence i
             covDef = th.kinds === "evade" || !!th.counters || th.id === "def",
             tag = `${disc} L${lv} ${eq} ${ty} ${min}min ${s.theme}: ${k.items.map((r) => r.k + (r.dist ? "D" : "") + (r.cover ? "C" : "")).join(" ")}`;
           assert.equal(s.blocks.reduce((n, b) => n + b.min, 0), s.min, "minutes " + tag);
+          if (eq[0] === "partner") {
+            // Teil 43: with a partner the main part is theme blocks – range & exit is the pace stage of every block, the
+            // defence (a real attack → defence → counter) the last stage; the opening stage never has a counter action
+            assert.ok(k.items.every((r) => r.k === "partner" && r.pb && r.dist), "partner blocks with entry/exit " + tag);
+            for (const r of k.items) if (r.react) assert.equal(r.pb.st[r.pb.st.length - 1][0], "react", "counter action in the last stage " + tag);
+            assert.ok(k.items.some((r) => r.react), "a counter action in the unit " + tag);
+            continue;
+          }
           if (ty === "T" && k.n >= 4) {
             if (covDist) assert.equal(k.dist, 0, "the focus covers range " + tag);
             else assert.equal(k.dist, 1, "range " + tag);
@@ -3039,13 +3047,6 @@ test("17.11.2026 seeded: Grundabdeckung Kickboxen – range & exit and defence i
             if (one && lastDist !== null && !covDist && !covDef) assert.equal(one, lastDist ? "def" : "dist", "in turn " + tag);
           }
           lastDist = k.dist > 0;
-          if (eq[0] === "partner") {
-            // the fixed rounds stay partner drills (focus rounds such as footwork or bounce are solo, as before)
-            assert.ok(k.items.every((r) => ["partner", "rope", "foot", "bounce"].includes(r.k)), "partner units stay partner drills " + tag);
-            const pr = k.items.filter((r) => r.combo);
-            if (pr.length > 1) assert.ok(!pr[0].react, "opening partner round without counter " + tag);
-            for (const r of k.items.filter((r) => r.cover === "def")) assert.ok(r.react, "defence round with a real attack " + tag);
-          }
         }
       }
 });
@@ -3666,49 +3667,6 @@ test("partner interruption only right after one of your own strikes; body hook i
   assert.ok(m > 0);
 });
 
-test("partner sessions: counter actions per session – Grundlage 1, Fortgeschritten 2–4, Wettkampf 3–6", () => {
-  const a = app();
-  const res = JSON.parse(a.run(`JSON.stringify((()=>{const out={};S.profile.disc='kl';S.profile.limits=[];S.profile.birthYear=1995;
-    for(const lvl of [0,1,2]){S.profile.level=lvl;const ns=[];for(let i=0;i<150;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min:90});const rb=s.blocks.find(b=>b.rounds);
-      const pr=rb.items.filter(x=>['partner','pads','counter'].includes(x.k)&&x.combo&&!x.dist).length;const th=focusOf(s.theme)||{};ns.push([rb.items.filter(x=>x.react).length,pr,th.id==='def'||!!th.counters,rb.items.some(x=>x.cover==='def')?1:0]);}out[lvl]=ns;}return out})())`));
-  // 17.11.2026: with the focus order every focus comes up – defence & counter and the counter foci give every partner
-  // round after the first a counter action (Teil 25); the ranges hold for all other foci
-  const check = (lvl, lo, hi) => {
-    // 17.11.2026 Grundabdeckung: the defence round with a partner (cover) may add one counter action on top
-    for (const [n, pr, all, cv] of res[lvl])
-      if (all) assert.ok(n >= Math.max(1, pr - 1) && n <= Math.max(1, pr - 1) + cv, `level ${lvl}, counter focus: ${n} of ${pr}`);
-      else assert.ok(n >= Math.min(lo, pr - 1) && n <= Math.min(hi, pr - 1) + cv, `level ${lvl}: ${n} of ${pr}`);
-    res[lvl] = res[lvl].filter(([, , all]) => !all);
-    const vals = new Set(res[lvl].map(([n]) => n));
-    return vals;
-  };
-  // Grundlage: one counter action; the defence round with a partner (Grundabdeckung) may add one, short units may have none left
-  assert.ok([...check(0, 1, 1)].every((v) => v <= 2) && res[0].some(([n]) => n === 1));
-  const v1 = check(1, 2, 4), v2 = check(2, 3, 6);
-  assert.ok(v1.has(2) && v1.has(4), "Fortgeschritten spans 2–4");
-  assert.ok(v2.has(3) && [...v2].some((x) => x >= 5), "Wettkampf spans 3–6");
-});
-
-test("partner sessions build up easy → hard; counters sit on the final combos and mostly later", () => {
-  const a = app();
-  // one call per discipline and level (100 sessions each) – small enough for slow machines, same checks
-  const parts = [];
-  for (const disc of ["lc", "kl", "k1"]) for (const lvl of [0, 1, 2]) parts.push(JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];let first=0,late=0,total=0;
-    {const disc='${disc}',lvl=${lvl};S.profile.disc=disc;S.profile.level=lvl;S.profile.limits=[];S.profile.birthYear=1995;
-      for(const min of [30,45,60,90])for(let i=0;i<25;i++){const s=buildSession('2026-11-04','T','gym',['partner','pads'],{min});if(!s.blocks.some(b=>b.rounds))continue;const rb=s.blocks.find(b=>b.rounds);
-        const pr=rb.items.map((r,k)=>[r,k]).filter(([r])=>PARTNER_K.has(r.k)&&r.combo);
-        const lv=pr.map(([r])=>comboLevel(r.combo));
-        // allow the opening-round easing swap: compare from the second partner round on
-        for(let k=2;k<lv.length;k++)if(lv[k]+0.001<lv[k-1])bad.push('order '+lv.join(','));
-        for(const [r,k] of pr){if(!r.react)continue;total++;if(k===pr[0][1]&&pr.length>1)first++; /* a single partner round (e.g. footwork focus) may carry one */if(k>=pr[Math.floor(pr.length/2)][1])late++;
-          if(r.react.mid&&(r.react.mid.at<1||r.react.mid.at>r.combo.length-2||!STRIKE.has(r.combo[r.react.mid.at-1])))bad.push('mid '+r.combo.join('-')+'@'+r.react.mid.at);}}}
-    return {bad:[...new Set(bad)].slice(0,5),first,late,total}})())`)));
-  const res = parts.reduce((o, p) => ({ bad: o.bad.concat(p.bad), first: o.first + p.first, late: o.late + p.late, total: o.total + p.total }), { bad: [], first: 0, late: 0, total: 0 });
-  assert.deepEqual(res.bad, []);
-  assert.equal(res.first, 0, "the opening partner round has no counter action");
-  assert.ok(res.late > res.total * 0.6, `counter actions mostly in the later rounds (${res.late}/${res.total})`);
-});
-
 test("partner counters: foot sweep from Fortgeschritten (lift the foot / step out), never with ankle limits; check = shin block", () => {
   const a = app();
   const r = JSON.parse(a.run(`JSON.stringify((()=>{const cnt=(lvl,lim)=>{S.profile.disc='lc';S.profile.level=lvl;S.profile.limits=lim;S.profile.birthYear=1995;let n=0;const d=new Set();
@@ -3801,11 +3759,23 @@ test("every session has body punches, every kick and knee names its target", () 
   assert.equal(r.noTarget.length, 0, r.noTarget.join());
 });
 
-test("no combo twice in one session", () => {
+test("no combo twice in one session – except within a partner block (25.11.2026: one combination over its rounds)", () => {
   const a = app();
   const r = a.run(`(() => { let dup = 0, all = 0;
     for (const disc of ["lc", "kl", "fc", "k1"]) for (const lvl of [0, 1, 2]) { S.profile.disc = disc; S.profile.level = lvl;
-      for (let i = 0; i < 50; i++) { const cs = fightRounds("T", 6, "gym", ["partner"], null).filter((x) => x.combo && x.k !== "sixkick").map((x) => x.combo.join());
+      for (let i = 0; i < 50; i++) { const rs = fightRounds("T", 6, "gym", ["partner"], null).filter((x) => x.combo && x.k !== "sixkick");
+        const seenBlock = new Set(), cs = [];
+        let prevBlock = null;
+        for (const x of rs) {
+          if (x.stage) {
+            if (seenBlock.has(x.stage.b)) continue;
+            seenBlock.add(x.stage.b);
+            // a short combination stays whole in the last block (the thread's plateau) – that is no repetition
+            if (prevBlock === x.combo.join()) continue;
+            prevBlock = x.combo.join();
+          }
+          cs.push(x.combo.join());
+        }
         all++; if (new Set(cs).size < cs.length) dup++; } }
     return dup / all; })()`);
   assert.ok(r < 0.03, String(r));
@@ -3830,8 +3800,8 @@ test("Full Contact vs Leichtkontakt: 6-kick rule with a partner, more body and p
     o.lcCue = guardCue({ k: "partner" }); o.lcBag = roundDesc({ k: "bag" }, 0);
     S.profile.disc = "fc"; o.fcBag = roundDesc({ k: "bag" }, 0); S.profile.disc = "kl"; o.klBag = roundDesc({ k: "bag" }, 0); o.klCue = guardCue({ k: "partner" });
     return o; })())`));
-  assert.equal(r.six, 100); assert.equal(r.sixFirst, 0);
-  assert.equal(r.body2, 100);
+  assert.equal(r.six, 100, JSON.stringify(r)); assert.equal(r.sixFirst, 0, JSON.stringify(r));
+  assert.equal(r.body2, 100, JSON.stringify(r));
   assert.ok(r.dblFc > r.dblKl, JSON.stringify(r));
   assert.equal(r.long, 0);
   assert.match(r.lcCue, /Leichtkontakt/); assert.match(r.lcBag, /Schnell und locker/); assert.match(r.fcBag, /voller Wirkung/);
@@ -6878,26 +6848,21 @@ test("13.11.2026 birthday: greeting, party hat, cake and balloons on the day; 29
   a.run("S.profile.seasonOff=true");
   assert.equal(a.run("season()"), null);
 });
-test("18.11.2026 Light Contact stays at 4 techniques when a body shot or a high kick is added afterwards (only kick combos left)", () => {
+test("18.11.2026 Light Contact stays at 4 techniques with body shot and high kick (Teil 43: the movement builder makes a new combo with the technique instead of adding it to a finished one)", () => {
   const a = app();
   const r = JSON.parse(a.run(`(() => { S.profile.limits = []; S.profile.birthYear = 1995; S.profile.level = 2;
-    const K = [["front","round","side","roundh"],["round","front","roundh","side"],["side","round","front","roundh"],["front","side","roundh","round"],["round","side","front","roundh"],["side","front","round","roundh"],["roundh","front","side","round"]];
-    const run = (disc, seed) => { S.profile.disc = disc; let x = seed, q = 0; Math.random = () => ((x = (x * 16807) % 2147483647) / 2147483647);
-      const keep = combo; combo = () => K[q++ % K.length].slice();
-      try { return [["bag"], [], ["partner"]].map((eq) => fightRounds("T", 6, "gym", eq, null).filter((r) => r.combo && !r.mine)); } finally { combo = keep; } };
+    const run = (disc) => { S.profile.disc = disc; return [["bag"], [], ["partner"]].map((eq) => fightRounds("T", 6, "gym", eq, null).filter((r) => r.combo && !r.mine)); };
     const o = { lc: [], fc: [] };
-    for (let seed = 1; seed <= 12; seed++) { o.lc.push(...run("lc", seed)); o.fc.push(...run("fc", seed)); }
+    for (let i = 0; i < 12; i++) { o.lc.push(...run("lc")); o.fc.push(...run("fc")); }
     return JSON.stringify({ lc: o.lc.map((rs) => rs.map((r) => r.combo)), fc: o.fc.map((rs) => rs.map((r) => r.combo)) }); })()`));
   const BODY = ["jabb", "crossb", "hookb"];
   for (const rs of r.lc) {
-    for (const c of rs) assert.ok(c.length <= 4, c.join(" "));
-    assert.ok(rs.some((c) => c.some((x) => BODY.includes(x))), "the body shot is still there: " + JSON.stringify(rs));
-    assert.ok(rs.some((c) => c.includes("roundh")), "the high kick is still there");
+    for (const c of rs) assert.ok(c.filter((x) => x !== "step").length <= 4, c.join(" "));
+    assert.ok(rs.some((c) => c.some((x) => BODY.includes(x))), "the body shot is there: " + JSON.stringify(rs));
+    assert.ok(rs.some((c) => c.includes("roundh")), "the high kick is there");
   }
-  // the case behind the report: the body cross opens a kick combo – in Light Contact the combo is then shortened
-  assert.ok(r.lc.flat().some((c) => c[0] === "crossb"), "the path is really taken");
-  // Full Contact has no such limit: the combo just gets longer there
-  assert.ok(r.fc.flat().some((c) => c.length > 4));
+  // Full Contact has no such limit
+  assert.ok(r.fc.flat().some((c) => c.filter((x) => x !== "step").length > 4));
 });
 
 /* ---- Teil 36 (18.11.2026): the load distribution follows what was really trained ---- */
@@ -7223,8 +7188,8 @@ test("21.11.2026 update on request: 'Nach Update suchen' in App & Daten – newe
   c.run("S.profile.lang='en';globalThis.reg={update:async()=>{}};navigator.serviceWorker={controller:null,getRegistration:async()=>reg,_l:{},addEventListener(n,f){this._l[n]=f}};updInit();navigator.serviceWorker._l.controllerchange()");
   assert.equal(c.run("!!ui.updReady"), false);
   assert.match(c.run("updPanelHtml()"), /App version[\s\S]*Check for updates/);
-  // the service worker: the app page and a new version's files past the HTTP cache
-  const sw = readFileSync(new URL("../pwa/sw.js", import.meta.url), "utf8");
+  // the service worker as it is uploaded (repo root): the app page and a new version's files past the HTTP cache
+  const sw = readFileSync(new URL("../sw.js", import.meta.url), "utf8");
   assert.match(sw, /fetch\(e\.request\.url, \{ cache: "no-cache", credentials: "same-origin" \}\)/);
   assert.match(sw, /c\.addAll\(FILES\.map\(\(f\) => new Request\(f, \{ cache: "no-cache" \}\)\)\)/);
 });
@@ -7350,9 +7315,9 @@ test("security 25.11.2026: loading a backup – checked before the question (lef
   a.run("localStorage.setItem=__set;S.profile.lang='en'");
   assert.match(a.run("t('impSafe').kept"), /undo the loading/);
 });
-test("security 25.11.2026: the installable page has a Content-Security-Policy – exactly the two inline scripts by hash, no unsafe-inline/unsafe-eval for scripts, network only to the own address", async () => {
+test("security 25.11.2026: the uploaded page (repo root) has a Content-Security-Policy – exactly the two inline scripts by hash, no unsafe-inline/unsafe-eval for scripts, network only to the own address", async () => {
   const { createHash } = await import("node:crypto");
-  const page = readFileSync(new URL("../pwa/index.html", import.meta.url), "utf8");
+  const page = readFileSync(new URL("../index.html", import.meta.url), "utf8");
   const m = page.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)" \/>/);
   assert.ok(m, "CSP meta present");
   const csp = m[1];
@@ -7380,4 +7345,114 @@ test("security 25.11.2026: older backups keep their shapes – no type on club e
   assert.equal(S.log[1].perf[0].sets[0].kg, 20);
   assert.deepEqual(S.sessions["2026-10-03"].checked, { "0.0": true });
   assert.equal(+a.run("sanDropped"), 0);
+});
+
+
+/* ---- Teil 43 (25.11.2026): combinations by movement, partner units in theme blocks ---- */
+test("Teil 43: every combination is built by movement – sides alternate (real doubles only), the turn loads the next technique, distance and weight fit, spins out of the right turn, a finishing technique at the end; all sports, levels, limits", () => {
+  const a = app();
+  a.setDate("2026-11-25");
+  const r = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];let n=0;const o={};S.profile.birthYear=1995;S.profile.birth='1995-05-01';
+    const CLOSE=new Set(['hook','hookb','upper','knee']),LONG=new Set(['front','side','back','axe','hookk']),PUSH=new Set(['front','side','back']),REAR=new Set(['cross','crossb','upper']);
+    for(const [sp,disc] of [['kickboxing','lc'],['kickboxing','kl'],['kickboxing','fc'],['kickboxing','k1'],['boxing',null],['taekwondo',null]])
+    for(const lvl of [0,1,2])for(const [lim,by] of [[[],1995],[['knee'],1995],[['wrist'],1995],[[],2016]])for(const kind of ['pads','bag','shadow']){
+      S.profile.sport=sp;buildSport=sp;buildDisc=disc;S.profile.disc=disc;S.profile.level=lvl;S.profile.limits=lim;S.profile.birthYear=by;S.profile.birth=by+'-05-01';
+      for(let i=0;i<40;i++){const c=combo(kind,null);n++;const core=c[c.length-1]==='step'?c.slice(0,-1):c;
+        if(!flowOk(c))bad.push('flow '+sp+disc+lvl+kind+': '+c.join('-'));
+        if(sp!=='taekwondo'){const sd=rawSides(core);
+          for(let k=1;k<core.length;k++){const x=core[k-1],y=core[k];
+            if(sd[k]===sd[k-1]&&!FLOW_DBL.has(x+'>'+y))bad.push('side '+c.join('-'));
+            if(CLOSE.has(x)&&LONG.has(y))bad.push('close→long '+c.join('-'));
+            if(PUSH.has(x)&&CLOSE.has(y))bad.push('push→close '+c.join('-'));
+            if(REAR.has(x)&&sd[k]==='L'&&(PUSH.has(y)||y==='axe'||y==='hookk'))bad.push('weight '+c.join('-'));}
+          if(['jab','jabb'].includes(core[core.length-1]))bad.push('ends on a jab '+c.join('-'));
+          if(lvl===0&&['roundh','axe','hookk','brazil'].includes(core[0]))bad.push('Grundlage opens with a head kick '+c.join('-'));
+          if(sp==='kickboxing'&&disc==='lc'&&core.length>4)bad.push('LC > 4 '+c.join('-'));
+          if(by===2016&&core.length>3)bad.push('kids > 3 '+c.join('-'));
+          if(lim.includes('knee')&&core.some(x=>RISKY.has(x)))bad.push('knee limit '+c.join('-'));
+          if(lim.includes('wrist')&&kind==='bag'&&sp==='kickboxing'&&core.some(x=>!KICKS.has(x)))bad.push('wrist bag '+c.join('-'));
+          if(['lc','fc'].includes(disc)&&core.some(x=>['lowk','knee','jknee'].includes(x)))bad.push('discipline '+c.join('-'));}}}
+    buildSport=null;buildDisc=null;
+    o.sides=[sides(['jab','hook']),sides(['cross','hookb','hook']),sides(['jab','cross','hook','lowk'])];
+    return {bad:[...new Set(bad)].slice(0,8),n,sides:o.sides}})())`));
+  assert.deepEqual(r.bad, [], r.bad.join("\n"));
+  assert.ok(r.n > 5000);
+  // the labels follow the same rule: jab → lead hook, body hook → head hook on the same side
+  assert.deepEqual(r.sides, [[null, "L"], [null, "L", "L"], [null, null, "L", "R"]]);
+});
+
+test("Teil 43: partner units (technique and conditioning, all sports, children, tournament preparation) are theme blocks of 8–12 minutes in one go (children 5–6) – stages clean → pace with entry/exit → counter action, easy → hard, one theme", () => {
+  const a = app();
+  a.setDate("2026-11-25");
+  const r = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];const st={units:0,thread:0,multi:0,six:0,fc:0,themes:new Set()};S.profile.limits=[];S.profile.lang='de';
+    for(const [sp,disc,tstyle,by] of [['kickboxing','lc',null,1995],['kickboxing','kl',null,1995],['kickboxing','fc',null,1995],['kickboxing','k1',null,1995],['boxing',null,null,1995],['taekwondo',null,'wt',1995],['taekwondo',null,'itf',1995],['kickboxing','kl',null,2016]])
+    for(const lvl of [0,1,2])for(const ty of ['T','C'])for(const min of [30,60,90]){
+      S.profile.sport=sp;S.profile.disc=disc;S.profile.level=lvl;S.profile.birthYear=by;S.profile.birth=by+'-05-01';
+      const s=buildSession('2026-11-26',ty,'gym',['partner','pads'],{sport:sp,disc,tstyle,min});const rb=s.blocks.find(b=>b.rounds);const tag=sp+(disc||tstyle||'')+' L'+lvl+' '+ty+min+' by'+by;
+      st.units++;if(!rb.pblk||!rb.items.every(x=>x.pb&&x.k==='partner'))bad.push('not blocks '+tag);
+      const kid=by===2016,n=rb.items.length,w=rb.w,tot=n*w+(n-1)*rb.b;
+      // (the progression may shorten the breaks afterwards: then the unit is a little shorter, never longer)
+      if(tot>rb.min*60+30||tot<rb.min*60-60*n-30)bad.push('time '+tag+' '+tot+' vs '+rb.min*60);
+      if(n>1&&(kid?(w<270||w>390):(w<450||w>750)))bad.push('length '+tag+' '+w);
+      st.themes.add(s.theme);
+      const seen=new Set();
+      rb.items.forEach((it,k)=>{const S2=it.pb.st;
+        if(S2.reduce((x,y)=>x+y[1],0)!==w)bad.push('stage time '+tag);
+        if(S2[0][0]!=='clean'||S2[1][0]!=='tempo')bad.push('stage order '+tag);
+        if(it.react&&S2[S2.length-1][0]!=='react')bad.push('react stage '+tag);
+        if(sp==='taekwondo'&&it.react)bad.push('TKD counter '+tag);
+        if(sp!=='taekwondo'&&!kid&&lvl>=1&&!it.react)bad.push('counter in every block from Fortgeschritten '+tag);
+        if((lvl===0||kid)&&it.react&&k<n-1&&!['def'].includes(s.theme)&&!(focusOf(s.theme)||{}).counters)bad.push('Grundlage/children: counter only in the last block '+tag);
+        if(kid&&S2.some(x=>x[0]==='full'))bad.push('children competition pace '+tag);
+        if(sp!=='taekwondo'&&!it.dist)bad.push('entry/exit '+tag);
+        if(!it.mine&&!flowOk(it.combo))bad.push('flow '+tag+' '+it.combo.join('-'));
+        if(seen.has(it.combo.join())&&n<=4)bad.push('same block twice '+tag);seen.add(it.combo.join());
+        if(it.six)st.six++;});
+      if(disc==='fc'&&sp==='kickboxing'&&n>=1)st.fc++;
+      if(!rb.items[0].ease)bad.push('ease '+tag);
+      for(let k=1;k<n;k++)if(comboLevel(rb.items[k].combo)+0.001<comboLevel(rb.items[k-1].combo)&&!rb.items[k].mine)bad.push('easy → hard '+tag);
+      // one concept: the blocks share their beginning, or their finish, or each block holds the one before
+      if(n>1&&!rb.items.some(x=>x.mine)){st.multi++;const cs=rb.items.map(x=>x.combo.filter(y=>y!=='step'));
+        if(cs.every(c=>c[0]===cs[0][0])||cs.every(c=>c[c.length-1]===cs[0][cs[0].length-1])||cs.every((c,k)=>!k||(','+c.join()+',').includes(','+cs[k-1].join()+',')))st.thread++;}
+      if(!pbTheme(s))bad.push('theme '+tag);}
+    return {bad:[...new Set(bad)].slice(0,10),units:st.units,thread:st.thread,multi:st.multi,six:st.six,fc:st.fc,themes:st.themes.size}})())`));
+  assert.deepEqual(r.bad, [], r.bad.join("\n"));
+  assert.ok(r.thread / r.multi >= 0.7, `one concept: the blocks share their beginning (${r.thread}/${r.multi})`);
+  assert.equal(r.six, r.fc, "Full Contact: the 6-kick rule on one block of every unit");
+  assert.ok(r.themes > 8, "the theme changes from unit to unit");
+});
+
+test("Teil 43: the list shows theme, block and stage plan; the training mode and the voice follow the stage by time; the progression shortens blocks instead of dropping one (DE/EN)", () => {
+  const a = app();
+  a.setDate("2026-11-25");
+  a.run("S.profile.sport='kickboxing';S.profile.disc='kl';S.profile.level=1;S.profile.birthYear=1995;S.profile.birth='1995-05-01';S.profile.limits=[];S.profile.lang='de';ui.sel='2026-11-26';S.sessions={};S.sessions['2026-11-26']=buildSession('2026-11-26','T','gym',['partner','pads'],{sport:'kickboxing',disc:'kl',min:75})");
+  const bi = +a.run("S.sessions['2026-11-26'].blocks.findIndex(b=>b.pblk)");
+  const list = a.run(`sessionBlockHtml(S.sessions['2026-11-26'],${bi},false)`);
+  assert.match(list, /<div class="pbtheme"><span class="sub">Thema der Einheit<\/span><b>[^<]+<\/b><\/div>/);
+  // the theme is the focus of the unit
+  assert.equal(a.run("pbTheme(S.sessions['2026-11-26'])"), a.run("t('pBlk').titles[S.sessions['2026-11-26'].theme]||t('pBlk').titles.any"));
+  assert.ok(a.run("!!S.sessions['2026-11-26'].theme&&!!t('pBlk').titles[S.sessions['2026-11-26'].theme]"), "a named theme");
+  assert.match(list, /Block 1 von \d · [\d,]+ Min\. am Stück/);
+  assert.match(list, /<ol class="pbplan"><li>[\d,]+ Min\. langsam und sauber<\/li><li>[\d,]+ Min\. mit Tempo – (Eingang|Ausgang zuerst)[^<]*<\/li><li>[\d,]+ Min\. mit Gegenaktion des Partners<\/li><\/ol>/);
+  const it = "S.sessions['2026-11-26'].blocks[" + bi + "].items[1]";
+  const b1 = +a.run(`pbBounds(${it})[0]`);
+  assert.match(a.run(`roundInfo(${it},0).desc`), /^Stufe 1: langsam und sauber\. Kontrollierter Kontakt, nach 3–5 Wiederholungen Rollen tauschen\./);
+  assert.match(a.run(`roundInfo(${it},${b1}).desc`), /^Stufe 2: mit Tempo\. (Eingang|Ausgang zuerst)/);
+  assert.equal(a.run(`roundInfo(${it},${b1}).item`), null, "no A/B frames before the counter stage");
+  assert.ok(a.run(`!!roundInfo(${it},+pbBounds(${it})[1]).item`), "the counter stage shows the A/B frames");
+  // the timer: a stage change gives a signal and redraws the card
+  a.run(`ui.timer={ds:'2026-11-26',phase:'work',round:2,total:${it}?S.sessions['2026-11-26'].blocks[${bi}].items.length:0,work:S.sessions['2026-11-26'].blocks[${bi}].w,left:S.sessions['2026-11-26'].blocks[${bi}].w-${b1},rest:60,running:true}`);
+  assert.equal(a.run("pbTick(ui.timer)"), true);
+  a.run("ui.timer.left--");
+  assert.equal(a.run("pbTick(ui.timer)"), false);
+  // the progression: a longer break – the blocks get shorter, none falls out
+  const before = JSON.parse(a.run(`JSON.stringify([S.sessions['2026-11-26'].blocks[${bi}].items.length,S.sessions['2026-11-26'].blocks[${bi}].w])`));
+  a.run(`(()=>{const b=S.sessions['2026-11-26'].blocks[${bi}];b.b+=60;const w=Math.floor((b.min*60-(b.items.length-1)*b.b)/b.items.length/30)*30;b.w=w;pbRescale(b.items,w);})()`);
+  const after = JSON.parse(a.run(`JSON.stringify([S.sessions['2026-11-26'].blocks[${bi}].items.length,S.sessions['2026-11-26'].blocks[${bi}].w,S.sessions['2026-11-26'].blocks[${bi}].items.every(x=>x.pb.st.reduce((s,y)=>s+y[1],0)===S.sessions['2026-11-26'].blocks[${bi}].w)])`));
+  assert.equal(after[0], before[0]);
+  assert.ok(after[1] < before[1] && after[2]);
+  a.run("S.profile.lang='en'");
+  assert.match(a.run(`pbHead(${it})`), /^Block 2 of \d · [\d.]+ min in one go$/);
+  assert.match(a.run(`roundInfo(${it},0).desc`), /^Stage 1: slow and clean\./);
+  assert.ok(a.run("pbTheme(S.sessions['2026-11-26'])").length > 3);
 });

@@ -362,14 +362,22 @@
     "knee",
     "jknee",
   ]);
-  function sides(c) {
-    let last = null;
+  /* the side of every strike (straight punches too) – the movement rules of the combo builder use it (08g-flow.js) */
+  function rawSides(c) {
+    let last = null,
+      prev = null;
     return c.map((x) => {
       if (!STRIKE.has(x) && !tkm().SIDED.has(x)) return null;
-      const s = FIXED[x] || tkm().FIXED[x] || (last ? (last === "L" ? "R" : "L") : DEF[x] || tkm().SIDE_DEF[x]);
+      // a real double stays on its side: jab–jab, jab–lead hook, body hook–head hook (Teil 43)
+      const s = FIXED[x] || tkm().FIXED[x] || (last ? (FLOW_DBL.has(prev + ">" + x) ? last : last === "L" ? "R" : "L") : DEF[x] || tkm().SIDE_DEF[x]);
       last = s;
-      return SIDED.has(x) || tkm().SIDED.has(x) ? s : null;
+      prev = x;
+      return s;
     });
+  }
+  function sides(c) {
+    const sd = rawSides(c);
+    return c.map((x, i) => (SIDED.has(x) || tkm().SIDED.has(x) ? sd[i] : null));
   }
   // a single technique outside a combo (partner attack, quick answer): its usual side, so every kick says V or H
   const oneSide = (x) => (SIDED.has(x) ? FIXED[x] || DEF[x] : tkm().SIDED.has(x) ? tkm().FIXED[x] || tkm().SIDE_DEF[x] : null);
@@ -613,6 +621,8 @@ ${setupFields(setup, ty)}
       lg = S.profile.lang === "de" ? 0 : 1;
     let h = "";
     h += `<div class="block" data-block="${bi}">${blockHead(b, sess)}`;
+    // partner theme blocks (Teil 43): the theme of the unit above them
+    if (b.pblk) h += `<div class="pbtheme"><span class="sub">${esc(t("pBlk").theme)}</span><b>${esc(pbTheme(sess))}</b></div>`;
     if (b.items.some((it) => it.combo))
       h += `<div class="legend">${[sess.sport === "taekwondo" ? t("legendTkd") : t("legend"), b.items.some((it) => it.react) ? t("legendReact") : "", b.items.some((it) => PARTNER_K.has(it.k)) ? esc(t("partnerNote")) : "", (() => { const g = b.items.map(guardCue).find(Boolean); return g ? esc(g) : ""; })()].filter(Boolean).join("<br>")}</div>`;
     b.items.forEach((it, n) => {
@@ -641,7 +651,7 @@ ${setupFields(setup, ty)}
           h += `<div class="ex${checked ? " past" : ""}" ${itemAttr}>${checkButton(sess, bi, n, pad(n + 1), preview)}<div class="tx">${preview ? `<b>${esc(x[S.profile.lang])}</b>` : examRow(x, n, sess.eq)}</div></div>`;
       } else if (it.kind === "round") {
         const r = rtOf(it);
-        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(r[lg])}</b>${PARTNER_K.has(it.k) ? "" : `<div>${esc(roundDesc(it, lg))}</div>`}${it.six ? `<div class="last">${esc(t("sixPartner"))}</div>` : ""}${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.combo ? reactHtml(it) : ""}</div></div>`;
+        h += `<div class="ex${checked ? " past" : ""}" ${itemAttr} ${preview ? "" : `data-rd="${n + 1}"`}>${checkButton(sess, bi, n, t("roundAbbr") + (n + 1), preview)}<div class="tx">${it.mine ? `<span class="last mine">★ ${t("myc").lbl}</span><br>` : ""}<b>${esc(it.pb ? pbHead(it) : r[lg])}</b>${it.pb ? `<ol class="pbplan">${pbPlan(it, lg).map((l) => `<li>${esc(l.replace(/^\d+\. /, ""))}</li>`).join("")}</ol>` : PARTNER_K.has(it.k) ? (it.dist ? `<div class="last pstage">${esc(distTxt(it, lg))}</div>` : "") : `<div>${esc(roundDesc(it, lg))}</div>`}${it.six ? `<div class="last">${esc(it.pb ? t("pBlk").six : t("sixPartner"))}</div>` : ""}${paceTxt(it) ? `<div class="last">${paceTxt(it)}</div>` : ""}${it.pb && it.react ? `<div class="last pstage">${esc(t("pBlk").reactFrom)}</div>` : ""}${it.combo ? reactHtml(it) : ""}</div></div>`;
       } else {
         const x = exText(it.id),
           tr = tracksSets(it.id) && b.key !== "warm" && b.key !== "cool";
