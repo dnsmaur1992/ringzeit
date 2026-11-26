@@ -515,22 +515,6 @@
     const s = c.filter((x) => STRIKE.has(x));
     return s.length ? s.filter((x) => KICKS.has(x)).length / s.length : 0;
   };
-  /* "More boxing"/"More kicks": combos with the preferred share are picked clearly more often (squared weight),
-     the other side still appears – nobody should lose kicks or punches entirely */
-  function weightedPick(pool, focus) {
-    if (focus === "bal") return rnd(pool);
-    const w = pool.map((c) => {
-      const k = kickShare(c),
-        x = focus === "kick" ? k : 1 - k;
-      return (0.15 + x) ** FOCUS_POW;
-    });
-    let r = Math.random() * w.reduce((a, b) => a + b, 0);
-    for (let i = 0; i < pool.length; i++) {
-      r -= w[i];
-      if (r <= 0) return pool[i];
-    }
-    return pool[pool.length - 1];
-  }
   const kneeAnk = () => S.profile.limits.some((l) => l === "knee" || l === "ankle");
   function chooseTheme() {
     if (isTkd()) return null; // taekwondo has no hidden themes yet
@@ -2432,8 +2416,11 @@
         }
       }
       // with a partner (technique and conditioning): theme blocks of 8–12 minutes in one go instead of rounds (Teil 43)
-      const pbL = (type === "T" || type === "C") && eq.includes("partner") && !lowTime() ? pbLayout(main, rb) : null;
-      if (pbL) main = Math.round((pbL.n * pbL.w + (pbL.n - 1) * rb) / 60);
+      const pbOn = (type === "T" || type === "C") && eq.includes("partner") && !lowTime(),
+        // with a bag as well: 2 bag rounds after the blocks (26.11.2026)
+        pbBag = pbOn && eq.includes("bag") ? 2 : 0,
+        pbL = pbOn ? pbLayout(main - (pbBag * (fw + rb)) / 60, rb) : null;
+      if (pbL) main = Math.round((pbL.n * pbL.w + (pbL.n - 1) * rb + pbBag * (fw + rb)) / 60);
       const sup = rest - exMin - main;
       if (type === "P" && eq.includes("partner")) {
         notes.push(t("gearNote"));
@@ -2460,6 +2447,7 @@
       } else if (type === "P") items = sparRounds(nR, loc, eq, soft || ph.phase === "grade");
       else if (pbL) {
         items = pbUnit(type, pbL, theme);
+        for (let k = 0; k < pbBag; k++) items.push({ kind: "round", k: "bag", combo: combo("bag", theme), w: fw, fin: 1 });
         // tournament pace / focus block: the pace stage and the last stage at fight pace
         if ((fmtR && !taper) || (br && br.pace)) items.forEach((it) => (it.pace = true));
         if (br && br.cue) items.forEach((it) => (it.cue = br.cue));

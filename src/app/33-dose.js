@@ -216,6 +216,9 @@
       const w = b.w || (b.items.some((i) => i.k !== "ex") ? 180 : 120),
         r = b.b || 60;
       info = `${b.items.length} × ${fmt(w)} / ${fmt(r)} ${de ? "Pause" : "rest"}`;
+      // partner theme blocks + bag rounds after them (26.11.2026)
+      const bag = b.pblk ? b.items.filter((x) => !x.pb) : [];
+      if (bag.length) info = `${b.items.length - bag.length} × ${fmt(w)} + ${bag.length} × ${fmt(bag[0].w || 180)} ${de ? "Sandsack" : "bag"} / ${fmt(r)} ${de ? "Pause" : "rest"}`;
     }
     const straight =
         !b.rounds && !isCirc(b) && (b.key === "str" || b.key === "pow") && /^\d+×/.test(b.sets || ""),

@@ -671,7 +671,10 @@
         const maxRounds = Math.max(1, Math.floor((b.min * 60 + b.b) / (b.w + b.b)));
         // partner theme blocks (Teil 43): none falls out – the blocks get shorter so the unit keeps its time
         if (b.pblk) {
-          const w = Math.floor((b.min * 60 - (b.items.length - 1) * b.b) / b.items.length / 30) * 30;
+          // (bag rounds after the blocks keep their own length)
+          const pb = b.items.filter((x) => x.pb).length,
+            own = b.items.filter((x) => !x.pb).reduce((s, x) => s + (x.w || 180), 0),
+            w = Math.floor((b.min * 60 - own - (b.items.length - 1) * b.b) / pb / 30) * 30;
           if (w < b.w) {
             b.w = Math.max(60, w);
             pbRescale(b.items, b.w);

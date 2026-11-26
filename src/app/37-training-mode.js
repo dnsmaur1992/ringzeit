@@ -71,7 +71,7 @@
       /* in the rest the card already shows the coming round */
       show = rest ? items[tm.round] : cur,
       nxt = items[tm.round + (rest ? 1 : 0)],
-      info = roundInfo(show, !rest && tm.phase === "work" ? tm.work - tm.left : 0),
+      info = roundInfo(show, !rest && tm.phase === "work" ? itemWork(tm, tm.round) - tm.left : 0),
       sk = show && show.k === "ex" && hasSketch(show.id),
       big = tm.phase !== "work";
     // rest is green, the lead-in brass, the round in the session colour
@@ -121,7 +121,7 @@
           : tm.phase === "prep"
             ? t("prepLbl")
             : t("work");
-    const len = tm.phase === "rest" ? tm.rest : tm.phase === "prep" ? 10 : tm.work,
+    const len = tm.phase === "rest" ? tm.rest : tm.phase === "prep" ? 10 : itemWork(tm, tm.round),
       C = 2 * Math.PI * 130,
       frac = tm.phase === "ready" ? 0 : 1 - tm.left / len;
     document.getElementById("farc").setAttribute("stroke-dashoffset", (C * (1 - frac)).toFixed(1));
@@ -176,7 +176,7 @@
     tm.call = null;
     tm.called = null;
     tm.phase = "ready";
-    tm.left = tm.work;
+    tm.left = itemWork(tm, tm.round);
     tm.running = false;
     tm.carryMs = 0;
     cancelTimerSpeech();
@@ -226,7 +226,7 @@
       fx = (k, txt) => !quiet && ui.focus && timerFx(k, txt);
     if (tm.phase === "prep") {
       tm.phase = "work";
-      tm.left = tm.work;
+      tm.left = itemWork(tm, tm.round);
       if (!quiet) bell(1);
       fx("go", tm.round === tm.total && tm.total > 1 ? W.last : W.go);
     } else if (tm.phase === "work") {
@@ -250,7 +250,7 @@
       tm.phase = "work";
       tm.call = null;
       tm.round++;
-      tm.left = tm.work;
+      tm.left = itemWork(tm, tm.round);
       if (!quiet) {
         bell(1);
         callTick(tm);
@@ -301,9 +301,9 @@
               ? t("prepLbl")
               : t("work");
     document.getElementById("tround").textContent =
-      `${t("round")} ${Math.min(tm.round, tm.total)}/${tm.total} · ${fmt(tm.work)} / ${fmt(tm.rest)}`;
+      `${isPbRound(tm) ? "Block" : t("round")} ${Math.min(tm.round, tm.total)}/${tm.total} · ${fmt(itemWork(tm, tm.round))} / ${fmt(tm.rest)}`;
     document.getElementById("tgo").textContent = tlabel(tm);
-    const len = tm.phase === "rest" ? tm.rest : tm.phase === "prep" ? 10 : tm.work,
+    const len = tm.phase === "rest" ? tm.rest : tm.phase === "prep" ? 10 : itemWork(tm, tm.round),
       bar = document.getElementById("tbar");
     if (bar)
       bar.style.width =

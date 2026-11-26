@@ -504,6 +504,12 @@
     if (rb && rb.w) return rb.w;
     return rb && rb.items.some((i) => i.k !== "ex") ? 180 : 120;
   };
+  /* a round may have its own length (partner theme blocks + bag rounds after them, 26.11.2026) */
+  const itemWork = (tm, round) => {
+    const rb = roundBlock(S.sessions[tm.ds]),
+      it = rb && rb.items[round - 1];
+    return (it && it.w) || tm.work;
+  };
   const restLen = (sess) => {
     const rb = roundBlock(sess);
     return (rb && rb.b) || 60;
@@ -518,16 +524,25 @@
       phase: "ready",
       // continue after the last completed round (e.g. after leaving the page)
       round: next < 0 ? 1 : next + 1,
-      left: workLen(sess),
+      left: (() => {
+        const it = roundBlock(sess).items[next < 0 ? 0 : next];
+        return (it && it.w) || workLen(sess);
+      })(),
       work: workLen(sess),
       rest: restLen(sess),
       total,
       running: false,
     };
   }
+  /* a partner theme block is called "Block", not "Runde" (26.11.2026) */
+  const isPbRound = (tm) => {
+    const rb = roundBlock(S.sessions[tm.ds]),
+      it = rb && rb.items[tm.round - 1];
+    return !!(it && it.pb);
+  };
   function tlabel(tm) {
     return tm.phase === "ready"
-      ? t("startRound")(tm.round)
+      ? (isPbRound(tm) ? t("pBlk").start : t("startRound"))(tm.round)
       : tm.phase === "done"
         ? t("reset")
         : tm.running

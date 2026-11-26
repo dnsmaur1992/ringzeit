@@ -133,7 +133,7 @@
   };
   /* is a combo built by the rules? (own club combos are never checked – they stay as entered) */
   function flowOk(c, ctx = flowCtx()) {
-    const core = c[c.length - 1] === "step" ? c.slice(0, -1) : c;
+    const core = c[c.length - 1] === "step" || c[c.length - 1] === "stepb" ? c.slice(0, -1) : c;
     if (!core.length) return false;
     // a kick chain (only kicks: wrist limit on the bag, kick chains) may hold more kicks in a row
     if (!ctx.tkd && core.every((x) => KICKS.has(x))) ctx = { ...ctx, kickOnly: true };
@@ -263,7 +263,8 @@
     const fs = kickOnly || handOnly ? {} : focusSpec(theme),
       must0 = o.must ? (c) => c.includes(o.must) && (!fs.must || fs.must(c)) : fs.must,
       must = o.mustFn ? (c) => o.mustFn(c) && (!must0 || must0(c)) : must0,
-      len = o.len || kbLen(),
+      // boxing with a wrist or shoulder limit: light work – the short end (4 actions)
+      len = o.len || (isBox() && (lim.includes("wrist") || lim.includes("shoulder")) && ageGroup() !== "kids" ? [4, 4] : kbLen()),
       base = { allowed, len, ctx: { kickOnly }, avoid: o.avoid };
     // kick chains (7f): from level 1 about every fifth combo only kicks – not for children, not with a knee/ankle limit;
     // "more boxing" fewer, "more kicks" more

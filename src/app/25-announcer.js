@@ -234,7 +234,8 @@
     const info = roundInfo(it),
       de = S.profile.lang === "de",
       // partner theme block (Teil 43): the block, its first stage and the combo – entry/exit comes with the pace stage
-      pbText = it.pb ? `${info.title}. ${pbNow(it, 0, de ? 0 : 1).replace(/\.?$/, ".")} ${comboWords(it.combo)}.` : null,
+      // (short, 26.11.2026: the long combo stays on the screen)
+      pbText = it.pb ? `${info.title}. ${pbNow(it, 0, de ? 0 : 1).replace(/\.?$/, ".")}` : null,
       d = !it.pb && it.dist && distOf(it.dist.i),
       o = !it.pb && it.dist && it.dist.o && distOf(it.dist.o),
       // range & exit round: entry (or exit first), combo, exit – said in that order

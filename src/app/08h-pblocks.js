@@ -21,7 +21,8 @@
       hi = kid ? 360 : 720,
       sec = mainMin * 60;
     let best = null;
-    for (let n = 1; n <= (kid ? 10 : 5); n++) {
+    // (children: units of 45–60 minutes – at most 6 blocks)
+    for (let n = 1; n <= (kid ? 6 : 5); n++) {
       const w = Math.floor((sec - (n - 1) * restB) / n / 30) * 30;
       // a short main part stays one block rather than splitting into short pieces
       if (w < 120 || (n > 1 && w < lo * 0.75)) break;
@@ -50,7 +51,7 @@
     for (const it of items) if (it.pb) it.pb.st = pbStages(w, it.pb.st[2] ? it.pb.st[2][0] : null);
   }
   /* the windows of the full combination that keep the theme: key = indices that must stay in */
-  function pbWindows(F, key, ctx) {
+  function pbWindows(F, key, ctx, minL = 2) {
     const L = F.length,
       lo = Math.min(...key),
       hi = Math.max(...key),
@@ -58,7 +59,7 @@
     for (let i = 0; i <= lo; i++)
       for (let j = hi; j < L; j++) {
         const w = F.slice(i, j + 1);
-        if (w.length >= 2 && (w.length === L || flowOk(w, ctx))) ok.push({ i, j, c: w });
+        if (w.length >= minL && (w.length === L || flowOk(w, ctx))) ok.push({ i, j, c: w });
       }
     return ok;
   }
@@ -102,20 +103,26 @@
       F = rnd(mine).slice();
       mineF = true;
     }
-    // the whole combination: 4–7 actions (children 3) – long enough that every block can add one
-    const fLen = ageGroup() === "kids" ? [3, 3] : [Math.min(7, Math.max(4, n + 2)), 7];
+    // the whole combination: 4–7 actions (children 3) – long enough that every block can add one; already the first
+    // block has at least 4 actions (26.11.2026)
+    const kid = ageGroup() === "kids",
+      minL = kid ? 2 : 4,
+      fLen = kid ? [3, 3] : [Math.min(7, Math.max(4, n + 3)), 7];
     for (let k = need.length; !F && k >= 0; k--) {
       const nd = need.slice(0, k),
         c = tkd ? tkdFlow("pads", false, theme, { must: theme && theme.kick ? theme.kick : undefined, len: fLen }) : flowCombo("pads", theme, { len: fLen, noExit: true, mustFn: (c) => nd.every((x) => has(c, x)) });
       if (c && nd.every((x) => has(c, x))) F = c;
       else if (k === 0) F = c;
     }
-    const exit = F[F.length - 1] === "step" && !mineF;
-    if (exit) F = F.slice(0, -1);
+    // themes with a way out (against taller / smaller, 26.11.2026): every block ends with the step out
+    // (taekwondo: the step back)
+    const exT = tkd ? "stepb" : "step",
+      exit = (F[F.length - 1] === exT || !!fs.exit || (tkd && theme && ["tallOpp", "shortOpp"].includes(theme.id))) && !mineF;
+    if (F[F.length - 1] === exT) F = F.slice(0, -1);
     // the blocks: nested windows around the key of the theme, one technique more each time
     const out = [F];
     if (!mineF) {
-      const win = pbWindows(F, pbKey(F, theme, fs), ctx);
+      const win = pbWindows(F, pbKey(F, theme, fs), ctx, minL);
       let cur = { i: 0, j: F.length - 1 };
       while (out.length < n) {
         const inner = win.filter((w) => w.i >= cur.i && w.j <= cur.j && w.j - w.i < cur.j - cur.i).sort((a, b) => b.j - b.i - (a.j - a.i) || a.i - b.i);
@@ -124,7 +131,7 @@
         out.unshift(cur.c);
       }
     } else
-      for (let l = F.length - 1; out.length < n && l >= 2; l--) out.unshift(F.slice(0, l));
+      for (let l = F.length - 1; out.length < n && l >= minL; l--) out.unshift(F.slice(0, l));
     // a combination too short for that: more combinations of the theme with the same beginning (or, for a finishing
     // theme, the same finish) – shorter first, never the same twice
     const seen = new Set(out.map((c) => c.join())),
@@ -135,8 +142,8 @@
       // (after 16 tries without a new one: any combination of the theme, after 32 any combination at all)
       if (t === 16) beg.length = 0;
       if (t === 32) theme = null;
-      const hi = Math.max(begN + 1, 2, F.length - 1 - (t % 2)),
-        o = { len: [Math.max(2, begN + 1), Math.max(2, hi)], noExit: true, avoid: seen, start: beg.length ? beg : null, must: tkd && theme && theme.kick ? theme.kick : undefined },
+      const hi = Math.max(begN + 1, minL, F.length - 1 - (t % 2)),
+        o = { len: [Math.max(minL, begN + 1), Math.max(minL, hi)], noExit: true, avoid: seen, start: beg.length ? beg : null, must: tkd && theme && theme.kick ? theme.kick : undefined },
         c = tkd ? tkdFlow("pads", false, theme, o) : flowCombo("pads", theme, o);
       // (never harder than the whole combination of the last block)
       if (c && !seen.has(c.join()) && (!beg.length || c.join().startsWith(beg.join())) && (mineF || comboLevel(c) <= comboLevel(F))) {
@@ -149,7 +156,7 @@
     // the full combination is the last block (my club combination stays marked)
     const fi = out.findIndex((c) => c === F);
     if (fi >= 0 && fi !== out.length - 1) out.push(...out.splice(fi, 1));
-    return out.map((c) => ({ c: exit ? [...c, "step"] : c, mine: mineF && c === F }));
+    return out.map((c) => ({ c: exit ? [...c, exT] : c, mine: mineF && c === F }));
   }
   /* the entry and exit for the pace stage (kickboxing and boxing; the combo stays as it is) */
   function pbDist(c, theme) {
@@ -236,7 +243,7 @@
       rb = sess && roundBlock(sess),
       it = rb && rb.items[tm.round - 1];
     if (!it || !it.pb || tm.phase !== "work") return false;
-    const el = tm.work - tm.left;
+    const el = itemWork(tm, tm.round) - tm.left;
     if (!pbBounds(it).includes(el)) return false;
     const i = pbStageAt(it, el);
     bell(2);
