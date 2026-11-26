@@ -226,3 +226,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 25.11. | Teil 43: Kombinationen nach Bewegung (Seitenwechsel, Drehung, Distanz, Gewicht; alle Sportarten), Partner-Einheiten in Themenblöcken 8–12 Min. am Stück mit Stufen nach Zeit, ein Thema pro Einheit | 335 |
 | 25.11. | Weniger Gegenaktionen: etwa 2 von 5 Blöcken, Konter des Partners mitten in der Kombination (Schlag oder Kick) | 335 |
 | 26.11. | Kombinationen überall 4–7 Aktionen (auch Leichtkontakt), Kinder 2–3; höchstens eine Spezialtechnik je Kombination | 335 |
+| 26.11. | Erster Block mind. 4 Aktionen, Ausgangsschritt bei Größer/Kleiner, 2 Sandsackrunden nach den Blöcken, Kinder max. 6 Blöcke, kurze Ansage, „Block“ im Timer; alte Kombinationslisten entfernt | 336 |
