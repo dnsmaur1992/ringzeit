@@ -1,5 +1,6 @@
-/* Kickboxing techniques and combos (WAKO disciplines LC, KL, FC, K1): names [de, en], technique groups, combo pools,
-   discipline extras and the hidden technique themes. Pure data – moved unchanged from the app (step 2). */
+/* Kickboxing techniques (WAKO disciplines LC, KL, FC, K1): names [de, en], technique groups, the disciplines with leg
+   kicks and the technique themes. Pure data. The combos are built by movement rules in the app (08g-flow.js, Teil 43);
+   the fixed combo lists are gone (26.11.2026). */
 export const TECH = {
   jab: ["Jab", "Jab"],
   cross: ["Cross", "Cross"],
@@ -46,103 +47,12 @@ export const STRIKE = new Set(["jab", "cross", "jabb", "crossb", "hook", "hookb"
 export const RISKY = new Set(["back", "hookk", "brazil", "shook", "tornado", "sweep", "lowk", "knee", "jknee"]);
 /* demanding spinning and jumping techniques – not in kids mode */
 export const ADV = new Set(["brazil", "shook", "tornado", "jknee"]);
-export const COMBOS = [
-  [
-    ["jab", "cross"],
-    ["jab", "cross", "round"],
-    ["jab", "roundh"],
-    ["jab", "front"],
-    ["cross", "hook", "cross"],
-    ["jab", "side"],
-    ["front", "jab", "cross"],
-    ["jab", "jab", "cross"],
-    ["round", "cross"],
-    ["jabb", "cross"],
-    ["jab", "crossb", "hook"],
-  ],
-  [
-    ["jab", "cross", "hook", "round"],
-    ["jab", "cross", "roundh"],
-    ["side", "jab", "cross"],
-    ["jab", "slip", "cross", "round"],
-    ["hook", "cross", "front"],
-    ["round", "cross", "hook"],
-    ["jab", "upper", "hook", "side"],
-    ["jab", "block", "cross", "hook", "round"],
-    ["jab", "cross", "brazil"],
-    ["round", "cross", "brazil"],
-    ["jab", "cross", "shook"],
-    ["jab", "axe", "cross"],
-    ["jab", "cross", "hookb", "hook"],
-    ["jabb", "cross", "roundh"],
-    ["cross", "hookb", "round"],
-    ["jab", "crossb", "upper", "hook"],
-  ],
-  [
-    ["jab", "cross", "hook", "roundh", "cross"],
-    ["side", "back"],
-    ["jab", "cross", "hookk"],
-    ["axe", "cross", "hook"],
-    ["jab", "step", "roundh", "cross", "hook"],
-    ["round", "roundh", "cross"],
-    ["jab", "cross", "back"],
-    ["jab", "slip", "hook", "upper", "cross", "round"],
-    ["jab", "cross", "tornado"],
-    ["round", "tornado"],
-    ["jab", "cross", "hook", "shook"],
-    ["brazil", "cross", "hook", "roundh"],
-    ["jab", "crossb", "hook", "roundh"],
-    ["jabb", "jab", "cross", "hookb", "roundh"],
-    ["hookb", "hook", "cross", "back"],
-  ],
-];
-export const EXTRA = {
-  kl: [
-    ["jab", "cross", "lowk"],
-    ["lowk", "cross", "hook"],
-    ["jab", "lowk", "roundh"],
-    ["cross", "hook", "lowk"],
-    ["jab", "lowk"],
-    ["lowk", "jab", "cross"],
-    ["jab", "cross", "lowk", "roundh"],
-    ["jab", "crossb", "lowk"],
-    ["hookb", "cross", "lowk"],
-  ],
-  k1: [
-    ["jab", "cross", "jknee"],
-    ["hook", "cross", "jknee"],
-    ["jab", "cross", "knee"],
-    ["hook", "lowk"],
-    ["jab", "cross", "hook", "lowk"],
-    ["knee", "cross", "hook"],
-    ["jab", "lowk", "cross", "knee"],
-    ["jab", "lowk"],
-    ["cross", "hook", "knee"],
-    ["lowk", "cross", "knee"],
-    ["jab", "crossb", "knee"],
-    ["hookb", "hook", "lowk"],
-  ],
-};
-export const KICK_ONLY = [
-  ["front", "round"],
-  ["side", "roundh"],
-  ["round", "round"],
-  ["front", "side"],
-  ["side", "round", "roundh"],
-  ["front", "front", "round"],
-];
-export const HAND_ONLY = [
-  ["jab", "cross"],
-  ["jab", "cross", "hook"],
-  ["cross", "hook", "cross"],
-  ["jab", "upper", "hook"],
-  ["jab", "slip", "cross", "hook"],
-  ["jab", "jab", "cross", "hook"],
-  ["jab", "crossb", "hook"],
-  ["jabb", "cross", "hookb"],
-];
+/* the disciplines with leg kicks (low kick; K1 also knees) – the combos themselves come from the movement builder
+   (src/app/08g-flow.js, Teil 43) */
+export const EXTRA = { kl: true, k1: true };
 
-/* Hidden technique themes — chosen automatically and balanced, never shown */
+/* Technique themes — chosen automatically and balanced; the movement builder turns them into rules (start, finish …),
+   in partner units they are the visible theme of the unit (Teil 43) */
 export const THEMES = [
   {
     id: "startJab",
@@ -201,16 +111,3 @@ export const THEMES = [
   },
 ];
 
-/* 7f: kick chains – a weaker form of the taekwondo kick chains, from level 1 about every fifth combo; low = only in the
-   disciplines with leg kicks (Kick Light, K1) */
-export const KICK_CHAINS = [
-  { lvl: 1, c: ["front", "round"] },
-  { lvl: 1, c: ["round", "round"] },
-  { lvl: 1, c: ["round", "roundh"] },
-  { lvl: 1, c: ["side", "round"] },
-  { lvl: 1, c: ["front", "lowk"], low: true },
-  { lvl: 2, c: ["front", "round", "roundh"] },
-  { lvl: 2, c: ["round", "side", "roundh"] },
-  { lvl: 2, c: ["lowk", "round", "roundh"], low: true },
-  { lvl: 2, c: ["lowk", "lowk", "roundh"], low: true },
-];
