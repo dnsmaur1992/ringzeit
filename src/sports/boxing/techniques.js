@@ -1,46 +1,6 @@
-/* Boxing techniques: combo pools per level (only punches, defence and side step from the shared technique names),
-   hidden themes, light pool for wrist/shoulder limits, and counter combos for the evasion rounds
-   (an imagined or real action of the opponent comes first, then the defence, then the counter). Pure data. */
-export const BOX_COMBOS = [
-  [
-    ["jab", "cross"],
-    ["jab", "jab", "cross"],
-    ["jab", "cross", "hook"],
-    ["jabb", "cross"],
-    ["jab", "crossb"],
-    ["cross", "hook", "cross"],
-    ["jab", "cross", "step"],
-  ],
-  [
-    ["jab", "cross", "hook", "cross"],
-    ["jab", "hookb", "hook"],
-    ["jab", "cross", "hookb", "hook"],
-    ["jab", "upper", "hook"],
-    ["jab", "cross", "hook", "hookb"],
-    ["jab", "crossb", "hook", "cross"],
-    ["hookb", "hook", "cross"],
-    ["jab", "cross", "upper", "hook"],
-    ["jabb", "jab", "cross"],
-    ["jab", "cross", "hook", "step"],
-  ],
-  [
-    ["jab", "cross", "hook", "upper", "cross"],
-    ["jab", "hook", "upper", "cross", "hookb"],
-    ["jab", "cross", "hookb", "hook", "cross"],
-    ["jab", "crossb", "hookb", "hook"],
-    ["jabb", "jab", "cross", "hookb", "hook"],
-    ["jab", "cross", "upper", "hookb", "hook"],
-    ["hook", "cross", "hook", "upper"],
-    ["jab", "cross", "hook", "upper", "cross"],
-    ["jab", "cross", "hook", "cross", "hook", "step"],
-  ],
-];
-/* with a wrist or shoulder limit: light, short work without bag and pads load */
-export const BOX_LIGHT = [
-  ["jab", "cross"],
-  ["jab", "step"],
-  ["jab", "cross", "step"],
-];
+/* Boxing techniques: counter combos for the evasion rounds (an imagined or real action of the opponent comes first,
+   then the defence, then the counter), the partner's attacks and the themes. Pure data. The combos themselves are built
+   by movement rules in the app (08g-flow.js, Teil 43); the fixed lists are gone (26.11.2026). */
 /* counter combos after a defence (the defence is the first item, its reason is the opponent's action) */
 export const BOX_COUNTER = [
   { d: "slip", att: "jab", c: ["cross", "hook"], lvl: 0 },
