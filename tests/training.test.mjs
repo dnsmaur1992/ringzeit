@@ -3066,7 +3066,7 @@ test("17.11.2026 range & exit rounds fit the discipline: low-kick range only KL/
       for (const r of rs) {
         if (r.dist.i === "low") assert.ok(r.combo.includes("lowk"));
         if (r.dist.i === "knee") assert.ok(r.combo.includes("knee"));
-        assert.ok(r.combo.length >= 1 && r.combo.length <= 3);
+        assert.ok(r.combo.length >= 4 && r.combo.length <= 7, r.combo.join()); // 26.11.2026: 4–7 actions everywhere
       }
       assert.equal(rs.some((r) => !r.dist.o), lv >= 1, `${disc} L${lv} exit first`);
       assert.ok(rs.filter((r) => r.dist.o).every((r) => ["back", "side", "pivot"].includes(r.dist.o)));
@@ -3781,7 +3781,7 @@ test("no combo twice in one session – except within a partner block (25.11.202
   assert.ok(r < 0.03, String(r));
 });
 
-test("Full Contact vs Leichtkontakt: 6-kick rule with a partner, more body and pressure in FC; short combos and control in LC", () => {
+test("Full Contact vs Leichtkontakt: 6-kick rule with a partner, more body and pressure in FC; control in LC (26.11.2026: combos 4–7 for LC too)", () => {
   const a = app();
   seedRandom(a, 20261118); // reproducible: the same 600 sessions in every run
   const r = JSON.parse(a.run(`JSON.stringify((() => { S.profile.limits = []; S.profile.birthYear = 1995; const o = {};
@@ -3795,7 +3795,7 @@ test("Full Contact vs Leichtkontakt: 6-kick rule with a partner, more body and p
     for (let i = 0; i < 100; i++) for (const x of fightRounds("T", 6, "gym", ["partner"], null)) if (x.react) { cnt++; if ((x.react.pre || x.react.mid) && x.react.post) dbl++; }
     o.dblKl = dbl / cnt;
     S.profile.disc = "lc"; let long = 0;
-    for (let i = 0; i < 100; i++) for (const eq of [["partner"], ["bag"], []]) for (const x of fightRounds("T", 6, "gym", eq, chooseTheme())) if (x.combo && !x.mine && x.combo.length > 4) long++;
+    for (let i = 0; i < 100; i++) for (const eq of [["partner"], ["bag"], []]) for (const x of fightRounds("T", 6, "gym", eq, chooseTheme())) if (x.combo && !x.mine && x.combo.filter((y) => y !== "step").length > 7) long++;
     o.long = long;
     o.lcCue = guardCue({ k: "partner" }); o.lcBag = roundDesc({ k: "bag" }, 0);
     S.profile.disc = "fc"; o.fcBag = roundDesc({ k: "bag" }, 0); S.profile.disc = "kl"; o.klBag = roundDesc({ k: "bag" }, 0); o.klCue = guardCue({ k: "partner" });
@@ -5116,7 +5116,7 @@ test("6b: kick series are one bracketed chip with explicit V/H, level 1, never f
   tkdProfile(k, { by: 2016, lvl: 0, grade: "k8" });
   for (let i = 0; i < 20; i++) assert.ok(!/"sr\d"/.test(JSON.stringify(tkdSess(k, "T"))), "kid got a series");
 });
-test("6b: kick chains get longer with the level", () => {
+test("6b: kick chains are 4–7 actions on every level (26.11.2026, before longer with the level)", () => {
   const maxKicks = (lvl) => {
     const a = app();
     tkdProfile(a, { lvl });
@@ -5135,9 +5135,10 @@ test("6b: kick chains get longer with the level", () => {
   const l0 = maxKicks(0),
     l1 = maxKicks(1),
     l2 = maxKicks(2);
-  assert.ok(l0.m <= 3, "beginner chains stay short: " + l0.m);
+  // 26.11.2026: 4–7 actions for every level – the chains reach 5+ kicks, none beyond 7 actions
+  assert.ok(l0.m <= 7 && l1.m <= 7 && l2.m <= 7, "no chain beyond 7: " + l0.m + " " + l1.m + " " + l2.m);
   assert.ok(l2.m >= 5, "competition level reaches 5+ kicks: " + l2.m);
-  assert.ok(l0.avg < l1.avg && l1.avg < l2.avg, `average grows: ${l0.avg} ${l1.avg} ${l2.avg}`);
+  assert.ok(l0.avg >= 3 && l1.avg >= 3 && l2.avg >= 3, `long chains on every level: ${l0.avg} ${l1.avg} ${l2.avg}`);
 });
 /* ---------- 6c: ITF-D plans ---------- */
 const itfSess = (a, type, o = {}) =>
@@ -6848,7 +6849,7 @@ test("13.11.2026 birthday: greeting, party hat, cake and balloons on the day; 29
   a.run("S.profile.seasonOff=true");
   assert.equal(a.run("season()"), null);
 });
-test("18.11.2026 Light Contact stays at 4 techniques with body shot and high kick (Teil 43: the movement builder makes a new combo with the technique instead of adding it to a finished one)", () => {
+test("18.11.2026 Light Contact stays at 7 techniques (26.11.2026: 4–7 for everyone, before 4) with body shot and high kick (Teil 43: the movement builder makes a new combo with the technique instead of adding it to a finished one)", () => {
   const a = app();
   const r = JSON.parse(a.run(`(() => { S.profile.limits = []; S.profile.birthYear = 1995; S.profile.level = 2;
     const run = (disc) => { S.profile.disc = disc; return [["bag"], [], ["partner"]].map((eq) => fightRounds("T", 6, "gym", eq, null).filter((r) => r.combo && !r.mine)); };
@@ -6857,12 +6858,12 @@ test("18.11.2026 Light Contact stays at 4 techniques with body shot and high kic
     return JSON.stringify({ lc: o.lc.map((rs) => rs.map((r) => r.combo)), fc: o.fc.map((rs) => rs.map((r) => r.combo)) }); })()`));
   const BODY = ["jabb", "crossb", "hookb"];
   for (const rs of r.lc) {
-    for (const c of rs) assert.ok(c.filter((x) => x !== "step").length <= 4, c.join(" "));
+    for (const c of rs) assert.ok(c.filter((x) => x !== "step").length <= 7, c.join(" "));
     assert.ok(rs.some((c) => c.some((x) => BODY.includes(x))), "the body shot is there: " + JSON.stringify(rs));
     assert.ok(rs.some((c) => c.includes("roundh")), "the high kick is there");
   }
-  // Full Contact has no such limit
-  assert.ok(r.fc.flat().some((c) => c.filter((x) => x !== "step").length > 4));
+  // 26.11.2026: 4–7 actions for Light Contact as for Full Contact
+  assert.ok(r.lc.flat().some((c) => c.filter((x) => x !== "step").length > 4));
 });
 
 /* ---- Teil 36 (18.11.2026): the load distribution follows what was really trained ---- */
@@ -7367,7 +7368,8 @@ test("Teil 43: every combination is built by movement – sides alternate (real 
             if(REAR.has(x)&&sd[k]==='L'&&(PUSH.has(y)||y==='axe'||y==='hookk'))bad.push('weight '+c.join('-'));}
           if(['jab','jabb'].includes(core[core.length-1]))bad.push('ends on a jab '+c.join('-'));
           if(lvl===0&&['roundh','axe','hookk','brazil'].includes(core[0]))bad.push('Grundlage opens with a head kick '+c.join('-'));
-          if(sp==='kickboxing'&&disc==='lc'&&core.length>4)bad.push('LC > 4 '+c.join('-'));
+          // 26.11.2026: 4–7 actions everywhere (Light Contact too, kick chains 4–5), children 2–3
+          if(by!==2016&&(core.length<4||core.length>7))bad.push('length '+c.join('-'));
           if(by===2016&&core.length>3)bad.push('kids > 3 '+c.join('-'));
           if(lim.includes('knee')&&core.some(x=>RISKY.has(x)))bad.push('knee limit '+c.join('-'));
           if(lim.includes('wrist')&&kind==='bag'&&sp==='kickboxing'&&core.some(x=>!KICKS.has(x)))bad.push('wrist bag '+c.join('-'));
@@ -7381,7 +7383,7 @@ test("Teil 43: every combination is built by movement – sides alternate (real 
   assert.deepEqual(r.sides, [[null, "L"], [null, "L", "L"], [null, null, "L", "R"]]);
 });
 
-test("Teil 43: partner units (technique and conditioning, all sports, children, tournament preparation) are theme blocks of 8–12 minutes in one go (children 5–6) – stages clean → pace with entry/exit → counter action, easy → hard, one theme", () => {
+test("Teil 43: partner units (technique and conditioning, all sports, children, tournament preparation) are theme blocks of 8–12 minutes in one go (children 5–6) – stages clean → pace with entry/exit → counter action (about 2 of 5 blocks, in the middle of the combo), easy → hard, one theme", () => {
   const a = app();
   a.setDate("2026-11-25");
   const r = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];const st={units:0,thread:0,multi:0,six:0,fc:0,themes:new Set()};S.profile.limits=[];S.profile.lang='de';
@@ -7401,8 +7403,13 @@ test("Teil 43: partner units (technique and conditioning, all sports, children, 
         if(S2[0][0]!=='clean'||S2[1][0]!=='tempo')bad.push('stage order '+tag);
         if(it.react&&S2[S2.length-1][0]!=='react')bad.push('react stage '+tag);
         if(sp==='taekwondo'&&it.react)bad.push('TKD counter '+tag);
-        if(sp!=='taekwondo'&&!kid&&lvl>=1&&!it.react)bad.push('counter in every block from Fortgeschritten '+tag);
-        if((lvl===0||kid)&&it.react&&k<n-1&&!['def'].includes(s.theme)&&!(focusOf(s.theme)||{}).counters)bad.push('Grundlage/children: counter only in the last block '+tag);
+        // counter actions: about 2 of 5 blocks (defence focus 3 of 5), the last ones; Grundlage and children one, in the last
+        // block; in the middle of the combo when it is long enough (A answers, then goes on) – punch or kick
+        const defF=s.theme==='def'||!!(focusOf(s.theme)||{}).counters,nR=sp==='taekwondo'?0:(lvl===0||kid)?1:Math.max(1,Math.round(n*(defF?0.6:0.4)));
+        if(!!it.react!==(k>=n-nR))bad.push('counter blocks '+tag+' '+k+'/'+n);
+        if(it.react&&!kid){const core=it.combo.filter(y=>y!=='step');const canMid=core.some((y,i)=>i>=1&&i<=core.length-2&&STRIKE.has(core[i-1]));
+          if(canMid?!it.react.mid:!it.react.post)bad.push('counter in the middle '+tag+' '+JSON.stringify(it.react));
+          if(Object.keys(it.react).length!==1)bad.push('one counter only '+tag);}
         if(kid&&S2.some(x=>x[0]==='full'))bad.push('children competition pace '+tag);
         if(sp!=='taekwondo'&&!it.dist)bad.push('entry/exit '+tag);
         if(!it.mine&&!flowOk(it.combo))bad.push('flow '+tag+' '+it.combo.join('-'));
@@ -7439,7 +7446,9 @@ test("Teil 43: the list shows theme, block and stage plan; the training mode and
   assert.match(a.run(`roundInfo(${it},0).desc`), /^Stufe 1: langsam und sauber\. Kontrollierter Kontakt, nach 3–5 Wiederholungen Rollen tauschen\./);
   assert.match(a.run(`roundInfo(${it},${b1}).desc`), /^Stufe 2: mit Tempo\. (Eingang|Ausgang zuerst)/);
   assert.equal(a.run(`roundInfo(${it},${b1}).item`), null, "no A/B frames before the counter stage");
-  assert.ok(a.run(`!!roundInfo(${it},+pbBounds(${it})[1]).item`), "the counter stage shows the A/B frames");
+  const last = "S.sessions['2026-11-26'].blocks[" + bi + "].items.at(-1)";
+  assert.ok(a.run(`!!roundInfo(${last},+pbBounds(${last})[1]).item`), "the counter stage (last block) shows the A/B frames");
+  assert.match(a.run(`roundInfo(${it},+pbBounds(${it})[1]).desc`), /^Stufe 3: Wettkampftempo, der Partner bewegt sich\./, "a block without counter action ends in competition pace");
   // the timer: a stage change gives a signal and redraws the card
   a.run(`ui.timer={ds:'2026-11-26',phase:'work',round:2,total:${it}?S.sessions['2026-11-26'].blocks[${bi}].items.length:0,work:S.sessions['2026-11-26'].blocks[${bi}].w,left:S.sessions['2026-11-26'].blocks[${bi}].w-${b1},rest:60,running:true}`);
   assert.equal(a.run("pbTick(ui.timer)"), true);

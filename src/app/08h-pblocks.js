@@ -9,6 +9,7 @@
        the range (the former range & exit round) → with the partner's counter action (the former defence round).
        Grundlage and children: the counter action once (the last block), otherwise competition pace; Taekwondo has no
        partner counter actions (competition pace with a moving partner); conditioning: rhythm → high pace → counter;
+       (counter actions only in about 2 of 5 blocks, in the middle of the combo – see pbUnit)
      - A and B take turns as before: swap roles after 3–5 repetitions;
      - the breaks between blocks are the round breaks of the unit; the progression shortens them as before – if the
        time gets tight, the blocks get shorter, none falls out. */
@@ -84,8 +85,7 @@
   function pbCombos(n, theme) {
     const tkd = isTkd(),
       ctx = flowCtx(),
-      fs = tkd ? {} : focusSpec(theme),
-      lenMax = tkd ? null : kbLen()[1];
+      fs = tkd ? {} : focusSpec(theme);
     // what every unit of the sport carries (17.11.2026): a head kick, Kick Light/K1 low kick, K1 knee, a body shot
     const need = [];
     if (!tkd && !isBox() && !lowTime()) {
@@ -102,9 +102,11 @@
       F = rnd(mine).slice();
       mineF = true;
     }
+    // the whole combination: 4–7 actions (children 3) – long enough that every block can add one
+    const fLen = ageGroup() === "kids" ? [3, 3] : [Math.min(7, Math.max(4, n + 2)), 7];
     for (let k = need.length; !F && k >= 0; k--) {
       const nd = need.slice(0, k),
-        c = tkd ? tkdFlow("pads", false, theme, { must: theme && theme.kick ? theme.kick : undefined, len: ageGroup() === "kids" ? [3, 3] : [3 + (techniqueLevel() || 0), 3 + (techniqueLevel() || 0)] }) : flowCombo("pads", theme, { len: [lenMax, lenMax], noExit: true, mustFn: (c) => nd.every((x) => has(c, x)) });
+        c = tkd ? tkdFlow("pads", false, theme, { must: theme && theme.kick ? theme.kick : undefined, len: fLen }) : flowCombo("pads", theme, { len: fLen, noExit: true, mustFn: (c) => nd.every((x) => has(c, x)) });
       if (c && nd.every((x) => has(c, x))) F = c;
       else if (k === 0) F = c;
     }
@@ -160,20 +162,24 @@
     const e = rnd(inn);
     return { i: e.id, o: first ? null : rnd(outs).id };
   }
-  /* the main part of a partner unit: n blocks of w seconds */
+  /* the main part of a partner unit: n blocks of w seconds
+     Counter actions (Betreiber 25.11.2026, after Teil 43): fewer – about 2 of 5 blocks (40 %, at least 1), the later,
+     harder blocks; with a defence focus 3 of 5. The partner counters in the middle of the combo – a punch or a kick –
+     and A has to answer it before going on with the combo (when the combo is too short for that: after it). Grundlage
+     and children: one, in the last block. The other blocks end in competition pace (children: with pace). */
   function pbUnit(type, L, theme) {
     const lvl = ageGroup() === "kids" ? 0 : techniqueLevel() || 0,
       kid = ageGroup() === "kids",
       canReact = !isTkd(),
-      allReact = !!(theme && (theme.id === "def" || theme.counters)) || lvl >= 2;
+      defF = !!(theme && (theme.id === "def" || theme.counters)),
+      nReact = !canReact ? 0 : lvl === 0 ? 1 : Math.max(1, Math.round(L.n * (defF ? 0.6 : 0.4)));
     usedAtt.clear();
     const cs = pbCombos(L.n, theme);
     const items = cs.map((x, k) => {
-      const last = k === L.n - 1,
-        react = canReact && (lvl >= 1 || allReact || last),
+      const react = k >= L.n - nReact,
         it = { kind: "round", k: "partner", combo: x.c.slice(), pb: { b: k + 1, n: L.n, c: type === "C" ? 1 : 0, st: pbStages(L.w, react ? "react" : kid ? null : "full") } };
       if (x.mine) it.mine = 1;
-      if (react) it.react = partnerReact(it.combo.filter((y) => y !== "step"), theme);
+      if (react) it.react = partnerReact(it.combo.filter((y) => y !== "step"), theme, { mid: !kid });
       const d = pbDist(it.combo, theme);
       if (d) it.dist = d;
       return it;

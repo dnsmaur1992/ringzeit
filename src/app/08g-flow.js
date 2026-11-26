@@ -53,7 +53,8 @@
   const FK_FREQ = { dol: 3, ap: 1.5, dolh: 1.5, yeop: 1.2, jir: 1.2, mireo: 0.8, nae: 0.7, ban: 0.6, dwi: 0.6, dhu: 0.35, ttdol: 0.25, ttyeop: 0.25, dung: 0.8, stepf: 1, slide: 1, swch: 0.6, turn: 0.5 };
   // "more boxing" / "more kicks" in the profile: the preferred side comes up clearly more often; ITF is hand-foot
   const kbFreq = (x, ctx) => (FREQ[x] || 1) * (ctx.focus === "kick" ? (KICKS.has(x) ? 1.9 : 0.6) : ctx.focus === "box" ? (KICKS.has(x) ? 0.55 : 1.6) : 1);
-  const fkFreq = (x, ctx) => (isSerId(x) ? 0.3 : FK_FREQ[x] || 1) * (ctx.itf && (x === "jir" || x === "dung") ? 8 : 1);
+  const fkFreq = (x, ctx) => (isSerId(x) ? 0.3 : FK_FREQ[x] || 1) * (x === "jir" || x === "dung" ? (ctx.itf ? 8 : 0.6) : 1);
+  const SPECIAL = new Set(["back", "shook", "tornado", "jknee", "axe", "hookk", "sweep", "brazil"]);
   const FLOW_SPIN_FROM = new Set(["jab", "side", "hook", "round", "roundh", "front"]);
   const REAR_PUNCH = new Set(["cross", "crossb", "upper"]);
   /* taekwondo: kicks, two hand techniques (ITF back fist), steps and series */
@@ -92,6 +93,8 @@
       if (B.jump && (A.spin || A.h || !(A.k || A.st))) return 0;
       if (B.h && A.push) return 0;
       if (B.push && A.push) return 0;
+      // a long chain stays clean: at most one spinning and one jumping kick
+      if ((B.spin && c.some((x) => fkOf(x) && fkOf(x).spin)) || (B.jump && c.some((x) => fkOf(x) && fkOf(x).jump))) return 0;
       if (B.ser && c.some(isSerId)) return 0;
       if (A.ser && B.spin) return 0;
       if (a === b && !["dol", "jir"].includes(a)) return 0;
@@ -106,6 +109,9 @@
     if (sa && sb && sa === sb && !FLOW_DBL.has(a + ">" + b)) return 0;
     if (a === b && a !== "jab" && !(a === "round" && ctx.lvl >= 1)) return 0;
     if (c.filter((x) => x === b).length >= 2) return 0;
+    // a long combo stays clean (4–7 actions): at most one special technique (spinning, jumping, axe, hook kick, sweep,
+    // Brazilian kick)
+    if (SPECIAL.has(b) && c.some((x) => SPECIAL.has(x))) return 0;
     if (A.push && B.r === "C") return 0;
     if (A.r === "C" && B.r === "L") return 0;
     if (B.spin && (A.spin || sa !== "L" || !FLOW_SPIN_FROM.has(a) || (b === "back" && a === "hook"))) return 0;
@@ -116,7 +122,6 @@
     let run = B.k ? 1 : 0;
     for (let i = c.length - 1; B.k && i >= 0 && FT[c[i]] && FT[c[i]].k; i--) run++;
     if (run > (ctx.lvl >= 1 ? 2 : 1) && !ctx.kickOnly) return 0;
-    if (run > 3) return 0;
     // the rear hook (and rear body hook) is rare – the hook is the lead hand's punch
     const rare = (b === "hook" || b === "hookb") && sb === "R" ? 0.25 : 1;
     return (FLOW_GOOD.has(a + ">" + b) ? 3 : 1) * kbFreq(b, ctx) * rare;
@@ -203,14 +208,9 @@
     if (o.noHead) s = s.filter((x) => !HIGHK.has(x));
     return new Set(s);
   }
-  const kbLen = () => {
-    const lvl = techniqueLevel() || 0,
-      len = isBox() ? [[2, 3], [3, 4], [4, 5]][lvl] : [[2, 3], [3, 4], [3, 5]][lvl];
-    let hi = len[1];
-    if (ageGroup() === "kids") hi = Math.min(hi, 3);
-    if (!isBox() && discOf() === "lc") hi = Math.min(hi, 4);
-    return [Math.min(len[0], hi), hi];
-  };
+  // length (Betreiber 26.11.2026): 4–7 actions for everyone and everywhere (also Light Contact); children 2–3
+  const COMBO_LEN = [4, 7];
+  const kbLen = () => (ageGroup() === "kids" ? [2, 3] : COMBO_LEN.slice());
   const BODY_HEAD = new Set(["jabb>jab", "hookb>hook", "crossb>hook", "hookb>roundh", "round>roundh", "crossb>roundh", "jabb>roundh", "hookb>upper", "crossb>upper"]);
   const hasPair = (c, set) => c.some((x, i) => i > 0 && set.has(c[i - 1] + ">" + x));
   /* the focus of the unit as a rule for the builder (instead of changing finished combos) */
@@ -269,7 +269,7 @@
     // "more boxing" fewer, "more kicks" more
     const chainP = p.focus === "box" ? 0.08 : p.focus === "kick" ? 0.3 : 0.22;
     if (!kickOnly && !handOnly && !isBox() && !o.must && !o.len && !fs.start && !fs.end && !fs.must && techniqueLevel() >= 1 && ageGroup() !== "kids" && !ka && Math.random() < chainP) {
-      const kc = flowGen({ allowed: new Set([...allowed].filter((x) => KICKS.has(x))), len: [2, techniqueLevel() >= 2 ? 3 : 2], ctx: { kickOnly: true }, avoid: o.avoid });
+      const kc = flowGen({ allowed: new Set([...allowed].filter((x) => KICKS.has(x))), len: [4, 5], ctx: { kickOnly: true }, avoid: o.avoid });
       if (kc) return kc;
     }
     const one = () =>
@@ -288,9 +288,14 @@
     let allowed = Object.keys(M.TECH).filter((x) => M.allowed(x, ctx) && fkOf(x) && !["stepb", "steps"].includes(x));
     if (lim.includes("wrist") || lim.includes("shoulder")) allowed = allowed.filter((x) => !TKDT.HANDS.has(x) && !(M.HANDS && M.HANDS.has(x)) && x !== "dung" && x !== "jir");
     if (noHead || lowTime()) allowed = allowed.filter((x) => !M.HEAD.has(x));
+    // spinning hook and jumping kicks (7h): about every fifth combo – with 4–7 actions they would come in most of them
+    const SJ = ["dhu", "ttdol", "ttyeop"],
+      sj = allowed.filter((x) => SJ.includes(x)),
+      wantSJ = sj.length && Math.random() < 0.2;
+    if (!wantSJ) allowed = allowed.filter((x) => !SJ.includes(x));
     const need = (noHead || M === ITFT ? 1 : 2) + lvl,
       kicks = lvl >= 1 && Math.random() < 0.75 ? need : Math.max(2, need - 1),
-      hi = ctx.kid ? 3 : kicks + 1;
+      hi = ctx.kid ? 3 : COMBO_LEN[1];
     const allowSet = new Set(allowed),
       spect = M === ITFT && lvl >= 1 && Math.random() < 0.45 ? allowed.filter((x) => ITF_SPECT.has(x)) : [],
       pref = theme && theme.prefer && Math.random() < 0.75 ? theme.prefer.filter((x) => allowSet.has(x)) : [],
@@ -299,8 +304,9 @@
     const must = (c) =>
       (!spect.length || c.some((x) => spect.includes(x))) &&
       (!pref.length || c.some((x) => pref.includes(x))) &&
-      (!mustK || hasKick(c, mustK, M));
-    const base = { allowed: allowSet, len: o.len || [Math.min(kicks, hi), hi], kicks: ctx.kid ? 2 : Math.min(kicks, hi), maxKicks: ctx.kid ? 3 : kicks + 1, ctx: {}, avoid: o.avoid };
+      (!mustK || hasKick(c, mustK, M)) &&
+      (!wantSJ || c.some((x) => sj.includes(x)));
+    const base = { allowed: allowSet, len: o.len || (ctx.kid ? [2, 3] : COMBO_LEN.slice()), kicks: ctx.kid ? 2 : Math.min(kicks, hi), maxKicks: ctx.kid ? 3 : hi, ctx: {}, avoid: o.avoid };
     return (
       (o.start && flowGen({ ...base, start: o.start, must })) ||
       flowGen({ ...base, must }) ||
@@ -315,5 +321,8 @@
     const m = c.map((x) => LOWER[x] || x);
     if (mine || isTkd() || m.join() === c.join() || flowOk(m)) return m;
     const n = c[c.length - 1] === "step" ? c.length - 1 : c.length;
-    return flowCombo(kind === "bag" || kind === "shadow" ? kind : "pads", theme, { noHead: true, len: [Math.max(2, n), Math.max(2, n)] });
+    // (a body shot it had stays in the new one)
+    const body = (x) => x.some((y) => FT[y] && FT[y].body),
+      keep = body(c);
+    return flowCombo(kind === "bag" || kind === "shadow" ? kind : "pads", theme, { noHead: true, len: [Math.max(2, n), Math.max(2, n)], mustFn: (x) => !keep || body(x) });
   }

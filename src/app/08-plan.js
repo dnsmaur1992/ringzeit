@@ -761,11 +761,11 @@
     c = noDefFirst(c.filter((x, i) => !(x === "slip" || x === "block" || (x === "step" && i < c.length - 1))));
     return fill2(c.filter((x, i) => !(x === "step" && i < c.length - 1)));
   }
-  // Leichtkontakt: short, fast combos – at most 4 techniques (the opener and the finish stay)
+  // Leichtkontakt: at most 7 techniques like everyone (26.11.2026, before 4) – the opener and the finish stay
   function lcShort(c) {
     if (discOf() !== "lc") return c;
     c = c.slice();
-    while (c.length > 4) c.splice(1, 1);
+    while (c.length > 7) c.splice(1, 1);
     return c;
   }
   function fill2(c) {
@@ -1146,7 +1146,7 @@
   /* E35 (17.11.2026): with a counter focus (kickVsPunch / punchVsKick) the partner attacks with exactly what the focus
      counters, and you defend as the focus says – in every counter action and in the defence round of the Grundabdeckung;
      your quick answer stays in the focus too (punches against kicks, kicks against punches). */
-  function partnerReact(c, theme = null) {
+  function partnerReact(c, theme = null, o = {}) {
     const p = S.profile,
       kid = ageGroup() === "kids",
       ka = kneeAnk(),
@@ -1202,7 +1202,9 @@
     const spots = ["pre", "post"],
       cuts = c ? c.map((x, i) => i).filter((i) => i >= 1 && i <= c.length - 2 && STRIKE.has(c[i - 1])) : [];
     if (!kid && lvl >= 1 && cuts.length) spots.push("mid");
-    const at = spots[Math.floor(Math.random() * spots.length)],
+    // theme blocks (Teil 43): the partner counters in the middle of the combo – A answers it, then goes on; a combo too
+    // short for that gets it at the end
+    const at = o.mid ? (cuts.length ? "mid" : "post") : spots[Math.floor(Math.random() * spots.length)],
       r = {};
     if (at === "pre") r.pre = pick(lowOk && Math.random() < 0.5);
     else if (at === "post") r.post = answer(pick(lowOk && Math.random() < 0.35));
@@ -1211,7 +1213,7 @@
     const dbl = discOf() === "fc" ? [0, 0.25, 0.6][lvl] : lvl >= 2 ? 0.4 : 0;
     // only with an attack not used yet in this unit – no partner attack twice (17.11.2026: with 6 rounds × 2 actions
     // there can be more spots than attacks)
-    if (!kid && !r.post && Math.random() < dbl && (focus.length ? focus : atts.map((a) => ({ att: a }))).some((x) => !usedAtt.has(x.att))) r.post = answer(pick(lowOk && Math.random() < 0.35));
+    if (!o.mid && !kid && !r.post && Math.random() < dbl && (focus.length ? focus : atts.map((a) => ({ att: a }))).some((x) => !usedAtt.has(x.att))) r.post = answer(pick(lowOk && Math.random() < 0.35));
     return r;
   }
   /* how many partner rounds of one session get a counter action: Grundlage (and children) exactly 1,
@@ -1506,7 +1508,7 @@
         // the range & exit round takes it first: its combo is free-form, so the focus rounds keep their shape (17.11.2026)
         const dr = pool.find((x) => x.dist && !(x.dist.i === "low" && tech !== "lowk") && !(x.dist.i === "knee" && tech !== "knee"));
         if (dr) {
-          dr.combo = flowCombo("shadow", theme, { must: tech, len: [2, 3] });
+          dr.combo = flowCombo("shadow", theme, { must: tech });
           continue;
         }
         const r = pool[(j + m * 2 + 1) % pool.length],
@@ -1567,6 +1569,16 @@
     }
     // short on time (21.11.2026): no head kicks at all – every kick to body height, own combos too
     if (lowTime()) for (const r of out) if (r.combo) r.combo = lowerFlow(r.combo, r.k, theme, r.mine);
+    // (safety net after all changes: still no body shot – a cross or jab of a combo goes to the body; same side,
+    // same distance, so the movement stays right)
+    if (!out.some((r) => r.combo && r.combo.some((x) => BODY.includes(x)))) {
+      const ok = (c) => c.includes("cross") || c.slice(0, -1).includes("jab"),
+        r = out.find((x) => x.combo && !x.mine && ok(x.combo));
+      if (r) {
+        const i = r.combo.lastIndexOf("cross") >= 0 ? r.combo.lastIndexOf("cross") : r.combo.slice(0, -1).lastIndexOf("jab");
+        r.combo = r.combo.map((x, k) => (k === i ? (x === "cross" ? "crossb" : "jabb") : x));
+      }
+    }
     // kids: at most 3 techniques (the opener and the finishing technique stay)
     if (ageGroup() === "kids")
       for (const r of out) if (r.combo && !r.mine) while (r.combo.length > 3) r.combo.splice(1, 1);

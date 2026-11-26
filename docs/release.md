@@ -224,3 +224,5 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 25.11. | Security: Datenprüfung bei Import und Start, Escaping, Sicherheitskopie + Rückgängig beim Laden, Content-Security-Policy, esbuild 0.25.12 | 333 |
 | 25.11. | Partnerdrills in Blöcken: 3 Runden je Kombination, höchstens 3 Kombinationen, Stufen sauber → Tempo → Gegenaktion, roter Faden leicht → schwer (alle Sportarten, auch Kondition) | 335 |
 | 25.11. | Teil 43: Kombinationen nach Bewegung (Seitenwechsel, Drehung, Distanz, Gewicht; alle Sportarten), Partner-Einheiten in Themenblöcken 8–12 Min. am Stück mit Stufen nach Zeit, ein Thema pro Einheit | 335 |
+| 25.11. | Weniger Gegenaktionen: etwa 2 von 5 Blöcken, Konter des Partners mitten in der Kombination (Schlag oder Kick) | 335 |
+| 26.11. | Kombinationen überall 4–7 Aktionen (auch Leichtkontakt), Kinder 2–3; höchstens eine Spezialtechnik je Kombination | 335 |
