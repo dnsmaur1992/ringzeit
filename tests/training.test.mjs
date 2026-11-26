@@ -7388,7 +7388,7 @@ test("Teil 43: partner units (technique and conditioning, all sports, children, 
   a.setDate("2026-11-25");
   const r = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];const st={units:0,thread:0,multi:0,six:0,fc:0,themes:new Set()};S.profile.limits=[];S.profile.lang='de';
     for(const [sp,disc,tstyle,by] of [['kickboxing','lc',null,1995],['kickboxing','kl',null,1995],['kickboxing','fc',null,1995],['kickboxing','k1',null,1995],['boxing',null,null,1995],['taekwondo',null,'wt',1995],['taekwondo',null,'itf',1995],['kickboxing','kl',null,2016]])
-    for(const lvl of [0,1,2])for(const ty of ['T','C'])for(const min of [30,60,90]){
+    for(const lvl of [0,1,2])for(const ty of ['T','C'])for(const min of (by===2016?[30,45,60]:[30,60,90])){ // children: units of 45–60 minutes at most
       S.profile.sport=sp;S.profile.disc=disc;S.profile.level=lvl;S.profile.birthYear=by;S.profile.birth=by+'-05-01';
       const s=buildSession('2026-11-26',ty,'gym',['partner','pads'],{sport:sp,disc,tstyle,min});const rb=s.blocks.find(b=>b.rounds);const tag=sp+(disc||tstyle||'')+' L'+lvl+' '+ty+min+' by'+by;
       st.units++;if(!rb.pblk||!rb.items.every(x=>x.pb&&x.k==='partner'))bad.push('not blocks '+tag);
@@ -7417,6 +7417,10 @@ test("Teil 43: partner units (technique and conditioning, all sports, children, 
         if(it.six)st.six++;});
       if(disc==='fc'&&sp==='kickboxing'&&n>=1)st.fc++;
       if(!rb.items[0].ease)bad.push('ease '+tag);
+      // 26.11.2026: already the first block has 4 actions (children 2–3); against taller/smaller every block ends with the step out
+      for(const it of rb.items){const core=it.combo.filter(y=>y!=='step'&&y!=='stepb');if(!it.mine&&(kid?core.length>3:(core.length<4||core.length>7)))bad.push('block length '+tag+' '+it.combo.join('-'));
+        if(['tallOpp','shortOpp'].includes(s.theme)&&!it.mine&&it.combo[it.combo.length-1]!==(sp==='taekwondo'?'stepb':'step'))bad.push('exit step '+tag);}
+      if(kid&&n>6)bad.push('children > 6 blocks '+tag);
       for(let k=1;k<n;k++)if(comboLevel(rb.items[k].combo)+0.001<comboLevel(rb.items[k-1].combo)&&!rb.items[k].mine)bad.push('easy → hard '+tag);
       // one concept: the blocks share their beginning, or their finish, or each block holds the one before
       if(n>1&&!rb.items.some(x=>x.mine)){st.multi++;const cs=rb.items.map(x=>x.combo.filter(y=>y!=='step'));
@@ -7464,4 +7468,33 @@ test("Teil 43: the list shows theme, block and stage plan; the training mode and
   assert.match(a.run(`pbHead(${it})`), /^Block 2 of \d · [\d.]+ min in one go$/);
   assert.match(a.run(`roundInfo(${it},0).desc`), /^Stage 1: slow and clean\./);
   assert.ok(a.run("pbTheme(S.sessions['2026-11-26'])").length > 3);
+});
+
+test("26.11.2026: partner and bag – 2 bag rounds after the theme blocks with their own length (timer, header, progression); the voice names block and stage only; the timer says Block", async () => {
+  const a = app();
+  a.setDate("2026-11-25");
+  a.run("S.profile.sport='kickboxing';S.profile.disc='kl';S.profile.level=1;S.profile.birthYear=1995;S.profile.birth='1995-05-01';S.profile.limits=[];S.profile.lang='de';S.sessions={};S.sessions['2026-11-26']=buildSession('2026-11-26','T','gym',['partner','pads','bag'],{sport:'kickboxing',disc:'kl',min:75});ui.sel='2026-11-26'");
+  const r = JSON.parse(a.run(`JSON.stringify((()=>{const s=S.sessions['2026-11-26'],bi=s.blocks.findIndex(b=>b.pblk),b=s.blocks[bi],pb=b.items.filter(x=>x.pb),bag=b.items.filter(x=>!x.pb);
+    return {pb:pb.length,bag:bag.map(x=>[x.k,x.w,flowOk(x.combo)]),last:b.items.slice(-2).every(x=>x.k==='bag'),tot:pb.length*b.w+bag.reduce((s,x)=>s+x.w,0)+(b.items.length-1)*b.b,min:b.min,head:sessionBlockHtml(s,bi,false).match(/\\d+ × [\\d:]+ \\+ 2 × [\\d:]+ Sandsack \\/ [\\d:]+ Pause/)?.[0]||''}})())`));
+  assert.ok(r.pb >= 2 && r.last, JSON.stringify(r));
+  assert.deepEqual(r.bag, [["bag", 180, true], ["bag", 180, true]]);
+  // (the progression may shorten the breaks afterwards: a little shorter, never longer)
+  assert.ok(r.tot <= r.min * 60 + 30 && r.tot >= r.min * 60 - 60 * (r.pb + 2), JSON.stringify(r));
+  assert.ok(r.head, "header shows blocks + bag rounds");
+  // the timer: a bag round runs 3:00, a block its own length; the start button says Block
+  a.run("selectSessionTimer('2026-11-26')");
+  assert.match(a.run("tlabel(ui.timer)"), /^Block 1 starten$/);
+  const n = +a.run("ui.timer.total");
+  assert.equal(+a.run(`itemWork(ui.timer,${n})`), 180);
+  assert.equal(+a.run("itemWork(ui.timer,1)"), +a.run("roundBlock(S.sessions['2026-11-26']).w"));
+  a.run(`ui.timer.round=${n}`);
+  assert.match(a.run("tlabel(ui.timer)"), /^Runde \d+ starten$/);
+  // the voice at a block start: block and stage – no long combo read out
+  a.run("globalThis.Q=[];queueTimerSpeech=(x)=>Q.push(x);window.speechSynthesis={};globalThis.SpeechSynthesisUtterance=function(){};S.profile.voice=true;ui.timer.phase='prep';ui.timer.round=1;ui.timer.called=0;callTick(ui.timer)");
+  const txt = a.run("JSON.stringify(Q)");
+  assert.match(txt, /Block 1 von \d+ · [\d,]+ Min\. am Stück\. Stufe 1: langsam und sauber\./);
+  assert.doesNotMatch(txt, /Jab|Cross|Haken|Kick/);
+  // the progression: a longer break – the blocks get shorter, the bag rounds keep 3:00
+  a.run(`(()=>{const s=S.sessions['2026-11-26'],b=s.blocks.find(b=>b.pblk);b.b+=60;const pb=b.items.filter(x=>x.pb).length,own=b.items.filter(x=>!x.pb).reduce((t,x)=>t+(x.w||180),0);b.w=Math.floor((b.min*60-own-(b.items.length-1)*b.b)/pb/30)*30;pbRescale(b.items,b.w);})()`);
+  assert.deepEqual(JSON.parse(a.run("JSON.stringify(roundBlock(S.sessions['2026-11-26']).items.filter(x=>!x.pb).map(x=>x.w))")), [180, 180]);
 });

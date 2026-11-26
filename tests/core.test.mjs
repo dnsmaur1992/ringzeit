@@ -306,7 +306,7 @@ test("prescriptions A6/A7/A9/A11: neck names the four hand positions, kick holds
 
 /* ---------- boxing (4a-U, U1/U2) ---------- */
 import { dbvClass, dbvFormat, standardFormat, KO_DAYS, WKB_URL } from "../src/sports/boxing/rules.js";
-import { BOX_COMBOS, BOX_LIGHT, BOX_COUNTER, BOX_ATT, BOX_THEMES } from "../src/sports/boxing/techniques.js";
+import { BOX_COUNTER, BOX_ATT, BOX_THEMES } from "../src/sports/boxing/techniques.js";
 import { BOX_TASKS } from "../src/sports/boxing/tasks.js";
 import { KICKS, TECH } from "../src/sports/kickboxing/techniques.js";
 import { SPORTS, visibleSports, previewSports } from "../src/sports/index.js";
@@ -329,15 +329,12 @@ test("boxing rules: training standard without a tournament, over-40 format, ban 
   assert.equal(KO_DAYS, 30);
   assert.match(WKB_URL, /^https:\/\/www\.boxverband\.de\/.*WKB.*\.pdf$/);
 });
-test("boxing techniques: punches only, every name exists, defence only where it has a reason", () => {
-  const all = [...BOX_COMBOS.flat(), ...BOX_LIGHT];
-  for (const c of all) for (const x of c) assert.ok(TECH[x] && !KICKS.has(x), `${x} is a punch or a shared move`);
-  for (const t of BOX_THEMES) for (const c of BOX_COMBOS.flat().slice(0, 6)) for (const x of t.ap(c.slice(), {})) assert.ok(!KICKS.has(x));
+test("boxing techniques: punches only, every name exists, defence only where it has a reason (26.11.2026: the combos come from the movement builder, the old lists are gone)", () => {
+  for (const t of BOX_THEMES) for (const x of t.ap(["jab", "cross", "hook", "cross"], {})) assert.ok(!KICKS.has(x));
   for (const c of BOX_COUNTER) {
     assert.ok(BOX_ATT.has(c.att));
     c.c.forEach((x) => assert.ok(!KICKS.has(x) && TECH[x]));
   }
-  assert.ok(BOX_COMBOS.every((l) => l.length >= 6), "enough combos per level");
 });
 test("boxing tasks: all with partner text or solo text; touch sparring needs a partner and gear and is from level 1", () => {
   assert.ok(BOX_TASKS.every((t) => t.sport === "boxing" && t.de[0] && t.en[0] && t.de[1] && t.en[1]));
