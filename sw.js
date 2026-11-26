@@ -1,7 +1,7 @@
 /* Ringzeit service worker: the app works offline; updates are fetched in the background and used on the next start.
    Only caches with this app's own prefix are touched: the stable Ringzeit app shares the origin and keeps its own caches. */
 const PREFIX = "ringzeit-";
-const CACHE = PREFIX + "202611260817";
+const CACHE = PREFIX + "202611261156";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-180.png", "icon-192.png", "icon-512.png", "icon-maskable-512.png"];
 self.addEventListener("install", (e) => {
   // the new version's files straight from the server, not from the browser's HTTP cache (21.11.2026)
