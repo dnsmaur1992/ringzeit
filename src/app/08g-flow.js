@@ -109,11 +109,15 @@
       sa = sd[sd.length - 2],
       sb = sd[sd.length - 1];
     if (sa && sb && sa === sb && !FLOW_DBL.has(a + ">" + b)) return 0;
+    // (a double is two – never three on the same side: jab, jab, jab body)
+    if (sa && sb && sa === sb && sd.length >= 3 && sd[sd.length - 3] === sb) return 0;
     if (a === b && a !== "jab" && !(a === "round" && ctx.lvl >= 1)) return 0;
     if (c.filter((x) => x === b).length >= 2) return 0;
     // a long combo stays clean (4–7 actions): at most one special technique (spinning, jumping, axe, hook kick, sweep,
     // Brazilian kick)
     if (SPECIAL.has(b) && c.some((x) => SPECIAL.has(x))) return 0;
+    // (28.11.2026) two straight punches to the body in a row (jab body → cross body) – the second one has nothing to aim at
+    if ((a === "jabb" || a === "crossb") && (b === "jabb" || b === "crossb")) return 0;
     if (A.push && B.r === "C") return 0;
     if (A.r === "C" && B.r === "L") return 0;
     // (28.11.2026) out of an uppercut or a knee no head kick – too close, the partner's glove is under the chin

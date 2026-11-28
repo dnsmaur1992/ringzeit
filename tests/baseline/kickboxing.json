@@ -322,7 +322,7 @@
            "round",
            "jabb",
            "jab",
-           "hook",
+           "cross",
            "step"
           ],
           "w": 180,
@@ -754,8 +754,8 @@
           "combo": [
            "front",
            "crossb",
-           "jabb",
-           "round",
+           "hook",
+           "roundh",
            "hook"
           ]
          },
@@ -767,7 +767,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -786,8 +786,6 @@
           "combo": [
            "front",
            "cross",
-           "hookb",
-           "roundh",
            "hook",
            "cross",
            "round"
@@ -827,7 +825,7 @@
          },
          {
           "kind": "hard",
-          "id": "shinbag"
+          "id": "bodybag"
          }
         ],
         "fitnessLevel": 0
@@ -838,15 +836,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 76
-         },
-         {
-          "kind": "ex",
           "id": 73
          },
          {
           "kind": "ex",
           "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 74
          }
         ],
         "fitnessLevel": 0
@@ -1038,21 +1036,15 @@
        },
        {
         "dose": null,
-        "timer": null
+        "timer": {
+         "phases": 11,
+         "seconds": 145,
+         "choices": [],
+         "perSet": 0
+        }
        }
       ],
       [
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
        {
         "dose": "60–90 s halten",
         "timer": {
@@ -1063,6 +1055,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        },
        {
@@ -1529,20 +1532,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, High Kick Kopf, Jab, Haken – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, High kick head, Jab, Hook – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, Cross, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross, Hook – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, High Kick Kopf, Jab, Haken verbunden, kontrolliert.",
-            "en": "Jab, High kick head, Jab, Hook linked, with control."
+            "de": "Jab, Jab, Cross, Haken verbunden, kontrolliert.",
+            "en": "Jab, Jab, Cross, Hook linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, High Kick Kopf, Jab, Haken, danach heraus aus der Distanz.",
-            "en": "Jab, High kick head, Jab, Hook, then out of range."
+            "de": "Jab, Jab, Cross, Haken, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross, Hook, then out of range."
            }
           ]
          }
@@ -1562,10 +1565,10 @@
           "k": "partner",
           "combo": [
            "jab",
-           "roundh",
            "jab",
+           "cross",
            "hook",
-           "round"
+           "cross"
           ],
           "pb": {
            "b": 1,
@@ -1598,10 +1601,10 @@
           "k": "partner",
           "combo": [
            "jab",
-           "roundh",
            "jab",
+           "cross",
            "hook",
-           "round",
+           "cross",
            "hookb",
            "roundh",
            "hook"
@@ -1628,9 +1631,9 @@
           },
           "react": {
            "mid": {
-            "at": 4,
-            "a": "cross",
-            "d": "cover"
+            "at": 1,
+            "a": "jab",
+            "d": "step"
            }
           },
           "dist": {
@@ -1643,10 +1646,10 @@
           "k": "bag",
           "combo": [
            "jab",
-           "cross",
-           "round",
-           "cross",
-           "hook"
+           "jab",
+           "front",
+           "jabb",
+           "roundh"
           ],
           "w": 180,
           "fin": 1
@@ -1656,9 +1659,10 @@
           "k": "bag",
           "combo": [
            "jab",
+           "cross",
            "round",
-           "hook",
-           "roundh",
+           "crossb",
+           "jab",
            "hook"
           ],
           "w": 180,
@@ -1674,7 +1678,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 89
+          "id": 90
          }
         ],
         "fitnessLevel": 0
@@ -1685,6 +1689,10 @@
         "items": [
          {
           "kind": "ex",
+          "id": 83
+         },
+         {
+          "kind": "ex",
           "id": 8
          },
          {
@@ -1693,11 +1701,7 @@
          },
          {
           "kind": "ex",
-          "id": 83
-         },
-         {
-          "kind": "ex",
-          "id": 7
+          "id": 19
          }
         ],
         "sets": "3×",
@@ -1713,7 +1717,7 @@
          },
          {
           "kind": "hard",
-          "id": "arms"
+          "id": "abs"
          }
         ],
         "fitnessLevel": 0
@@ -1724,15 +1728,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
           "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 76
          }
         ],
         "fitnessLevel": 0
@@ -1863,9 +1867,9 @@
       ],
       [
        {
-        "dose": "3 × (30 s / 30 s Pause)",
+        "dose": "4 × (15 s / 30 s Pause)",
         "timer": {
-         "phases": 6,
+         "phases": 8,
          "seconds": 180,
          "choices": [],
          "perSet": 0
@@ -1873,6 +1877,15 @@
        }
       ],
       [
+       {
+        "dose": "4 × (10 s / 20 s locker)",
+        "timer": {
+         "phases": 8,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
+        }
+       },
        {
         "dose": "6 Wdh.",
         "timer": null
@@ -1887,19 +1900,10 @@
         }
        },
        {
-        "dose": "4 × (10 s / 20 s locker)",
+        "dose": "30 s (ca. 10 m hin und zurück), 30 s Pause",
         "timer": {
-         "phases": 8,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
-        "timer": {
-         "phases": 4,
-         "seconds": 120,
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -1920,16 +1924,38 @@
        {
         "dose": null,
         "timer": {
-         "phases": 3,
-         "seconds": 65,
+         "phases": 5,
+         "seconds": 70,
          "choices": [
-          30
+          20
          ],
-         "perSet": 30
+         "perSet": 20
         }
        }
       ],
       [
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
        {
         "dose": "je Seite 30 s",
         "timer": {
@@ -1939,29 +1965,6 @@
           30
          ],
          "perSet": 30
-        }
-       },
-       {
-        "dose": "60–90 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        }
       ]
@@ -3782,7 +3785,7 @@
            "round",
            "jabb",
            "jab",
-           "hook",
+           "cross",
            "step"
           ],
           "w": 180,
@@ -4223,7 +4226,7 @@
            "cross",
            "jab",
            "jab",
-           "hook"
+           "round"
           ]
          }
         ],
@@ -4931,20 +4934,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, High Kick Kopf, Jab, Haken – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, High kick head, Jab, Hook – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, Cross, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross, Hook – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, High Kick Kopf, Jab, Haken verbunden, kontrolliert.",
-            "en": "Jab, High kick head, Jab, Hook linked, with control."
+            "de": "Jab, Jab, Cross, Haken verbunden, kontrolliert.",
+            "en": "Jab, Jab, Cross, Hook linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, High Kick Kopf, Jab, Haken, danach heraus aus der Distanz.",
-            "en": "Jab, High kick head, Jab, Hook, then out of range."
+            "de": "Jab, Jab, Cross, Haken, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross, Hook, then out of range."
            }
           ]
          }
@@ -4964,10 +4967,10 @@
           "k": "partner",
           "combo": [
            "jab",
-           "roundh",
            "jab",
+           "cross",
            "hook",
-           "round"
+           "cross"
           ],
           "pb": {
            "b": 1,
@@ -5000,10 +5003,10 @@
           "k": "partner",
           "combo": [
            "jab",
-           "roundh",
            "jab",
+           "cross",
            "hook",
-           "round",
+           "cross",
            "hookb",
            "roundh",
            "hook"
@@ -5030,9 +5033,9 @@
           },
           "react": {
            "mid": {
-            "at": 4,
-            "a": "cross",
-            "d": "cover"
+            "at": 1,
+            "a": "jab",
+            "d": "step"
            }
           },
           "dist": {
@@ -5045,10 +5048,10 @@
           "k": "bag",
           "combo": [
            "jab",
-           "cross",
-           "round",
-           "cross",
-           "hook"
+           "jab",
+           "front",
+           "jabb",
+           "roundh"
           ],
           "w": 180,
           "fin": 1
@@ -5058,9 +5061,10 @@
           "k": "bag",
           "combo": [
            "jab",
+           "cross",
            "round",
-           "hook",
-           "roundh",
+           "crossb",
+           "jab",
            "hook"
           ],
           "w": 180,
@@ -5076,7 +5080,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 89
+          "id": 90
          }
         ],
         "fitnessLevel": 0
@@ -5087,6 +5091,10 @@
         "items": [
          {
           "kind": "ex",
+          "id": 83
+         },
+         {
+          "kind": "ex",
           "id": 8
          },
          {
@@ -5095,11 +5103,7 @@
          },
          {
           "kind": "ex",
-          "id": 83
-         },
-         {
-          "kind": "ex",
-          "id": 7
+          "id": 19
          }
         ],
         "sets": "2×",
@@ -5115,7 +5119,7 @@
          },
          {
           "kind": "hard",
-          "id": "arms"
+          "id": "abs"
          }
         ],
         "fitnessLevel": 0
@@ -5126,15 +5130,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
           "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 76
          }
         ],
         "fitnessLevel": 0
@@ -5260,9 +5264,9 @@
       ],
       [
        {
-        "dose": "3 × (30 s / 30 s Pause)",
+        "dose": "4 × (15 s / 30 s Pause)",
         "timer": {
-         "phases": 6,
+         "phases": 8,
          "seconds": 180,
          "choices": [],
          "perSet": 0
@@ -5270,6 +5274,15 @@
        }
       ],
       [
+       {
+        "dose": "4 × (10 s / 20 s locker)",
+        "timer": {
+         "phases": 8,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
+        }
+       },
        {
         "dose": "6 Wdh.",
         "timer": null
@@ -5284,19 +5297,10 @@
         }
        },
        {
-        "dose": "4 × (10 s / 20 s locker)",
+        "dose": "30 s (ca. 10 m hin und zurück), 30 s Pause",
         "timer": {
-         "phases": 8,
-         "seconds": 120,
-         "choices": [],
-         "perSet": 0
-        }
-       },
-       {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
-        "timer": {
-         "phases": 4,
-         "seconds": 120,
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -5317,16 +5321,38 @@
        {
         "dose": null,
         "timer": {
-         "phases": 3,
-         "seconds": 65,
+         "phases": 5,
+         "seconds": 70,
          "choices": [
-          30
+          20
          ],
-         "perSet": 30
+         "perSet": 20
         }
        }
       ],
       [
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
        {
         "dose": "je Seite 30 s",
         "timer": {
@@ -5336,29 +5362,6 @@
           30
          ],
          "perSet": 30
-        }
-       },
-       {
-        "dose": "60–90 s halten",
-        "timer": {
-         "phases": 1,
-         "seconds": 60,
-         "choices": [
-          60,
-          90
-         ],
-         "perSet": 60
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        }
       ]
@@ -6867,20 +6870,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Roundhouse Körper, Jab, High Kick Kopf, Jab – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Roundhouse body, Jab, High kick head, Jab – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab verbunden, kontrolliert.",
-            "en": "Roundhouse body, Jab, High kick head, Jab linked, with control."
+            "de": "Jab, Jab, Cross, Roundhouse Körper verbunden, kontrolliert.",
+            "en": "Jab, Jab, Cross, Roundhouse body linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab, danach heraus aus der Distanz.",
-            "en": "Roundhouse body, Jab, High kick head, Jab, then out of range."
+            "de": "Jab, Jab, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross, Roundhouse body, then out of range."
            }
           ]
          }
@@ -6899,11 +6902,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook"
+           "cross"
           ],
           "pb": {
            "b": 1,
@@ -6926,8 +6927,8 @@
            ]
           },
           "dist": {
-           "i": "jab",
-           "o": "pivot"
+           "i": "backIn",
+           "o": null
           },
           "ease": 1
          },
@@ -6935,12 +6936,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook",
            "cross",
+           "round",
+           "roundh",
+           "upper",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -6966,23 +6968,22 @@
           "react": {
            "mid": {
             "at": 1,
-            "a": "hookb",
-            "d": "block"
+            "a": "upper",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "slide",
-           "o": "pivot"
+           "i": "angle",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "front",
-           "round",
-           "upper",
-           "cross",
+           "jab",
+           "hook",
+           "roundh",
            "sweep"
           ],
           "pb": {
@@ -7006,17 +7007,19 @@
            ]
           },
           "dist": {
-           "i": "pivotIn",
-           "o": null
+           "i": "slide",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
+           "round",
+           "side",
+           "cross",
            "hook",
-           "roundh",
+           "cross",
            "sweep"
           ],
           "w": 180,
@@ -7026,9 +7029,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "round",
+           "jab",
            "upper",
-           "crossb",
+           "hookb",
+           "cross",
            "sweep"
           ],
           "w": 180,
@@ -7079,15 +7083,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
+          "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 73
          },
          {
           "kind": "ex",
           "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -7272,14 +7276,26 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "2 Min.",
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 1,
+         "seconds": 120,
          "choices": [
-          45
+          120
          ],
-         "perSet": 45
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        },
        {
@@ -7291,17 +7307,6 @@
           30
          ],
          "perSet": 30
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        }
       ]
@@ -7416,7 +7421,7 @@
            "front",
            "shook",
            "jabb",
-           "crossb"
+           "hook"
           ]
          },
          {
@@ -7461,7 +7466,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -10340,20 +10345,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Roundhouse Körper, Jab, High Kick Kopf, Jab – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Roundhouse body, Jab, High kick head, Jab – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab verbunden, kontrolliert.",
-            "en": "Roundhouse body, Jab, High kick head, Jab linked, with control."
+            "de": "Jab, Jab, Cross, Roundhouse Körper verbunden, kontrolliert.",
+            "en": "Jab, Jab, Cross, Roundhouse body linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab, danach heraus aus der Distanz.",
-            "en": "Roundhouse body, Jab, High kick head, Jab, then out of range."
+            "de": "Jab, Jab, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross, Roundhouse body, then out of range."
            }
           ]
          }
@@ -10372,11 +10377,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook"
+           "cross"
           ],
           "pb": {
            "b": 1,
@@ -10399,8 +10402,8 @@
            ]
           },
           "dist": {
-           "i": "jab",
-           "o": "pivot"
+           "i": "backIn",
+           "o": null
           },
           "ease": 1
          },
@@ -10408,12 +10411,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook",
            "cross",
+           "round",
+           "roundh",
+           "upper",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -10439,23 +10443,22 @@
           "react": {
            "mid": {
             "at": 1,
-            "a": "hookb",
-            "d": "block"
+            "a": "upper",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "slide",
-           "o": "pivot"
+           "i": "angle",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "front",
-           "round",
-           "upper",
-           "cross",
+           "jab",
+           "hook",
+           "roundh",
            "sweep"
           ],
           "pb": {
@@ -10479,17 +10482,19 @@
            ]
           },
           "dist": {
-           "i": "pivotIn",
-           "o": null
+           "i": "slide",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
+           "round",
+           "side",
+           "cross",
            "hook",
-           "roundh",
+           "cross",
            "sweep"
           ],
           "w": 180,
@@ -10499,9 +10504,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "round",
+           "jab",
            "upper",
-           "crossb",
+           "hookb",
+           "cross",
            "sweep"
           ],
           "w": 180,
@@ -10552,15 +10558,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
+          "id": 76
+         },
+         {
+          "kind": "ex",
+          "id": 73
          },
          {
           "kind": "ex",
           "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -10740,14 +10746,26 @@
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "2 Min.",
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 1,
+         "seconds": 120,
          "choices": [
-          45
+          120
          ],
-         "perSet": 45
+         "perSet": 120
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        },
        {
@@ -10759,17 +10777,6 @@
           30
          ],
          "perSet": 30
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
         }
        }
       ]
@@ -10883,7 +10890,7 @@
            "front",
            "shook",
            "jabb",
-           "crossb"
+           "hook"
           ]
          },
          {
@@ -10918,7 +10925,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -13535,20 +13542,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Low kick thigh, Jab, Roundhouse body, Hook – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, High Kick Kopf, Haken, Low Kick Oberschenkel – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, High kick head, Hook, Low kick thigh – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken verbunden, kontrolliert.",
-            "en": "Low kick thigh, Jab, Roundhouse body, Hook linked, with control."
+            "de": "Jab, High Kick Kopf, Haken, Low Kick Oberschenkel verbunden, kontrolliert.",
+            "en": "Jab, High kick head, Hook, Low kick thigh linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken, danach heraus aus der Distanz.",
-            "en": "Low kick thigh, Jab, Roundhouse body, Hook, then out of range."
+            "de": "Jab, High Kick Kopf, Haken, Low Kick Oberschenkel, danach heraus aus der Distanz.",
+            "en": "Jab, High kick head, Hook, Low kick thigh, then out of range."
            }
           ]
          }
@@ -13567,11 +13574,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "lowk",
            "jab",
-           "round",
-           "hook",
-           "roundh"
+           "roundh",
+           "hook"
           ],
           "pb": {
            "b": 1,
@@ -13594,7 +13599,7 @@
            ]
           },
           "dist": {
-           "i": "backIn",
+           "i": "pivotIn",
            "o": null
           },
           "ease": 1
@@ -13603,13 +13608,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
+           "jab",
+           "roundh",
+           "hook",
            "lowk",
            "jab",
-           "round",
            "hook",
-           "roundh",
-           "upper",
-           "cross",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -13635,21 +13640,23 @@
           "react": {
            "mid": {
             "at": 2,
-            "a": "round",
-            "d": "step"
+            "a": "hookb",
+            "d": "block"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "pivot"
+           "i": "pivotIn",
+           "o": null
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
+           "jabb",
            "cross",
+           "round",
+           "crossb",
            "sweep"
           ],
           "pb": {
@@ -13673,16 +13680,17 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "jab",
+           "o": "back"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
+           "jabb",
+           "upper",
            "jab",
-           "hook",
            "roundh",
            "sweep"
           ],
@@ -13693,11 +13701,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
            "round",
-           "side",
-           "cross",
-           "jabb",
+           "round",
+           "crossb",
+           "hook",
            "cross",
            "sweep"
           ],
@@ -13738,7 +13745,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 1
@@ -13749,15 +13756,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
           "id": 72
          },
          {
           "kind": "ex",
           "id": 76
-         },
-         {
-          "kind": "ex",
-          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -13912,16 +13919,27 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
        {
         "dose": "je Seite 45 s",
         "timer": {
@@ -13942,17 +13960,6 @@
           120
          ],
          "perSet": 120
-        }
-       },
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
         }
        }
       ]
@@ -14102,10 +14109,9 @@
           "k": "bag",
           "combo": [
            "front",
-           "lowk",
-           "hookb",
-           "roundh",
-           "lowk"
+           "cross",
+           "hook",
+           "round"
           ]
          },
          {
@@ -14116,7 +14122,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -14137,7 +14143,7 @@
            "front",
            "lowk",
            "jabb",
-           "round",
+           "roundh",
            "hook"
           ]
          },
@@ -14197,15 +14203,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
           "id": 75
          },
          {
           "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 76
          }
         ],
         "fitnessLevel": 1
@@ -14387,6 +14393,17 @@
       ],
       [
        {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
         "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
@@ -14398,26 +14415,14 @@
         }
        },
        {
-        "dose": "60–90 s halten",
+        "dose": "2 Min.",
         "timer": {
          "phases": 1,
-         "seconds": 60,
+         "seconds": 120,
          "choices": [
-          60,
-          90
+          120
          ],
-         "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 120
         }
        }
       ]
@@ -14874,20 +14879,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross, High Kick Kopf, Cross – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross, High kick head, Cross – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, High Kick Kopf, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, High kick head, Hook – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross verbunden, kontrolliert.",
-            "en": "Jab, Cross, High kick head, Cross linked, with control."
+            "de": "Jab, Jab, High Kick Kopf, Haken verbunden, kontrolliert.",
+            "en": "Jab, Jab, High kick head, Hook linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross, danach heraus aus der Distanz.",
-            "en": "Jab, Cross, High kick head, Cross, then out of range."
+            "de": "Jab, Jab, High Kick Kopf, Haken, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, High kick head, Hook, then out of range."
            }
           ]
          }
@@ -14907,9 +14912,8 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross"
+           "jab",
+           "roundh"
           ],
           "pb": {
            "b": 1,
@@ -14932,8 +14936,8 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "slide",
+           "o": "pivot"
           },
           "ease": 1
          },
@@ -14942,13 +14946,11 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross",
-           "hook",
-           "lowk",
            "jab",
-           "round"
+           "roundh",
+           "hook",
+           "round",
+           "lowk"
           ],
           "pb": {
            "b": 2,
@@ -14972,14 +14974,14 @@
           },
           "react": {
            "mid": {
-            "at": 3,
-            "a": "hook",
-            "d": "cover"
+            "at": 1,
+            "a": "round",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "back"
+           "i": "slide",
+           "o": "side"
           }
          },
          {
@@ -14988,8 +14990,8 @@
           "combo": [
            "jab",
            "jab",
-           "lowk",
-           "hookb"
+           "round",
+           "front"
           ],
           "w": 180,
           "fin": 1
@@ -14999,11 +15001,9 @@
           "k": "bag",
           "combo": [
            "jab",
-           "hook",
            "lowk",
-           "front",
-           "cross",
-           "hook"
+           "jabb",
+           "cross"
           ],
           "w": 180,
           "fin": 1
@@ -15017,11 +15017,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 8
-         },
-         {
-          "kind": "ex",
-          "id": 21
+          "id": 13
          },
          {
           "kind": "ex",
@@ -15029,7 +15025,11 @@
          },
          {
           "kind": "ex",
-          "id": 7
+          "id": 83
+         },
+         {
+          "kind": "ex",
+          "id": 19
          }
         ],
         "sets": "3×",
@@ -15045,7 +15045,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 1
@@ -15056,15 +15056,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -15180,18 +15180,12 @@
       ],
       [
        {
-        "dose": "10 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "3 Min.",
+        "dose": "4 × (15 s / 15 s Pause)",
         "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
+         "phases": 8,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
         }
        },
        {
@@ -15199,10 +15193,19 @@
         "timer": null
        },
        {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "dose": "4 × (10 s / 20 s locker)",
         "timer": {
-         "phases": 4,
+         "phases": 8,
          "seconds": 120,
+         "choices": [],
+         "perSet": 0
+        }
+       },
+       {
+        "dose": "40 s (ca. 10 m hin und zurück), 20 s Pause",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -15223,27 +15226,16 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -15256,14 +15248,26 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        }
       ]
@@ -16792,20 +16796,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Low kick thigh, Jab, Roundhouse body, Hook – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, High Kick Kopf, Haken, Low Kick Oberschenkel – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, High kick head, Hook, Low kick thigh – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken verbunden, kontrolliert.",
-            "en": "Low kick thigh, Jab, Roundhouse body, Hook linked, with control."
+            "de": "Jab, High Kick Kopf, Haken, Low Kick Oberschenkel verbunden, kontrolliert.",
+            "en": "Jab, High kick head, Hook, Low kick thigh linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken, danach heraus aus der Distanz.",
-            "en": "Low kick thigh, Jab, Roundhouse body, Hook, then out of range."
+            "de": "Jab, High Kick Kopf, Haken, Low Kick Oberschenkel, danach heraus aus der Distanz.",
+            "en": "Jab, High kick head, Hook, Low kick thigh, then out of range."
            }
           ]
          }
@@ -16824,11 +16828,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "lowk",
            "jab",
-           "round",
-           "hook",
-           "roundh"
+           "roundh",
+           "hook"
           ],
           "pb": {
            "b": 1,
@@ -16851,7 +16853,7 @@
            ]
           },
           "dist": {
-           "i": "backIn",
+           "i": "pivotIn",
            "o": null
           },
           "ease": 1
@@ -16860,13 +16862,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
+           "jab",
+           "roundh",
+           "hook",
            "lowk",
            "jab",
-           "round",
            "hook",
-           "roundh",
-           "upper",
-           "cross",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -16892,21 +16894,23 @@
           "react": {
            "mid": {
             "at": 2,
-            "a": "round",
-            "d": "step"
+            "a": "hookb",
+            "d": "block"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "pivot"
+           "i": "pivotIn",
+           "o": null
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
+           "jabb",
            "cross",
+           "round",
+           "crossb",
            "sweep"
           ],
           "pb": {
@@ -16930,16 +16934,17 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "jab",
+           "o": "back"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
+           "jabb",
+           "upper",
            "jab",
-           "hook",
            "roundh",
            "sweep"
           ],
@@ -16950,11 +16955,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
            "round",
-           "side",
-           "cross",
-           "jabb",
+           "round",
+           "crossb",
+           "hook",
            "cross",
            "sweep"
           ],
@@ -16995,7 +16999,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 1
@@ -17006,15 +17010,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
           "id": 72
          },
          {
           "kind": "ex",
           "id": 76
-         },
-         {
-          "kind": "ex",
-          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -17170,16 +17174,27 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
        {
         "dose": "je Seite 45 s",
         "timer": {
@@ -17200,17 +17215,6 @@
           120
          ],
          "perSet": 120
-        }
-       },
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
         }
        }
       ]
@@ -17264,20 +17268,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Frontkick Körper, Low Kick Oberschenkel, Haken, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Front kick body, Low kick thigh, Hook, High kick head – back into your stance after each."
+            "de": "Die Techniken einzeln: Frontkick Körper, Low Kick Oberschenkel, Jab Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Front kick body, Low kick thigh, Jab body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Frontkick Körper, Low Kick Oberschenkel, Haken, High Kick Kopf verbunden, kontrolliert.",
-            "en": "Front kick body, Low kick thigh, Hook, High kick head linked, with control."
+            "de": "Frontkick Körper, Low Kick Oberschenkel, Jab Körper, High Kick Kopf verbunden, kontrolliert.",
+            "en": "Front kick body, Low kick thigh, Jab body, High kick head linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Frontkick Körper, Low Kick Oberschenkel, Haken, High Kick Kopf, danach heraus aus der Distanz.",
-            "en": "Front kick body, Low kick thigh, Hook, High kick head, then out of range."
+            "de": "Frontkick Körper, Low Kick Oberschenkel, Jab Körper, High Kick Kopf, danach heraus aus der Distanz.",
+            "en": "Front kick body, Low kick thigh, Jab body, High kick head, then out of range."
            }
           ]
          }
@@ -17309,11 +17313,9 @@
           "combo": [
            "front",
            "lowk",
-           "hook",
+           "jabb",
            "roundh",
-           "round",
-           "upper",
-           "round"
+           "hook"
           ],
           "dist": {
            "i": "sideIn",
@@ -17363,7 +17365,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -17429,7 +17431,7 @@
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -17623,14 +17625,14 @@
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          120
+          45
          ],
-         "perSet": 120
+         "perSet": 45
         }
        }
       ]
@@ -18063,20 +18065,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross, High Kick Kopf, Cross – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross, High kick head, Cross – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, High Kick Kopf, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, High kick head, Hook – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross verbunden, kontrolliert.",
-            "en": "Jab, Cross, High kick head, Cross linked, with control."
+            "de": "Jab, Jab, High Kick Kopf, Haken verbunden, kontrolliert.",
+            "en": "Jab, Jab, High kick head, Hook linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross, danach heraus aus der Distanz.",
-            "en": "Jab, Cross, High kick head, Cross, then out of range."
+            "de": "Jab, Jab, High Kick Kopf, Haken, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, High kick head, Hook, then out of range."
            }
           ]
          }
@@ -18096,9 +18098,8 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross"
+           "jab",
+           "roundh"
           ],
           "pb": {
            "b": 1,
@@ -18121,8 +18122,8 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "slide",
+           "o": "pivot"
           },
           "ease": 1
          },
@@ -18131,13 +18132,11 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross",
-           "hook",
-           "lowk",
            "jab",
-           "round"
+           "roundh",
+           "hook",
+           "round",
+           "lowk"
           ],
           "pb": {
            "b": 2,
@@ -18161,14 +18160,14 @@
           },
           "react": {
            "mid": {
-            "at": 3,
-            "a": "hook",
-            "d": "cover"
+            "at": 1,
+            "a": "round",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "back"
+           "i": "slide",
+           "o": "side"
           }
          },
          {
@@ -18177,8 +18176,8 @@
           "combo": [
            "jab",
            "jab",
-           "lowk",
-           "hookb"
+           "round",
+           "front"
           ],
           "w": 180,
           "fin": 1
@@ -18188,11 +18187,9 @@
           "k": "bag",
           "combo": [
            "jab",
-           "hook",
            "lowk",
-           "front",
-           "cross",
-           "hook"
+           "jabb",
+           "cross"
           ],
           "w": 180,
           "fin": 1
@@ -18206,11 +18203,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 8
-         },
-         {
-          "kind": "ex",
-          "id": 21
+          "id": 13
          },
          {
           "kind": "ex",
@@ -18218,7 +18211,11 @@
          },
          {
           "kind": "ex",
-          "id": 7
+          "id": 83
+         },
+         {
+          "kind": "ex",
+          "id": 19
          }
         ],
         "sets": "2×",
@@ -18234,7 +18231,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 1
@@ -18245,15 +18242,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -18370,18 +18367,12 @@
       ],
       [
        {
-        "dose": "10 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "3 Min.",
+        "dose": "4 × (15 s / 15 s Pause)",
         "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
+         "phases": 8,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
         }
        },
        {
@@ -18389,10 +18380,19 @@
         "timer": null
        },
        {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "dose": "4 × (10 s / 20 s locker)",
         "timer": {
-         "phases": 4,
+         "phases": 8,
          "seconds": 120,
+         "choices": [],
+         "perSet": 0
+        }
+       },
+       {
+        "dose": "40 s (ca. 10 m hin und zurück), 20 s Pause",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -18413,27 +18413,16 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -18446,14 +18435,26 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        }
       ]
@@ -19945,20 +19946,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf, Cross, Fußfeger – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Roundhouse body, High kick head, Cross, Foot sweep – back into your stance after each."
+            "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf, Cross Körper, Fußfeger – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Roundhouse body, High kick head, Cross body, Foot sweep – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Roundhouse Körper, High Kick Kopf, Cross, Fußfeger verbunden, kontrolliert.",
-            "en": "Roundhouse body, High kick head, Cross, Foot sweep linked, with control."
+            "de": "Roundhouse Körper, High Kick Kopf, Cross Körper, Fußfeger verbunden, kontrolliert.",
+            "en": "Roundhouse body, High kick head, Cross body, Foot sweep linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Roundhouse Körper, High Kick Kopf, Cross, Fußfeger, danach heraus aus der Distanz.",
-            "en": "Roundhouse body, High kick head, Cross, Foot sweep, then out of range."
+            "de": "Roundhouse Körper, High Kick Kopf, Cross Körper, Fußfeger, danach heraus aus der Distanz.",
+            "en": "Roundhouse body, High kick head, Cross body, Foot sweep, then out of range."
            }
           ]
          }
@@ -19977,9 +19978,11 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jabb",
-           "roundh",
-           "side"
+           "round",
+           "side",
+           "cross",
+           "hookb",
+           "hook"
           ],
           "pb": {
            "b": 1,
@@ -20003,7 +20006,7 @@
           },
           "dist": {
            "i": "angle",
-           "o": "back"
+           "o": "side"
           },
           "ease": 1,
           "pace": true
@@ -20012,12 +20015,12 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jabb",
-           "roundh",
+           "round",
            "side",
            "cross",
+           "hookb",
            "hook",
-           "cross",
+           "roundh",
            "sweep"
           ],
           "pb": {
@@ -20042,13 +20045,13 @@
           },
           "react": {
            "mid": {
-            "at": 4,
-            "a": "round",
-            "d": "block"
+            "at": 1,
+            "a": "crossb",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "slide",
+           "i": "angle",
            "o": "pivot"
           },
           "six": 1,
@@ -20060,7 +20063,7 @@
           "combo": [
            "round",
            "roundh",
-           "cross",
+           "crossb",
            "sweep"
           ],
           "pb": {
@@ -20085,7 +20088,7 @@
           },
           "dist": {
            "i": "slide",
-           "o": "pivot"
+           "o": "side"
           },
           "pace": true
          },
@@ -20093,11 +20096,11 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "hook",
-           "round",
            "jab",
            "hook",
-           "roundh",
+           "upper",
+           "hook",
+           "cross",
            "sweep"
           ],
           "w": 120,
@@ -20108,11 +20111,11 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
+           "front",
+           "roundh",
            "hook",
-           "round",
-           "jab",
-           "cross",
+           "hookb",
+           "roundh",
            "sweep"
           ],
           "w": 120,
@@ -20166,15 +20169,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
-         },
-         {
-          "kind": "ex",
           "id": 74
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 75
          }
         ],
         "fitnessLevel": 2
@@ -20372,14 +20375,14 @@
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 30 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          120
+          30
          ],
-         "perSet": 120
+         "perSet": 30
         }
        }
       ]
@@ -20567,10 +20570,11 @@
           "k": "evade",
           "combo": [
            "jab",
-           "cross"
+           "cross",
+           "round"
           ],
           "evade": {
-           "d": "cover"
+           "d": "step"
           },
           "pace": false
          },
@@ -21501,8 +21505,8 @@
           "react": {
            "mid": {
             "at": 1,
-            "a": "side",
-            "d": "deflect"
+            "a": "sweep",
+            "d": "lift"
            }
           },
           "dist": {
@@ -23434,20 +23438,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf, Cross, Fußfeger – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Roundhouse body, High kick head, Cross, Foot sweep – back into your stance after each."
+            "de": "Die Techniken einzeln: Roundhouse Körper, High Kick Kopf, Cross Körper, Fußfeger – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Roundhouse body, High kick head, Cross body, Foot sweep – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Roundhouse Körper, High Kick Kopf, Cross, Fußfeger verbunden, kontrolliert.",
-            "en": "Roundhouse body, High kick head, Cross, Foot sweep linked, with control."
+            "de": "Roundhouse Körper, High Kick Kopf, Cross Körper, Fußfeger verbunden, kontrolliert.",
+            "en": "Roundhouse body, High kick head, Cross body, Foot sweep linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Roundhouse Körper, High Kick Kopf, Cross, Fußfeger, danach heraus aus der Distanz.",
-            "en": "Roundhouse body, High kick head, Cross, Foot sweep, then out of range."
+            "de": "Roundhouse Körper, High Kick Kopf, Cross Körper, Fußfeger, danach heraus aus der Distanz.",
+            "en": "Roundhouse body, High kick head, Cross body, Foot sweep, then out of range."
            }
           ]
          }
@@ -23466,9 +23470,11 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jabb",
-           "roundh",
-           "side"
+           "round",
+           "side",
+           "cross",
+           "hookb",
+           "hook"
           ],
           "pb": {
            "b": 1,
@@ -23492,7 +23498,7 @@
           },
           "dist": {
            "i": "angle",
-           "o": "back"
+           "o": "side"
           },
           "ease": 1,
           "pace": true
@@ -23501,12 +23507,12 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jabb",
-           "roundh",
+           "round",
            "side",
            "cross",
+           "hookb",
            "hook",
-           "cross",
+           "roundh",
            "sweep"
           ],
           "pb": {
@@ -23531,13 +23537,13 @@
           },
           "react": {
            "mid": {
-            "at": 4,
-            "a": "round",
-            "d": "block"
+            "at": 1,
+            "a": "crossb",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "slide",
+           "i": "angle",
            "o": "pivot"
           },
           "six": 1,
@@ -23549,7 +23555,7 @@
           "combo": [
            "round",
            "roundh",
-           "cross",
+           "crossb",
            "sweep"
           ],
           "pb": {
@@ -23574,7 +23580,7 @@
           },
           "dist": {
            "i": "slide",
-           "o": "pivot"
+           "o": "side"
           },
           "pace": true
          },
@@ -23582,11 +23588,11 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "hook",
-           "round",
            "jab",
            "hook",
-           "roundh",
+           "upper",
+           "hook",
+           "cross",
            "sweep"
           ],
           "w": 120,
@@ -23597,11 +23603,11 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
+           "front",
+           "roundh",
            "hook",
-           "round",
-           "jab",
-           "cross",
+           "hookb",
+           "roundh",
            "sweep"
           ],
           "w": 120,
@@ -23655,15 +23661,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
-         },
-         {
-          "kind": "ex",
           "id": 74
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 75
          }
         ],
         "fitnessLevel": 2
@@ -23862,14 +23868,14 @@
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 30 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          120
+          30
          ],
-         "perSet": 120
+         "perSet": 30
         }
        }
       ]
@@ -24038,7 +24044,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           },
           "pace": false
          },
@@ -24883,8 +24889,8 @@
           "react": {
            "mid": {
             "at": 1,
-            "a": "side",
-            "d": "deflect"
+            "a": "sweep",
+            "d": "lift"
            }
           },
           "dist": {
@@ -26749,8 +26755,8 @@
            ]
           },
           "dist": {
-           "i": "angle",
-           "o": "pivot"
+           "i": "backIn",
+           "o": null
           },
           "ease": 1
          },
@@ -26788,9 +26794,9 @@
           },
           "react": {
            "mid": {
-            "at": 4,
-            "a": "roundh",
-            "d": "cover"
+            "at": 1,
+            "a": "crossb",
+            "d": "step"
            }
           },
           "dist": {
@@ -26803,7 +26809,7 @@
           "k": "partner",
           "combo": [
            "jab",
-           "jab",
+           "round",
            "hook"
           ],
           "pb": {
@@ -26827,20 +26833,19 @@
            ]
           },
           "dist": {
-           "i": "slide",
-           "o": "back"
+           "i": "jab",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
-           "jab",
            "cross",
            "hookb",
+           "cross",
            "hook",
-           "crossb",
+           "upper",
            "hook"
           ],
           "w": 180,
@@ -26851,10 +26856,9 @@
           "k": "bag",
           "combo": [
            "jab",
-           "hook",
-           "cross",
            "jab",
-           "cross"
+           "cross",
+           "hook"
           ],
           "w": 180,
           "fin": 1
@@ -26902,11 +26906,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 76
+          "id": 75
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 76
          },
          {
           "kind": "ex",
@@ -27093,17 +27097,6 @@
       ],
       [
        {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
         "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
@@ -27112,6 +27105,17 @@
           30
          ],
          "perSet": 30
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        },
        {
@@ -27281,12 +27285,12 @@
           "kind": "round",
           "k": "evade",
           "combo": [
-           "hookb",
+           "cross",
            "hook",
-           "round"
+           "roundh"
           ],
           "evade": {
-           "d": "slip"
+           "d": "duck"
           }
          },
          {
@@ -27295,9 +27299,9 @@
           "combo": [
            "jabb",
            "jab",
-           "jab",
            "cross",
-           "hook"
+           "hook",
+           "cross"
           ]
          },
          {
@@ -28050,20 +28054,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Haken, Cross, Jab – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Hook, Cross, Jab – back into your stance after each."
+            "de": "Die Techniken einzeln: Sidekick Körper, Cross, Roundhouse Körper, Cross – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Side kick body, Cross, Roundhouse body, Cross – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, Haken, Cross, Jab verbunden, kontrolliert.",
-            "en": "Jab, Hook, Cross, Jab linked, with control."
+            "de": "Sidekick Körper, Cross, Roundhouse Körper, Cross verbunden, kontrolliert.",
+            "en": "Side kick body, Cross, Roundhouse body, Cross linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Haken, Cross, Jab, danach heraus aus der Distanz.",
-            "en": "Jab, Hook, Cross, Jab, then out of range."
+            "de": "Sidekick Körper, Cross, Roundhouse Körper, Cross, danach heraus aus der Distanz.",
+            "en": "Side kick body, Cross, Roundhouse body, Cross, then out of range."
            }
           ]
          }
@@ -28082,10 +28086,8 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
-           "hook",
+           "side",
            "cross",
-           "jab",
            "round"
           ],
           "pb": {
@@ -28109,8 +28111,8 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "jab",
+           "o": "back"
           },
           "ease": 1
          },
@@ -28118,13 +28120,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
-           "hook",
+           "side",
+           "cross",
+           "round",
            "cross",
            "jab",
            "round",
-           "front",
-           "cross",
+           "hook",
            "roundh"
           ],
           "pb": {
@@ -28150,8 +28152,8 @@
           "react": {
            "mid": {
             "at": 6,
-            "a": "roundh",
-            "d": "cover"
+            "a": "hook",
+            "d": "duck"
            }
           },
           "dist": {
@@ -30298,8 +30300,8 @@
            ]
           },
           "dist": {
-           "i": "angle",
-           "o": "pivot"
+           "i": "backIn",
+           "o": null
           },
           "ease": 1
          },
@@ -30337,9 +30339,9 @@
           },
           "react": {
            "mid": {
-            "at": 4,
-            "a": "roundh",
-            "d": "cover"
+            "at": 1,
+            "a": "crossb",
+            "d": "step"
            }
           },
           "dist": {
@@ -30352,7 +30354,7 @@
           "k": "partner",
           "combo": [
            "jab",
-           "jab",
+           "round",
            "hook"
           ],
           "pb": {
@@ -30376,20 +30378,19 @@
            ]
           },
           "dist": {
-           "i": "slide",
-           "o": "back"
+           "i": "jab",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
-           "jab",
            "cross",
            "hookb",
+           "cross",
            "hook",
-           "crossb",
+           "upper",
            "hook"
           ],
           "w": 180,
@@ -30400,10 +30401,9 @@
           "k": "bag",
           "combo": [
            "jab",
-           "hook",
-           "cross",
            "jab",
-           "cross"
+           "cross",
+           "hook"
           ],
           "w": 180,
           "fin": 1
@@ -30451,11 +30451,11 @@
         "items": [
          {
           "kind": "ex",
-          "id": 76
+          "id": 75
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 76
          },
          {
           "kind": "ex",
@@ -30637,17 +30637,6 @@
       ],
       [
        {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
-       {
         "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
@@ -30656,6 +30645,17 @@
           30
          ],
          "perSet": 30
+        }
+       },
+       {
+        "dose": "2 Min.",
+        "timer": {
+         "phases": 1,
+         "seconds": 120,
+         "choices": [
+          120
+         ],
+         "perSet": 120
         }
        },
        {
@@ -31528,20 +31528,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Haken, Cross, Jab – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Hook, Cross, Jab – back into your stance after each."
+            "de": "Die Techniken einzeln: Sidekick Körper, Cross, Roundhouse Körper, Cross – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Side kick body, Cross, Roundhouse body, Cross – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, Haken, Cross, Jab verbunden, kontrolliert.",
-            "en": "Jab, Hook, Cross, Jab linked, with control."
+            "de": "Sidekick Körper, Cross, Roundhouse Körper, Cross verbunden, kontrolliert.",
+            "en": "Side kick body, Cross, Roundhouse body, Cross linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Haken, Cross, Jab, danach heraus aus der Distanz.",
-            "en": "Jab, Hook, Cross, Jab, then out of range."
+            "de": "Sidekick Körper, Cross, Roundhouse Körper, Cross, danach heraus aus der Distanz.",
+            "en": "Side kick body, Cross, Roundhouse body, Cross, then out of range."
            }
           ]
          }
@@ -31560,10 +31560,8 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
-           "hook",
+           "side",
            "cross",
-           "jab",
            "round"
           ],
           "pb": {
@@ -31587,8 +31585,8 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "jab",
+           "o": "back"
           },
           "ease": 1
          },
@@ -31596,13 +31594,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
-           "hook",
+           "side",
+           "cross",
+           "round",
            "cross",
            "jab",
            "round",
-           "front",
-           "cross",
+           "hook",
            "roundh"
           ],
           "pb": {
@@ -31628,8 +31626,8 @@
           "react": {
            "mid": {
             "at": 6,
-            "a": "roundh",
-            "d": "cover"
+            "a": "hook",
+            "d": "duck"
            }
           },
           "dist": {
@@ -33570,14 +33568,14 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Sidekick Körper, Cross, Fußfeger – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Side kick body, Cross, Foot sweep – back into your stance after each."
+            "de": "Die Techniken einzeln: Roundhouse Körper, Fußfeger – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Roundhouse body, Foot sweep – back into your stance after each."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Sidekick Körper, Cross, Fußfeger, danach heraus aus der Distanz.",
-            "en": "Side kick body, Cross, Foot sweep, then out of range."
+            "de": "Roundhouse Körper, Fußfeger, danach heraus aus der Distanz.",
+            "en": "Roundhouse body, Foot sweep, then out of range."
            }
           ]
          }
@@ -33596,8 +33594,8 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "hook",
-           "cross",
+           "jabb",
+           "front",
            "sweep"
           ],
           "pb": {
@@ -33626,8 +33624,7 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "side",
-           "cross",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -33648,15 +33645,14 @@
           },
           "dist": {
            "i": "jab",
-           "o": "back"
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
-           "round",
+           "cross",
            "sweep"
           ],
           "pb": {
@@ -33680,21 +33676,20 @@
            ]
           },
           "react": {
-           "post": {
+           "pre": {
             "a": "jab",
-            "d": "step"
+            "d": "parry"
            }
           },
           "dist": {
            "i": "jab",
-           "o": "side"
+           "o": "back"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
            "cross",
            "sweep"
           ],
@@ -33706,7 +33701,7 @@
           "k": "bag",
           "combo": [
            "jab",
-           "cross",
+           "front",
            "sweep"
           ],
           "w": 90,
@@ -33742,15 +33737,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
           "id": 72
          },
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 76
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -33901,25 +33896,26 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "60–90 s halten",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 60,
          "choices": [
-          120
+          60,
+          90
          ],
-         "perSet": 120
+         "perSet": 60
         }
        }
       ]
@@ -34051,7 +34047,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -34769,7 +34765,7 @@
           "react": {
            "pre": {
             "a": "cross",
-            "d": "cover"
+            "d": "parry"
            }
           },
           "dist": {
@@ -36384,14 +36380,14 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Sidekick Körper, Cross, Fußfeger – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Side kick body, Cross, Foot sweep – back into your stance after each."
+            "de": "Die Techniken einzeln: Roundhouse Körper, Fußfeger – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Roundhouse body, Foot sweep – back into your stance after each."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Sidekick Körper, Cross, Fußfeger, danach heraus aus der Distanz.",
-            "en": "Side kick body, Cross, Foot sweep, then out of range."
+            "de": "Roundhouse Körper, Fußfeger, danach heraus aus der Distanz.",
+            "en": "Roundhouse body, Foot sweep, then out of range."
            }
           ]
          }
@@ -36410,8 +36406,8 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "hook",
-           "cross",
+           "jabb",
+           "front",
            "sweep"
           ],
           "pb": {
@@ -36440,8 +36436,7 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "side",
-           "cross",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -36462,15 +36457,14 @@
           },
           "dist": {
            "i": "jab",
-           "o": "back"
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
-           "round",
+           "cross",
            "sweep"
           ],
           "pb": {
@@ -36494,21 +36488,20 @@
            ]
           },
           "react": {
-           "post": {
+           "pre": {
             "a": "jab",
-            "d": "step"
+            "d": "parry"
            }
           },
           "dist": {
            "i": "jab",
-           "o": "side"
+           "o": "back"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
            "cross",
            "sweep"
           ],
@@ -36520,7 +36513,7 @@
           "k": "bag",
           "combo": [
            "jab",
-           "cross",
+           "front",
            "sweep"
           ],
           "w": 90,
@@ -36556,15 +36549,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
           "id": 72
          },
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 76
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -36717,25 +36710,26 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "60–90 s halten",
         "timer": {
          "phases": 1,
-         "seconds": 120,
+         "seconds": 60,
          "choices": [
-          120
+          60,
+          90
          ],
-         "perSet": 120
+         "perSet": 60
         }
        }
       ]
@@ -37551,7 +37545,7 @@
           "react": {
            "pre": {
             "a": "cross",
-            "d": "cover"
+            "d": "parry"
            }
           },
           "dist": {
@@ -39141,20 +39135,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Low kick thigh, Jab, Roundhouse body, Hook – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, High Kick Kopf, Haken, Low Kick Oberschenkel – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, High kick head, Hook, Low kick thigh – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken verbunden, kontrolliert.",
-            "en": "Low kick thigh, Jab, Roundhouse body, Hook linked, with control."
+            "de": "Jab, High Kick Kopf, Haken, Low Kick Oberschenkel verbunden, kontrolliert.",
+            "en": "Jab, High kick head, Hook, Low kick thigh linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken, danach heraus aus der Distanz.",
-            "en": "Low kick thigh, Jab, Roundhouse body, Hook, then out of range."
+            "de": "Jab, High Kick Kopf, Haken, Low Kick Oberschenkel, danach heraus aus der Distanz.",
+            "en": "Jab, High kick head, Hook, Low kick thigh, then out of range."
            }
           ]
          }
@@ -39173,11 +39167,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "lowk",
            "jab",
-           "round",
-           "hook",
-           "roundh"
+           "roundh",
+           "hook"
           ],
           "pb": {
            "b": 1,
@@ -39200,7 +39192,7 @@
            ]
           },
           "dist": {
-           "i": "backIn",
+           "i": "pivotIn",
            "o": null
           },
           "ease": 1
@@ -39209,13 +39201,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
+           "jab",
+           "roundh",
+           "hook",
            "lowk",
            "jab",
-           "round",
            "hook",
-           "roundh",
-           "upper",
-           "cross",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -39241,21 +39233,23 @@
           "react": {
            "mid": {
             "at": 2,
-            "a": "round",
-            "d": "step"
+            "a": "hookb",
+            "d": "block"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "pivot"
+           "i": "pivotIn",
+           "o": null
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
+           "jabb",
            "cross",
+           "round",
+           "crossb",
            "sweep"
           ],
           "pb": {
@@ -39279,16 +39273,17 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "jab",
+           "o": "back"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
+           "jabb",
+           "upper",
            "jab",
-           "hook",
            "roundh",
            "sweep"
           ],
@@ -39299,11 +39294,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
            "round",
-           "side",
-           "cross",
-           "jabb",
+           "round",
+           "crossb",
+           "hook",
            "cross",
            "sweep"
           ],
@@ -39344,7 +39338,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 1
@@ -39355,15 +39349,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
           "id": 72
          },
          {
           "kind": "ex",
           "id": 76
-         },
-         {
-          "kind": "ex",
-          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -39537,16 +39531,27 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
+       {
+        "dose": "45 s per side",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
        {
         "dose": "45 s per side",
         "timer": {
@@ -39567,17 +39572,6 @@
           120
          ],
          "perSet": 120
-        }
-       },
-       {
-        "dose": "30 s per side",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
         }
        }
       ]
@@ -39631,20 +39625,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Frontkick Körper, Low Kick Oberschenkel, Haken, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Front kick body, Low kick thigh, Hook, High kick head – back into your stance after each."
+            "de": "Die Techniken einzeln: Frontkick Körper, Cross, Haken, Cross Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Front kick body, Cross, Hook, Cross body – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Frontkick Körper, Low Kick Oberschenkel, Haken, High Kick Kopf verbunden, kontrolliert.",
-            "en": "Front kick body, Low kick thigh, Hook, High kick head linked, with control."
+            "de": "Frontkick Körper, Cross, Haken, Cross Körper verbunden, kontrolliert.",
+            "en": "Front kick body, Cross, Hook, Cross body linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Frontkick Körper, Low Kick Oberschenkel, Haken, High Kick Kopf, danach heraus aus der Distanz.",
-            "en": "Front kick body, Low kick thigh, Hook, High kick head, then out of range."
+            "de": "Frontkick Körper, Cross, Haken, Cross Körper, danach heraus aus der Distanz.",
+            "en": "Front kick body, Cross, Hook, Cross body, then out of range."
            }
           ]
          }
@@ -39675,11 +39669,9 @@
           "k": "dist",
           "combo": [
            "front",
-           "lowk",
+           "cross",
            "hook",
-           "roundh",
-           "round",
-           "upper",
+           "crossb",
            "round"
           ],
           "dist": {
@@ -39740,7 +39732,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -39761,7 +39753,7 @@
            "front",
            "lowk",
            "jabb",
-           "round",
+           "roundh",
            "hook"
           ]
          }
@@ -39799,7 +39791,7 @@
          },
          {
           "kind": "hard",
-          "id": "shinbag"
+          "id": "bodybag"
          }
         ],
         "fitnessLevel": 1
@@ -39810,15 +39802,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 76
-         },
-         {
-          "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 74
          }
         ],
         "fitnessLevel": 1
@@ -40006,32 +39998,15 @@
        },
        {
         "dose": null,
-        "timer": null
+        "timer": {
+         "phases": 11,
+         "seconds": 145,
+         "choices": [],
+         "perSet": 0
+        }
        }
       ],
       [
-       {
-        "dose": "30 s per side",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "2 min",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
        {
         "dose": "hold 60–90 s",
         "timer": {
@@ -40042,6 +40017,28 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "45 s per side",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "45 s per side",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -40480,20 +40477,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross, High Kick Kopf, Cross – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross, High kick head, Cross – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, High Kick Kopf, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, High kick head, Hook – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross verbunden, kontrolliert.",
-            "en": "Jab, Cross, High kick head, Cross linked, with control."
+            "de": "Jab, Jab, High Kick Kopf, Haken verbunden, kontrolliert.",
+            "en": "Jab, Jab, High kick head, Hook linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross, danach heraus aus der Distanz.",
-            "en": "Jab, Cross, High kick head, Cross, then out of range."
+            "de": "Jab, Jab, High Kick Kopf, Haken, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, High kick head, Hook, then out of range."
            }
           ]
          }
@@ -40513,9 +40510,8 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross"
+           "jab",
+           "roundh"
           ],
           "pb": {
            "b": 1,
@@ -40538,8 +40534,8 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "slide",
+           "o": "pivot"
           },
           "ease": 1
          },
@@ -40548,13 +40544,11 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross",
-           "hook",
-           "lowk",
            "jab",
-           "round"
+           "roundh",
+           "hook",
+           "round",
+           "lowk"
           ],
           "pb": {
            "b": 2,
@@ -40578,14 +40572,14 @@
           },
           "react": {
            "mid": {
-            "at": 3,
-            "a": "hook",
-            "d": "cover"
+            "at": 1,
+            "a": "round",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "back"
+           "i": "slide",
+           "o": "side"
           }
          },
          {
@@ -40594,8 +40588,8 @@
           "combo": [
            "jab",
            "jab",
-           "lowk",
-           "hookb"
+           "round",
+           "front"
           ],
           "w": 180,
           "fin": 1
@@ -40605,11 +40599,9 @@
           "k": "bag",
           "combo": [
            "jab",
-           "hook",
            "lowk",
-           "front",
-           "cross",
-           "hook"
+           "jabb",
+           "cross"
           ],
           "w": 180,
           "fin": 1
@@ -40623,11 +40615,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 8
-         },
-         {
-          "kind": "ex",
-          "id": 21
+          "id": 13
          },
          {
           "kind": "ex",
@@ -40635,7 +40623,11 @@
          },
          {
           "kind": "ex",
-          "id": 7
+          "id": 83
+         },
+         {
+          "kind": "ex",
+          "id": 19
          }
         ],
         "sets": "3×",
@@ -40651,7 +40643,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 1
@@ -40662,15 +40654,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -40801,18 +40793,12 @@
       ],
       [
        {
-        "dose": "10 reps",
-        "timer": null
-       },
-       {
-        "dose": "3 min",
+        "dose": "4 × (15 s / 15 s rest)",
         "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
+         "phases": 8,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
         }
        },
        {
@@ -40820,10 +40806,19 @@
         "timer": null
        },
        {
-        "dose": "2 min alternating (30 s fast / 30 s easy)",
+        "dose": "4 × (10 s / 20 s easy)",
         "timer": {
-         "phases": 4,
+         "phases": 8,
          "seconds": 120,
+         "choices": [],
+         "perSet": 0
+        }
+       },
+       {
+        "dose": "40 s (about 10 m out and back), 20 s rest",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -40844,27 +40839,16 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
-       {
-        "dose": "45 s per side",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 min",
         "timer": {
@@ -40877,14 +40861,26 @@
         }
        },
        {
-        "dose": "30 s per side",
+        "dose": "45 s per side",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "hold 60–90 s",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        }
       ]
@@ -42580,20 +42576,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Low kick thigh, Jab, Roundhouse body, Hook – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, High Kick Kopf, Haken, Low Kick Oberschenkel – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, High kick head, Hook, Low kick thigh – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken verbunden, kontrolliert.",
-            "en": "Low kick thigh, Jab, Roundhouse body, Hook linked, with control."
+            "de": "Jab, High Kick Kopf, Haken, Low Kick Oberschenkel verbunden, kontrolliert.",
+            "en": "Jab, High kick head, Hook, Low kick thigh linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Jab, Roundhouse Körper, Haken, danach heraus aus der Distanz.",
-            "en": "Low kick thigh, Jab, Roundhouse body, Hook, then out of range."
+            "de": "Jab, High Kick Kopf, Haken, Low Kick Oberschenkel, danach heraus aus der Distanz.",
+            "en": "Jab, High kick head, Hook, Low kick thigh, then out of range."
            }
           ]
          }
@@ -42612,11 +42608,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "lowk",
            "jab",
-           "round",
-           "hook",
-           "roundh"
+           "roundh",
+           "hook"
           ],
           "pb": {
            "b": 1,
@@ -42639,7 +42633,7 @@
            ]
           },
           "dist": {
-           "i": "backIn",
+           "i": "pivotIn",
            "o": null
           },
           "ease": 1
@@ -42648,13 +42642,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
+           "jab",
+           "roundh",
+           "hook",
            "lowk",
            "jab",
-           "round",
            "hook",
-           "roundh",
-           "upper",
-           "cross",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -42680,21 +42674,23 @@
           "react": {
            "mid": {
             "at": 2,
-            "a": "round",
-            "d": "step"
+            "a": "hookb",
+            "d": "block"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "pivot"
+           "i": "pivotIn",
+           "o": null
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "jab",
+           "jabb",
            "cross",
+           "round",
+           "crossb",
            "sweep"
           ],
           "pb": {
@@ -42718,16 +42714,17 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "jab",
+           "o": "back"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
+           "jabb",
+           "upper",
            "jab",
-           "hook",
            "roundh",
            "sweep"
           ],
@@ -42738,11 +42735,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
            "round",
-           "side",
-           "cross",
-           "jabb",
+           "round",
+           "crossb",
+           "hook",
            "cross",
            "sweep"
           ],
@@ -42783,7 +42779,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 1
@@ -42794,15 +42790,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 74
+         },
+         {
+          "kind": "ex",
           "id": 72
          },
          {
           "kind": "ex",
           "id": 76
-         },
-         {
-          "kind": "ex",
-          "id": 75
          }
         ],
         "fitnessLevel": 1
@@ -42971,16 +42967,27 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
+       {
+        "dose": "45 s per side",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
        {
         "dose": "45 s per side",
         "timer": {
@@ -43001,17 +43008,6 @@
           120
          ],
          "perSet": 120
-        }
-       },
-       {
-        "dose": "30 s per side",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
         }
        }
       ]
@@ -43861,20 +43857,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross, High Kick Kopf, Cross – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross, High kick head, Cross – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, High Kick Kopf, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, High kick head, Hook – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross verbunden, kontrolliert.",
-            "en": "Jab, Cross, High kick head, Cross linked, with control."
+            "de": "Jab, Jab, High Kick Kopf, Haken verbunden, kontrolliert.",
+            "en": "Jab, Jab, High kick head, Hook linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross, danach heraus aus der Distanz.",
-            "en": "Jab, Cross, High kick head, Cross, then out of range."
+            "de": "Jab, Jab, High Kick Kopf, Haken, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, High kick head, Hook, then out of range."
            }
           ]
          }
@@ -43894,9 +43890,8 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross"
+           "jab",
+           "roundh"
           ],
           "pb": {
            "b": 1,
@@ -43919,8 +43914,8 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "slide",
+           "o": "pivot"
           },
           "ease": 1
          },
@@ -43929,13 +43924,11 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross",
-           "hook",
-           "lowk",
            "jab",
-           "round"
+           "roundh",
+           "hook",
+           "round",
+           "lowk"
           ],
           "pb": {
            "b": 2,
@@ -43959,14 +43952,14 @@
           },
           "react": {
            "mid": {
-            "at": 3,
-            "a": "hook",
-            "d": "cover"
+            "at": 1,
+            "a": "round",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "back"
+           "i": "slide",
+           "o": "side"
           }
          },
          {
@@ -43975,8 +43968,8 @@
           "combo": [
            "jab",
            "jab",
-           "lowk",
-           "hookb"
+           "round",
+           "front"
           ],
           "w": 180,
           "fin": 1
@@ -43986,11 +43979,9 @@
           "k": "bag",
           "combo": [
            "jab",
-           "hook",
            "lowk",
-           "front",
-           "cross",
-           "hook"
+           "jabb",
+           "cross"
           ],
           "w": 180,
           "fin": 1
@@ -44004,11 +43995,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 8
-         },
-         {
-          "kind": "ex",
-          "id": 21
+          "id": 13
          },
          {
           "kind": "ex",
@@ -44016,7 +44003,11 @@
          },
          {
           "kind": "ex",
-          "id": 7
+          "id": 83
+         },
+         {
+          "kind": "ex",
+          "id": 19
          }
         ],
         "sets": "2×",
@@ -44032,7 +44023,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 1
@@ -44043,15 +44034,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -44177,18 +44168,12 @@
       ],
       [
        {
-        "dose": "10 reps",
-        "timer": null
-       },
-       {
-        "dose": "3 min",
+        "dose": "4 × (15 s / 15 s rest)",
         "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
+         "phases": 8,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
         }
        },
        {
@@ -44196,10 +44181,19 @@
         "timer": null
        },
        {
-        "dose": "2 min alternating (30 s fast / 30 s easy)",
+        "dose": "4 × (10 s / 20 s easy)",
         "timer": {
-         "phases": 4,
+         "phases": 8,
          "seconds": 120,
+         "choices": [],
+         "perSet": 0
+        }
+       },
+       {
+        "dose": "40 s (about 10 m out and back), 20 s rest",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -44220,27 +44214,16 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
-       {
-        "dose": "45 s per side",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 min",
         "timer": {
@@ -44253,14 +44236,26 @@
         }
        },
        {
-        "dose": "30 s per side",
+        "dose": "45 s per side",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "hold 60–90 s",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        }
       ]
@@ -45762,20 +45757,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Roundhouse Körper, Jab, High Kick Kopf, Jab – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Roundhouse body, Jab, High kick head, Jab – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab verbunden, kontrolliert.",
-            "en": "Roundhouse body, Jab, High kick head, Jab linked, with control."
+            "de": "Jab, Jab, Cross, Roundhouse Körper verbunden, kontrolliert.",
+            "en": "Jab, Jab, Cross, Roundhouse body linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab, danach heraus aus der Distanz.",
-            "en": "Roundhouse body, Jab, High kick head, Jab, then out of range."
+            "de": "Jab, Jab, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross, Roundhouse body, then out of range."
            }
           ]
          }
@@ -45794,11 +45789,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook"
+           "cross"
           ],
           "pb": {
            "b": 1,
@@ -45821,8 +45814,8 @@
            ]
           },
           "dist": {
-           "i": "jab",
-           "o": "pivot"
+           "i": "backIn",
+           "o": null
           },
           "ease": 1
          },
@@ -45830,12 +45823,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook",
            "cross",
+           "round",
+           "roundh",
+           "upper",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -45861,23 +45855,22 @@
           "react": {
            "mid": {
             "at": 1,
-            "a": "hookb",
-            "d": "block"
+            "a": "upper",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "slide",
-           "o": "pivot"
+           "i": "angle",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "front",
-           "round",
-           "upper",
-           "cross",
+           "jab",
+           "hook",
+           "roundh",
            "sweep"
           ],
           "pb": {
@@ -45901,17 +45894,19 @@
            ]
           },
           "dist": {
-           "i": "pivotIn",
-           "o": null
+           "i": "slide",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
+           "round",
+           "side",
+           "cross",
            "hook",
-           "roundh",
+           "cross",
            "sweep"
           ],
           "w": 180,
@@ -45921,9 +45916,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "round",
+           "jab",
            "upper",
-           "crossb",
+           "hookb",
+           "cross",
            "sweep"
           ],
           "w": 180,
@@ -45978,15 +45974,15 @@
          },
          {
           "kind": "ex",
-          "id": 69
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 60
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -46179,19 +46175,8 @@
         "timer": null
        },
        {
-        "dose": "je Seite 5",
+        "dose": "10 Wechsel",
         "timer": null
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
        },
        {
         "dose": "60–90 s halten",
@@ -46203,6 +46188,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -46316,7 +46312,7 @@
            "front",
            "shook",
            "jabb",
-           "crossb"
+           "hook"
           ]
          },
          {
@@ -46351,7 +46347,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -47161,7 +47157,7 @@
            "mid": {
             "at": 1,
             "a": "cross",
-            "d": "parry"
+            "d": "step"
            }
           },
           "dist": {
@@ -49233,20 +49229,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Roundhouse Körper, Jab, High Kick Kopf, Jab – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Roundhouse body, Jab, High kick head, Jab – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab verbunden, kontrolliert.",
-            "en": "Roundhouse body, Jab, High kick head, Jab linked, with control."
+            "de": "Jab, Jab, Cross, Roundhouse Körper verbunden, kontrolliert.",
+            "en": "Jab, Jab, Cross, Roundhouse body linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab, danach heraus aus der Distanz.",
-            "en": "Roundhouse body, Jab, High kick head, Jab, then out of range."
+            "de": "Jab, Jab, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross, Roundhouse body, then out of range."
            }
           ]
          }
@@ -49265,11 +49261,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook"
+           "cross"
           ],
           "pb": {
            "b": 1,
@@ -49292,8 +49286,8 @@
            ]
           },
           "dist": {
-           "i": "jab",
-           "o": "pivot"
+           "i": "backIn",
+           "o": null
           },
           "ease": 1
          },
@@ -49301,12 +49295,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook",
            "cross",
+           "round",
+           "roundh",
+           "upper",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -49332,23 +49327,22 @@
           "react": {
            "mid": {
             "at": 1,
-            "a": "hookb",
-            "d": "block"
+            "a": "upper",
+            "d": "step"
            }
           },
           "dist": {
-           "i": "slide",
-           "o": "pivot"
+           "i": "angle",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "partner",
           "combo": [
-           "front",
-           "round",
-           "upper",
-           "cross",
+           "jab",
+           "hook",
+           "roundh",
            "sweep"
           ],
           "pb": {
@@ -49372,17 +49366,19 @@
            ]
           },
           "dist": {
-           "i": "pivotIn",
-           "o": null
+           "i": "slide",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
+           "round",
+           "side",
+           "cross",
            "hook",
-           "roundh",
+           "cross",
            "sweep"
           ],
           "w": 180,
@@ -49392,9 +49388,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "round",
+           "jab",
            "upper",
-           "crossb",
+           "hookb",
+           "cross",
            "sweep"
           ],
           "w": 180,
@@ -49449,15 +49446,15 @@
          },
          {
           "kind": "ex",
-          "id": 69
-         },
-         {
-          "kind": "ex",
-          "id": 72
+          "id": 60
          },
          {
           "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -49646,19 +49643,8 @@
         "timer": null
        },
        {
-        "dose": "je Seite 5",
+        "dose": "10 Wechsel",
         "timer": null
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
        },
        {
         "dose": "60–90 s halten",
@@ -49670,6 +49656,17 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -49785,7 +49782,7 @@
            "front",
            "shook",
            "jabb",
-           "crossb"
+           "hook"
           ]
          },
          {
@@ -49822,7 +49819,7 @@
            "cross",
            "jab",
            "jab",
-           "hookb"
+           "round"
           ]
          }
         ],
@@ -50583,7 +50580,7 @@
            "mid": {
             "at": 1,
             "a": "cross",
-            "d": "parry"
+            "d": "step"
            }
           },
           "dist": {
@@ -52524,8 +52521,8 @@
           "react": {
            "mid": {
             "at": 3,
-            "a": "hookb",
-            "d": "block"
+            "a": "upper",
+            "d": "step"
            }
           },
           "dist": {
@@ -55955,8 +55952,8 @@
           "react": {
            "mid": {
             "at": 3,
-            "a": "hookb",
-            "d": "block"
+            "a": "upper",
+            "d": "step"
            }
           },
           "dist": {
@@ -59067,14 +59064,14 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross Körper, Haken, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross body, Hook, Roundhouse body – back into your stance after each."
+            "de": "Die Techniken einzeln: Roundhouse Körper, Körperhaken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Roundhouse body, Body hook – back into your stance after each."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross Körper, Haken, Roundhouse Körper, danach heraus aus der Distanz.",
-            "en": "Jab, Cross body, Hook, Roundhouse body, then out of range."
+            "de": "Roundhouse Körper, Körperhaken, danach heraus aus der Distanz.",
+            "en": "Roundhouse body, Body hook, then out of range."
            }
           ]
          }
@@ -59104,10 +59101,8 @@
           "kind": "round",
           "k": "dist",
           "combo": [
-           "jab",
-           "crossb",
-           "hook",
-           "round"
+           "round",
+           "hookb"
           ],
           "dist": {
            "i": "slide",
@@ -59126,7 +59121,7 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 20
          },
          {
           "kind": "round",
@@ -59142,15 +59137,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 74
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -59290,6 +59285,28 @@
       ],
       [
        {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
         "dose": "60–90 s halten",
         "timer": {
          "phases": 1,
@@ -59299,28 +59316,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
         }
        }
       ]
@@ -59372,14 +59367,14 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Sidekick Körper, Cross, Haken, Cross – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Side kick body, Cross, Hook, Cross – back into your stance after each."
+            "de": "Die Techniken einzeln: Cross Körper, Jab, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Cross body, Jab, Hook – back into your stance after each."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Sidekick Körper, Cross, Haken, Cross, danach heraus aus der Distanz.",
-            "en": "Side kick body, Cross, Hook, Cross, then out of range."
+            "de": "Cross Körper, Jab, Haken, danach heraus aus der Distanz.",
+            "en": "Cross body, Jab, Hook, then out of range."
            }
           ]
          }
@@ -59397,11 +59392,9 @@
           "kind": "round",
           "k": "shadow",
           "combo": [
-           "side",
-           "cross",
-           "hook",
-           "cross",
-           "hookb"
+           "crossb",
+           "jab",
+           "hook"
           ],
           "ease": 1
          },
@@ -59429,12 +59422,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 21
+          "id": 16
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 21
          }
         ],
         "fitnessLevel": 1
@@ -59445,15 +59438,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
-         },
-         {
-          "kind": "ex",
-          "id": 74
+          "id": 73
          },
          {
           "kind": "ex",
           "id": 75
+         },
+         {
+          "kind": "ex",
+          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -59583,35 +59576,25 @@
       ],
       [
        {
-        "dose": "3 Min.",
+        "dose": "3 × (20 s / 10 s Pause)",
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "3 Min.",
         "timer": null
        }
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          45
+          60,
+          90
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 60
         }
        },
        {
@@ -59623,6 +59606,17 @@
           30
          ],
          "perSet": 30
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -61543,14 +61537,14 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross Körper, Haken, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross body, Hook, Roundhouse body – back into your stance after each."
+            "de": "Die Techniken einzeln: Roundhouse Körper, Körperhaken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Roundhouse body, Body hook – back into your stance after each."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross Körper, Haken, Roundhouse Körper, danach heraus aus der Distanz.",
-            "en": "Jab, Cross body, Hook, Roundhouse body, then out of range."
+            "de": "Roundhouse Körper, Körperhaken, danach heraus aus der Distanz.",
+            "en": "Roundhouse body, Body hook, then out of range."
            }
           ]
          }
@@ -61580,10 +61574,8 @@
           "kind": "round",
           "k": "dist",
           "combo": [
-           "jab",
-           "crossb",
-           "hook",
-           "round"
+           "round",
+           "hookb"
           ],
           "dist": {
            "i": "slide",
@@ -61602,7 +61594,7 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 20
          },
          {
           "kind": "round",
@@ -61618,15 +61610,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 73
-         },
-         {
-          "kind": "ex",
-          "id": 74
+          "id": 75
          },
          {
           "kind": "ex",
           "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -61761,6 +61753,28 @@
       ],
       [
        {
+        "dose": "je Seite 30 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 65,
+         "choices": [
+          30
+         ],
+         "perSet": 30
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
         "dose": "60–90 s halten",
         "timer": {
          "phases": 1,
@@ -61770,28 +61784,6 @@
           90
          ],
          "perSet": 60
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
         }
        }
       ]
@@ -61843,14 +61835,14 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Sidekick Körper, Cross, Haken, Cross – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Side kick body, Cross, Hook, Cross – back into your stance after each."
+            "de": "Die Techniken einzeln: Cross Körper, Jab, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Cross body, Jab, Hook – back into your stance after each."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Sidekick Körper, Cross, Haken, Cross, danach heraus aus der Distanz.",
-            "en": "Side kick body, Cross, Hook, Cross, then out of range."
+            "de": "Cross Körper, Jab, Haken, danach heraus aus der Distanz.",
+            "en": "Cross body, Jab, Hook, then out of range."
            }
           ]
          }
@@ -61868,11 +61860,9 @@
           "kind": "round",
           "k": "shadow",
           "combo": [
-           "side",
-           "cross",
-           "hook",
-           "cross",
-           "hookb"
+           "crossb",
+           "jab",
+           "hook"
           ],
           "ease": 1
          },
@@ -61900,12 +61890,12 @@
          {
           "kind": "round",
           "k": "ex",
-          "id": 21
+          "id": 16
          },
          {
           "kind": "round",
           "k": "ex",
-          "id": 9
+          "id": 21
          }
         ],
         "fitnessLevel": 1
@@ -61916,15 +61906,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 72
-         },
-         {
-          "kind": "ex",
-          "id": 74
+          "id": 73
          },
          {
           "kind": "ex",
           "id": 75
+         },
+         {
+          "kind": "ex",
+          "id": 72
          }
         ],
         "fitnessLevel": 1
@@ -62049,35 +62039,25 @@
       ],
       [
        {
-        "dose": "3 Min.",
+        "dose": "3 × (20 s / 10 s Pause)",
         "timer": null
        },
        {
-        "dose": "40 s Belastung, 20 s Pause",
+        "dose": "3 Min.",
         "timer": null
        }
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "60–90 s halten",
         "timer": {
-         "phases": 3,
-         "seconds": 95,
+         "phases": 1,
+         "seconds": 60,
          "choices": [
-          45
+          60,
+          90
          ],
-         "perSet": 45
-        }
-       },
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
+         "perSet": 60
         }
        },
        {
@@ -62089,6 +62069,17 @@
           30
          ],
          "perSet": 30
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -63982,20 +63973,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Low Kick Oberschenkel, Haken, Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Low kick thigh, Hook, Roundhouse body, High kick head – back into your stance after each."
+            "de": "Die Techniken einzeln: Roundhouse Körper, Sidekick Körper, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Roundhouse body, Side kick body, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Haken, Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
-            "en": "Low kick thigh, Hook, Roundhouse body, High kick head linked, with control."
+            "de": "Roundhouse Körper, Sidekick Körper, Cross, High Kick Kopf verbunden, kontrolliert.",
+            "en": "Roundhouse body, Side kick body, Cross, High kick head linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Haken, Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
-            "en": "Low kick thigh, Hook, Roundhouse body, High kick head, then out of range."
+            "de": "Roundhouse Körper, Sidekick Körper, Cross, High Kick Kopf, danach heraus aus der Distanz.",
+            "en": "Roundhouse body, Side kick body, Cross, High kick head, then out of range."
            }
           ]
          }
@@ -64014,10 +64005,8 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "lowk",
-           "hook",
            "round",
-           "roundh",
+           "side",
            "cross"
           ],
           "pb": {
@@ -64041,8 +64030,8 @@
            ]
           },
           "dist": {
-           "i": "low",
-           "o": "side"
+           "i": "slide",
+           "o": "pivot"
           },
           "ease": 1
          },
@@ -64050,13 +64039,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "lowk",
-           "hook",
            "round",
-           "roundh",
+           "side",
            "cross",
-           "upper",
-           "crossb",
+           "roundh",
+           "round",
+           "jab",
+           "lowk",
            "sweep"
           ],
           "pb": {
@@ -64081,13 +64070,13 @@
           },
           "react": {
            "mid": {
-            "at": 5,
-            "a": "lowk",
-            "d": "check"
+            "at": 6,
+            "a": "crossb",
+            "d": "block"
            }
           },
           "dist": {
-           "i": "slide",
+           "i": "jab",
            "o": "side"
           }
          },
@@ -64096,9 +64085,8 @@
           "k": "partner",
           "combo": [
            "jab",
-           "lowk",
            "hook",
-           "cross",
+           "roundh",
            "sweep"
           ],
           "pb": {
@@ -64122,20 +64110,20 @@
            ]
           },
           "dist": {
-           "i": "slide",
-           "o": "side"
+           "i": "angle",
+           "o": "back"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jabb",
-           "cross",
-           "jabb",
+           "hook",
+           "upper",
+           "hook",
            "lowk",
            "jab",
-           "round",
+           "lowk",
            "sweep"
           ],
           "w": 180,
@@ -64145,9 +64133,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
+           "round",
+           "front",
            "cross",
-           "jab",
+           "upper",
            "lowk",
            "sweep"
           ],
@@ -64188,7 +64177,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 2
@@ -64207,7 +64196,7 @@
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 74
          }
         ],
         "fitnessLevel": 2
@@ -64381,12 +64370,12 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
@@ -64415,14 +64404,14 @@
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          120
+          45
          ],
-         "perSet": 120
+         "perSet": 45
         }
        }
       ]
@@ -64572,10 +64561,9 @@
           "k": "bag",
           "combo": [
            "front",
-           "lowk",
-           "hookb",
-           "roundh",
-           "lowk"
+           "cross",
+           "hook",
+           "round"
           ]
          },
          {
@@ -64586,7 +64574,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -64607,7 +64595,7 @@
            "front",
            "lowk",
            "jabb",
-           "round",
+           "roundh",
            "hook"
           ]
          }
@@ -64641,11 +64629,11 @@
         "items": [
          {
           "kind": "hard",
-          "id": "fGlove"
+          "id": "fWraps"
          },
          {
           "kind": "hard",
-          "id": "bodybag"
+          "id": "shinbag"
          }
         ],
         "fitnessLevel": 2
@@ -64656,7 +64644,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
+          "id": 75
          },
          {
           "kind": "ex",
@@ -64842,34 +64830,29 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        },
        {
         "dose": null,
-        "timer": {
-         "phases": 11,
-         "seconds": 145,
-         "choices": [],
-         "perSet": 0
-        }
+        "timer": null
        }
       ],
       [
        {
-        "dose": "je Seite 45 s",
+        "dose": "je Seite 30 s",
         "timer": {
          "phases": 3,
-         "seconds": 95,
+         "seconds": 65,
          "choices": [
-          45
+          30
          ],
-         "perSet": 45
+         "perSet": 30
         }
        },
        {
@@ -65349,20 +65332,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross, High Kick Kopf, Cross – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross, High kick head, Cross – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, High Kick Kopf, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, High kick head, Hook – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross verbunden, kontrolliert.",
-            "en": "Jab, Cross, High kick head, Cross linked, with control."
+            "de": "Jab, Jab, High Kick Kopf, Haken verbunden, kontrolliert.",
+            "en": "Jab, Jab, High kick head, Hook linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross, danach heraus aus der Distanz.",
-            "en": "Jab, Cross, High kick head, Cross, then out of range."
+            "de": "Jab, Jab, High Kick Kopf, Haken, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, High kick head, Hook, then out of range."
            }
           ]
          }
@@ -65382,9 +65365,8 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross"
+           "jab",
+           "roundh"
           ],
           "pb": {
            "b": 1,
@@ -65407,8 +65389,8 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "slide",
+           "o": "pivot"
           },
           "ease": 1
          },
@@ -65417,13 +65399,11 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross",
-           "hook",
-           "lowk",
            "jab",
-           "round"
+           "roundh",
+           "hook",
+           "round",
+           "lowk"
           ],
           "pb": {
            "b": 2,
@@ -65447,14 +65427,14 @@
           },
           "react": {
            "mid": {
-            "at": 3,
-            "a": "hook",
-            "d": "cover"
+            "at": 1,
+            "a": "cross",
+            "d": "slipx"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "back"
+           "i": "slide",
+           "o": "side"
           }
          },
          {
@@ -65463,8 +65443,8 @@
           "combo": [
            "jab",
            "jab",
-           "lowk",
-           "hookb"
+           "round",
+           "front"
           ],
           "w": 180,
           "fin": 1
@@ -65474,11 +65454,9 @@
           "k": "bag",
           "combo": [
            "jab",
-           "hook",
            "lowk",
-           "front",
-           "cross",
-           "hook"
+           "jabb",
+           "cross"
           ],
           "w": 180,
           "fin": 1
@@ -65492,11 +65470,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 8
-         },
-         {
-          "kind": "ex",
-          "id": 21
+          "id": 13
          },
          {
           "kind": "ex",
@@ -65504,7 +65478,11 @@
          },
          {
           "kind": "ex",
-          "id": 7
+          "id": 83
+         },
+         {
+          "kind": "ex",
+          "id": 19
          }
         ],
         "sets": "3×",
@@ -65520,7 +65498,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 2
@@ -65531,15 +65509,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 2
@@ -65674,18 +65652,12 @@
       ],
       [
        {
-        "dose": "15 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "3 Min.",
+        "dose": "4 × (15 s / 15 s Pause)",
         "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
+         "phases": 8,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
         }
        },
        {
@@ -65693,10 +65665,19 @@
         "timer": null
        },
        {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "dose": "4 × (10 s / 20 s locker)",
         "timer": {
-         "phases": 4,
+         "phases": 8,
          "seconds": 120,
+         "choices": [],
+         "perSet": 0
+        }
+       },
+       {
+        "dose": "45 s (ca. 10 m hin und zurück), 15 s Pause",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -65717,27 +65698,16 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -65750,14 +65720,26 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        }
       ]
@@ -67476,20 +67458,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Low Kick Oberschenkel, Haken, Roundhouse Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Low kick thigh, Hook, Roundhouse body, High kick head – back into your stance after each."
+            "de": "Die Techniken einzeln: Roundhouse Körper, Sidekick Körper, Cross, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Roundhouse body, Side kick body, Cross, High kick head – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Haken, Roundhouse Körper, High Kick Kopf verbunden, kontrolliert.",
-            "en": "Low kick thigh, Hook, Roundhouse body, High kick head linked, with control."
+            "de": "Roundhouse Körper, Sidekick Körper, Cross, High Kick Kopf verbunden, kontrolliert.",
+            "en": "Roundhouse body, Side kick body, Cross, High kick head linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Low Kick Oberschenkel, Haken, Roundhouse Körper, High Kick Kopf, danach heraus aus der Distanz.",
-            "en": "Low kick thigh, Hook, Roundhouse body, High kick head, then out of range."
+            "de": "Roundhouse Körper, Sidekick Körper, Cross, High Kick Kopf, danach heraus aus der Distanz.",
+            "en": "Roundhouse body, Side kick body, Cross, High kick head, then out of range."
            }
           ]
          }
@@ -67508,10 +67490,8 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "lowk",
-           "hook",
            "round",
-           "roundh",
+           "side",
            "cross"
           ],
           "pb": {
@@ -67535,8 +67515,8 @@
            ]
           },
           "dist": {
-           "i": "low",
-           "o": "side"
+           "i": "slide",
+           "o": "pivot"
           },
           "ease": 1
          },
@@ -67544,13 +67524,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "lowk",
-           "hook",
            "round",
-           "roundh",
+           "side",
            "cross",
-           "upper",
-           "crossb",
+           "roundh",
+           "round",
+           "jab",
+           "lowk",
            "sweep"
           ],
           "pb": {
@@ -67575,14 +67555,14 @@
           },
           "react": {
            "mid": {
-            "at": 5,
-            "a": "lowk",
-            "d": "check"
+            "at": 6,
+            "a": "crossb",
+            "d": "block"
            }
           },
           "dist": {
-           "i": "sideIn",
-           "o": null
+           "i": "jab",
+           "o": "side"
           }
          },
          {
@@ -67590,9 +67570,8 @@
           "k": "partner",
           "combo": [
            "jab",
-           "lowk",
            "hook",
-           "cross",
+           "roundh",
            "sweep"
           ],
           "pb": {
@@ -67616,20 +67595,20 @@
            ]
           },
           "dist": {
-           "i": "slide",
-           "o": "side"
+           "i": "angle",
+           "o": "back"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jabb",
-           "cross",
-           "jabb",
+           "hook",
+           "upper",
+           "hook",
            "lowk",
            "jab",
-           "round",
+           "lowk",
            "sweep"
           ],
           "w": 180,
@@ -67639,9 +67618,10 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
+           "round",
+           "front",
            "cross",
-           "jab",
+           "upper",
            "lowk",
            "sweep"
           ],
@@ -67682,7 +67662,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 2
@@ -67701,7 +67681,7 @@
          },
          {
           "kind": "ex",
-          "id": 76
+          "id": 74
          }
         ],
         "fitnessLevel": 2
@@ -67870,12 +67850,12 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
@@ -67904,14 +67884,14 @@
         }
        },
        {
-        "dose": "2 Min.",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 120,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          120
+          45
          ],
-         "perSet": 120
+         "perSet": 45
         }
        }
       ]
@@ -67965,20 +67945,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Frontkick Körper, Low Kick Oberschenkel, Haken, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Front kick body, Low kick thigh, Hook, High kick head – back into your stance after each."
+            "de": "Die Techniken einzeln: Frontkick Körper, Low Kick Oberschenkel, Jab Körper, High Kick Kopf – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Front kick body, Low kick thigh, Jab body, High kick head – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Frontkick Körper, Low Kick Oberschenkel, Haken, High Kick Kopf verbunden, kontrolliert.",
-            "en": "Front kick body, Low kick thigh, Hook, High kick head linked, with control."
+            "de": "Frontkick Körper, Low Kick Oberschenkel, Jab Körper, High Kick Kopf verbunden, kontrolliert.",
+            "en": "Front kick body, Low kick thigh, Jab body, High kick head linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Frontkick Körper, Low Kick Oberschenkel, Haken, High Kick Kopf, danach heraus aus der Distanz.",
-            "en": "Front kick body, Low kick thigh, Hook, High kick head, then out of range."
+            "de": "Frontkick Körper, Low Kick Oberschenkel, Jab Körper, High Kick Kopf, danach heraus aus der Distanz.",
+            "en": "Front kick body, Low kick thigh, Jab body, High kick head, then out of range."
            }
           ]
          }
@@ -68009,11 +67989,9 @@
           "combo": [
            "front",
            "lowk",
-           "hook",
+           "jabb",
            "roundh",
-           "round",
-           "upper",
-           "round"
+           "hook"
           ],
           "dist": {
            "i": "sideIn",
@@ -68061,10 +68039,11 @@
           "k": "evade",
           "combo": [
            "jab",
-           "cross"
+           "cross",
+           "round"
           ],
           "evade": {
-           "d": "cover"
+           "d": "step"
           }
          },
          {
@@ -68111,7 +68090,7 @@
          },
          {
           "kind": "hard",
-          "id": "shinbag"
+          "id": "bodybag"
          }
         ],
         "fitnessLevel": 2
@@ -68122,15 +68101,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 76
-         },
-         {
-          "kind": "ex",
           "id": 73
+         },
+         {
+          "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 74
          }
         ],
         "fitnessLevel": 2
@@ -68305,32 +68284,15 @@
        },
        {
         "dose": null,
-        "timer": null
+        "timer": {
+         "phases": 11,
+         "seconds": 145,
+         "choices": [],
+         "perSet": 0
+        }
        }
       ],
       [
-       {
-        "dose": "je Seite 30 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 65,
-         "choices": [
-          30
-         ],
-         "perSet": 30
-        }
-       },
-       {
-        "dose": "2 Min.",
-        "timer": {
-         "phases": 1,
-         "seconds": 120,
-         "choices": [
-          120
-         ],
-         "perSet": 120
-        }
-       },
        {
         "dose": "60–90 s halten",
         "timer": {
@@ -68341,6 +68303,28 @@
           90
          ],
          "perSet": 60
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "je Seite 45 s",
+        "timer": {
+         "phases": 3,
+         "seconds": 95,
+         "choices": [
+          45
+         ],
+         "perSet": 45
         }
        }
       ]
@@ -68773,20 +68757,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Jab, Cross, High Kick Kopf, Cross – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Jab, Cross, High kick head, Cross – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, High Kick Kopf, Haken – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, High kick head, Hook – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross verbunden, kontrolliert.",
-            "en": "Jab, Cross, High kick head, Cross linked, with control."
+            "de": "Jab, Jab, High Kick Kopf, Haken verbunden, kontrolliert.",
+            "en": "Jab, Jab, High kick head, Hook linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Jab, Cross, High Kick Kopf, Cross, danach heraus aus der Distanz.",
-            "en": "Jab, Cross, High kick head, Cross, then out of range."
+            "de": "Jab, Jab, High Kick Kopf, Haken, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, High kick head, Hook, then out of range."
            }
           ]
          }
@@ -68806,9 +68790,8 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross"
+           "jab",
+           "roundh"
           ],
           "pb": {
            "b": 1,
@@ -68831,8 +68814,8 @@
            ]
           },
           "dist": {
-           "i": "backIn",
-           "o": null
+           "i": "slide",
+           "o": "pivot"
           },
           "ease": 1
          },
@@ -68841,13 +68824,11 @@
           "k": "partner",
           "combo": [
            "jab",
-           "cross",
-           "roundh",
-           "cross",
-           "hook",
-           "lowk",
            "jab",
-           "round"
+           "roundh",
+           "hook",
+           "round",
+           "lowk"
           ],
           "pb": {
            "b": 2,
@@ -68871,14 +68852,14 @@
           },
           "react": {
            "mid": {
-            "at": 3,
-            "a": "hook",
-            "d": "cover"
+            "at": 1,
+            "a": "cross",
+            "d": "slipx"
            }
           },
           "dist": {
-           "i": "jab",
-           "o": "back"
+           "i": "slide",
+           "o": "side"
           }
          },
          {
@@ -68887,8 +68868,8 @@
           "combo": [
            "jab",
            "jab",
-           "lowk",
-           "hookb"
+           "round",
+           "front"
           ],
           "w": 180,
           "fin": 1
@@ -68898,11 +68879,9 @@
           "k": "bag",
           "combo": [
            "jab",
-           "hook",
            "lowk",
-           "front",
-           "cross",
-           "hook"
+           "jabb",
+           "cross"
           ],
           "w": 180,
           "fin": 1
@@ -68916,11 +68895,7 @@
         "items": [
          {
           "kind": "ex",
-          "id": 8
-         },
-         {
-          "kind": "ex",
-          "id": 21
+          "id": 13
          },
          {
           "kind": "ex",
@@ -68928,7 +68903,11 @@
          },
          {
           "kind": "ex",
-          "id": 7
+          "id": 83
+         },
+         {
+          "kind": "ex",
+          "id": 19
          }
         ],
         "sets": "2×",
@@ -68944,7 +68923,7 @@
          },
          {
           "kind": "hard",
-          "id": "abs"
+          "id": "checks"
          }
         ],
         "fitnessLevel": 2
@@ -68955,15 +68934,15 @@
         "items": [
          {
           "kind": "ex",
-          "id": 74
-         },
-         {
-          "kind": "ex",
           "id": 76
          },
          {
           "kind": "ex",
-          "id": 75
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 73
          }
         ],
         "fitnessLevel": 2
@@ -69093,18 +69072,12 @@
       ],
       [
        {
-        "dose": "15 Wdh.",
-        "timer": null
-       },
-       {
-        "dose": "3 Min.",
+        "dose": "4 × (15 s / 15 s Pause)",
         "timer": {
-         "phases": 1,
-         "seconds": 180,
-         "choices": [
-          180
-         ],
-         "perSet": 180
+         "phases": 8,
+         "seconds": 120,
+         "choices": [],
+         "perSet": 0
         }
        },
        {
@@ -69112,10 +69085,19 @@
         "timer": null
        },
        {
-        "dose": "2 Min. im Wechsel (30 s zügig / 30 s locker)",
+        "dose": "4 × (10 s / 20 s locker)",
         "timer": {
-         "phases": 4,
+         "phases": 8,
          "seconds": 120,
+         "choices": [],
+         "perSet": 0
+        }
+       },
+       {
+        "dose": "45 s (ca. 10 m hin und zurück), 15 s Pause",
+        "timer": {
+         "phases": 2,
+         "seconds": 60,
          "choices": [],
          "perSet": 0
         }
@@ -69136,27 +69118,16 @@
        {
         "dose": null,
         "timer": {
-         "phases": 5,
-         "seconds": 70,
+         "phases": 3,
+         "seconds": 65,
          "choices": [
-          20
+          30
          ],
-         "perSet": 20
+         "perSet": 30
         }
        }
       ],
       [
-       {
-        "dose": "je Seite 45 s",
-        "timer": {
-         "phases": 3,
-         "seconds": 95,
-         "choices": [
-          45
-         ],
-         "perSet": 45
-        }
-       },
        {
         "dose": "2 Min.",
         "timer": {
@@ -69169,14 +69140,26 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "je Seite 45 s",
         "timer": {
          "phases": 3,
-         "seconds": 65,
+         "seconds": 95,
          "choices": [
-          30
+          45
          ],
-         "perSet": 30
+         "perSet": 45
+        }
+       },
+       {
+        "dose": "60–90 s halten",
+        "timer": {
+         "phases": 1,
+         "seconds": 60,
+         "choices": [
+          60,
+          90
+         ],
+         "perSet": 60
         }
        }
       ]
@@ -70676,20 +70659,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Roundhouse Körper, Jab, High Kick Kopf, Jab – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Roundhouse body, Jab, High kick head, Jab – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab verbunden, kontrolliert.",
-            "en": "Roundhouse body, Jab, High kick head, Jab linked, with control."
+            "de": "Jab, Jab, Cross, Roundhouse Körper verbunden, kontrolliert.",
+            "en": "Jab, Jab, Cross, Roundhouse body linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab, danach heraus aus der Distanz.",
-            "en": "Roundhouse body, Jab, High kick head, Jab, then out of range."
+            "de": "Jab, Jab, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross, Roundhouse body, then out of range."
            }
           ]
          }
@@ -70708,11 +70691,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook"
+           "cross"
           ],
           "pb": {
            "b": 1,
@@ -70735,8 +70716,8 @@
            ]
           },
           "dist": {
-           "i": "slide",
-           "o": "back"
+           "i": "angle",
+           "o": "side"
           },
           "ease": 1
          },
@@ -70744,12 +70725,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook",
            "cross",
+           "round",
+           "roundh",
+           "upper",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -70774,25 +70756,26 @@
           },
           "react": {
            "mid": {
-            "at": 1,
-            "a": "crossb",
-            "d": "step"
+            "at": 3,
+            "a": "upper",
+            "d": "parry"
            }
           },
           "dist": {
-           "i": "pivotIn",
-           "o": null
+           "i": "angle",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
-           "hook",
-           "roundh",
            "hook",
            "round",
+           "side",
+           "cross",
+           "hook",
+           "upper",
            "sweep"
           ],
           "w": 180,
@@ -70802,12 +70785,11 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jabb",
+           "jab",
+           "hook",
            "round",
-           "hook",
-           "roundh",
-           "hook",
-           "cross",
+           "front",
+           "crossb",
            "sweep"
           ],
           "w": 180,
@@ -70881,15 +70863,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 76
+         },
+         {
+          "kind": "ex",
           "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -71093,26 +71075,25 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "2 Min.",
         "timer": {
-         "phases": 3,
-         "seconds": 65,
+         "phases": 1,
+         "seconds": 120,
          "choices": [
-          30
+          120
          ],
-         "perSet": 30
+         "perSet": 120
         }
        },
        {
-        "dose": "60–90 s halten",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 60,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          60,
-          90
+          45
          ],
-         "perSet": 60
+         "perSet": 45
         }
        }
       ]
@@ -71255,7 +71236,7 @@
            "cross"
           ],
           "evade": {
-           "d": "cover"
+           "d": "parry"
           }
          },
          {
@@ -74082,20 +74063,20 @@
            {
             "t": "slow",
             "f": 0,
-            "de": "Die Techniken einzeln: Roundhouse Körper, Jab, High Kick Kopf, Jab – nach jeder zurück in die Kampfstellung.",
-            "en": "The techniques one by one: Roundhouse body, Jab, High kick head, Jab – back into your stance after each."
+            "de": "Die Techniken einzeln: Jab, Jab, Cross, Roundhouse Körper – nach jeder zurück in die Kampfstellung.",
+            "en": "The techniques one by one: Jab, Jab, Cross, Roundhouse body – back into your stance after each."
            },
            {
             "t": "link",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab verbunden, kontrolliert.",
-            "en": "Roundhouse body, Jab, High kick head, Jab linked, with control."
+            "de": "Jab, Jab, Cross, Roundhouse Körper verbunden, kontrolliert.",
+            "en": "Jab, Jab, Cross, Roundhouse body linked, with control."
            },
            {
             "t": "work",
             "f": 0,
-            "de": "Roundhouse Körper, Jab, High Kick Kopf, Jab, danach heraus aus der Distanz.",
-            "en": "Roundhouse body, Jab, High kick head, Jab, then out of range."
+            "de": "Jab, Jab, Cross, Roundhouse Körper, danach heraus aus der Distanz.",
+            "en": "Jab, Jab, Cross, Roundhouse body, then out of range."
            }
           ]
          }
@@ -74114,11 +74095,9 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook"
+           "cross"
           ],
           "pb": {
            "b": 1,
@@ -74141,8 +74120,8 @@
            ]
           },
           "dist": {
-           "i": "slide",
-           "o": "back"
+           "i": "angle",
+           "o": "side"
           },
           "ease": 1
          },
@@ -74150,12 +74129,13 @@
           "kind": "round",
           "k": "partner",
           "combo": [
-           "round",
            "jab",
-           "roundh",
            "jab",
-           "hook",
            "cross",
+           "round",
+           "roundh",
+           "upper",
+           "round",
            "sweep"
           ],
           "pb": {
@@ -74180,25 +74160,26 @@
           },
           "react": {
            "mid": {
-            "at": 1,
-            "a": "crossb",
-            "d": "step"
+            "at": 3,
+            "a": "upper",
+            "d": "parry"
            }
           },
           "dist": {
-           "i": "pivotIn",
-           "o": null
+           "i": "angle",
+           "o": "side"
           }
          },
          {
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jab",
-           "hook",
-           "roundh",
            "hook",
            "round",
+           "side",
+           "cross",
+           "hook",
+           "upper",
            "sweep"
           ],
           "w": 180,
@@ -74208,12 +74189,11 @@
           "kind": "round",
           "k": "bag",
           "combo": [
-           "jabb",
+           "jab",
+           "hook",
            "round",
-           "hook",
-           "roundh",
-           "hook",
-           "cross",
+           "front",
+           "crossb",
            "sweep"
           ],
           "w": 180,
@@ -74287,15 +74267,15 @@
         "items": [
          {
           "kind": "ex",
+          "id": 72
+         },
+         {
+          "kind": "ex",
+          "id": 76
+         },
+         {
+          "kind": "ex",
           "id": 74
-         },
-         {
-          "kind": "ex",
-          "id": 75
-         },
-         {
-          "kind": "ex",
-          "id": 73
          }
         ],
         "fitnessLevel": 1
@@ -74500,26 +74480,25 @@
         }
        },
        {
-        "dose": "je Seite 30 s",
+        "dose": "2 Min.",
         "timer": {
-         "phases": 3,
-         "seconds": 65,
+         "phases": 1,
+         "seconds": 120,
          "choices": [
-          30
+          120
          ],
-         "perSet": 30
+         "perSet": 120
         }
        },
        {
-        "dose": "60–90 s halten",
+        "dose": "je Seite 45 s",
         "timer": {
-         "phases": 1,
-         "seconds": 60,
+         "phases": 3,
+         "seconds": 95,
          "choices": [
-          60,
-          90
+          45
          ],
-         "perSet": 60
+         "perSet": 45
         }
        }
       ]

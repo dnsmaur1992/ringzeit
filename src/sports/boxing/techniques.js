@@ -5,11 +5,12 @@
 export const BOX_COUNTER = [
   { d: "slip", att: "jab", c: ["cross", "hook"], lvl: 0 },
   { d: "parry", att: "jab", c: ["cross"], lvl: 0 },
-  { d: "cover", att: "cross", c: ["jab", "cross"], lvl: 0 },
+  { d: "parry", att: "cross", c: ["cross", "hook"], lvl: 0 },
   { d: "step", att: "cross", c: ["jab", "cross"], lvl: 0 },
   { d: "slip", att: "cross", c: ["hookb", "hook"], lvl: 1 },
   { d: "duck", att: "hook", c: ["cross", "hook"], lvl: 1 },
-  { d: "block", att: "hook", c: ["cross", "hook"], lvl: 1 },
+  { d: "block", att: "hook", c: ["hook", "cross"], lvl: 1 },
+  { d: "slipx", att: "cross", c: ["hook", "cross"], lvl: 2 },
   { d: "slip", att: "jab", c: ["cross", "hook", "cross"], lvl: 2 },
   { d: "duck", att: "hook", c: ["upper", "cross", "hook"], lvl: 2 },
 ];

@@ -229,3 +229,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 26.11. | Erster Block mind. 4 Aktionen, Ausgangsschritt bei Größer/Kleiner, 2 Sandsackrunden nach den Blöcken, Kinder max. 6 Blöcke, kurze Ansage, „Block“ im Timer; alte Kombinationslisten entfernt | 336 |
 | 28.11. | Partnertraining geprüft: kein Kopfkick aus Uppercut/Knie, Konter passend zur Distanz, Abwehr passend zur Fortsetzung, Thema in jedem Block | 336 |
 | 28.11. | Zwei große Kombinationen (6–8) in je zwei Blöcken aufgebaut (erst 3–5, dann ganz), kurze Kombinationen (3–5) in den übrigen Blöcken, Gegenaktion im zweiten Block | 336 |
+| 28.11. | Abwehr nach Körpermechanik: keine Doppeldeckung, Slip nur außen (innen nur mit Haken über den Jab), Slip mit Cross, aktives Blocken mit Gegenseite danach; kein Körper-Jab → Körper-Cross, höchstens zwei Techniken von einer Seite | 337 |

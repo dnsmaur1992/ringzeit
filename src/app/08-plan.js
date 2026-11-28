@@ -715,7 +715,9 @@
   }
   /* kickboxing evade & counter rounds (broad focus "Verteidigung & Konter"): a defence, then the counter */
   const KB_COUNTER = [
-    { d: "cover", att: "jab", c: ["jab", "cross"], lvl: 0 },
+    // (28.11.2026: no double guard as an answer – parry, slip, duck, footwork or an active block; after the defence the
+    // side it loaded: a block against the rear kick leans onto the lead side → the rear hand)
+    { d: "parry", att: "jab", c: ["jab", "cross"], lvl: 0 },
     { d: "step", att: "cross", c: ["jab", "cross", "round"], lvl: 0 },
     { d: "block", att: "round", c: ["cross", "round"], lvl: 0 },
     { d: "parry", att: "jab", c: ["cross", "hook", "round"], lvl: 1 },
@@ -723,6 +725,7 @@
     { d: "slip", att: "cross", c: ["hookb", "hook", "round"], lvl: 1 },
     { d: "check", att: "lowk", c: ["cross", "lowk"], lvl: 1, low: true },
     { d: "duck", att: "hook", c: ["cross", "hook", "roundh"], lvl: 2 },
+    { d: "slipx", att: "cross", c: ["hook", "round"], lvl: 2 },
   ];
   /* one combo for a round – built by movement rules (08g-flow.js, Teil 43) instead of drawn from fixed lists */
   function combo(kind, theme) {
@@ -1086,22 +1089,27 @@
     cover: ["Doppeldeckung", "Double guard"],
     step: ["Rausgehen", "Step out"],
     parry: ["Parieren", "Parry"],
-    slip: ["Slippen", "Slip"],
+    // 28.11.2026: slipping goes outside – inside only with a counter over the punch at the same time
+    slip: ["Slip nach außen", "Slip outside"],
+    slipx: ["Slip nach außen, dabei Cross", "Slip outside with a cross"],
+    slipin: ["Slip nach innen, dabei Haken über den Jab", "Slip inside with a hook over the jab"],
     duck: ["Abducken", "Duck"],
-    block: ["Abblocken", "Block"],
+    block: ["Aktiv blocken (in den Schlag lehnen)", "Active block (lean into it)"],
     deflect: ["Ableiten", "Deflect"],
     check: ["Checken (Schienbein-Block)", "Check (shin block)"],
     lift: ["Fuß anheben", "Lift the foot"],
   };
   Object.assign(DEFS, TKDT.DEFS, ITFT.DEFS); // taekwondo defences (Zurückweichen, Ausweichen, Abblocken, Eindrehen)
   const COUNTER_ATT = {
-    jab: { lvl: 0, d: [["cover", 0], ["step", 0], ["parry", 1], ["slip", 1]] },
-    cross: { lvl: 0, d: [["cover", 0], ["step", 0], ["parry", 1], ["slip", 1]] },
+    // 28.11.2026: no double guard – parry, slip (outside; inside or with a cross only together with the counter), duck,
+    // footwork or an active block
+    jab: { lvl: 0, d: [["parry", 0], ["step", 0], ["slip", 1], ["slipin", 2]] },
+    cross: { lvl: 0, d: [["parry", 0], ["step", 0], ["slip", 1], ["slipx", 2]] },
     round: { lvl: 0, d: [["block", 0], ["step", 0]] },
-    hook: { lvl: 1, d: [["cover", 1], ["duck", 1]] },
+    hook: { lvl: 1, d: [["duck", 1], ["block", 1]] },
     front: { lvl: 1, d: [["deflect", 1], ["step", 1]] },
-    roundh: { lvl: 2, d: [["cover", 2], ["step", 2], ["duck", 2]] },
-    upper: { lvl: 1, d: [["cover", 1], ["step", 1]] },
+    roundh: { lvl: 2, d: [["block", 2], ["step", 2], ["duck", 2]] },
+    upper: { lvl: 1, d: [["parry", 1], ["step", 1]] },
     hookb: { lvl: 1, d: [["block", 1]] },
     crossb: { lvl: 1, d: [["block", 1], ["step", 1]] },
     side: { lvl: 1, d: [["deflect", 1], ["step", 1]] },
@@ -1114,10 +1122,11 @@
   /* your own answer after a defence (the quick exchange): what fits best after each defence */
   const ANSWER = {
     parry: ["cross", "jab"],
-    slip: ["hookb", "cross", "crossb", "upper"],
+    slip: ["hookb", "hook", "cross", "round"],
+    slipx: ["hook", "hookb"],
+    slipin: ["hook", "hookb", "upper"],
     duck: ["hook", "upper"],
-    cover: ["cross", "hook", "knee"],
-    block: ["cross", "round", "knee"],
+    block: ["cross", "hook", "round"],
     check: ["lowk", "cross"],
     deflect: ["cross", "round"],
     step: ["jab", "front"],
@@ -1127,6 +1136,44 @@
   let lowTurn = 0;
   // the partner's attacks vary within a session: an attack already used comes again only when all were used
   const usedAtt = new Set();
+  /* what may follow a defence (Betreiber 28.11.2026): the defence leaves the body turned or leaning – the next technique
+     has to use that (orthodox, V = lead, H = rear; the partner's lead-side attacks land on A's rear side):
+     - slip outside the cross (to the right): weight on the rear leg – lead body hook, lead hook or a rear kick; a cross
+       only together with the slip (slipx); slip outside the jab: the rear hand (cross, rear uppercut); inside the jab
+       only with a hook over the jab at the same time (slipin) – after both A's rear hand has fired: the lead side next;
+     - active block: A leans into the strike – against the lead hook / body hook (rear side) → lead hooks or a rear kick,
+       against the rear kick / body cross (lead side) → the rear hand or a rear kick;
+     - parry: in place, anything; step out: only a reaching technique next; duck: hooks, uppercut or a cross;
+     - check (lead leg up): cross, jab or a kick; deflect: cross, jab or a kick; lift the foot: a kick or the cross. */
+  function followOk(x, t, side) {
+    if (!t) return true;
+    const has = (list) => list.some(([id, sd]) => id === t && (!sd || !side || sd === side));
+    switch (x.d) {
+      case "parry":
+        return true;
+      case "step":
+        return (FT[t] || {}).r !== "C";
+      case "slip":
+        return x.a === "cross" ? has([["hook", "L"], ["hookb", "L"], ["round", "R"], ["roundh", "R"], ["lowk", "R"]]) : has([["cross"], ["crossb"], ["upper", "R"]]);
+      case "slipx":
+      case "slipin":
+        return side === "L" || t === "jab" || t === "jabb";
+      case "duck":
+        return ["hook", "hookb", "upper", "cross", "crossb"].includes(t);
+      case "block":
+        if (x.a === "hook" || x.a === "hookb") return has([["hook", "L"], ["hookb", "L"], ["round", "R"], ["roundh", "R"], ["lowk", "R"]]);
+        if (["round", "roundh", "crossb"].includes(x.a)) return has([["cross"], ["crossb"], ["upper", "R"], ["round", "R"], ["roundh", "R"], ["lowk", "R"]]);
+        return true;
+      case "check":
+        return ["cross", "jab", "front", "round", "roundh", "lowk", "side"].includes(t);
+      case "deflect":
+        return ["cross", "crossb", "jab", "round", "roundh", "lowk"].includes(t);
+      case "lift":
+        return ["round", "roundh", "cross", "lowk"].includes(t);
+      default:
+        return true;
+    }
+  }
   /* E35 (17.11.2026): with a counter focus (kickVsPunch / punchVsKick) the partner attacks with exactly what the focus
      counters, and you defend as the focus says – in every counter action and in the defence round of the Grundabdeckung;
      your quick answer stays in the focus too (punches against kicks, kicks against punches). */
@@ -1163,55 +1210,54 @@
         pool = fresh.length ? fresh : pool;
       }
       const a = pool[Math.floor(Math.random() * pool.length)],
-        ds = COUNTER_ATT[a].d.filter(([d, l]) => lvl >= l && !(kid && !["cover", "parry", "step"].includes(d)) && !(ka && d === "check"));
+        ds = COUNTER_ATT[a].d.filter(([d, l]) => lvl >= l && !(kid && !["parry", "step", "block"].includes(d)) && !(ka && d === "check"));
       usedAtt.add(a);
       if (a === "lowk" && ds.length === 2) return { a, d: lowTurn++ % 2 ? "step" : "check" };
-      return { a, d: (ds[Math.floor(Math.random() * ds.length)] || ["cover"])[0] };
+      return { a, d: (ds[Math.floor(Math.random() * ds.length)] || [KICKS.has(a) ? "block" : "parry"])[0] };
     };
     /* in the middle of the combo (28.11.2026): the partner's counter fits the distance A is at (after a hook or uppercut
-       no kick to the head or push kick, after a push kick no hook), and A's defence fits how the combo goes on (an
-       evasive step out only when a reaching technique follows; before a hook or uppercut A stays – cover, parry, block) */
-    const OUTD = new Set(["step", "deflect", "lift"]);
-    const inPlace = (a) => COUNTER_ATT[a].d.filter(([d, l]) => lvl >= l && !OUTD.has(d) && !(ka && d === "check")).map(([d]) => d);
+       no kick to the head or push kick, after a push kick no hook), and A's defence fits how the combo goes on */
     const NEAR = new Set(["jab", "cross", "hook", "hookb", "crossb", "upper", "knee", "lowk"]),
       FAR = new Set(["jab", "cross", "front", "side", "round", "roundh", "lowk", "sweep", "crossb"]);
     const fitsAt = (prev) => {
       const R = (FT[prev] || {}).r || "M";
       return (a) => (R === "C" ? NEAR.has(a) : R === "L" ? FAR.has(a) : a !== "knee");
     };
-    // a cut where the partner still has a fresh attack that fits (no attack twice in a unit)
-    const freshAt = (i) => {
-      const fits = fitsAt(c[i - 1]),
-        stay = (FT[c[i]] || {}).r === "C";
-      return focus.length ? focus.some((x) => fits(x.att) && !usedAtt.has(x.att) && !(stay && OUTD.has(x.d))) : atts.some((a) => fits(a) && !usedAtt.has(a) && (!stay || inPlace(a).length));
+    // the defences that may be chosen against an attack (level, children, knee/ankle limit)
+    const defsOf = (a) => COUNTER_ATT[a].d.filter(([d, l]) => lvl >= l && !(kid && !["parry", "step", "block"].includes(d)) && !(ka && d === "check")).map(([d]) => d);
+    // the candidates at one cut: every attack/defence pair whose defence loads what A throws next
+    const cands = (prev, next, side) => {
+      const fits = prev ? fitsAt(prev) : () => true;
+      if (focus.length) return focus.filter((x) => fits(x.att) && followOk({ a: x.att, d: x.d }, next, side)).map((x) => ({ a: x.att, d: x.d }));
+      const out = [];
+      for (const a of atts) if (fits(a)) for (const d of defsOf(a)) if (followOk({ a, d }, next, side)) out.push({ a, d });
+      return out;
     };
-    const pickMid = (prev, next) => {
-      const fits = fitsAt(prev),
-        stay = (FT[next] || {}).r === "C";
-      const keepF = focus.slice(),
-        keepA = atts.slice();
-      // the pool by distance – and, when A stays close, only attacks with a defence in place (a focus keeps its own
-      // attacks when none of them fits)
-      const fF = focus.filter((x) => fits(x.att) && !(stay && OUTD.has(x.d)));
-      if (fF.length) focus.splice(0, focus.length, ...fF);
-      const fA = atts.filter((a) => fits(a) && (!stay || inPlace(a).length));
-      if (fA.length) atts.splice(0, atts.length, ...fA);
-      let x = pick(false);
-      focus.splice(0, focus.length, ...keepF);
-      atts.splice(0, atts.length, ...keepA);
-      if (stay && OUTD.has(x.d) && !focus.length && inPlace(x.a).length) {
-        const ds = inPlace(x.a);
-        // (low kicks stay half checked, half stepped out over the unit)
-        if (x.a === "lowk") lowTurn--;
-        x = { ...x, d: ds[Math.floor(Math.random() * ds.length)] };
+    // one of them: a fresh attack first (no attack twice in a unit); low kicks half checked, half stepped out
+    const choose = (list) => {
+      const fresh = list.filter((x) => !usedAtt.has(x.a)),
+        want = lowTurn % 2 ? "step" : "check";
+      let pool = fresh.length ? fresh : list;
+      // (a low kick whose turn of defence does not fit here: another attack when there is one)
+      if (pool.some((x) => x.a !== "lowk") && !pool.some((x) => x.a === "lowk" && x.d === want)) pool = pool.filter((x) => x.a !== "lowk");
+      const a = pool[Math.floor(Math.random() * pool.length)].a,
+        ds = pool.filter((x) => x.a === a).map((x) => x.d);
+      usedAtt.add(a);
+      if (a === "lowk") {
+        if (ds.includes(want)) {
+          lowTurn++;
+          return { a, d: want };
+        }
+        return { a, d: ds[0] };
       }
-      return x;
+      return { a, d: ds[Math.floor(Math.random() * ds.length)] };
     };
     // the quick exchange: after the defence you answer right away (Fortgeschritten about half the time, Wettkampf mostly)
     const answer = (x) => {
       if (kid || Math.random() >= [0, 0.5, 0.85][lvl]) return x;
       const ok = (ANSWER[x.d] || []).filter(
         (t) =>
+          followOk(x, t, oneSide(t)) &&
           !(focus.length && theme.tag === "hand" && KICKS.has(t)) &&
           !(focus.length && theme.tag === "kick" && !KICKS.has(t)) &&
           !(box && !BOXT.BOX_ATT.has(t)) &&
@@ -1229,13 +1275,20 @@
     // short for that gets it at the end
     const at = o.mid ? (cuts.length ? "mid" : "post") : spots[Math.floor(Math.random() * spots.length)],
       r = {};
-    if (at === "pre") r.pre = pick(lowOk && Math.random() < 0.5);
-    else if (at === "post") r.post = answer(pick(lowOk && Math.random() < 0.35));
-    else {
+    const sdC = c ? rawSides(c) : [];
+    let at2 = at;
+    if (at === "mid") {
+      // a cut where the partner has a fitting attack – a fresh one first
       const order = cuts.slice().sort(() => Math.random() - 0.5),
-        i = order.find(freshAt) || order[0];
-      r.mid = { at: i, ...pickMid(c[i - 1], c[i]) };
+        lists = order.map((i) => ({ i, l: cands(c[i - 1], c[i], sdC[i]) })).filter((x) => x.l.length),
+        hit = lists.find((x) => x.l.some((y) => !usedAtt.has(y.a))) || lists[0];
+      if (hit) r.mid = { at: hit.i, ...choose(hit.l) };
+      else at2 = "post";
     }
+    if (at2 === "pre") {
+      const l = c ? cands(null, c[0], sdC[0]) : [];
+      r.pre = l.length ? choose(l) : pick(lowOk && Math.random() < 0.5);
+    } else if (at2 === "post") r.post = answer(pick(lowOk && Math.random() < 0.35));
     // Wettkampf: in some rounds the partner comes in twice – before your combo and again after it
     const dbl = discOf() === "fc" ? [0, 0.25, 0.6][lvl] : lvl >= 2 ? 0.4 : 0;
     // only with an attack not used yet in this unit – no partner attack twice (17.11.2026: with 6 rounds × 2 actions
@@ -1378,7 +1431,7 @@
       kinds.push(k);
     }
     focusKinds(kinds, theme, easy);
-    const counters = BOXT.BOX_COUNTER.filter((c) => c.lvl <= lvl && (!kid || ["cover", "parry", "step"].includes(c.d)) && (!kid || c.c.length <= 2));
+    const counters = BOXT.BOX_COUNTER.filter((c) => c.lvl <= lvl && (!kid || ["parry", "step", "block"].includes(c.d)) && (!kid || c.c.length <= 2));
     const used = new Set();
     const out = kinds.map((k) => {
       const r = { kind: "round", k };

@@ -5518,7 +5518,7 @@ test("14.11.2026 technique focus: always one, not shown as extra text, balanced 
   // children: only simple defences
   force("def");
   const kid = sess7(a, "kickboxing", "T", { eq: ["bag"], by: 2016, lvl: 0 });
-  assert.ok(blk(kid, (b) => b.key === "main").items.filter((r) => r.k === "evade").every((r) => ["cover", "step", "block"].includes(r.evade.d) && r.combo.length <= 3));
+  assert.ok(blk(kid, (b) => b.key === "main").items.filter((r) => r.k === "evade").every((r) => ["parry", "step", "block"].includes(r.evade.d) && r.combo.length <= 3)) // 28.11.2026: no double guard;
   back();
   // balanced: 48 technique units in a row – every focus of the sport comes up, none dominates, the broad ones too
   for (const sp of ["kickboxing", "boxing", "taekwondo"]) {
@@ -7366,7 +7366,9 @@ test("Teil 43: every combination is built by movement – sides alternate (real 
             if(CLOSE.has(x)&&LONG.has(y))bad.push('close→long '+c.join('-'));
             if(PUSH.has(x)&&CLOSE.has(y))bad.push('push→close '+c.join('-'));
             if(REAR.has(x)&&sd[k]==='L'&&(PUSH.has(y)||y==='axe'||y==='hookk'))bad.push('weight '+c.join('-'));
-            if((x==='upper'||x==='knee')&&['roundh','axe','brazil','hookk','shook','tornado'].includes(y))bad.push('head kick out of uppercut/knee '+c.join('-'));}
+            if((x==='upper'||x==='knee')&&['roundh','axe','brazil','hookk','shook','tornado'].includes(y))bad.push('head kick out of uppercut/knee '+c.join('-'));
+            if((x==='jabb'||x==='crossb')&&(y==='jabb'||y==='crossb'))bad.push('body jab → body cross '+c.join('-'));
+            if(k>=2&&sd[k]&&sd[k]===sd[k-1]&&sd[k-1]===sd[k-2])bad.push('three on one side '+c.join('-'));}
           if(['jab','jabb'].includes(core[core.length-1]))bad.push('ends on a jab '+c.join('-'));
           if(lvl===0&&['roundh','axe','hookk','brazil'].includes(core[0]))bad.push('Grundlage opens with a head kick '+c.join('-'));
           // 26.11.2026: 4–7 actions everywhere (Light Contact too, kick chains 4–5), children 2–3
@@ -7410,13 +7412,17 @@ test("Teil 43: partner units (technique and conditioning, all sports, children, 
           wantR=sp!=='taekwondo'&&(kid?k===n-1:((it.pb.r==='full'&&(lvl>=1||k===lastBig))||(it.pb.r==='short'&&defF&&lvl>=1)));
         if(!!it.react!==wantR)bad.push('counter blocks '+tag+' '+k+'/'+n+' '+it.pb.r);
         if(it.react&&!kid){const core=it.combo.filter(y=>y!=='step');const canMid=core.some((y,i)=>i>=1&&i<=core.length-2&&STRIKE.has(core[i-1]));
-          if(canMid?!it.react.mid:!it.react.post)bad.push('counter in the middle '+tag+' '+JSON.stringify(it.react));
+          // (in the middle where a counter fits the defence rules, otherwise at the end – 28.11.2026)
+          if(!it.react.mid&&!it.react.post||(!canMid&&it.react.mid))bad.push('counter in the middle '+tag+' '+JSON.stringify(it.react));
           if(Object.keys(it.react).length!==1)bad.push('one counter only '+tag);
           // 28.11.2026: the partner's counter fits the distance, A's defence fits how the combo goes on
           if(it.react.mid&&sp!=='taekwondo'){const m=it.react.mid,prev=core[m.at-1],next=core[m.at],CL=['hook','hookb','upper','knee'];
             if(!(focusOf(s.theme)||{}).counters){if(CL.includes(prev)&&['front','side','back','round','roundh','axe'].includes(m.a))bad.push('counter too far '+tag);
               if(['front','side'].includes(prev)&&CL.includes(m.a))bad.push('counter too close '+tag);}
-            if(CL.includes(next)&&['step','deflect','lift'].includes(m.d))bad.push('step out before close range '+tag);}}
+            if(CL.includes(next)&&['step','deflect','lift'].includes(m.d))bad.push('step out before close range '+tag);
+            // 28.11.2026: the defence loads what comes next (slip outside, active block leans in), never a double guard
+            if(!followOk(m,next,rawSides(core)[m.at]))bad.push('defence does not load the next technique '+tag+' '+JSON.stringify(m)+' '+core.join('-'));}
+          for(const q of [it.react.pre,it.react.mid,it.react.post])if(q&&q.d==='cover')bad.push('double guard '+tag);}
         // the theme stays in every block (start, rule) – 28.11.2026
         {const fs=focusSpec(focusOf(s.theme));if(sp!=='taekwondo'&&!it.mine&&((fs.must&&!fs.must(it.combo))||(fs.start&&fs.start.some((x,i)=>it.combo[i]!==x))))bad.push('theme '+s.theme+' '+tag+' '+it.combo.join('-'));}
         if(kid&&S2.some(x=>x[0]==='full'))bad.push('children competition pace '+tag);
@@ -7428,7 +7434,8 @@ test("Teil 43: partner units (technique and conditioning, all sports, children, 
       if(!rb.items[0].ease)bad.push('ease '+tag);
       // 28.11.2026: two big combinations (6–8, children 3), each built up in two blocks (first 3–5 actions, children 2, then
       // the whole); the blocks left over short ones (3–5, children 2–3); against taller/smaller every block ends with the step out
-      const LEN={part:kid?[2,2]:[3,5],full:kid?[3,3]:[6,8],short:kid?[2,3]:[3,5]};
+      // (boxing "against smaller: keep the range" has only jab and cross – its whole combination may be shorter)
+      const LEN={part:kid?[2,2]:[3,5],full:kid?[3,3]:sp==='boxing'&&s.theme==='shortOpp'?[4,8]:[6,8],short:kid?[2,3]:[3,5]};
       // (children: no build-up – every block its own short combination)
       const roles=rb.items.map(x=>x.pb.r).join(),wantRoles=(kid?Array(n).fill('short'):n===1?['full']:n===2?['part','full']:n===3?['part','full','short']:['part','full','part','full',...Array(n-4).fill('short')]).join();
       if(roles!==wantRoles)bad.push('structure '+tag+' '+roles);
@@ -7510,4 +7517,29 @@ test("26.11.2026: partner and bag – 2 bag rounds after the theme blocks with t
   // the progression: a longer break – the blocks get shorter, the bag rounds keep 3:00
   a.run(`(()=>{const s=S.sessions['2026-11-26'],b=s.blocks.find(b=>b.pblk);b.b+=60;const pb=b.items.filter(x=>x.pb).length,own=b.items.filter(x=>!x.pb).reduce((t,x)=>t+(x.w||180),0);b.w=Math.floor((b.min*60-own-(b.items.length-1)*b.b)/pb/30)*30;pbRescale(b.items,b.w);})()`);
   assert.deepEqual(JSON.parse(a.run("JSON.stringify(roundBlock(S.sessions['2026-11-26']).items.filter(x=>!x.pb).map(x=>x.w))")), [180, 180]);
+});
+
+test("28.11.2026: defences that load the next technique – slip outside (inside / with a cross only together with the counter), active block leans into the strike, no double guard; no body cross right after a body jab", () => {
+  const a = app();
+  const r = JSON.parse(a.run(`JSON.stringify((()=>{
+    const f=(a,d,t,s)=>followOk({a,d},t,s);
+    return {
+      slipCross:[f('cross','slip','hookb','L'),f('cross','slip','hook','L'),f('cross','slip','round','R'),f('cross','slip','cross','R'),f('cross','slip','jab','L')],
+      slipJab:[f('jab','slip','cross','R'),f('jab','slip','hook','L')],
+      withCounter:[f('cross','slipx','hook','L'),f('cross','slipx','cross','R'),f('jab','slipin','hookb','L')],
+      block:[f('hook','block','hook','L'),f('hook','block','round','R'),f('hook','block','cross','R'),f('round','block','cross','R'),f('round','block','hook','L')],
+      step:[f('jab','step','jab','L'),f('jab','step','hook','L')],
+      noCover:Object.values(COUNTER_ATT).every(x=>!x.d.some(([d])=>d==='cover'))&&!KB_COUNTER.some(x=>x.d==='cover')&&!BOXT.BOX_COUNTER.some(x=>x.d==='cover'),
+      evadeOk:[...KB_COUNTER,...BOXT.BOX_COUNTER].every(x=>followOk({a:x.att,d:x.d},x.c[0],oneSide(x.c[0]))),
+      bodyBody:flowW(['jab','jabb'],'crossb',flowCtx())===0&&flowW(['jab','crossb'],'jabb',flowCtx())===0,
+      labels:[DEFS.slip[0],DEFS.slipx[0],DEFS.slipin[0],DEFS.block[0]]};})())`));
+  assert.deepEqual(r.slipCross, [true, true, true, false, false], "after slipping the cross outside: lead hooks or a rear kick, no own cross, no jab");
+  assert.deepEqual(r.slipJab, [true, false]);
+  assert.deepEqual(r.withCounter, [true, false, true], "after a slip with the counter A's rear hand has fired – the lead side next");
+  assert.deepEqual(r.block, [true, true, false, true, false], "an active block leans into the strike – the loaded side next");
+  assert.deepEqual(r.step, [true, false]);
+  assert.ok(r.noCover, "no double guard as an answer");
+  assert.ok(r.evadeOk, "the evasion rounds follow the same rules");
+  assert.ok(r.bodyBody, "no body cross right after a body jab");
+  assert.deepEqual(r.labels, ["Slip nach außen", "Slip nach außen, dabei Cross", "Slip nach innen, dabei Haken über den Jab", "Aktiv blocken (in den Schlag lehnen)"]);
 });
