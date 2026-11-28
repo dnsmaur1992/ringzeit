@@ -5116,7 +5116,7 @@ test("6b: kick series are one bracketed chip with explicit V/H, level 1, never f
   tkdProfile(k, { by: 2016, lvl: 0, grade: "k8" });
   for (let i = 0; i < 20; i++) assert.ok(!/"sr\d"/.test(JSON.stringify(tkdSess(k, "T"))), "kid got a series");
 });
-test("6b: kick chains are 4–7 actions on every level (26.11.2026, before longer with the level)", () => {
+test("6b: kick chains are 4–7 actions on every level (26.11.2026, before longer with the level; 28.11.2026 big partner combinations 6–8)", () => {
   const maxKicks = (lvl) => {
     const a = app();
     tkdProfile(a, { lvl });
@@ -5135,8 +5135,8 @@ test("6b: kick chains are 4–7 actions on every level (26.11.2026, before longe
   const l0 = maxKicks(0),
     l1 = maxKicks(1),
     l2 = maxKicks(2);
-  // 26.11.2026: 4–7 actions for every level – the chains reach 5+ kicks, none beyond 7 actions
-  assert.ok(l0.m <= 7 && l1.m <= 7 && l2.m <= 7, "no chain beyond 7: " + l0.m + " " + l1.m + " " + l2.m);
+  // 26.11.2026: 4–7 actions for every level (28.11.2026: the big partner combinations 6–8) – the chains reach 5+ kicks
+  assert.ok(l0.m <= 8 && l1.m <= 8 && l2.m <= 8, "no chain beyond 8: " + l0.m + " " + l1.m + " " + l2.m);
   assert.ok(l2.m >= 5, "competition level reaches 5+ kicks: " + l2.m);
   assert.ok(l0.avg >= 3 && l1.avg >= 3 && l2.avg >= 3, `long chains on every level: ${l0.avg} ${l1.avg} ${l2.avg}`);
 });
@@ -7384,7 +7384,7 @@ test("Teil 43: every combination is built by movement – sides alternate (real 
   assert.deepEqual(r.sides, [[null, "L"], [null, "L", "L"], [null, null, "L", "R"]]);
 });
 
-test("Teil 43: partner units (technique and conditioning, all sports, children, tournament preparation) are theme blocks of 8–12 minutes in one go (children 5–6) – stages clean → pace with entry/exit → counter action (about 2 of 5 blocks, in the middle of the combo; 28.11.2026: fitting the distance and how the combo goes on), easy → hard, one theme kept in every block", () => {
+test("Teil 43: partner units (technique and conditioning, all sports, children, tournament preparation) are theme blocks of 8–12 minutes in one go (children 5–6) – stages clean → pace with entry/exit → counter action (28.11.2026: two big combinations built up in two blocks each, short ones after; the counter in the second block of a big one, fitting the distance and how the combo goes on), one theme kept in every block", () => {
   const a = app();
   a.setDate("2026-11-25");
   const r = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];const st={units:0,thread:0,multi:0,six:0,fc:0,themes:new Set()};S.profile.limits=[];S.profile.lang='de';
@@ -7404,10 +7404,11 @@ test("Teil 43: partner units (technique and conditioning, all sports, children, 
         if(S2[0][0]!=='clean'||S2[1][0]!=='tempo')bad.push('stage order '+tag);
         if(it.react&&S2[S2.length-1][0]!=='react')bad.push('react stage '+tag);
         if(sp==='taekwondo'&&it.react)bad.push('TKD counter '+tag);
-        // counter actions: about 2 of 5 blocks (defence focus 3 of 5), the last ones; Grundlage and children one, in the last
-        // block; in the middle of the combo when it is long enough (A answers, then goes on) – punch or kick
-        const defF=s.theme==='def'||!!(focusOf(s.theme)||{}).counters,nR=sp==='taekwondo'?0:(lvl===0||kid)?1:Math.max(1,Math.round(n*(defF?0.6:0.4)));
-        if(!!it.react!==(k>=n-nR))bad.push('counter blocks '+tag+' '+k+'/'+n);
+        // 28.11.2026: counter actions in the second block of each big combination (Grundlage and children: only the last big
+        // one; defence focus: also the short blocks); in the middle of the combo when it is long enough – punch or kick
+        const defF=s.theme==='def'||!!(focusOf(s.theme)||{}).counters,lastBig=Math.max(...rb.items.map((x,j)=>x.pb.r==='full'?j:-1)),
+          wantR=sp!=='taekwondo'&&(kid?k===n-1:((it.pb.r==='full'&&(lvl>=1||k===lastBig))||(it.pb.r==='short'&&defF&&lvl>=1)));
+        if(!!it.react!==wantR)bad.push('counter blocks '+tag+' '+k+'/'+n+' '+it.pb.r);
         if(it.react&&!kid){const core=it.combo.filter(y=>y!=='step');const canMid=core.some((y,i)=>i>=1&&i<=core.length-2&&STRIKE.has(core[i-1]));
           if(canMid?!it.react.mid:!it.react.post)bad.push('counter in the middle '+tag+' '+JSON.stringify(it.react));
           if(Object.keys(it.react).length!==1)bad.push('one counter only '+tag);
@@ -7425,18 +7426,21 @@ test("Teil 43: partner units (technique and conditioning, all sports, children, 
         if(it.six)st.six++;});
       if(disc==='fc'&&sp==='kickboxing'&&n>=1)st.fc++;
       if(!rb.items[0].ease)bad.push('ease '+tag);
-      // 26.11.2026: already the first block has 4 actions (children 2–3); against taller/smaller every block ends with the step out
-      for(const it of rb.items){const core=it.combo.filter(y=>y!=='step'&&y!=='stepb');if(!it.mine&&(kid?core.length>3:(core.length<4||core.length>7)))bad.push('block length '+tag+' '+it.combo.join('-'));
+      // 28.11.2026: two big combinations (6–8, children 3), each built up in two blocks (first 3–5 actions, children 2, then
+      // the whole); the blocks left over short ones (3–5, children 2–3); against taller/smaller every block ends with the step out
+      const LEN={part:kid?[2,2]:[3,5],full:kid?[3,3]:[6,8],short:kid?[2,3]:[3,5]};
+      // (children: no build-up – every block its own short combination)
+      const roles=rb.items.map(x=>x.pb.r).join(),wantRoles=(kid?Array(n).fill('short'):n===1?['full']:n===2?['part','full']:n===3?['part','full','short']:['part','full','part','full',...Array(n-4).fill('short')]).join();
+      if(roles!==wantRoles)bad.push('structure '+tag+' '+roles);
+      rb.items.forEach((it,k)=>{if(it.pb.r==='part'){const f=rb.items[k+1];if(!f||!(f.mine||(','+f.combo.filter(y=>y!=='step'&&y!=='stepb').join()+',').startsWith(','+it.combo.filter(y=>y!=='step'&&y!=='stepb').join()+',')))bad.push('first block is the beginning of the whole '+tag);}});
+      for(const it of rb.items){const core=it.combo.filter(y=>y!=='step'&&y!=='stepb'),[lo,hi]=LEN[it.pb.r];if(!it.mine&&!rb.items.some(x=>x.mine&&x.pb.r==='full')&&(core.length<lo||core.length>hi))bad.push('block length '+tag+' '+it.pb.r+' '+it.combo.join('-'));
         if(['tallOpp','shortOpp'].includes(s.theme)&&!it.mine&&it.combo[it.combo.length-1]!==(sp==='taekwondo'?'stepb':'step'))bad.push('exit step '+tag);}
       if(kid&&n>6)bad.push('children > 6 blocks '+tag);
-      for(let k=1;k<n;k++)if(comboLevel(rb.items[k].combo)+0.001<comboLevel(rb.items[k-1].combo)&&!rb.items[k].mine)bad.push('easy → hard '+tag);
-      // one concept: the blocks share their beginning, or their finish, or each block holds the one before
-      if(n>1&&!rb.items.some(x=>x.mine)){st.multi++;const cs=rb.items.map(x=>x.combo.filter(y=>y!=='step'));
-        if(cs.every(c=>c[0]===cs[0][0])||cs.every(c=>c[c.length-1]===cs[0][cs[0].length-1])||cs.every((c,k)=>!k||(','+c.join()+',').includes(','+cs[k-1].join()+',')))st.thread++;}
+      // the two big combinations are different ones
+      {const fulls=rb.items.filter(x=>x.pb.r==='full');if(fulls.length===2&&fulls[0].combo.join()===fulls[1].combo.join())bad.push('two big the same '+tag);}
       if(!pbTheme(s))bad.push('theme '+tag);}
     return {bad:[...new Set(bad)].slice(0,10),units:st.units,thread:st.thread,multi:st.multi,six:st.six,fc:st.fc,themes:st.themes.size}})())`));
   assert.deepEqual(r.bad, [], r.bad.join("\n"));
-  assert.ok(r.thread / r.multi >= 0.7, `one concept: the blocks share their beginning (${r.thread}/${r.multi})`);
   assert.equal(r.six, r.fc, "Full Contact: the 6-kick rule on one block of every unit");
   assert.ok(r.themes > 8, "the theme changes from unit to unit");
 });
@@ -7460,7 +7464,8 @@ test("Teil 43: the list shows theme, block and stage plan; the training mode and
   assert.equal(a.run(`roundInfo(${it},${b1}).item`), null, "no A/B frames before the counter stage");
   const last = "S.sessions['2026-11-26'].blocks[" + bi + "].items.at(-1)";
   assert.ok(a.run(`!!roundInfo(${last},+pbBounds(${last})[1]).item`), "the counter stage (last block) shows the A/B frames");
-  assert.match(a.run(`roundInfo(${it},+pbBounds(${it})[1]).desc`), /^Stufe 3: Wettkampftempo, der Partner bewegt sich\./, "a block without counter action ends in competition pace");
+  const first = "S.sessions['2026-11-26'].blocks[" + bi + "].items[0]";
+  assert.match(a.run(`roundInfo(${first},+pbBounds(${first})[1]).desc`), /^Stufe 3: Wettkampftempo, der Partner bewegt sich\./, "a block without counter action (the first part of a big combination) ends in competition pace");
   // the timer: a stage change gives a signal and redraws the card
   a.run(`ui.timer={ds:'2026-11-26',phase:'work',round:2,total:${it}?S.sessions['2026-11-26'].blocks[${bi}].items.length:0,work:S.sessions['2026-11-26'].blocks[${bi}].w,left:S.sessions['2026-11-26'].blocks[${bi}].w-${b1},rest:60,running:true}`);
   assert.equal(a.run("pbTick(ui.timer)"), true);

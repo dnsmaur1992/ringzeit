@@ -84,6 +84,8 @@
   /* weight of the step a → b (0 = not allowed); c = the combo so far (ends with a) */
   function flowW(c, b, ctx) {
     const a = c[c.length - 1];
+    // a long combo does not repeat itself: no pair of techniques twice ("jab, cross … jab, cross", 28.11.2026)
+    for (let i = 1; i < c.length; i++) if (c[i - 1] === a && c[i] === b) return 0;
     if (ctx.tkd) {
       const A = fkOf(a),
         B = fkOf(b);
@@ -301,7 +303,7 @@
     if (!wantSJ) allowed = allowed.filter((x) => !SJ.includes(x));
     const need = (noHead || M === ITFT ? 1 : 2) + lvl,
       kicks = lvl >= 1 && Math.random() < 0.75 ? need : Math.max(2, need - 1),
-      hi = ctx.kid ? 3 : COMBO_LEN[1];
+      hi = ctx.kid ? 3 : o.len ? o.len[1] : COMBO_LEN[1];
     const allowSet = new Set(allowed),
       spect = M === ITFT && lvl >= 1 && Math.random() < 0.45 ? allowed.filter((x) => ITF_SPECT.has(x)) : [],
       pref = theme && theme.prefer && Math.random() < 0.75 ? theme.prefer.filter((x) => allowSet.has(x)) : [],
