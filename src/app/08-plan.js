@@ -102,6 +102,12 @@
   const isTkd = () => sportNow() === "taekwondo";
   let buildDisc = null; // discipline of the unit being built (kickboxing); null = profile discipline
   const discOf = () => (isBox() ? "box" : isTkd() ? "tkd" : buildDisc || S.profile.disc);
+  /* group (Betreiber 28.11.2026): a training group is always mixed – some with low kicks, some without. In Kick Light
+     and K1 every low kick then has its stand-in for the others: a roundhouse kick to the body from the same side, and
+     a combination with a low kick must run cleanly in both versions; the theme fits both (no low-kick theme), the
+     partner does not counter with a low kick. */
+  let buildGrp = false;
+  const grpLk = () => buildGrp && !isBox() && !isTkd() && !!EXTRA[discOf()];
   /* Protection ban after a KO: kickboxing 4 weeks (WAKO), boxing 30 days (DBV §89) */
   const koDays = () => {
     const k = sportFor(sportNow()).rules.koDays;
@@ -530,7 +536,8 @@
         (!th.disc || th.disc.includes(discOf())) &&
         (!th.lvl || techniqueLevel() >= th.lvl) &&
         !(ka && th.risky) &&
-        !(th.id === "sweepFinish" && p.limits.includes("ankle")),
+        !(th.id === "sweepFinish" && p.limits.includes("ankle")) &&
+        !(th.id === "lowFinish" && grpLk()),
     );
     return rotatePick(ok, focusWeight);
   }
@@ -655,7 +662,7 @@
   const tacticFoci = () => {
     const sp = isTkd() ? "taekwondo" : isBox() ? "boxing" : "kickboxing",
       ka = kneeAnk();
-    return (TACTIC[sp] || []).filter((th) => !th.lvl || techniqueLevel() >= th.lvl).map((th) => ({ ...th, counters: th.counters && th.counters.filter((c) => !(c.low && (ka || !EXTRA[discOf()]))) }));
+    return (TACTIC[sp] || []).filter((th) => !th.lvl || techniqueLevel() >= th.lvl).map((th) => ({ ...th, counters: th.counters && th.counters.filter((c) => !(c.low && (ka || !EXTRA[discOf()] || grpLk()))) }));
   };
   // taekwondo: one kick per unit; it shows up in most combos of the unit (tkdCombo)
   const TKD_KF = ["dol", "ap", "yeop", "nae", "dwi", "mireo", "ban"];
@@ -674,7 +681,7 @@
       const p = S.profile,
         ka = kneeAnk();
       base = THEMES.filter(
-        (th) => (!th.disc || th.disc.includes(discOf())) && (!th.lvl || techniqueLevel() >= th.lvl) && !(ka && th.risky) && !(th.id === "sweepFinish" && p.limits.includes("ankle")),
+        (th) => (!th.disc || th.disc.includes(discOf())) && (!th.lvl || techniqueLevel() >= th.lvl) && !(ka && th.risky) && !(th.id === "sweepFinish" && p.limits.includes("ankle")) && !(th.id === "lowFinish" && grpLk()),
       );
     }
     // technique units also get the tactical foci; conditioning/sparring in taekwondo keep a kick (no kinds changed)
@@ -1182,7 +1189,8 @@
       kid = ageGroup() === "kids",
       ka = kneeAnk(),
       box = isBox(),
-      lowOk = (discOf() === "kl" || discOf() === "k1") && !ka && !kid,
+      // (a mixed group: the partner never counters with a low kick)
+      lowOk = (discOf() === "kl" || discOf() === "k1") && !ka && !kid && !grpLk(),
       lvl = techniqueLevel() || 0;
     const atts = Object.keys(COUNTER_ATT).filter((a) => {
       const x = COUNTER_ATT[a];
@@ -1312,6 +1320,10 @@
   /* Partner rounds with a counter action: who does what, in order, as framed groups – A (attacker, light blue)
      and B (partner, yellow). Inside the frames the usual technique chips; a defence is a plain chip. */
   function reactHtml(it) {
+    const h = reactHtml0(it);
+    return it.lk && h ? h + `<div class="last lkalt">${esc(t("grpLk"))}</div>` : h;
+  }
+  function reactHtml0(it) {
     const R = it.react,
       c = it.combo;
     // boxing evasion round: the defence, then the counter – nothing is said about the opponent
@@ -1513,7 +1525,7 @@
     // Grundabdeckung (E10/E11/E17–E19, 17.11.2026): a range & exit round and a defence round in every technique unit
     const cover = coverSlots(kinds, type, theme, easy, partner);
     const lvlK = techniqueLevel() || 0,
-      kbCounters = KB_COUNTER.filter((c) => c.lvl <= lvlK && !(c.low && (ka || !EXTRA[discOf()])) && !(ageGroup() === "kids" && (c.lvl > 0 || c.c.length > 2))),
+      kbCounters = KB_COUNTER.filter((c) => c.lvl <= lvlK && !(c.low && (ka || !EXTRA[discOf()] || grpLk())) && !(ageGroup() === "kids" && (c.lvl > 0 || c.c.length > 2))),
       usedC = new Set();
     // my combos from club training: the first suitable round always, later ones now and then
     let mi = Math.floor(Math.random() * 8),
@@ -1689,9 +1701,9 @@
   }
   /* Equipment that is relevant per session type – everything else the user selected is ignored */
   const EQ_FOR = {
-    T: ["partner", "bag", "pads", "rope", "weights", "kb", "bb", "bands", "bar"],
-    C: ["partner", "bag", "pads", "rope", "weights", "kb", "bb", "bands", "bar"],
-    P: ["partner", "bag"],
+    T: ["partner", "group", "bag", "pads", "rope", "weights", "kb", "bb", "bands", "bar"],
+    C: ["partner", "group", "bag", "pads", "rope", "weights", "kb", "bb", "bands", "bar"],
+    P: ["partner", "group", "bag"],
     S: ["rope", "weights", "kb", "bb", "bands", "bar"],
     K: ["rope", "weights", "kb", "bands", "bar"],
     M: ["bands"],
@@ -2096,9 +2108,15 @@
     buildDate = dateStr; // Federn & Antritt: the deload week of this date lowers the limits
     buildDisc = buildSport === "kickboxing" ? opts.disc || null : null;
     unitStyle = buildSport === "taekwondo" ? opts.tstyle || null : null;
+    buildGrp = (eqIn || []).includes("group") && (eqIn || []).includes("partner") && !lowTime() && !koLock(dateStr);
     let s;
     try {
       s = buildSessionCore(dateStr, type, loc, eqIn, opts);
+      // a mixed group: every item with a low kick shows its stand-in
+      if (grpLk()) {
+        s.grp = 1;
+        s.blocks.forEach((b) => b.items.forEach((it) => Array.isArray(it.combo) && (it.combo.includes("lowk") || (it.react && it.react.post && it.react.post.c === "lowk")) && (it.lk = 1)));
+      } else if (buildGrp) s.grp = 1;
       addPrep(s); // preparation for the focus at the end of the warm-up (17.11.2026)
       // short on time: no head kick anywhere – a safety net behind the round builders (also own combos, preparation)
       if (lowTime()) {
@@ -2112,6 +2130,7 @@
       buildSport = null;
       buildDisc = null;
       unitStyle = null;
+      buildGrp = false;
     }
     s.sport = opts.sport || mainSport();
     // boxing opening rounds name no kicks (7b B3): every easy round of a boxing unit gets the boxing text
@@ -2147,7 +2166,7 @@
     const ko = koLock(dateStr),
       ramp = rampOn(dateStr);
     if (ko && type === "P") type = "T";
-    if (ko) eq = eq.filter((x) => x !== "partner" && x !== "pads");
+    if (ko) eq = eq.filter((x) => x !== "partner" && x !== "pads" && x !== "group");
     if (low) eq = eq.filter((x) => x === "bag" || x === "bar");
     const p = S.profile,
       D = Math.min(opts.min || sessMin(type), type === "M" ? 45 : 240),
@@ -2520,6 +2539,8 @@
       const sup = rest - exMin - main;
       if (type === "P" && eq.includes("partner")) {
         notes.push(t("gearNote"));
+        // a mixed group: pairs spar under one rule
+        if (grpLk()) notes.push(t("grpSpar"));
         // what "complete protective gear" means in this sport (7e; boxing keeps its own note below)
         if (!box) notes.push(t(isTkd() ? (tkdUnitStyle() === "itf" ? "gearItf" : "gearWt") : "gearKb"));
         if (isTkd() && tkdUnitStyle() === "wt") notes.push(t("wtSparNote"));

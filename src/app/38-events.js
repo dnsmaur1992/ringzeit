@@ -623,10 +623,11 @@
       render();
       return;
     }
-    /* partner and heavy bag are mutually exclusive: one, the other, or neither */
+    /* partner, group and heavy bag are mutually exclusive: one of them or none (a group trains in pairs: partner + group) */
     if (ds.pb) {
-      ui.setup.eq = ui.setup.eq.filter((x) => x !== "partner" && x !== "bag" && (ds.pb === "partner" || x !== "pads"));
-      if (ds.pb !== "none") ui.setup.eq.push(ds.pb);
+      ui.setup.eq = ui.setup.eq.filter((x) => x !== "partner" && x !== "bag" && x !== "group" && (ds.pb === "partner" || ds.pb === "group" || x !== "pads"));
+      if (ds.pb === "group") ui.setup.eq.push("partner", "group");
+      else if (ds.pb !== "none") ui.setup.eq.push(ds.pb);
       render();
       return;
     }

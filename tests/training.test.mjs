@@ -7543,3 +7543,47 @@ test("28.11.2026: defences that load the next technique – slip outside (inside
   assert.ok(r.bodyBody, "no body cross right after a body jab");
   assert.deepEqual(r.labels, ["Slip nach außen", "Slip nach außen, dabei Cross", "Slip nach innen, dabei Haken über den Jab", "Aktiv blocken (in den Schlag lehnen)"]);
 });
+
+test("28.11.2026: a mixed group (with and without low kicks) – every low kick has its stand-in, the combination runs in both versions, the theme fits both, no partner low kick", () => {
+  const a = app();
+  const r = JSON.parse(a.run(`JSON.stringify((()=>{
+    S.profile.lang='de';S.profile.sport='kickboxing';S.profile.limits=[];S.profile.birthYear=1992;S.sessions={};
+    const bad=[];let lk=0,items=0,lkItems=0,grp=0;
+    for(const disc of ['kl','k1','lc'])for(const lv of [0,1,2])for(const ty of ['T','C'])for(let k=0;k<6;k++){
+      S.profile.disc=disc;S.profile.level=lv;
+      const ds='2026-12-0'+(1+k%7),s=buildSession(ds,ty,'gym',['partner','group'],{sport:'kickboxing',disc,min:90});
+      if(!s.grp)bad.push('no grp '+disc);
+      if(s.theme==='lowFinish')bad.push('low theme '+disc);
+      buildDisc=disc;
+      for(const b of s.blocks)for(const it of b.items){
+        if(!Array.isArray(it.combo))continue;items++;
+        const R=it.react||{};
+        for(const x of [R.pre,R.mid,R.post])if(x&&x.a==='lowk')bad.push('partner lowk '+disc);
+        if(it.combo.includes('lowk')){lk++;if(!it.lk)bad.push('no lk flag');
+          const sub=it.combo.map(x=>x==='lowk'?'round':x);
+          if(it.pb&&!it.mine&&!flowOk(sub,flowCtx()))bad.push('sub breaks '+it.combo.join(','));}
+        if(it.lk)lkItems++;
+        if(disc==='lc'&&it.lk)bad.push('lc lk');
+      }
+      buildDisc=null;
+    }
+    S.profile.disc='kl';ui.sel='2026-12-02';ui.tab='session';
+    let s;for(let k=0;k<20;k++){s=buildSession(ui.sel,'T','gym',['partner','group'],{sport:'kickboxing',disc:'kl',min:90});if(s.blocks.some(b=>b.items.some(i=>i.lk)))break;}
+    S.sessions[ui.sel]=s;
+    const h=renderSession();
+    const solo=buildSession('2026-12-03','T','gym',['partner'],{sport:'kickboxing',disc:'kl',min:90});
+    return {bad:bad.slice(0,8),lk,items,html:h.includes(t('grpLk')),tag:h.includes(t('grpTag')),solo:!solo.grp&&!solo.blocks.some(b=>b.items.some(i=>i.lk))};})())`));
+  assert.deepEqual(r.bad, []);
+  assert.ok(r.lk > 5, "low kicks stay in the group (with their stand-in) " + r.lk);
+  assert.ok(r.html && r.tag, "the stand-in and the group tag are shown");
+  assert.ok(r.solo, "with one partner nothing changes");
+});
+
+test("28.11.2026: the question before a unit is heavy bag, partner or group – group means a partner plus the group marker", () => {
+  const a = app();
+  a.run("S.profile.lang='de';S.profile.sport='kickboxing';S.profile.disc='kl';");
+  const h = a.run("setupFields({eq:['partner','group'],loc:'gym'},'T')");
+  assert.match(h, /Sandsack, Partner oder Gruppe\?/);
+  assert.match(h, /data-pb="group" aria-pressed="true"/);
+  assert.match(h, /data-pb="partner" aria-pressed="false"/);
+});

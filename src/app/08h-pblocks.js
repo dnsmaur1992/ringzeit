@@ -139,7 +139,7 @@
       const key = pbKey(F, theme, fs);
       for (let l = kid ? 2 : 3; l <= Math.min(kid ? 2 : 5, F.length - 1); l++) {
         const p = F.slice(0, l);
-        if (flowOk(p, ctx) && (!fs.must || fs.must(p)) && Math.max(...key) < l) return true;
+        if (flowOkG(p, ctx) && (!fs.must || fs.must(p)) && Math.max(...key) < l) return true;
       }
       return false;
     };
@@ -165,7 +165,7 @@
         ok = [];
       for (let l = lo; l <= hi; l++) {
         const p = F.slice(0, l);
-        if (!flowOk(p, ctx)) continue;
+        if (!flowOkG(p, ctx)) continue;
         ok.push({ p, w: (Math.max(...key) < l ? 3 : 0.05) * (fs.must && !fs.must(p) ? 0.02 : 1) });
       }
       // (no clean ending in the first actions: a short combination with the same opening instead)

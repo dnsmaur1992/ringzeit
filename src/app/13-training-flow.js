@@ -408,7 +408,7 @@
     loc: sess.loc,
     // the simple view only offers partner/bag – hidden extra equipment must not stick to a rebuilt session
     eq: sess.eq.filter(
-      (x) => !(x === "bag" && sess.eq.includes("partner")) && (!simpleView() || ["partner", "bag", "pads"].includes(x)),
+      (x) => !(x === "bag" && sess.eq.includes("partner")) && (!simpleView() || ["partner", "group", "bag", "pads"].includes(x)),
     ),
     type: sess.type,
     run: !!sess.run,
@@ -459,7 +459,7 @@
     const low = lowTime();
     if (low) h += `<div class="field"><span class="sub">${t("life").lowSetup}</span></div>`;
     if (fight)
-      h += `<div class="field"><span class="lab">${t("pbQ")}</span><div class="seg">${(low ? ["bag", "none"] : ["partner", "bag", "none"]).map((k) => `<button type="button" data-pb="${k}" aria-pressed="${k === "none" ? !has("partner") && !has("bag") : has(k)}">${t("pb")[k]}</button>`).join("")}</div></div>`;
+      h += `<div class="field"><span class="lab">${t("pbQ")}</span><div class="seg">${(low ? ["bag", "none"] : ["bag", "partner", "group", "none"]).map((k) => `<button type="button" data-pb="${k}" aria-pressed="${k === "none" ? !has("partner") && !has("bag") : k === "partner" ? has(k) && !has("group") : has(k)}">${t("pb")[k]}</button>`).join("")}</div>${has("group") && !low ? `<span class="sub">${t("grpHint")}</span>` : ""}</div>`;
     if (ty === "K" && setup.loc === "out")
       h += `<div class="field"><span class="lab">${t("runQ")}</span><div class="seg">${["iv", "run", "free"].map((k) => `<button type="button" data-run="${k}" aria-pressed="${k === "free" ? setup.run === "free" : setup.run !== "free" && (k === "run") === (!!setup.run && !kneeAnk())}" ${k !== "iv" && kneeAnk() ? "disabled" : ""}>${t("runOpt")[k]}</button>`).join("")}</div>${setup.run === "free" ? `<span class="sub">${t("freeRunHint")}</span>` : ""}${kneeAnk() ? `<span class="sub">${t("runLock")}</span>` : ""}</div>`;
     const runOnly = !!setup.run && setup.run !== "free" && canRun(ty, setup.loc),
@@ -575,7 +575,7 @@ ${setupFields(setup, ty)}
     }
     if (!simpleView()) h += progressionInfoHtml(true);
     const rbS = roundBlock(sess);
-    h += `<div class="tags">${simpleView() ? "" : `<span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>`}${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${!isTkdMain() && sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<button type="button" class="tg tgbtn" data-guide="wrap">🩹 ${t("guide").wrapLink} ›</button>` : ""}${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
+    h += `<div class="tags">${simpleView() ? "" : `<span class="tg ok">${t("rpeTarget")} ${sess.rpe}</span>`}${sess.blk ? `<span class="tg blk">${t("blk").tag} · ${t("blk").names[sess.blk.k]} · ${t("blk").wkN(sess.blk.wk)}</span>` : ""}${rbS && rbS.w === 120 && rbS.items.some((i) => i.k !== "ex") ? `<span class="tg ok">${t("fmtTag")} ${fmt(rbS.w)} / ${fmt(rbS.b)}</span>` : ""}<span class="tg">${t("locs")[sess.loc]}</span>${sess.grp ? `<span class="tg">${t("grpTag")}</span>` : ""}${!isTkdMain() && sess.eq.some((x) => x === "bag" || x === "pads" || x === "partner") ? `<button type="button" class="tg tgbtn" data-guide="wrap">🩹 ${t("guide").wrapLink} ›</button>` : ""}${S.profile.limits.length ? `<span class="tg no">${t("adapted")}: ${S.profile.limits.map((l) => t("lim")[l]).join(", ")}</span>` : ""}</div>`;
     let dataLine = "";
     if (sess.progression?.data) {
       const data = sess.progression.data,
@@ -612,7 +612,7 @@ ${setupFields(setup, ty)}
     const done = S.log.find((e) => e.date === ds && own(e));
     if (done) h += `<div class="note ok">✓ ${t("already")} ${effortTxt(done.rpe)} · ${done.minutes} ${t("min")}${runInfo(done)}</div>`;
     else
-      h += `<div class="panel training-start"><p class="sub">${workoutText().preview}</p><p class="sub">${S.profile.lang === "de" ? "Bereitlegen" : "Prepare"}: ${esc(sess.eq.map((k) => t("equip")[k] || t("pb")?.[k] || k).join(", ") || (S.profile.lang === "de" ? "keine zusätzliche Ausrüstung" : "no extra equipment"))}</p><button type="button" class="btn" data-workout="start">${PLAY}<span>${sess.flow ? workoutText().resume : workoutText().start}</span></button></div>`;
+      h += `<div class="panel training-start"><p class="sub">${workoutText().preview}</p><p class="sub">${S.profile.lang === "de" ? "Bereitlegen" : "Prepare"}: ${esc(sess.eq.filter((k) => k !== "group").map((k) => t("equip")[k] || t("pb")?.[k] || k).join(", ") || (S.profile.lang === "de" ? "keine zusätzliche Ausrüstung" : "no extra equipment"))}</p><button type="button" class="btn" data-workout="start">${PLAY}<span>${sess.flow ? workoutText().resume : workoutText().start}</span></button></div>`;
     return h;
   }
   function sessionBlockHtml(sess, bi, preview = false) {

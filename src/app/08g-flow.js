@@ -150,6 +150,9 @@
     for (let i = 1; i < core.length; i++) if (!flowW(core.slice(0, i), core[i], ctx)) return false;
     return core.length === 1 ? !!ctx.single : flowEnd(core, ctx);
   }
+  // a mixed group: the version for those without low kicks (roundhouse kick to the body, same side)
+  const lkSub = (c) => c.map((x) => (x === "lowk" ? "round" : x));
+  const flowOkG = (c, ctx) => flowOk(c, ctx) && (!grpLk() || !c.includes("lowk") || flowOk(lkSub(c), ctx));
   function flowCtx(extra = {}) {
     const lvl = techniqueLevel() || 0;
     return { lvl, tkd: isTkd(), box: isBox(), itf: isTkd() && tkm() === ITFT, focus: lvl === 0 || isBox() || isTkd() ? "bal" : S.profile.focus, ...extra };
@@ -269,7 +272,10 @@
       handOnly = !isBox() && !kickOnly && ka && kind === "bag",
       allowed = kbAllowed({ kickOnly, handOnly, noHead: o.noHead || lowTime(), must: o.must });
     const fs = kickOnly || handOnly ? {} : focusSpec(theme),
-      must0 = o.must ? (c) => c.includes(o.must) && (!fs.must || fs.must(c)) : fs.must,
+      // a mixed group: a combination with a low kick also runs with the roundhouse kick to the body instead
+      gOk = grpLk() ? (c) => !c.includes("lowk") || flowOk(c.map((x) => (x === "lowk" ? "round" : x)), flowCtx(kickOnly ? { kickOnly } : {})) : null,
+      must1 = o.must ? (c) => c.includes(o.must) && (!fs.must || fs.must(c)) : fs.must,
+      must0 = gOk ? (c) => gOk(c) && (!must1 || must1(c)) : must1,
       must = o.mustFn ? (c) => o.mustFn(c) && (!must0 || must0(c)) : must0,
       // boxing with a wrist or shoulder limit: light work – the short end (4 actions)
       len = o.len || (isBox() && (lim.includes("wrist") || lim.includes("shoulder")) && ageGroup() !== "kids" ? [4, 4] : kbLen()),
@@ -278,7 +284,7 @@
     // "more boxing" fewer, "more kicks" more
     const chainP = p.focus === "box" ? 0.08 : p.focus === "kick" ? 0.3 : 0.22;
     if (!kickOnly && !handOnly && !isBox() && !o.must && !o.len && !fs.start && !fs.end && !fs.must && techniqueLevel() >= 1 && ageGroup() !== "kids" && !ka && Math.random() < chainP) {
-      const kc = flowGen({ allowed: new Set([...allowed].filter((x) => KICKS.has(x))), len: [4, 5], ctx: { kickOnly: true }, avoid: o.avoid });
+      const kc = flowGen({ allowed: new Set([...allowed].filter((x) => KICKS.has(x))), len: [4, 5], ctx: { kickOnly: true }, avoid: o.avoid, must: gOk });
       if (kc) return kc;
     }
     const first = () => flowGen({ ...base, start: o.start || (fs.start && fs.start.every((x) => allowed.has(x)) ? fs.start : null), end: fs.end && [...fs.end].some((x) => allowed.has(x)) ? fs.end : null, must, exit: fs.exit && !o.noExit });
@@ -286,8 +292,8 @@
     if (o.strict) return first();
     const one = () =>
       first() ||
-      flowGen({ ...base, must: o.must ? (c) => c.includes(o.must) : null }) ||
-      flowGen({ ...base, len: [2, Math.max(2, len[1])] });
+      flowGen({ ...base, must: o.must ? (c) => c.includes(o.must) && (!gOk || gOk(c)) : gOk }) ||
+      flowGen({ ...base, len: [2, Math.max(2, len[1])], must: gOk });
     const c = one();
     return c || (kickOnly ? ["front", "round"] : handOnly || isBox() ? ["jab", "cross"] : ["jab", "cross"]);
   }
