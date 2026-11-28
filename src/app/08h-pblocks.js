@@ -72,6 +72,11 @@
       const i = F.findIndex((x, k) => k > 0 && BODY_HEAD.has(F[k - 1] + ">" + x));
       if (i > 0) return [i - 1, i];
     }
+    // against taller: every block keeps the body shot (28.11.2026)
+    if (theme && theme.id === "tallOpp") {
+      const i = F.findIndex((x) => FT[x] && FT[x].body);
+      if (i >= 0) return [i];
+    }
     if (theme && theme.kick) {
       const i = F.findIndex((x) => hasKick([x], theme.kick, tkm()));
       if (i >= 0) return [i];
@@ -109,10 +114,14 @@
       minL = kid ? 2 : 4,
       fLen = kid ? [3, 3] : [Math.min(7, Math.max(4, n + 3)), 7];
     for (let k = need.length; !F && k >= 0; k--) {
-      const nd = need.slice(0, k),
-        c = tkd ? tkdFlow("pads", false, theme, { must: theme && theme.kick ? theme.kick : undefined, len: fLen }) : flowCombo("pads", theme, { len: fLen, noExit: true, mustFn: (c) => nd.every((x) => has(c, x)) });
+      const nd = need.slice(0, k);
+      let c = tkd ? tkdFlow("pads", false, theme, { must: theme && theme.kick ? theme.kick : undefined, len: fLen }) : flowCombo("pads", theme, { len: fLen, noExit: true, strict: true, mustFn: (c) => nd.every((x) => has(c, x)) });
       if (c && nd.every((x) => has(c, x))) F = c;
-      else if (k === 0) F = c;
+      // (none: the theme with any length 4–7, only then without it)
+      else if (k === 0) {
+        for (let t = 0; !c && !tkd && t < 4; t++) c = flowCombo("pads", theme, { len: kid ? [3, 3] : [4, 7], noExit: true, strict: true });
+        F = c || flowCombo("pads", theme, { len: fLen, noExit: true });
+      }
     }
     // themes with a way out (against taller / smaller, 26.11.2026): every block ends with the step out
     // (taekwondo: the step back)
@@ -141,10 +150,10 @@
     for (let t = 0; out.length < n && t < 48; t++) {
       // (after 16 tries without a new one: any combination of the theme, after 32 any combination at all)
       if (t === 16) beg.length = 0;
-      if (t === 32) theme = null;
+      // (the theme always stays – 28.11.2026)
       const hi = Math.max(begN + 1, minL, F.length - 1 - (t % 2)),
         o = { len: [Math.max(minL, begN + 1), Math.max(minL, hi)], noExit: true, avoid: seen, start: beg.length ? beg : null, must: tkd && theme && theme.kick ? theme.kick : undefined },
-        c = tkd ? tkdFlow("pads", false, theme, o) : flowCombo("pads", theme, o);
+        c = tkd ? tkdFlow("pads", false, theme, o) : flowCombo("pads", theme, { ...o, strict: true });
       // (never harder than the whole combination of the last block)
       if (c && !seen.has(c.join()) && (!beg.length || c.join().startsWith(beg.join())) && (mineF || comboLevel(c) <= comboLevel(F))) {
         seen.add(c.join());

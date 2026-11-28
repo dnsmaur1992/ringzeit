@@ -114,6 +114,8 @@
     if (SPECIAL.has(b) && c.some((x) => SPECIAL.has(x))) return 0;
     if (A.push && B.r === "C") return 0;
     if (A.r === "C" && B.r === "L") return 0;
+    // (28.11.2026) out of an uppercut or a knee no head kick – too close, the partner's glove is under the chin
+    if ((a === "upper" || a === "knee") && B.k && B.head) return 0;
     if (B.spin && (A.spin || sa !== "L" || !FLOW_SPIN_FROM.has(a) || (b === "back" && a === "hook"))) return 0;
     if (B.jump && !A.h) return 0;
     if (b === "sweep" && sa !== "R") return 0;
@@ -273,8 +275,11 @@
       const kc = flowGen({ allowed: new Set([...allowed].filter((x) => KICKS.has(x))), len: [4, 5], ctx: { kickOnly: true }, avoid: o.avoid });
       if (kc) return kc;
     }
+    const first = () => flowGen({ ...base, start: o.start || (fs.start && fs.start.every((x) => allowed.has(x)) ? fs.start : null), end: fs.end && [...fs.end].some((x) => allowed.has(x)) ? fs.end : null, must, exit: fs.exit && !o.noExit });
+    // strict (partner theme blocks, 28.11.2026): the theme is never dropped – no combo rather than one without it
+    if (o.strict) return first();
     const one = () =>
-      flowGen({ ...base, start: o.start || (fs.start && fs.start.every((x) => allowed.has(x)) ? fs.start : null), end: fs.end && [...fs.end].some((x) => allowed.has(x)) ? fs.end : null, must, exit: fs.exit && !o.noExit }) ||
+      first() ||
       flowGen({ ...base, must: o.must ? (c) => c.includes(o.must) : null }) ||
       flowGen({ ...base, len: [2, Math.max(2, len[1])] });
     const c = one();

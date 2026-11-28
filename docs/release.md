@@ -227,3 +227,4 @@ Prod-Stand mit der echten Sicherung geprüft. Details in [implementation-status.
 | 25.11. | Weniger Gegenaktionen: etwa 2 von 5 Blöcken, Konter des Partners mitten in der Kombination (Schlag oder Kick) | 335 |
 | 26.11. | Kombinationen überall 4–7 Aktionen (auch Leichtkontakt), Kinder 2–3; höchstens eine Spezialtechnik je Kombination | 335 |
 | 26.11. | Erster Block mind. 4 Aktionen, Ausgangsschritt bei Größer/Kleiner, 2 Sandsackrunden nach den Blöcken, Kinder max. 6 Blöcke, kurze Ansage, „Block“ im Timer; alte Kombinationslisten entfernt | 336 |
+| 28.11. | Partnertraining geprüft: kein Kopfkick aus Uppercut/Knie, Konter passend zur Distanz, Abwehr passend zur Fortsetzung, Thema in jedem Block | 336 |

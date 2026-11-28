@@ -7350,7 +7350,7 @@ test("security 25.11.2026: older backups keep their shapes – no type on club e
 
 
 /* ---- Teil 43 (25.11.2026): combinations by movement, partner units in theme blocks ---- */
-test("Teil 43: every combination is built by movement – sides alternate (real doubles only), the turn loads the next technique, distance and weight fit, spins out of the right turn, a finishing technique at the end; all sports, levels, limits", () => {
+test("Teil 43: every combination is built by movement – sides alternate (real doubles only), the turn loads the next technique, distance and weight fit (28.11.2026: no head kick out of an uppercut or knee), spins out of the right turn, a finishing technique at the end; all sports, levels, limits", () => {
   const a = app();
   a.setDate("2026-11-25");
   const r = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];let n=0;const o={};S.profile.birthYear=1995;S.profile.birth='1995-05-01';
@@ -7365,7 +7365,8 @@ test("Teil 43: every combination is built by movement – sides alternate (real 
             if(sd[k]===sd[k-1]&&!FLOW_DBL.has(x+'>'+y))bad.push('side '+c.join('-'));
             if(CLOSE.has(x)&&LONG.has(y))bad.push('close→long '+c.join('-'));
             if(PUSH.has(x)&&CLOSE.has(y))bad.push('push→close '+c.join('-'));
-            if(REAR.has(x)&&sd[k]==='L'&&(PUSH.has(y)||y==='axe'||y==='hookk'))bad.push('weight '+c.join('-'));}
+            if(REAR.has(x)&&sd[k]==='L'&&(PUSH.has(y)||y==='axe'||y==='hookk'))bad.push('weight '+c.join('-'));
+            if((x==='upper'||x==='knee')&&['roundh','axe','brazil','hookk','shook','tornado'].includes(y))bad.push('head kick out of uppercut/knee '+c.join('-'));}
           if(['jab','jabb'].includes(core[core.length-1]))bad.push('ends on a jab '+c.join('-'));
           if(lvl===0&&['roundh','axe','hookk','brazil'].includes(core[0]))bad.push('Grundlage opens with a head kick '+c.join('-'));
           // 26.11.2026: 4–7 actions everywhere (Light Contact too, kick chains 4–5), children 2–3
@@ -7383,7 +7384,7 @@ test("Teil 43: every combination is built by movement – sides alternate (real 
   assert.deepEqual(r.sides, [[null, "L"], [null, "L", "L"], [null, null, "L", "R"]]);
 });
 
-test("Teil 43: partner units (technique and conditioning, all sports, children, tournament preparation) are theme blocks of 8–12 minutes in one go (children 5–6) – stages clean → pace with entry/exit → counter action (about 2 of 5 blocks, in the middle of the combo), easy → hard, one theme", () => {
+test("Teil 43: partner units (technique and conditioning, all sports, children, tournament preparation) are theme blocks of 8–12 minutes in one go (children 5–6) – stages clean → pace with entry/exit → counter action (about 2 of 5 blocks, in the middle of the combo; 28.11.2026: fitting the distance and how the combo goes on), easy → hard, one theme kept in every block", () => {
   const a = app();
   a.setDate("2026-11-25");
   const r = JSON.parse(a.run(`JSON.stringify((()=>{const bad=[];const st={units:0,thread:0,multi:0,six:0,fc:0,themes:new Set()};S.profile.limits=[];S.profile.lang='de';
@@ -7409,7 +7410,14 @@ test("Teil 43: partner units (technique and conditioning, all sports, children, 
         if(!!it.react!==(k>=n-nR))bad.push('counter blocks '+tag+' '+k+'/'+n);
         if(it.react&&!kid){const core=it.combo.filter(y=>y!=='step');const canMid=core.some((y,i)=>i>=1&&i<=core.length-2&&STRIKE.has(core[i-1]));
           if(canMid?!it.react.mid:!it.react.post)bad.push('counter in the middle '+tag+' '+JSON.stringify(it.react));
-          if(Object.keys(it.react).length!==1)bad.push('one counter only '+tag);}
+          if(Object.keys(it.react).length!==1)bad.push('one counter only '+tag);
+          // 28.11.2026: the partner's counter fits the distance, A's defence fits how the combo goes on
+          if(it.react.mid&&sp!=='taekwondo'){const m=it.react.mid,prev=core[m.at-1],next=core[m.at],CL=['hook','hookb','upper','knee'];
+            if(!(focusOf(s.theme)||{}).counters){if(CL.includes(prev)&&['front','side','back','round','roundh','axe'].includes(m.a))bad.push('counter too far '+tag);
+              if(['front','side'].includes(prev)&&CL.includes(m.a))bad.push('counter too close '+tag);}
+            if(CL.includes(next)&&['step','deflect','lift'].includes(m.d))bad.push('step out before close range '+tag);}}
+        // the theme stays in every block (start, rule) – 28.11.2026
+        {const fs=focusSpec(focusOf(s.theme));if(sp!=='taekwondo'&&!it.mine&&((fs.must&&!fs.must(it.combo))||(fs.start&&fs.start.some((x,i)=>it.combo[i]!==x))))bad.push('theme '+s.theme+' '+tag+' '+it.combo.join('-'));}
         if(kid&&S2.some(x=>x[0]==='full'))bad.push('children competition pace '+tag);
         if(sp!=='taekwondo'&&!it.dist)bad.push('entry/exit '+tag);
         if(!it.mine&&!flowOk(it.combo))bad.push('flow '+tag+' '+it.combo.join('-'));
